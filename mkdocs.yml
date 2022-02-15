@@ -1,0 +1,90 @@
+site_name: SPO JAPAN GUILD DOCS
+theme:
+  language: ja
+  favicon: images/favicon.png
+  logo: images/logo-white.png
+  font:
+    text: Noto Sans Japanese
+  name: material
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - scheme: slate 
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+  features:
+    - content.tabs.link
+    #- navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.instant
+    - navigation.tracking
+
+copyright: Copyright &copy; 2020 - 2022 CARDANO COMMUNITY SPO JAPAN GUILD
+extra:
+  generator: false
+
+markdown_extensions:
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - meta
+  - codehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
+  - admonition
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+extra_javascript:
+  - https://unpkg.com/mermaid@8.5.1/dist/mermaid.min.js
+  - https://unpkg.com/browse/mermaid@8.8.0/dist/mermaid.min.js
+
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+    - 'はじめに': '../'
+    - 'プール構築マニュアル':
+      - '0-はじめに': './setup/0-start-guide.md'
+      - '1-Ubuntu初期設定': './setup/1-ubuntu-setup.md'
+      - '2-ノードインストール': './setup/2-node-setup.md'
+      - '3-リレー/BPの接続': './setup/3-relay-bp-setup.md'
+      - '4-BPセットアップ': './setup/4-bp-setup.md'
+      - '5-アドレスの作成': './setup/5-generate-address.md'
+      - '6-ステークアドレスの登録': './setup/6-register-stakeaddress.md'
+      - '7-ステークプールの登録': './setup/7-register-stakepool.md'
+      - '8-P2Pトポロジー設定': './setup/8.topology-setup.md'
+      - '9.監視ツールセットアップ': './setup/9-monitoring-tools-setup.md'
+      - '10.ブロックログセットアップ': './setup/10-blocklog-setup.md'
+      - '寄付とクレジット': './setup/99-donation-credit.md'
+    - 'プール運用マニュアル':
+      - '運用ガイド': './operation/start-guide.md'
+      - 'KESの更新': './operation/kes-update.md'
+      - 'プール情報の更新': './operation/cert-update.md'
+      - 'ノードアップデート': './operation/node-update.md'
+      - '資金引き出し': './operation/withdrawal.md'
+      - 'プール廃止': './operation/pool-retire.md'
+
