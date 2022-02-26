@@ -24,6 +24,10 @@ theme:
     - navigation.top
     - navigation.instant
     - navigation.tracking
+    - search.suggest
+    - search.highlight
+    - search.share
+
   icon:
     repo: fontawesome/brands/github
 
@@ -34,6 +38,8 @@ repo_name: btbf/spojapanguild
 plugins:
   - git-revision-date-localized:
       type: datetime
+  - search:
+      lang: ja
 
 extra:
   generator: false
