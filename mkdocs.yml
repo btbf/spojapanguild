@@ -37,6 +37,17 @@ plugins:
 
 extra:
   generator: false
+  analytics:
+    provider: google
+    property: G-R9C48XMXE5
+  consent:
+    title: Cookieの使用許諾
+    description: >- 
+      当サイトは、ドキュメントの効果測定や利用者確認のため、クッキーを使用しGoogle アナリティクスによるトラフィックの分析を行っています。
+      ご同意いただける場合は「Accept」をクリックしてください。
+
+    cookies:
+      analytics: Google Analytics
 
 
 markdown_extensions:
@@ -78,7 +89,9 @@ extra_css:
   - stylesheets/extra.css
 
 nav:
-    - 'スタートガイド': './index.md'
+    - 'HOME':
+      - 'スタートガイド': './index.md'
+      - '変更履歴': './changelogs.md'
     - 'プール構築マニュアル':
       - '0-はじめに': './setup/0-start-guide.md'
       - '1-Ubuntu初期設定': './setup/1-ubuntu-setup.md'
@@ -100,4 +113,5 @@ nav:
       - 'ノードアップデート': './operation/node-update.md'
       - '資金引き出し': './operation/withdrawal.md'
       - 'プール廃止': './operation/pool-retire.md'
+    
 
