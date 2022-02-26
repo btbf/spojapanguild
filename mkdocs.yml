@@ -11,21 +11,33 @@ theme:
       toggle:
         icon: material/toggle-switch-off-outline
         name: Switch to dark mode
-    - scheme: slate 
+    - scheme: slate
+      accent: cyan
+      primary: cyan
       toggle:
         icon: material/toggle-switch
         name: Switch to light mode
   features:
     - content.tabs.link
-    #- navigation.tabs
+    - navigation.tabs
     - navigation.tabs.sticky
     - navigation.top
     - navigation.instant
     - navigation.tracking
+  icon:
+    repo: fontawesome/brands/github
 
 copyright: Copyright &copy; 2020 - 2022 CARDANO COMMUNITY SPO JAPAN GUILD
+repo_url: https://github.com/btbf/spojapanguild
+repo_name: btbf/spojapanguild
+
+plugins:
+  - git-revision-date-localized:
+      type: datetime
+
 extra:
   generator: false
+
 
 markdown_extensions:
   - pymdownx.critic
@@ -66,7 +78,7 @@ extra_css:
   - stylesheets/extra.css
 
 nav:
-    - 'はじめに': '../'
+    - 'スタートガイド': './index.md'
     - 'プール構築マニュアル':
       - '0-はじめに': './setup/0-start-guide.md'
       - '1-Ubuntu初期設定': './setup/1-ubuntu-setup.md'
@@ -79,7 +91,8 @@ nav:
       - '8-P2Pトポロジー設定': './setup/8.topology-setup.md'
       - '9.監視ツールセットアップ': './setup/9-monitoring-tools-setup.md'
       - '10.ブロックログセットアップ': './setup/10-blocklog-setup.md'
-      - '寄付とクレジット': './setup/99-donation-credit.md'
+      - '11.ブロック生成ステータス通知セットアップ': './setup/11-blocknotify-setup.md'
+      - '＊寄付とクレジット': './setup/99-donation-credit.md'
     - 'プール運用マニュアル':
       - '運用ガイド': './operation/start-guide.md'
       - 'KESの更新': './operation/kes-update.md'

@@ -11,13 +11,13 @@ prometheusインストール
 
 === "リレーノード1"
     ```text
-    sudo apt-get install -y prometheus prometheus-node-exporter
+    sudo apt install -y prometheus prometheus-node-exporter
     ```
 
 === "ブロックプロデューサーノード"
 
     ```bash
-    sudo apt-get install -y prometheus-node-exporter
+    sudo apt install -y prometheus-node-exporter
     ```
 
 grafanaインストール
@@ -31,7 +31,7 @@ grafanaインストール
     sudo mv grafana.list /etc/apt/sources.list.d/grafana.list
     ```
     ```bash
-    sudo apt-get update && sudo apt-get install -y grafana
+    sudo apt update && sudo apt install -y grafana
     ```
 
 サービスを有効にして、自動的に開始されるように設定します。
@@ -53,7 +53,7 @@ grafanaインストール
 ## **2.定義ファイルの作成**
 
 !!! warning "注意"
-    \*\*\*.\*\*\*.\*\*\*.\*\*\*はBPのパブリックIPアドレスに書き換えて、コマンドを送信してください。
+    targets:の「xxx.xxx.xxx」は、BPのパブリックIP(静的)アドレスに置き換えて下さい
 
 === "リレーノード1"
 
@@ -78,11 +78,11 @@ grafanaインストール
             labels:
             alias: 'relaynode1'
             type:  'system'
-        - targets: ['***.***.***:9100']
+        - targets: ['xxx.xxx.xxx:9100']
             labels:
             alias: 'block-producing-node'
             type:  'system'
-        - targets: ['***.***.***.***:12798']
+        - targets: ['xxx.xxx.xxx:12798']
             labels:
             alias: 'block-producing-node'
             type:  'cardano-node'
@@ -129,7 +129,7 @@ prometheus.ymlを移動します
 
 
 !!! info "ファイアウォールの設定を確認してください"
-    ファイアウォールを設定している場合は、ブロックプロデューサーノードにて9100番と12798番ポートをリレーノード1のパブリックIP指定で開放して下さい。  
+    ファイアウォールを設定している場合は、ブロックプロデューサーノードにて9100番と12798番ポートをリレーノード1のパブリックIP(静的)指定で開放して下さい。  
     リレーノード1では、Grafana用に3000番ポートを開放してください。
 
 

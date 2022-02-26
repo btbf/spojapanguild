@@ -22,10 +22,10 @@
 ### **1-1. システムアップデート**
 
 ```bash
-sudo apt-get update -y
+sudo apt update -y
 ```
 ```bash
-sudo apt-get upgrade -y
+sudo apt upgrade -y
 ```
 ノードをストップする
 ```bash
@@ -206,7 +206,7 @@ sudo systemctl start cardano-node
 cd $NODE_HOME/scripts
 ./gLiveView.sh
 ```
-> 約10分～15分ほどで同期完了見込み
+> 具体的な時間は不明ですが、同期完了までには数時間が必要になると思われます。
 
 
 ### **1-6.作業フォルダリネーム**
@@ -299,7 +299,7 @@ sudo systemctl daemon-reload
 
 ## 2. エアギャップマシンアップデート
 
- **エアギャップマシン用にバイナリファイルをコピーする(実施は1回のみでOK)**
+ **エアギャップマシン用にバイナリファイルをコピーする**
 
 更新手順１を終えたBPかリレーサーバーで以下を実行する
 ```bash
@@ -364,7 +364,7 @@ sudo systemctl stop cnode-cncli-sync.service
 rustup update
 cd $HOME/git/cncli
 git fetch --all --prune
-git checkout v4.0.4
+git checkout $(curl -s https://api.github.com/repos/AndrewWestberg/cncli/releases/latest | jq -r .tag_name)
 cargo install --path . --force
 cncli --version
 ```
@@ -381,11 +381,11 @@ tmux ls
 ```
 
 !!! info "ヒント"
-    4つの画面がバックグラウンドで起動中であればOKです
+    ノードを再起動してから、約20秒後に5プログラムがバックグラウンドで起動中であればOKです
     * cncli
     * leaderlog
     * validate
-    * logmonitor(5分後に遅延起動)
+    * logmonitor
     * blockcheck(ブロック生成ステータス通知を導入している場合)
 
 

@@ -23,3 +23,49 @@
 .md-sidebar--secondary .md-nav__link{
     font-size:.65rem;
 }
+
+.mermaid .label{
+    color :var(--md-mermaid-font-color) !important;
+}
+
+.mermaid .edgeLabel{
+    padding: 10px;
+    background-color: var(--md-mermaid-node-label-bg-color) !important;
+    stroke:var(--md-mermaid-font-color) !important;
+}
+
+.mermaid .arrowheadPath,.mermaid .edgePath .path{
+    stroke:var(--md-mermaid-node-fg-color) !important;
+}
+
+.node rect {
+    fill: var(--md-mermaid-node-bg-color) !important;
+    stroke: var(--md-mermaid-node-fg-color) !important;
+    }
+    
+:root>* {
+
+    --md-mermaid-node-bg-color: var(--md-scheme-node-fg-color--transparent);
+    --md-mermaid-node-label-bg-color: var(--md-scheme-node-label-color);
+    --md-mermaid-node-fg-color: var(--md-scheme-node-fg-color);
+    --md-mermaid-font-color: var(--md-scheme-node-font-color);
+
+}
+    
+[data-md-color-scheme="slate"] {
+    --md-scheme-node-font-color :#FFF;
+    --md-scheme-node-label-color: #333;
+    --md-scheme-node-fg-color: #00b0ff;
+    --md-scheme-node-fg-color--transparent: rgba(25, 151, 255, 0.1);
+    --md-scheme-node-bg-color: #fff;
+    --md-scheme-node-bg-color--light: hsla(0,0%,100%,.7);
+}
+
+[data-md-color-scheme="default"] { 
+    --md-scheme-node-font-color :#000;
+    --md-scheme-node-label-color: #FFF;
+    --md-scheme-node-fg-color: #4051b5;
+    --md-scheme-node-fg-color--transparent: rgba(25, 151, 255, 0.1);
+    --md-scheme-node-bg-color: #fff;
+    --md-scheme-node-bg-color--light: hsla(0,0%,100%,.7);
+}

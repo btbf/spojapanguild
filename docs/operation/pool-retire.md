@@ -32,7 +32,7 @@
 
 
 
-プールが引退できる最も早くて最も遅い引退エポックを見つけます。
+プールが最も早く引退できるエポックと最も遅い引退エポックを見つけます。
 
 
 === "ブロックプロデューサノード"
@@ -52,11 +52,11 @@
 !!! info "リタイアのタイミングについて"
     **例**: エポック320でeMax18の場合,
 
-    * 最も早いポックは 321 \( 現在のエポック  + 1\).
-    * 最も遅いエポックは 338 \( eMax + 現在のエポック\). 
+    * 最も早いポックは 321 \( 現在のエポック  + 1\)
+    * 最も遅いエポックは 338 \( eMax + 現在のエポック\)
 
 
-登録解除証明書 `pool.dereg.`を作成します。  
+登録解除証明書 `pool.dereg`を作成します。  
 以下のコマンド内の `--epoch ***` にリタイアしたいエポックを記入します
 
 === "エアギャップオフラインマシン"
@@ -238,7 +238,7 @@ build-raw transactionコマンドを実行します。
     ```bash
     cd $NODE_HOME
     cardano-cli query ledger-state --mainnet > ledger-state.json
-    jq -r '.esLState._delegationState._pstate._pParams."'"$(cat stakepoolid.txt)"'"  // empty' ledger-state.json
+    jq -r '.esLState._delegationState._pstate._pParams."'"$(cat stakepoolid_hex.txt)"'"  // empty' ledger-state.json
     ```
 
 ## 2.**登録料返還確認**
@@ -314,7 +314,7 @@ build-raw transactionコマンドを実行します。
 
     cat balance.out
     ```
-**UTXOを算出***
+**UTXOを算出**
 === "ブロックプロデューサノード"
     ```bash   
     tx_in=""

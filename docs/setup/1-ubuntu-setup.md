@@ -1,4 +1,4 @@
-# **1.Ubuntuセットアップ**
+# **1.Ubuntu初期設定**
 
 !!! tip "AWSをご利用の方"
     AWS EC2及びlightsailは特殊環境なため、このマニュアル通りに動かない場合がございます。  
@@ -11,7 +11,7 @@
 
 ## **1-1.オススメのターミナルソフト**
 
-1.R-Login(Winodws)  
+1.R-Login(Windows) 
 [https://kmiya-culti.github.io/RLogin/](https://kmiya-culti.github.io/RLogin/) 
 
 2.Terminal(Mac)  
@@ -111,9 +111,9 @@ rm id_rsa.pub
 2.左側ウィンドウ(ローカル側)は任意の階層にフォルダを作成する。  
 3.右側ウィンドウ(サーバ側)は「.ssh」フォルダを選択する  
 4.右側ウィンドウから、id_rsaファイルの上で右クリックして「ファイルのダウンロード」を選択する  
-5.一旦サーバからログアウトする
-6.R-Loginのサーバ接続編集画面を開き、「SSH認証鍵」をクリックし4でダウンロードしたファイルを選ぶ
-7.サーバへ接続する
+5.一旦サーバからログアウトする  
+6.R-Loginのサーバ接続編集画面を開き、「SSH認証鍵」をクリックし4でダウンロードしたファイルを選ぶ  
+7.サーバへ接続する  
 
 **SSHの設定変更**
 
@@ -189,15 +189,15 @@ exit
     不正アクセスを予防するには、システムに最新のパッチを適用することが重要です。
 
 ```bash
-sudo apt-get update -y && sudo apt-get upgrade -y
-sudo apt-get autoremove
-sudo apt-get autoclean
+sudo apt update -y && sudo apt upgrade -y
+sudo apt autoremove
+sudo apt autoclean
 ```
 
 自動更新を有効にすると、手動でインストールする手間を省けます。
 
 ```text
-sudo apt-get install unattended-upgrades
+sudo apt install unattended-upgrades
 sudo dpkg-reconfigure --priority=low unattended-upgrades
 ```
 
@@ -271,7 +271,7 @@ sudo reboot
 
 
 ```text
-sudo apt-get install fail2ban -y
+sudo apt install fail2ban -y
 ```
 
 SSHログインを監視する設定ファイルを開きます。
@@ -306,12 +306,13 @@ sudo systemctl restart fail2ban
 
 新規インストール時点では、デフォルトでufwが無効になっているため、以下のコマンドで有効にしてください。
 
-* SSH接続用のポート22番\(または設定したランダムなポート番号 \#\)
+* SSH接続用のポート22番\(または設定したランダムなポート番号)
 * ノード用のポート6000番または6001番
 * ノード監視Grafana用3000番ポート
-* Prometheus-node-exporter用のポート12798・9100をリレーノードのIPのみ受け付ける用に設定してください。  
+* Prometheus-node-exporter用のポート12798・9100をリレーノードのIPのみ受け付けるように設定してください。  
 * ブロックプロデューサーノードおよびリレーノード用に設定を変更して下さい。  
-* ブロックプロデューサーノードでは、リレーノードのIPのみ受け付ける用に設定してください。  
+* ブロックプロデューサーノードでは、リレーノードのIPのみ受け付けるように設定してください。 
+* **(コマンド中の<>は不要です)**
 
 === "リレーノード"
 
@@ -344,17 +345,13 @@ sudo systemctl restart fail2ban
 chronyをインストールします。
 
 ```sh
-sudo apt-get install chrony
+sudo apt install chrony
 ```
 
-`/etc/chrony/chrony.conf` を編集する
+/etc/chrony/chrony.conf を更新します。
 
-```sh
-sudo nano /etc/chrony/chrony.conf
 ```
-
-以下のように書き換える
-```text
+cat > $HOME/chrony.conf << EOF
 pool time.google.com       iburst minpoll 2 maxpoll 2 maxsources 3 maxdelay 0.3
 pool time.facebook.com     iburst minpoll 2 maxpoll 2 maxsources 3 maxdelay 0.3
 pool time.euro.apple.com   iburst minpoll 2 maxpoll 2 maxsources 3 maxdelay 0.3
@@ -391,8 +388,13 @@ leapsectz right/UTC
 
 # Serve time even if not synchronized to a time source.
 local stratum 10
+EOF
 ```
-> Ctrl+Oで保存し、Ctrl+xで閉じる
+
+作成したchrony.confを/etc/chrony/chrony.confに移動します。
+```
+sudo mv $HOME/chrony.conf /etc/chrony/chrony.conf
+```
 
 UFWで以下を設定します。
 ```
@@ -430,7 +432,7 @@ chronyc tracking
 
 
 !!! danger "注意"
-    設定に失敗するとログインできなくなる場合があるので、設定前に２つの目ウィンドウでサーバーにログインしておいてください。万が一ログインできなくなった場合、復旧できます。
+    設定に失敗するとログインできなくなる場合があるので、設定前に二つ目のウィンドウでサーバーにログインしておいてください。万が一ログインできなくなった場合、復旧できます。
 
 
 ```text
@@ -445,7 +447,7 @@ SSHがGoogle Authenticator PAM モジュールを使用するために、`/etc/p
 sudo nano /etc/pam.d/sshd 
 ```
 
-先頭の **@include common-auth**を#を付与してコメントアウトする
+4行目の `@include common-auth`の先頭へ#を付与してコメントアウトする。
 ```
 #@include common-auth
 ```
@@ -508,7 +510,7 @@ google-authenticator
 * Increase the original generation time limit: no
 * Enable rate-limiting: yes
 
-プロセス中に大きなQRコードが表示されますが、その下には緊急時のスクラッチコードがひょうじされますので、忘れずに書き留めておいて下さい。
+プロセス中に大きなQRコードが表示されますが、その下には緊急時のスクラッチコードが表示されますので、忘れずに書き留めておいて下さい。
 
 スマートフォンでGoogle認証システムアプリを開き、QRコードを読み取り2段階認証を機能させます。
 

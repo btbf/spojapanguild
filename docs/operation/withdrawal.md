@@ -1,195 +1,6 @@
 # **資金引き出し**
 
-
-## **1 Payment.addrからの引き出し**
-!!! summary "概要"
-    payment.addrから任意のアドレスへ送信する例です
-
-!!! info "注意"
-    入力ミスなどで送金が失敗しても責任は負えません。自己責任のもと実施下さい。  
-    **payment.skey**と**stake.skey**は必ずオフライン環境で保管してください。  
-
-
-最新のスロット番号を取得します
-
-
-=== "ブロックプロデューサーノード"
-    ```bash
-    cd $NODE_HOME
-    currentSlot=$(cardano-cli query tip --mainnet | jq -r '.slot')
-    echo Current Slot: $currentSlot
-    ```
-
-
-
-lovelaces形式で送信する金額を設定します。**1 ADA** = **1,000,000 lovelaces** で覚えます。
-
-
-=== "ブロックプロデューサーノード"
-    ```bash
-    amountToSend=10000000
-    echo amountToSend: $amountToSend
-    ```
-
-送金先のアドレスを設定します。
-
-=== "ブロックプロデューサーノード"
-    ```bash
-    destinationAddress=送金先アドレス
-    echo destinationAddress: $destinationAddress
-    ```
-
-
-payment.addrの残高を算出します。
-
-=== "ブロックプロデューサーノード"
-    ```bash
-    cardano-cli query utxo \
-        --address $(cat payment.addr) \
-        --mainnet > fullUtxo.out
-
-    tail -n +3 fullUtxo.out | sort -k3 -nr > balance.out
-
-    cat balance.out
-    ```
-
-UTXOを算出します
-
-=== "ブロックプロデューサーノード"
-    ```bash
-    tx_in=""
-    total_balance=0
-    while read -r utxo; do
-        in_addr=$(awk '{ print $1 }' <<< "${utxo}")
-        idx=$(awk '{ print $2 }' <<< "${utxo}")
-        utxo_balance=$(awk '{ print $3 }' <<< "${utxo}")
-        total_balance=$((${total_balance}+${utxo_balance}))
-        echo TxHash: ${in_addr}#${idx}
-        echo ADA: ${utxo_balance}
-        tx_in="${tx_in} --tx-in ${in_addr}#${idx}"
-    done < balance.out
-    txcnt=$(cat balance.out | wc -l)
-    echo Total ADA balance: ${total_balance}
-    echo Number of UTXOs: ${txcnt}
-    ```
-
-build-rawトランザクションコマンドを実行します。
-
-=== "ブロックプロデューサーノード"
-    ```bash
-    cardano-cli transaction build-raw \
-        ${tx_in} \
-        --tx-out $(cat payment.addr)+0 \
-        --tx-out ${destinationAddress}+0 \
-        --invalid-hereafter $(( ${currentSlot} + 10000)) \
-        --fee 0 \
-        --out-file tx.tmp
-    ```
-
-最低手数料を出力します
-
-=== "ブロックプロデューサーノード"
-    ```bash
-    fee=$(cardano-cli transaction calculate-min-fee \
-        --tx-body-file tx.tmp \
-        --tx-in-count ${txcnt} \
-        --tx-out-count 2 \
-        --mainnet \
-        --witness-count 1 \
-        --byron-witness-count 0 \
-        --protocol-params-file params.json | awk '{ print $1 }')
-    echo fee: $fee
-    ```
-
-
-
-計算結果を出力します。
-
-
-=== "ブロックプロデューサーノード"
-    ```bash
-    txOut=$((${total_balance}-${fee}-${amountToSend}))
-    echo Change Output: ${txOut}
-    ```
-
-
-
-トランザクションファイルを構築します。
-
-
-=== "ブロックプロデューサーノード"
-    ```bash
-    cardano-cli transaction build-raw \
-        ${tx_in} \
-        --tx-out $(cat payment.addr)+${txOut} \
-        --tx-out ${destinationAddress}+${amountToSend} \
-        --invalid-hereafter $(( ${currentSlot} + 10000)) \
-        --fee ${fee} \
-        --out-file tx.raw
-    ```
-
-
-!!! important "ファイル転送"
-    BPのtx.raw` をエアギャップマシンのcnodeディレクトリにコピーします。
-    ``` mermaid
-    graph LR
-        A[BP] -->|tx.raw| B[エアギャップ];
-    ```
-
-トランザクションに署名します。
-
-=== "エアギャップオフラインマシン"
-    ```bash
-    cd $NODE_HOME
-    cardano-cli transaction sign \
-        --tx-body-file tx.raw \
-        --signing-key-file payment.skey \
-        --mainnet \
-        --out-file tx.signed
-    ```
-
-**tx.signed** をブロックプロデューサーノードのcnodeディレクトリにコピーします。
-!!! important "ファイル転送"
-    エアギャップの`tx.signed` をBPのcnodeディレクトリにコピーします。
-    ``` mermaid
-    graph LR
-        A[エアギャップ] -->|tx.signed| B[BP];
-    ```
-
-署名されたトランザクションを送信します。
-
-
-=== "ブロックプロデューサーノード"
-    ```bash
-    cardano-cli transaction submit \
-        --tx-file tx.signed \
-        --mainnet
-    ```
-
-> Transacsion Successfully submittedと表示されれば成功
-
-入金されているか確認します。
-
-
-=== "ブロックプロデューサーノード"
-    ```bash
-    cardano-cli query utxo \
-        --address ${destinationAddress} \
-        --mainnet \
-    ```
-
-
-
-先程指定した金額と一致していれば問題ないです。
-
-```text
-                           TxHash                                 TxIx        Lovelace
-----------------------------------------------------------------------------------------
-100322a39d02c2ead....                                              0        10000000
-```
-
-
-## **2 stake.addrからの引き出し**
+## **1 stake.addrからの引き出し**
 
 !!! summary "概要"
     * 報酬は `stake.addr` アドレスに蓄積されていきます。  
@@ -207,7 +18,7 @@ build-rawトランザクションコマンドを実行します。
 
 
 
-### **2-1 payment.addrへ送金する方法**
+### **1-1 payment.addrへ送金する方法**
 
 
 現在のスロットを算出します
@@ -231,9 +42,9 @@ build-rawトランザクションコマンドを実行します。
     ```
 
 
-**1 ADA** = **1,000,000 lovelaces.**と覚えましょう  
+**1 ADA** = **1,000,000 lovelace.**と覚えましょう  
 
-報酬の移動先となるアドレスを設定します。このアドレスには取引手数料を支払うための残高が必要です。
+報酬の移動先となるpayment.addrを設定します。payment.addrには取引手数料を支払うための残高が必要です。
 
 
 === "ブロックプロデューサノード"
@@ -341,7 +152,7 @@ build-raw transactionコマンドを実行します。
         A[BP] -->|tx.raw| B[エアギャップ];
     ```
 
-支払いとステークの秘密鍵の両方を使用していトランザクションに署名します。
+支払いとステークの秘密鍵の両方を使用してトランザクションに署名します。
 
 
 === "エアギャップオフラインマシン"
@@ -394,7 +205,7 @@ build-raw transactionコマンドを実行します。
 ```
 
 
-### **2-2 任意のアドレスへ送金する方法**
+### **1-2 任意のアドレスへ送金する方法**
 
 現在のスロットNoを算出します。
 
@@ -534,7 +345,7 @@ build-raw transactionコマンドを実行します。
     ```
 
 
-支払いとステークの秘密鍵の両方を使用していトランザクションに署名します。
+支払いとステークの秘密鍵の両方を使用してトランザクションに署名します。
 
 === "エアギャップオフラインマシン"
     ```bash
@@ -588,4 +399,194 @@ build-raw transactionコマンドを実行します。
                            TxHash                                 TxIx        Lovelace
 ----------------------------------------------------------------------------------------
 100322a39d02c2ead....  
+```
+
+
+
+## **2 Payment.addrからの引き出し**
+!!! summary "概要"
+    payment.addrから任意のアドレスへ送信する例です
+
+!!! info "注意"
+    * 入力ミスなどで送金が失敗しても責任は負えません。自己責任のもと実施下さい。  
+    * **宣言した誓約(Pledge)分まで引き出してしまうと、プール報酬がゼロになりますのでご注意ください**
+    * **payment.skey**と**stake.skey**は必ずオフライン環境で保管してください。  
+
+
+最新のスロット番号を取得します
+
+
+=== "ブロックプロデューサーノード"
+    ```bash
+    cd $NODE_HOME
+    currentSlot=$(cardano-cli query tip --mainnet | jq -r '.slot')
+    echo Current Slot: $currentSlot
+    ```
+
+
+
+lovelace形式で送信する金額を設定します。**1 ADA** = **1,000,000 lovelace** で覚えます。
+
+
+=== "ブロックプロデューサーノード"
+    ```bash
+    amountToSend=10000000
+    echo amountToSend: $amountToSend
+    ```
+
+送金先のアドレスを設定します。
+
+=== "ブロックプロデューサーノード"
+    ```bash
+    destinationAddress=送金先アドレス
+    echo destinationAddress: $destinationAddress
+    ```
+
+
+payment.addrの残高を算出します。
+
+=== "ブロックプロデューサーノード"
+    ```bash
+    cardano-cli query utxo \
+        --address $(cat payment.addr) \
+        --mainnet > fullUtxo.out
+
+    tail -n +3 fullUtxo.out | sort -k3 -nr > balance.out
+
+    cat balance.out
+    ```
+
+UTXOを算出します
+
+=== "ブロックプロデューサーノード"
+    ```bash
+    tx_in=""
+    total_balance=0
+    while read -r utxo; do
+        in_addr=$(awk '{ print $1 }' <<< "${utxo}")
+        idx=$(awk '{ print $2 }' <<< "${utxo}")
+        utxo_balance=$(awk '{ print $3 }' <<< "${utxo}")
+        total_balance=$((${total_balance}+${utxo_balance}))
+        echo TxHash: ${in_addr}#${idx}
+        echo ADA: ${utxo_balance}
+        tx_in="${tx_in} --tx-in ${in_addr}#${idx}"
+    done < balance.out
+    txcnt=$(cat balance.out | wc -l)
+    echo Total ADA balance: ${total_balance}
+    echo Number of UTXOs: ${txcnt}
+    ```
+
+build-rawトランザクションコマンドを実行します。
+
+=== "ブロックプロデューサーノード"
+    ```bash
+    cardano-cli transaction build-raw \
+        ${tx_in} \
+        --tx-out $(cat payment.addr)+0 \
+        --tx-out ${destinationAddress}+0 \
+        --invalid-hereafter $(( ${currentSlot} + 10000)) \
+        --fee 0 \
+        --out-file tx.tmp
+    ```
+
+最低手数料を出力します
+
+=== "ブロックプロデューサーノード"
+    ```bash
+    fee=$(cardano-cli transaction calculate-min-fee \
+        --tx-body-file tx.tmp \
+        --tx-in-count ${txcnt} \
+        --tx-out-count 2 \
+        --mainnet \
+        --witness-count 1 \
+        --byron-witness-count 0 \
+        --protocol-params-file params.json | awk '{ print $1 }')
+    echo fee: $fee
+    ```
+
+
+
+計算結果を出力します。
+
+
+=== "ブロックプロデューサーノード"
+    ```bash
+    txOut=$((${total_balance}-${fee}-${amountToSend}))
+    echo Change Output: ${txOut}
+    ```
+
+
+
+トランザクションファイルを構築します。
+
+
+=== "ブロックプロデューサーノード"
+    ```bash
+    cardano-cli transaction build-raw \
+        ${tx_in} \
+        --tx-out $(cat payment.addr)+${txOut} \
+        --tx-out ${destinationAddress}+${amountToSend} \
+        --invalid-hereafter $(( ${currentSlot} + 10000)) \
+        --fee ${fee} \
+        --out-file tx.raw
+    ```
+
+
+!!! important "ファイル転送"
+    BPの`tx.raw` をエアギャップマシンのcnodeディレクトリにコピーします。
+    ``` mermaid
+    graph LR
+        A[BP] -->|tx.raw| B[エアギャップ];
+    ```
+
+トランザクションに署名します。
+
+=== "エアギャップオフラインマシン"
+    ```bash
+    cd $NODE_HOME
+    cardano-cli transaction sign \
+        --tx-body-file tx.raw \
+        --signing-key-file payment.skey \
+        --mainnet \
+        --out-file tx.signed
+    ```
+
+**tx.signed** をブロックプロデューサーノードのcnodeディレクトリにコピーします。
+!!! important "ファイル転送"
+    エアギャップの`tx.signed` をBPのcnodeディレクトリにコピーします。
+    ``` mermaid
+    graph LR
+        A[エアギャップ] -->|tx.signed| B[BP];
+    ```
+
+署名されたトランザクションを送信します。
+
+
+=== "ブロックプロデューサーノード"
+    ```bash
+    cardano-cli transaction submit \
+        --tx-file tx.signed \
+        --mainnet
+    ```
+
+> Transacsion Successfully submittedと表示されれば成功
+
+入金されているか確認します。
+
+
+=== "ブロックプロデューサーノード"
+    ```bash
+    cardano-cli query utxo \
+        --address ${destinationAddress} \
+        --mainnet \
+    ```
+
+
+
+先程指定した金額と一致していれば問題ないです。
+
+```text
+                           TxHash                                 TxIx        Lovelace
+----------------------------------------------------------------------------------------
+100322a39d02c2ead....                                              0        10000000
 ```

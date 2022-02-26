@@ -52,9 +52,12 @@ date '+%Y/%m/%d %R'
 
 **KESファイル(kes.skey/kes.vkey)をエアギャップのcnodeディレクトリへコピーする**
 
-{% hint style="danger" %}
-kes.skey/kes.vkeyをエアギャップオフラインマシンのcnodeディレクトリにコピーします。
-{% endhint %}
+!!! important "ファイル転送"
+    BPにある`kes.skey/kes.vkey`をエアギャップオフラインマシンのcnodeディレクトリにコピーします。
+    ``` mermaid
+    graph LR
+        A[BP] -->|kes.skey<br>kes.vkey| B[エアギャップ];
+    ``` 
 
 BPとエアギャップで`kes.vkey`ファイルハッシュを比較する
 
@@ -86,27 +89,44 @@ sha256sum kes.vkey
     > ↑このままコマンドに入力してください  
     > コマンド実行後に、数字入力モードになりますので  
     > そこで1で算出した`startKesPeriod`の数字を入力します
-    ```
-    echo "入力した数字は$kesです"
-    ```
-    > 入力した数字が戻り値に表示されているかご確認ください
-    ```
-    chmod u+rwx $HOME/cold-keys
-    cardano-cli node issue-op-cert \
-        --kes-verification-key-file kes.vkey \
-        --cold-signing-key-file $HOME/cold-keys/node.skey \
-        --operational-certificate-issue-counter $HOME/cold-keys/node.counter \
-        --kes-period $kes \
-        --out-file node.cert
+```
+echo "入力した数字は$kesです"
+```
+> 入力した数字が戻り値に表示されているかご確認ください
+```
+chmod u+rwx $HOME/cold-keys
+cardano-cli node issue-op-cert \
+    --kes-verification-key-file kes.vkey \
+    --cold-signing-key-file $HOME/cold-keys/node.skey \
+    --operational-certificate-issue-counter $HOME/cold-keys/node.counter \
+    --kes-period $kes \
+    --out-file node.cert
+chmod a-rwx $HOME/cold-keys
+```
+
+!!! info "ヒント"
+    コールドキーへのアクセス権限を変更しセキュリティを向上させることができます。これによって誤削除、誤った編集などから保護できます。
+
+    ロックするには
+
+    ```bash
     chmod a-rwx $HOME/cold-keys
     ```
 
-**6.エアギャップ：node.certファイルをBPのcnodeディレクトリへコピーする**
+    ロックを解除するには
 
-!!! danger "注意"
-**node.cert** をブロックプロデューサーノードのcnodeディレクトリにコピーします。
-{% endhint %}
+    ```bash
+    chmod u+rwx $HOME/cold-keys
+    ```
+    {% endhint %}
 
+
+!!! important "ファイル転送"
+    エアギャップにある`node.cert`をBPのcnodeディレクトリにコピーします。
+    ``` mermaid
+    graph LR
+        A[エアギャップ] -->|node.cert| B[BP];
+    ``` 
 
 **BPとエアギャップで`node.cert`ファイルハッシュを比較する**
 
@@ -142,33 +162,15 @@ sha256sum kes.vkey
 !!! danger "注意"
     *** ノードが同期したことを確認してから以下を実行してください ***
 
-{% tabs %}
-{% tab title="ブロックプロデューサーノード" %}
-```
-cd $NODE_HOME
-wget https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/kes_chk.sh -O kes_chk.sh
-chmod 755 kes_chk.sh
-```
-```
-./kes_chk.sh
-```
-> 最初に`pool`から始まるPoolIDを入力してください。[adapools.org](https://adapools.org/)  
-> 表示された内容をご確認ください。  
-> 最後に"KESは正常に更新されました"と表示されれば完了です  
-
-
-!!! info "ヒント"
-    コールドキーへのアクセス権限を変更しセキュリティを向上させることができます。これによって誤削除、誤った編集などから保護できます。
-
-ロックするには
-
-```bash
-chmod a-rwx $HOME/cold-keys
-```
-
-ロックを解除するには
-
-```bash
-chmod u+rwx $HOME/cold-keys
-```
-{% endhint %}
+=== "ブロックプロデューサーノード"
+    ```
+    cd $NODE_HOME
+    wget https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/kes_chk.sh -O kes_chk.sh
+    chmod 755 kes_chk.sh
+    ```
+    ```
+    ./kes_chk.sh
+    ```
+    > 最初に`pool`から始まるPoolIDを入力してください。[adapools.org](https://adapools.org/)  
+    > 表示された内容をご確認ください。  
+    > 最後に"KESは正常に更新されました"と表示されれば完了です  
