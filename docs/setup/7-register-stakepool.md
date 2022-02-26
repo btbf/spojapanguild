@@ -1,8 +1,8 @@
-# **ステークプールの登録**
+# **7.ステークプールの登録**
 
 !!! Abstract "概要"
     こちらの手順は初回プール登録時のみ有効です。  
-    プール登録後にメタ情報、誓約、固定費、変動費、リレー情報を変更する場合は、[18.4](./guide-how-to-build-a-haskell-stakepool-node.md#184-prumetayamarginno)の変更手順を実施してください。
+    プール登録後にメタ情報、誓約、固定費、変動費、リレー情報を変更する場合は、[プール情報(pool.cert)の更新](../operation/cert-update.md)の変更手順を実施してください。
 
 
 !!! warning "プール登録料"
@@ -160,31 +160,12 @@
 
 #### **pool.certを作成する** ####
 
-=== "エアギャップオフラインマシン"
-    ```bash
-    cd $NODE_HOME
-    cardano-cli stake-pool registration-certificate \
-        --cold-verification-key-file $HOME/cold-keys/node.vkey \
-        --vrf-verification-key-file vrf.vkey \
-        --pool-pledge 100000000 \
-        --pool-cost 340000000 \
-        --pool-margin 0.05 \
-        --pool-reward-account-verification-key-file stake.vkey \
-        --pool-owner-stake-verification-key-file stake.vkey \
-        --mainnet \
-        --pool-relay-ipv4 ***.***.***.*** \
-        --pool-relay-port 6000 \
-        --metadata-url https://bit.ly/**** \
-        --metadata-hash $(cat poolMetaDataHash.txt) \
-        --out-file pool.cert
-    ```
-
 
 
 ??? note annotate "pool.cert作成時の注意点▼"
     
     pool.certはプール登録証明書の役割を果たし、プール情報を記載します。  
-    以下のスクリプトは例です。ご自身のプール運用設定値に変更してください。  
+    上記のスクリプトは例です。ご自身のプール運用設定値に変更してください。  
     ** 誓約 100ADA ** 　(--pool-pledge)  
 
     ** 固定手数料 340ADA ** (--pool-cost)  
@@ -206,11 +187,11 @@
     **複数のリレーノードを構成する記述方法**
 
     **IPアドレス方式： 1ノード1IPアドレスの場合(分からない場合はこちら)**  
-    [\*\*\*.\*\*\*.*\*\*]をリレーノードのパプリックIPへ書き換え
+    [xxx.xxx.xxx]をリレーノードのパブリックIP(静的)アドレスへ書き換え
     ```bash
-        --pool-relay-ipv4 ***.***.*** \
+        --pool-relay-ipv4 xxx.xxx.xxx \
         --pool-relay-port 6000 \
-        --pool-relay-ipv4 ***.***.*** \
+        --pool-relay-ipv4 xxx.xxx.xxx \
         --pool-relay-port 6000 \
     ```
 
@@ -229,6 +210,27 @@
         --multi-host-pool-relay relay.yourdomain.com \
         --pool-relay-port 6000 \
     ```
+
+
+=== "エアギャップオフラインマシン"
+    ```bash
+    cd $NODE_HOME
+    cardano-cli stake-pool registration-certificate \
+        --cold-verification-key-file $HOME/cold-keys/node.vkey \
+        --vrf-verification-key-file vrf.vkey \
+        --pool-pledge 100000000 \
+        --pool-cost 340000000 \
+        --pool-margin 0.05 \
+        --pool-reward-account-verification-key-file stake.vkey \
+        --pool-owner-stake-verification-key-file stake.vkey \
+        --mainnet \
+        --pool-relay-ipv4 ***.***.***.*** \
+        --pool-relay-port 6000 \
+        --metadata-url https://bit.ly/**** \
+        --metadata-hash $(cat poolMetaDataHash.txt) \
+        --out-file pool.cert
+    ```
+
 
 **自身のステークプールに委任する証明書(deleg.cert)を作成します**
 
@@ -399,29 +401,35 @@
 
 === "エアギャップオフラインマシン"
     ```bash
-    cardano-cli stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format bech32 > stakepoolid.txt
+    cardano-cli stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format bech32 > stakepoolid_bech32.txt
+    cardano-cli stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format hex > stakepoolid_hex.txt
     ```
 
 !!! important "ファイル転送"
-    エアギャップマシンの`stakepoolid.txt`をBPのcnodeディレクトリにコピーします。
+    エアギャップマシンの`stakepoolid_bech32.txt`と`stakepoolid_hex.txt`をBPのcnodeディレクトリにコピーします。
     ``` mermaid
     graph LR
-        A[エアギャップ] -->|stakepoolid.txt| B[BP];
+        A[エアギャップ] -->|stakepoolid_bech32.txt<br>stakepoolid_hex.txt| B[BP];
     ```
 
-**自分のステークプールがブロックチェーンに登録されているか確認します**
-=== "ブロックプロデューサーノード"
-    ```
-    cd $NODE_HOME
-    cat stakepoolid.txt
-    ```
-<!--
 **以下のコマンドを実行し、赤文字の戻り値があればブロックチェーンに登録されています**
 === "ブロックプロデューサーノード"
     ```bash
-    cardano-cli query stake-pools --mainnet --out-file stakepoolid.txt
+    cardano-cli query stake-pools --mainnet --out-file allpoosID.txt
     ```
--->
+
+    ```bash
+    cat allpoolsID.txt | grep $(cat stakepoolid_bech32.txt)
+    ```
+
+
+**自分のステークプールが`Adapools.org`に登録されているか確認します**
+=== "ブロックプロデューサーノード"
+    ```
+    cd $NODE_HOME
+    cat stakepoolid_bech32.txt
+    ```
+
 表示されたPoolIDであなたのステークプールがブロックチェーンに登録されているか、次のサイトで確認することが出来ます。  
 [Adapools.org](https://adapools.org/){ .md-button blank}
 

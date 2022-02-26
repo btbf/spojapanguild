@@ -1,4 +1,4 @@
-# **2. ノードセットアップ**
+# **2. ノードインストール**
 
 ## **2-1. Cabal/GHCインストール**
 
@@ -7,13 +7,13 @@
 まずはじめに、パッケージを更新しUbuntuを最新の状態に保ちます。
 
 ```bash
-sudo apt-get update -y
+sudo apt update -y
 ```
 ```bash
-sudo apt-get upgrade -y
+sudo apt upgrade -y
 ```
 ```bash
-sudo apt-get install git jq bc automake tmux rsync htop curl build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ wget libncursesw5 libtool autoconf -y
+sudo apt install git jq bc automake tmux rsync htop curl build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ wget libncursesw5 libtool autoconf -y
 ```
 
 次に、Libsodiumをインストールします。
@@ -164,11 +164,16 @@ sudo cp $(find $HOME/git/cardano-node/dist-newstyle/build -type f -name "cardano
 sudo cp $(find $HOME/git/cardano-node/dist-newstyle/build -type f -name "cardano-node") /usr/local/bin/cardano-node
 ```
 
-**cardano-cli** と **cardano-node**のバージョンが上記で指定したGitタグバージョンであることを確認してください。
+**cardano-cli** と **cardano-node**のバージョンが最新Gitタグバージョンであることを確認してください。
 
 ```text
 cardano-node version
 cardano-cli version
+```
+
+最新バージョン確認コマンド
+```
+curl -s https://api.github.com/repos/input-output-hk/cardano-node/releases/latest | jq -r .tag_name
 ```
 
 ## **2-3. ノード設定ファイルの修正**
@@ -433,10 +438,10 @@ Guild Liveviewを起動します。
 ![Guild Live View](../images/glive.PNG)
 
 ??? info "gLiveViewについて▼"
-    **このツールを立ち上げてもノードは起動しません。ノードは別途起動しておく必要があります**  
-    リレー／BPは自動判別されます。  
-    リレーノードでは基本情報に加え、トポロジー接続状況を確認できます。  
-    BPノードでは基本情報に加え、KES有効期限、ブロック生成状況を確認できます。  
+    * **このツールを立ち上げてもノードは起動しません。ノードは別途起動しておく必要があります**  
+    * リレー／BPの自動判別は、手順4-5終了後に行われるようになります。 
+    * リレーノードでは基本情報に加え、トポロジー接続状況を確認できます。  
+    * BPノードでは基本情報に加え、KES有効期限、ブロック生成状況を確認できます。  
 
 ??? hint "CONECTIONSについて▼"
     ノードにpingを送信する際ICMPpingを使用します。接続先ノードのファイアウォールがICMPトラフィックを受け付ける場合のみ機能します。
@@ -469,9 +474,17 @@ Guild Liveviewを起動します。
     * ネットワーク上にあるVMマシンではありません。
     * エアギャップについて更に詳しく知りたい場合は、[こちら](https://ja.wikipedia.org/wiki/%E3%82%A8%E3%82%A2%E3%82%AE%E3%83%A3%E3%83%83%E3%83%97)を参照下さい。
 
-目次1～2までをエアギャップオフラインマシンで実行する
+１．「2-1. Cabal/GHCインストール」と「2-2. ソースコードからビルド」をエアギャップオフラインマシンで実行します。  
+２．以下のパスを環境変数にセットし、フォルダを作成します。
 
-## systemd活用コマンド
+```
+echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
+source $HOME/.bashrc
+mkdir -p $NODE_HOME
+```
+
+
+## **systemd活用コマンド**
 !!! example "systemd活用コマンド" 
     以下は、systemdを有効活用するためのコマンドです。
     必要に応じで実行するようにし、一連の流れで実行しないでください

@@ -1,4 +1,4 @@
-# **ステークプールブロックログ導入手順**
+# **10.ステークプールブロックログ導入手順**
 
 
 !!! info "ブロックログについて"
@@ -27,7 +27,7 @@
 ## **10-1. CNCLIインストール**
 
 !!! info "CNCLIについて"
-    [AndrewWestberg](https://twitter.com/amw7)さんによって開発された[CNCLI](https://github.com/AndrewWestberg/cncli)はプールのブロック生成スケジュールを算出ツールを開発し、Shelley期におけるSPOに革命をもたらしました。
+    [AndrewWestberg](https://twitter.com/amw7)さんによって開発された[CNCLI](https://github.com/AndrewWestberg/cncli)はプールのブロック生成スケジュールを算出し、Shelley期におけるSPOに革命をもたらしました。
 
   
 RUST環境を準備します
@@ -62,7 +62,7 @@ sudo apt-get update -y && sudo apt-get install -y automake build-essential pkg-c
 cd $HOME/git
 git clone https://github.com/AndrewWestberg/cncli
 cd cncli
-git checkout v4.0.4
+git checkout $(curl -s https://api.github.com/repos/AndrewWestberg/cncli/releases/latest | jq -r .tag_name)
 cargo install --path . --force
 ```
 
@@ -129,7 +129,7 @@ sed -i $NODE_HOME/scripts/env \
 
 プールID取得
 ```bash
-pool_ID=`cat $NODE_HOME/stakepoolid.txt`
+pool_ID=`cat $NODE_HOME/stakepoolid_hex.txt`
 echo "プールIDは${pool_ID}です"
 ```
 ```bash
@@ -163,9 +163,9 @@ cd service
     Restart=on-failure
     RestartSec=20
     User=$(whoami)
-    WorkingDirectory=$NODE_HOME
-    ExecStart=/usr/bin/tmux new -d -s cncli
-    ExecStartPost=/usr/bin/tmux send-keys -t cncli $NODE_HOME/scripts/cncli.sh Space sync Enter
+    WorkingDirectory=$NODE_HOME/scripts
+    ExecStart=/bin/bash -c "sleep 5;/usr/bin/tmux new -d -s cncli"
+    ExecStartPost=/usr/bin/tmux send-keys -t cncli ./cncli.sh Space sync Enter
     ExecStop=/usr/bin/tmux kill-session -t cncli
     KillSignal=SIGINT
     RestartKillSignal=SIGINT
@@ -196,9 +196,9 @@ cd service
     Restart=on-failure
     RestartSec=20
     User=$(whoami)
-    WorkingDirectory=$NODE_HOME
-    ExecStart=/usr/bin/tmux new -d -s validate
-    ExecStartPost=/usr/bin/tmux send-keys -t validate $NODE_HOME/scripts/cncli.sh Space validate Enter
+    WorkingDirectory=$NODE_HOME/scripts
+    ExecStart=/bin/bash -c "sleep 10;/usr/bin/tmux new -d -s validate"
+    ExecStartPost=/usr/bin/tmux send-keys -t validate ./cncli.sh Space validate Enter
     ExecStop=/usr/bin/tmux kill-session -t validate
     KillSignal=SIGINT
     RestartKillSignal=SIGINT
@@ -229,9 +229,9 @@ cd service
     Restart=on-failure
     RestartSec=20
     User=$(whoami)
-    WorkingDirectory=$NODE_HOME
-    ExecStart=/usr/bin/tmux new -d -s leaderlog
-    ExecStartPost=/usr/bin/tmux send-keys -t leaderlog $NODE_HOME/scripts/cncli.sh Space leaderlog Enter
+    WorkingDirectory=$NODE_HOME/scripts
+    ExecStart=/bin/bash -c "sleep 15;/usr/bin/tmux new -d -s leaderlog"
+    ExecStartPost=/usr/bin/tmux send-keys -t leaderlog ./cncli.sh Space leaderlog Enter
     ExecStop=/usr/bin/tmux kill-session -t leaderlog
     KillSignal=SIGINT
     RestartKillSignal=SIGINT
@@ -253,8 +253,8 @@ cd service
 
     [Unit]
     Description=Cardano Node - CNCLI logmonitor
-    BindsTo=cardano-node.service
-    After=cardano-node.service
+    BindsTo=cnode-cncli-sync.service
+    After=cnode-cncli-sync.service
 
     [Service]
     Type=oneshot
@@ -263,7 +263,7 @@ cd service
     RestartSec=20
     User=$(whoami)
     WorkingDirectory=$NODE_HOME
-    ExecStart=/bin/bash -c "sleep 300;/usr/bin/tmux new -d -s logmonitor"
+    ExecStart=/bin/bash -c "sleep 20;/usr/bin/tmux new -d -s logmonitor"
     ExecStartPost=/usr/bin/tmux send-keys -t logmonitor $NODE_HOME/scripts/logMonitor.sh Enter
     ExecStop=/usr/bin/tmux kill-session -t logmonitor
     KillSignal=SIGINT
@@ -275,14 +275,14 @@ cd service
     TimeoutStopSec=5
 
     [Install]
-    WantedBy=cardano-node.service
+    WantedBy=cnode-cncli-sync.service
     EOF
     ```
 
 
 **サービスファイルをシステムフォルダにコピーして権限を付与します**
 
-**1行づつコマンドに貼り付けてください**
+**1行ずつコマンドに貼り付けてください**
 ```bash
 sudo cp $NODE_HOME/service/cnode-cncli-sync.service /etc/systemd/system/cnode-cncli-sync.service
 sudo cp $NODE_HOME/service/cnode-cncli-validate.service /etc/systemd/system/cnode-cncli-validate.service
@@ -372,7 +372,7 @@ Ctrl+Oでファイルを保存し、Ctrl+Xで閉じる
 ```bash
 sudo systemctl reload-or-restart cardano-node
 ```
-> cardano-nodeを再起動すると、以下サービスも連動して再起動します。  
+> cardano-nodeを再起動すると、以下サービスも連動して5秒間隔で再起動されます 
 > cnode-cncli-sync.service  
 > cnode-cncli-validate.service  
 > cnode-cncli-leaderlog.service  
@@ -386,11 +386,11 @@ tmux ls
 ```
 
 !!! info "確認"
-    4つの画面がバックグラウンドで起動中であればOKです  
+    ノードを再起動してから、約20秒後に4プログラムがバックグラウンドで起動中であればOKです
     * cncli  
     * leaderlog  
     * validate  
-    * logmonitor(5分後に遅延起動)  
+    * logmonitor 
 
 
 
@@ -402,21 +402,21 @@ tmux ls
     sudo systemctl stop cnode-cncli-sync.service
     ```
     上記コマンドを実行すると以下サービスも連動して止まります  
-    cnode-cncli-validate.service  
-    cnode-cncli-leaderlog.service  
-    cnode-logmonitor.service  
-    ```
-    sudo systemctl stop cnode-logmonitor.service
-    ```
+
+    * cnode-cncli-validate.service  
+    * cnode-cncli-leaderlog.service  
+    * cnode-logmonitor.service  
 
     **●各種サービスを再起動する方法**
 
     ```bash
     sudo systemctl reload-or-restart cnode-cncli-sync.service
     ```
-    上記コマンドを実行すると以下サービスも連動して止まります   
-    cnode-cncli-validate.service  
-    cnode-cncli-leaderlog.service  
+    上記コマンドを実行すると以下サービスも連動して止まります 
+
+    * cnode-cncli-validate.service  
+    * cnode-cncli-leaderlog.service  
+    * cnode-logmonitor.service 
 
 
 
@@ -430,7 +430,7 @@ tmux ls
     ```bash
     tmux a -t validate
     ```
-    以下表示なら正常です。
+    以下の表示なら正常です。
     ```
     ~ CNCLI Block Validation started ~
     ```
@@ -477,7 +477,7 @@ tmux ls
 
 
 
-## 10-8. ブロックログを表示する
+## **10-8. ブロックログを表示する**
 
 このツールでは上記で設定してきたプログラムを組み合わせ、割り当てられたスロットリーダーに対してのブロック生成結果をデータベースに格納し、確認することができます。
 
@@ -489,7 +489,7 @@ cd $NODE_HOME/scripts
 !!! hint "便利な設定"
     スクリプトへのパスを通し、任意の単語で起動出来るようにする。
     ```bash
-    echo alias blocks="$NODE_HOME/scripts/blocks.sh" >> $HOME/.bashrc
+    echo alias blocks="'cd $NODE_HOME/scripts; ./blocks.sh'" >> $HOME/.bashrc
     source $HOME/.bashrc
     ```
 
@@ -513,11 +513,15 @@ cd $NODE_HOME/scripts
 | **Luck**    | 期待値における実際に割り当てられたスロットリーダー数のパーセンテージ |
 | **Adopted**    | ブロック生成フラグ |
 | **Confirmed**    | 生成したブロックのうち確実にオンチェーンであることが検証されたブロック (ブロック生成成功) |
-| **Missed**    | スロットでスケジュールされているが、 cncli DB には記録されておらず他のプールがこのスロットのためにブロックを作った可能性e |
-| **Ghosted**    | ブロックは作成されましたが「Orpah(孤立ブロック)」となっております。 スロットバトル・ハイトバトルで敗北したか、ブロック伝播の問題で有効なブロックになっていません |
+| **Missed**    | スロットでスケジュールされているが、 cncli DB には記録されておらず他のプールがこのスロットのためにブロックを作った可能性 |
+| **Ghosted**    | ブロックは作成されましたが「Orphans(孤立ブロック)」となっております。 スロットバトル・ハイトバトルで敗北したか、ブロック伝播の問題で有効なブロックになっていません |
 | **Stolen**    | 別のプールに有効なブロックが登録されているため、スロットバトルで敗北した可能性 |
-| **Invalid**    | プールはブロックの作成に失敗しました。base64でエンコードされたエラーメッセージ。次のコードでデコードできます 'echo <base64 hash> | base64 -d | jq -r' |
+| **Invalid**    | プールはブロックの作成に失敗しました。base64でエンコードされたエラーメッセージがlogmonitorに表示されます |
  
+Invalidのエラー内容は次のコードでデコードできます 
+```
+echo (base64コードを入れる) | base64 -d | jq -r
+```
 
 メニュー項目が文字化けする場合は、システム文字コードが「UTF-8」であることを確認してください。  
 ```bash
@@ -538,11 +542,11 @@ blocks
 ```bash
 sudo systemctl reload-or-restart cardano-node
 ```
-> cardano-nodeを再起動すると、以下サービスも連動して再起動します。  
+> ノードを再起動してから、約20秒後に4プログラムがバックグラウンドで起動中であればOKです
 > cnode-cncli-sync.service  
 > cnode-cncli-validate.service  
 > cnode-cncli-leaderlog.service  
-> cnode-logmonitor.service(5分後に遅延起動)
+> cnode-logmonitor.service
 
 5分～10分後にblocks.shを起動する
 
@@ -560,12 +564,9 @@ tmux a -t leaderlog
 ```
 
 
-運用編へ
-
-9-2. ブロック生成スケジュール算出のタイミングについて
-
-算出タイミングは、エポックスロットが約302400を過ぎてから次エポックのスケジュールを取得できるようになります。(次エポックの1.5日前)  
-取得するには、手動でノードを再起動します。(いろんな要素があって手動運用にしています)  
+!!! hit "ブロック生成スケジュール算出のタイミングについて"
+    算出タイミングは、エポックスロットが約302400を過ぎてから次エポックのスケジュールを取得できるようになります。(次エポックの1.5日前)  
+    取得するには、手動でノードを再起動します。(いろんな要素があって手動運用にしています)  
 
 1エポックで1ブロック割り当てられるために必要な委任量の目安は以下の通りです。%は確率  
 1M 60%  
@@ -579,10 +580,10 @@ tmux a -t leaderlog
 306 報酬計算  
 307 報酬振り込み   
 
-🏁 10. ブロック生成ステータスを通知する
-!!! info "便利なツール"
-    ブロックログDBに保存されるブロック生成ステータスをLINEまたはDiscordに通知することができます。  
-    設定手順は[ブロック生成ステータス通知設定手順](./block_notify/README.md)を参照してください。
+
+!!! info "ブロック生成ステータスを通知する"
+    ブロックログDBに保存されるブロック生成ステータスをLINE/Slack/discord/telegramに通知することができます。  
+    設定手順は[ブロック生成ステータス通知設定手順](./11-blocknotify-setup.md)を参照してください。
 
 
 ## 10-99.CNCLI更新手順
@@ -598,7 +599,7 @@ cncli旧バージョンからの更新手順
 rustup update
 cd $HOME/git/cncli
 git fetch --all --prune
-git checkout v4.0.4
+git checkout $(curl -s https://api.github.com/repos/AndrewWestberg/cncli/releases/latest | jq -r .tag_name)
 cargo install --path . --force
 ```
 バージョンを確認する
@@ -625,7 +626,7 @@ tmux a -t validate
 > envまたはcncli.shのアップデートが必要になった場合は改めてアナウンスします。
 
 
-101.スケジュールにないブロックが生成される場合
+### スケジュールにないブロックが生成される場合
 
 CNCLIのブロック生成スケジュールは正しい値が取得できていれば、100%正確です。  
 cncli.dbを再作成することで正しいスケジュールを取得することができます。
