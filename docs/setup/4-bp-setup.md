@@ -96,7 +96,7 @@
     BPの`kes.skey`と`kes.vkey` をエアギャップマシンのcnodeディレクトリにコピーします。
     ``` mermaid
     graph LR
-        A[BP] -->|kes.skey<br>kes.vkey| B[エアギャップ];
+        A[BP] -->|kes.skey / kes.vkey| B[エアギャップ];
     ```
 
 

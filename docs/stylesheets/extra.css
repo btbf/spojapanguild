@@ -28,6 +28,14 @@
     color :var(--md-mermaid-font-color) !important;
 }
 
+.nodes .label text,.clusters .cluster .cluster-label text{
+    fill :var(--md-mermaid-font-color) !important;
+}
+
+.clusters .cluster rect{
+    fill: var(--md-scheme-node-fg-color--transparent) !important;
+}
+
 .mermaid .edgeLabel{
     padding: 10px;
     background-color: var(--md-mermaid-node-label-bg-color) !important;

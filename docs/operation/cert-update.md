@@ -97,7 +97,7 @@ poolMetaData.jsonをGithubでホストしている場合はダウンロードす
     エアギャップの`pool.cert`と`deleg.cert`をブロックプロデューサーのcnodeディレクトリにコピーします。
     ``` mermaid
     graph LR
-        A[エアギャップ] -->|pool.cert<br>deleg.cert| B[BP];
+        A[エアギャップ] -->|pool.cert / deleg.cert| B[BP];
     ```
 
 最新のスロット番号を取得します

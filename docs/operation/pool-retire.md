@@ -61,6 +61,7 @@
 
 === "エアギャップオフラインマシン"
     ```bash
+    chmod u+rwx $HOME/cold-keys
     cardano-cli stake-pool deregistration-certificate \
     --cold-verification-key-file $HOME/cold-keys/node.vkey \
     --epoch *** \
@@ -198,6 +199,11 @@ build-raw transactionコマンドを実行します。
         --mainnet \
         --out-file tx.signed
     ```
+
+コールドキーをロックする
+```
+chmod a-rwx $HOME/cold-keys
+```
 
 
 
