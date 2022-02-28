@@ -6,6 +6,7 @@ theme:
   font:
     text: Noto Sans Japanese
   name: material
+  custom_dir: ./docs/overrides
   palette:
     - scheme: default
       toggle:
