@@ -1,4 +1,6 @@
 site_name: SPO JAPAN GUILD DOCS
+site_url: https://docs.spojapanguild.net
+site_description: SPO JAPAN GUILD監修のステークプール構築ガイド。私たちは日本におけるステークプール構築を促進しカルダノ分散化に貢献してまいります。
 theme:
   language: ja
   favicon: images/favicon.png
