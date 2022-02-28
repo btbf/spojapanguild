@@ -126,7 +126,7 @@
     BPにある`vrf.vkey`と`poolMetaDataHash.txt` をエアギャップオフラインマシンのcnodeディレクトリにコピーします。
     ``` mermaid
     graph LR
-        A[BP] -->|vrf.vkey<br>poolMetaDataHash.txt| B[エアギャップ];
+        A[BP] -->|vrf.vkey / poolMetaDataHash.txt| B[エアギャップ];
     ``` 
 
 ** BPとエアギャップで`vrf.vkey`ファイルハッシュを比較する **
@@ -246,7 +246,7 @@
     エアギャップマシンの`pool.cert`と`deleg.cert`をBPのcnodeディレクトリにコピーします。
     ``` mermaid
     graph LR
-        A[エアギャップ] -->|pool.cert<br>deleg.cert| B[BP];
+        A[エアギャップ] -->|pool.cert / deleg.cert| B[BP];
     ```
 
 ## **3.プール登録トランザクションの送信**
@@ -409,7 +409,7 @@
     エアギャップマシンの`stakepoolid_bech32.txt`と`stakepoolid_hex.txt`をBPのcnodeディレクトリにコピーします。
     ``` mermaid
     graph LR
-        A[エアギャップ] -->|stakepoolid_bech32.txt<br>stakepoolid_hex.txt| B[BP];
+        A[エアギャップ] -->|stakepoolid_bech32.txt / stakepoolid_hex.txt| B[BP];
     ```
 
 **以下のコマンドを実行し、赤文字の戻り値があればブロックチェーンに登録されています**

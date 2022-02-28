@@ -56,7 +56,7 @@ date '+%Y/%m/%d %R'
     BPにある`kes.skey/kes.vkey`をエアギャップオフラインマシンのcnodeディレクトリにコピーします。
     ``` mermaid
     graph LR
-        A[BP] -->|kes.skey<br>kes.vkey| B[エアギャップ];
+        A[BP] -->|kes.skey / kes.vkey| B[エアギャップ];
     ``` 
 
 BPとエアギャップで`kes.vkey`ファイルハッシュを比較する
