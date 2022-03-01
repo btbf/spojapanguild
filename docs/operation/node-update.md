@@ -1,21 +1,21 @@
 # **ノードアップデートマニュアル**
 
 !!! note "対応バージョン" 
-    2022年1月8日時点でこのガイドは v.1.33.0に対応しています
+    2022年3月1日時点でこのガイドは v.1.34.0に対応しています
 
 
 !!! info "概要"
-    * 以下、バージョンアップ作業を行う場合、ブロック生成スケジュールがないタイミングで実施してください。  今回のバージョンアップは時間がかかりますので、余裕をもって実施してください。(ダウンタイムは最小限に抑えます)  
+    * 以下、バージョンアップ作業を行う場合、ブロック生成スケジュールがないタイミングで実施してください。
     * 以下手順実施後、ブロック生成確認済みです。
-    * ノードパフォーマンスが向上しているため、なるべく早めにバージョンアップすることをおすすめします。これはカルダノネットワーク全体のパフォーマンスを向上することに繋がります。  
-    * バージョンアップ後、DBを再構築する必要があります(ジェネシスブロックから)  この作業が完了するには数時間かかりその間ダウンタイムが発生します。 
+    * 今回のアップデートに期限はありませんが、なるべく早めの実施をお願いします
 
 
 ### **主な変更点と新機能**
-* パフォーマンスの向上
-* ブロック伝播時間の改善
-* メモリ使用量の削減
-* 報酬計算の改善
+* Cabalアップデート v3.6.2.0
+* CLIリーダーシップのスケジュールコマンド追加
+* ステークプール運用証明書の有効性チェックコマンド追加
+* トランザクションビルドコマンドでのCDDL形式CBORエンコーディングのサポート
+* その他開発者用コマンドも多数追加
 
 ## **1.ノードアップデート**
 
@@ -41,48 +41,22 @@ SSHで再接続する
 ### **1-2. cabal/GHCアップデート**
 
 
-**cabalパス確認**
+**ccabalバージョンアップ**
+```
+ghcup upgrade
+ghcup install cabal 3.6.2.0
+ghcup set cabal 3.6.2.0
+```
+
+cabalバージョン確認
 ```
 which cabal
 cabal --version
 ```
+> 以下の戻り値ならOK  
 > /home/user/.ghcup/bin/cabal  
-> cabal-install version 3.4.0.0  
-compiled using version 3.4.0.0 of the Cabal library  
-ならOK
-
-
-!!! danger "確認"
-    **戻り値が[~/.local/bin/cabal]  / version 3.2.0.0だった場合**
-
-    パスを追加する
-    ```
-    echo PATH=$PATH:$HOME/.ghcup/bin >> $HOME/.bashrc
-    source $HOME/.bashrc
-    ```
-
-    旧cabalリネーム
-    ```
-    cd $HOME/.local/bin/
-    mv cabal cabal_bk
-    ```
-
-    cabalバージョンアップ
-    ```
-    ghcup upgrade
-    ghcup install cabal 3.4.0.0
-    ghcup set cabal 3.4.0.0
-    ```
-
-    cabalバージョン確認
-    ```
-    which cabal
-    cabal --version
-    ```
-    > 以下の戻り値ならOK  
-    > /home/user/.ghcup/bin/cabal  
-    cabal-install version 3.4.0.0  
-    compiled using version 3.4.0.0 of the Cabal library  
+cabal-install version 3.6.2.0
+compiled using version 3.6.2.0 of the Cabal library  
 
 
 
@@ -124,14 +98,9 @@ cabal update
 
 ```
 git fetch --all --recurse-submodules --tags
-git checkout tags/1.33.0
+git checkout $(curl -s https://api.github.com/repos/input-output-hk/cardano-node/releases/latest | jq -r .tag_name)
 cabal configure -O0 -w ghc-8.10.7
 ```
-> 'hackage.haskell.org'! Falling back to older state (2021-12-06T23:34:30Z).
-Resolving dependencies...
-
-と表示され止まったように見えますが、動くまでお待ちください
-
 
 ```bash
 echo -e "package cardano-crypto-praos\n flags: -external-libsodium-vrf" > cabal.project.local
@@ -152,11 +121,11 @@ $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-cli") 
 $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-node") version  
 ```
 以下の戻り値を確認する  
->cardano-cli 1.33.0 - linux-x86_64 - ghc-8.10  
-git rev 814df2c146f5d56f8c35a681fe75e85b905aed5d  
+>cardano-cli 1.34.0 - linux-x86_64 - ghc-8.10  
+git rev c23d5d319cd3276575c6ac32458516232e8d2c48  
 
->cardano-node 1.33.0 - linux-x86_64 - ghc-8.10  
-git rev 814df2c146f5d56f8c35a681fe75e85b905aed5d  
+>cardano-node 1.34.0 - linux-x86_64 - ghc-8.10  
+git rev c23d5d319cd3276575c6ac32458516232e8d2c48  
 
 
 **ノードをストップする** 
@@ -182,11 +151,11 @@ cardano-node version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 1.33.0 - linux-x86_64 - ghc-8.10  
-git rev 814df2c146f5d56f8c35a681fe75e85b905aed5d  
-  
->cardano-node 1.33.0 - linux-x86_64 - ghc-8.10  
-git rev 814df2c146f5d56f8c35a681fe75e85b905aed5d  
+>cardano-cli 1.34.0 - linux-x86_64 - ghc-8.10  
+git rev c23d5d319cd3276575c6ac32458516232e8d2c48  
+
+>cardano-node 1.34.0 - linux-x86_64 - ghc-8.10  
+git rev c23d5d319cd3276575c6ac32458516232e8d2c48  
 
 
 ### **1-5.ノード起動**
@@ -196,9 +165,7 @@ sudo systemctl start cardano-node
 ```
 
 !!! info "ヒント"
-    DBの再構築が始まります。完了までに数時間かかります。
-
-
+    DBの同期が完了するまで数十分かかります
 
 **ノード状況を確認する**
 
@@ -206,7 +173,7 @@ sudo systemctl start cardano-node
 cd $NODE_HOME/scripts
 ./gLiveView.sh
 ```
-> 具体的な時間は不明ですが、同期完了までには数時間が必要になると思われます。
+
 
 
 ### **1-6.作業フォルダリネーム**
