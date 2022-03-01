@@ -119,7 +119,7 @@ nav:
       - '運用ガイド': './operation/start-guide.md'
       - 'KESの更新': './operation/kes-update.md'
       - 'プール情報の更新': './operation/cert-update.md'
-      - 'ノードアップデート': './operation/node-update.md'
+      #- 'ノードアップデート': './operation/node-update.md'
       - '資金引き出し': './operation/withdrawal.md'
       - 'プール廃止': './operation/pool-retire.md'
       - 'SJG修正プログラム': './operation/sjg-fixed.md'
