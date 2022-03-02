@@ -1,8 +1,8 @@
 # **カルダノステークプール構築手順**
 
-!!! summary "概要"
+<!--!!! summary "概要"
     このマニュアルは、[X Stake Pool](https://xstakepool.com)オペレータの[BTBF](https://twitter.com/btbfpark)が[CoinCashew](https://www.coincashew.com/coins/overview-ada/guide-how-to-build-a-haskell-stakepool-node#9-register-your-stakepool)より許可を得て、日本語翻訳しております。
-
+-->
 
 !!! info "情報"
     このマニュアルは、カルダノノードv1.33.0に対応しています。  
