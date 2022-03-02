@@ -415,6 +415,7 @@
 **以下のコマンドを実行し、赤文字の戻り値があればブロックチェーンに登録されています**
 === "ブロックプロデューサーノード"
     ```bash
+    cd $NODE_HOME
     cardano-cli query stake-pools --mainnet --out-file allpoosID.txt
     ```
 

@@ -244,8 +244,13 @@ chmod a-rwx $HOME/cold-keys
     ```bash
     cd $NODE_HOME
     cardano-cli query ledger-state --mainnet > ledger-state.json
+    ```
+    > このコマンドが完了するまでに数十分かかる場合があります。
+
+    ```bash
     jq -r '.esLState._delegationState._pstate._pParams."'"$(cat stakepoolid_hex.txt)"'"  // empty' ledger-state.json
     ```
+    
 
 ## 2.**登録料返還確認**
 
@@ -291,6 +296,15 @@ chmod a-rwx $HOME/cold-keys
         --out-file stake-dereg.cert
     ```
 
+
+!!! important "ファイル転送"
+    
+    **エアギャップ**の**stake-dereg.cert** を **ブロックプロデューサノード**のcnodeディレクトリにコピーします。
+    
+    ``` mermaid
+    graph LR
+        A[エアギャップ] -->|stake-dereg.cert| B[BP];
+    ```
 
 
 **ステークキー登録料算出**
