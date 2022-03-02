@@ -416,7 +416,7 @@
 === "ブロックプロデューサーノード"
     ```bash
     cd $NODE_HOME
-    cardano-cli query stake-pools --mainnet --out-file allpoosID.txt
+    cardano-cli query stake-pools --mainnet --out-file allpoolsID.txt
     ```
 
     ```bash
