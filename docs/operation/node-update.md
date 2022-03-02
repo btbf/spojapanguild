@@ -121,11 +121,11 @@ $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-cli") 
 $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-node") version  
 ```
 以下の戻り値を確認する  
->cardano-cli 1.34.0 - linux-x86_64 - ghc-8.10  
-git rev c23d5d319cd3276575c6ac32458516232e8d2c48  
+>cardano-cli 1.34.0 - linux-x86_64 - ghc-8.10
+git rev 36a3c0ff8ce3db3104f5db97672fa2fd32311fef   
 
->cardano-node 1.34.0 - linux-x86_64 - ghc-8.10  
-git rev c23d5d319cd3276575c6ac32458516232e8d2c48  
+>cardano-node 1.34.0 - linux-x86_64 - ghc-8.10
+git rev 36a3c0ff8ce3db3104f5db97672fa2fd32311fef  
 
 
 **ノードをストップする** 
@@ -151,11 +151,11 @@ cardano-node version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 1.34.0 - linux-x86_64 - ghc-8.10  
-git rev c23d5d319cd3276575c6ac32458516232e8d2c48  
+>cardano-cli 1.34.0 - linux-x86_64 - ghc-8.10
+git rev 36a3c0ff8ce3db3104f5db97672fa2fd32311fef   
 
->cardano-node 1.34.0 - linux-x86_64 - ghc-8.10  
-git rev c23d5d319cd3276575c6ac32458516232e8d2c48  
+>cardano-node 1.34.0 - linux-x86_64 - ghc-8.10
+git rev 36a3c0ff8ce3db3104f5db97672fa2fd32311fef  
 
 
 ### **1-5.ノード起動**
