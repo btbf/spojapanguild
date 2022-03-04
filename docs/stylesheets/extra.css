@@ -1,10 +1,8 @@
-
-
-.md-typeset{
+.md-typeset {
     font-size: .75rem;
 }
 
-.md-typeset :is(.admonition,details){
+.md-typeset :is(.admonition,details) {
     font-size: .75rem;
 }
 
@@ -16,33 +14,38 @@
     max-width: 1440px; 
 }
 
-.md-sidebar--secondary{
+.md-sidebar--secondary {
     width: 18rem;
 
 }
-.md-sidebar--secondary .md-nav__link{
+.md-sidebar--secondary .md-nav__link {
     font-size:.65rem;
 }
 
-.mermaid .label{
+.mermaid .label {
     color :var(--md-mermaid-font-color) !important;
 }
 
-.nodes .label text,.clusters .cluster .cluster-label text{
+.nodes .label text,.clusters .cluster .cluster-label text {
     fill :var(--md-mermaid-font-color) !important;
 }
 
-.clusters .cluster rect{
+#__mermaid_0 .label text{
+    fill: #FFF;
+}
+
+.clusters .cluster rect {
     fill: var(--md-scheme-node-fg-color--transparent) !important;
 }
 
-.mermaid .edgeLabel{
+
+.mermaid .edgeLabel {
     padding: 10px;
     background-color: var(--md-mermaid-node-label-bg-color) !important;
     stroke:var(--md-mermaid-font-color) !important;
 }
 
-.mermaid .arrowheadPath,.mermaid .edgePath .path{
+.mermaid .arrowheadPath,.mermaid .edgePath .path {
     stroke:var(--md-mermaid-node-fg-color) !important;
 }
 

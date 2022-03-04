@@ -295,10 +295,10 @@ rm -rf $NODE_HOME/cardano-wallet-shelley-2020.7.28
 次のステップは、あなたの支払いアドレスに送金する手順です。
 
 !!! important "ファイル転送"
-    エアギャップマシンの**payment.addr** をBPのcnodeディレクトリにコピーします。
+    エアギャップマシンの**payment.addr**と**stake.addr** をBPのcnodeディレクトリにコピーします。
     ``` mermaid
     graph LR
-        A[エアギャップ] -->|payment.addr| B[BP];
+        A[エアギャップ] -->|payment.addr / stake.addr| B[BP];
     ```
 
 === "メインネット"
