@@ -60,36 +60,36 @@ grafanaインストール
     ```bash
     cat > prometheus.yml << EOF
     global:
-    scrape_interval:     15s
+      scrape_interval:     15s # By default, scrape targets every 15 seconds.
 
-    # Attach these labels to any time series or alerts when communicating with
-    # external systems (federation, remote storage, Alertmanager).
-    external_labels:
+      # Attach these labels to any time series or alerts when communicating with
+      # external systems (federation, remote storage, Alertmanager).
+      external_labels:
         monitor: 'codelab-monitor'
-
+    
     # A scrape configuration containing exactly one endpoint to scrape:
     # Here it's Prometheus itself.
     scrape_configs:
-    # The job name is added as a label job=<job_name> to any timeseries scraped from this config.
-    - job_name: 'prometheus'
+      # The job name is added as a label job=<job_name> to any timeseries scraped from this config.
+      - job_name: 'prometheus'
 
-        static_configs:
-        - targets: ['localhost:9100']
+       static_configs:
+          - targets: ['localhost:9100']
             labels:
-            alias: 'relaynode1'
-            type:  'system'
-        - targets: ['xxx.xxx.xxx:9100']
+              alias: 'relaynode1'
+              type:  'system'
+          - targets: ['xxx.xxx.xxx.xxx:9100']
             labels:
-            alias: 'block-producing-node'
-            type:  'system'
-        - targets: ['xxx.xxx.xxx:12798']
+              alias: 'block-producing-node'
+              type:  'system'
+          - targets: ['xxx.xxx.xxx.xxx:12798']
             labels:
-            alias: 'block-producing-node'
-            type:  'cardano-node'
-        - targets: ['localhost:12798']
+              alias: 'block-producer-node'
+              type:  'cardano-node'
+          - targets: ['localhost:12798']
             labels:
-            alias: 'relaynode1'
-            type:  'cardano-node'
+              alias: 'relaynode1'
+              type:  'cardano-node'
     EOF
     ```
 
