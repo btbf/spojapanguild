@@ -60,7 +60,7 @@ grafanaインストール
     ```bash
     cat > prometheus.yml << EOF
     global:
-    scrape_interval:     15s 
+    scrape_interval:     15s
 
     # Attach these labels to any time series or alerts when communicating with
     # external systems (federation, remote storage, Alertmanager).
