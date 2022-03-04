@@ -96,9 +96,13 @@ cabal clean
 cabal update
 ```
 
+
+<!--#git fetch --all --recurse-submodules --tags
+#git checkout $(curl -s https://api.github.com/repos/input-output-hk/cardano-node/releases/latest | jq -r .tag_name)
+-->
 ```
-git fetch --all --recurse-submodules --tags
-git checkout $(curl -s https://api.github.com/repos/input-output-hk/cardano-node/releases/latest | jq -r .tag_name)
+git fetch --all --recurse-submodules
+git checkout release/1.34
 cabal configure -O0 -w ghc-8.10.7
 ```
 
