@@ -30,8 +30,8 @@
     fill :var(--md-mermaid-font-color) !important;
 }
 
-#__mermaid_0 .label text{
-    fill: #FFF;
+.mermaid .label text{
+    fill: #FFF !important;
 }
 
 .clusters .cluster rect {
