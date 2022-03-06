@@ -456,7 +456,7 @@ Guild Liveviewを起動します。
 !!! hint "ヒント"
     スクリプトへのパスを通し、任意の単語で起動出来るようにする。
     ```bash
-    echo alias glive="$NODE_HOME/scripts/gLiveView.sh" >> $HOME/.bashrc
+    echo alias glive="'cd $NODE_HOME/scripts; ./gLiveView.sh'" >> $HOME/.bashrc
     source $HOME/.bashrc
     ```
 
