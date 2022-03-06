@@ -23,15 +23,15 @@
 }
 
 .mermaid .label {
-    color :var(--md-mermaid-font-color) !important;
+    color: var(--md-mermaid-font-color) !important;
 }
 
 .nodes .label text,.clusters .cluster .cluster-label text {
-    fill :var(--md-mermaid-font-color) !important;
+    fill: var(--md-mermaid-font-color) !important;
 }
 
-.mermaid .label text{
-    fill: #FFF !important;
+.label text{
+    fill: var(--md-mermaid-font-color) !important;
 }
 
 .clusters .cluster rect {
