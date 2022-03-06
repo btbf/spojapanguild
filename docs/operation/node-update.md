@@ -40,6 +40,26 @@ SSHで再接続する
 
 ### **1-2. cabal/GHCアップデート**
 
+**cabalパス確認**
+```
+which cabal
+```
+
+!!! danger "確認"
+    **戻り値が[~/.local/bin/cabal]だった場合**  
+    
+    パスを追加する
+    ```
+    echo PATH=$PATH:$HOME/.ghcup/bin >> $HOME/.bashrc
+    source $HOME/.bashrc
+    ```
+
+    旧cabalリネーム
+    ```
+    cd $HOME/.local/bin/
+    mv cabal cabal_bk
+    ```
+
 
 **ccabalバージョンアップ**
 ```
@@ -101,8 +121,8 @@ cabal update
 #git checkout $(curl -s https://api.github.com/repos/input-output-hk/cardano-node/releases/latest | jq -r .tag_name)
 -->
 ```
-git fetch --all --recurse-submodules
-git checkout release/1.34
+git fetch --all --recurse-submodules --tags
+git checkout tags/1.34.1
 cabal configure -O0 -w ghc-8.10.7
 ```
 
@@ -125,11 +145,11 @@ $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-cli") 
 $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-node") version  
 ```
 以下の戻り値を確認する  
->cardano-cli 1.34.0 - linux-x86_64 - ghc-8.10
-git rev 36a3c0ff8ce3db3104f5db97672fa2fd32311fef   
+>cardano-cli 1.34.1 - linux-x86_64 - ghc-8.10  
+git rev 73f9a746362695dc2cb63ba757fbcabb81733d23  
 
->cardano-node 1.34.0 - linux-x86_64 - ghc-8.10
-git rev 36a3c0ff8ce3db3104f5db97672fa2fd32311fef  
+>cardano-node 1.34.1 - linux-x86_64 - ghc-8.10  
+git rev 73f9a746362695dc2cb63ba757fbcabb81733d23  
 
 
 **ノードをストップする** 
@@ -155,11 +175,11 @@ cardano-node version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 1.34.0 - linux-x86_64 - ghc-8.10
-git rev 36a3c0ff8ce3db3104f5db97672fa2fd32311fef   
+>cardano-cli 1.34.1 - linux-x86_64 - ghc-8.10  
+git rev 73f9a746362695dc2cb63ba757fbcabb81733d23  
 
->cardano-node 1.34.0 - linux-x86_64 - ghc-8.10
-git rev 36a3c0ff8ce3db3104f5db97672fa2fd32311fef  
+>cardano-node 1.34.1 - linux-x86_64 - ghc-8.10  
+git rev 73f9a746362695dc2cb63ba757fbcabb81733d23   
 
 
 ### **1-5.ノード起動**
