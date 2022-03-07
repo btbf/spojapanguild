@@ -22,6 +22,40 @@
     * 日本語マニュアルのフォルダ構成に合わせて作成されています。
     * vrf.skey と vrf.vkeyが必要です。
 
+!!! abstract "構成図"
+    ``` mermaid
+        flowchart TB
+            subgraph Node
+                a1[node] --> a2[logファイル]
+            end
+            a1 --> a3[cncli.service]
+            a3 --> a5[leaderlog.service]
+            a3 --> a6[validate.service]
+            a2 --> a4[logmonitor.service]
+            subgraph ブロックログ
+                a3[cncli.service]
+                a4[logmonitor.service]
+                a5[leaderlog.service]
+                a6[validate.service]
+                
+                subgraph Guild-DB
+                    a7[cncli.db]
+                    a8[blocklog.db]
+                end
+            end
+            subgraph ステータス通知
+                a9[blockcheck] --> 各アプリ
+            end
+
+            Guild-DB --> blocks.sh
+            a8[blocklog.db] --> a9[blockcheck]
+            a3[cncli.service] --> a7[cncli.db]
+            a5[leaderlog.service] --> a8[blocklog.db]
+            a6[validate.service] --> a8[blocklog.db]
+            
+    ```
+
+
  
 
 ## **10-1. CNCLIインストール**
