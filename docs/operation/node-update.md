@@ -1,7 +1,7 @@
 # **ノードアップデートマニュアル**
 
 !!! note "対応バージョン" 
-    2022年3月1日時点でこのガイドは v.1.34.0に対応しています
+    2022年3月7日時点でこのガイドは v.1.34.1に対応しています
 
 
 !!! info "概要"
@@ -44,9 +44,10 @@ SSHで再接続する
 ```
 which cabal
 ```
+> /home/user/.ghcup/bin/cabal なら正常
 
 !!! danger "確認"
-    **戻り値が[~/.local/bin/cabal]だった場合**  
+    **戻り値が[/home/user/.local/bin/cabal]だった場合のみ以下を実行**  
     
     パスを追加する
     ```
@@ -61,7 +62,7 @@ which cabal
     ```
 
 
-**ccabalバージョンアップ**
+**cabalバージョンアップ**
 ```
 ghcup upgrade
 ghcup install cabal 3.6.2.0
@@ -87,7 +88,7 @@ ghc --version
 > GHCのバージョンは「8.10.7」であることを確認してください。
 
 !!! danger "確認"
-    **GHC 8.10.4だった場合**
+    **GHC 8.10.4以下だった場合のみ実行**
     ```bash
     ghcup upgrade
     ghcup install ghc 8.10.7
@@ -136,7 +137,7 @@ cabal build cardano-node cardano-cli
 Resolving dependencies...
 と表示され止まったように見えますが、動くまでお待ちください
 
-> ビルド完了までに数十分ほどかかります。  
+ビルド完了までに数十分ほどかかります。  
 
 **バージョン確認**
 
@@ -288,7 +289,69 @@ sudo systemctl daemon-reload
 ```
 -->
 
-## 2. エアギャップマシンアップデート
+
+## **2.CNCLIバージョンアップ**
+
+!!! info "確認"
+    * BPのみで実施します
+    * CNCLI4.0.4以下の場合に実施してください
+
+```
+cncli --version
+```
+
+=== "cncli 4.0.3以下の場合"
+
+    **サービスを止める**
+    ```
+    sudo systemctl stop cnode-cncli-sync.service
+    ```
+
+    **CNCLIをアップデートする**
+
+    ```bash
+    rustup update
+    cd $HOME/git/cncli
+    git fetch --all --prune
+    git checkout $(curl -s https://api.github.com/repos/AndrewWestberg/cncli/releases/latest | jq -r .tag_name)
+    cargo install --path . --force
+    cncli --version
+    ```
+    > cncli 4.0.4になったことを確認する
+
+    **ノードを再起動する**
+    ```
+    sudo systemctl reload-or-restart cardano-node
+    ```
+
+    **サービス起動を確認する**
+
+    ```bash
+    tmux ls
+    ```
+
+    !!! info "ヒント"
+        ノードを再起動してから、約20秒後に5プログラムがバックグラウンドで起動中であればOKです
+        * cncli
+        * leaderlog
+        * validate
+        * logmonitor
+        * blockcheck(ブロック生成ステータス通知を導入している場合)
+
+    ```
+    tmux a -t cncli
+    ```
+    >「100.00% synced」になるまで待ちます。
+    100%になったら、Ctrl+bを押した後に d を押し元の画面に戻ります
+    (バックグラウンド実行に切り替え)
+
+
+=== "cncli 4.0.4の場合"
+
+    最新バージョンです。
+
+
+## 3. エアギャップマシンアップデート
 
  **エアギャップマシン用にバイナリファイルをコピーする**
 
@@ -328,71 +391,14 @@ cardano-node version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 1.33.0 - linux-x86_64 - ghc-8.10
-git rev 814df2c146f5d56f8c35a681fe75e85b905aed5d
+>cardano-cli 1.34.1 - linux-x86_64 - ghc-8.10  
+git rev 73f9a746362695dc2cb63ba757fbcabb81733d23  
 
->cardano-node 1.33.0 - linux-x86_64 - ghc-8.10
-git rev 814df2c146f5d56f8c35a681fe75e85b905aed5d  
-
-
-
-## **3.CNCLIバージョンアップ**
-
-!!! info "ヒント"
-    BPのみで実施します
-
-**サービスを止める**
-```
-sudo systemctl stop cnode-cncli-sync.service
-```
-
-**CNCLIをアップデートする**
-!!! info "ヒント"
-既にCNCLI4.0.4導入済みの場合は飛ばしてください
+>cardano-node 1.34.1 - linux-x86_64 - ghc-8.10  
+git rev 73f9a746362695dc2cb63ba757fbcabb81733d23 
 
 
-```bash
-rustup update
-cd $HOME/git/cncli
-git fetch --all --prune
-git checkout $(curl -s https://api.github.com/repos/AndrewWestberg/cncli/releases/latest | jq -r .tag_name)
-cargo install --path . --force
-cncli --version
-```
-
-**ノードを再起動する**
-```
-sudo systemctl reload-or-restart cardano-node
-```
-
-**サービス起動を確認する**
-
-```bash
-tmux ls
-```
-
-!!! info "ヒント"
-    ノードを再起動してから、約20秒後に5プログラムがバックグラウンドで起動中であればOKです
-    * cncli
-    * leaderlog
-    * validate
-    * logmonitor
-    * blockcheck(ブロック生成ステータス通知を導入している場合)
-
-
-
-```
-tmux a -t cncli
-```
->「100.00% synced」になるまで待ちます。
-100%になったら、Ctrl+bを押した後に d を押し元の画面に戻ります
-(バックグラウンド実行に切り替え)
-
-
-ノードバージョンアップは以上です。
-
-
-
+<!--
 ## **4.新メトリクスについて**
 
 v1.31.0からブロックチェーンの状態をより可視化したメトリクスが追加されています。
@@ -456,7 +462,7 @@ Panel Graph
 Field Unit (none)
 ```
 
-<!--
+
 # 5 ブロックログアップデート暫定調整
 
 ## BPの対応
