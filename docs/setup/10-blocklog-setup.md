@@ -23,6 +23,7 @@
     * vrf.skey と vrf.vkeyが必要です。
 
 !!! abstract "構成図"
+    * （コードが表示されてる場合はブラウザ更新ボタンで更新してください）
     ``` mermaid
         flowchart TB
             subgraph Node
