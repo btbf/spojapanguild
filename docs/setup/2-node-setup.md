@@ -78,8 +78,8 @@ ghcupセットアップ確認
 ```bash
 source ~/.bashrc
 ghcup upgrade
-ghcup install cabal 3.4.0.0
-ghcup set cabal 3.4.0.0
+ghcup install cabal 3.6.2.0
+ghcup set cabal 3.6.2.0
 ```
 
 GHCをインストールします。
@@ -110,7 +110,7 @@ ghc --version
 ```
 
 !!! check "チェック"
-    Cabalバージョン：「3.4.0.0」  
+    Cabalバージョン：「3.6.2.0」  
     GHCバージョン：「8.10.7」であることを確認してください。
 
 
@@ -128,7 +128,7 @@ cd $HOME/git
 git clone https://github.com/input-output-hk/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/1.33.0
+git checkout tags/1.34.1
 ```
 
 Cabalのビルドオプションを構成します。
