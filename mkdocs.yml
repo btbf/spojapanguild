@@ -71,7 +71,7 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_div_format
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - admonition
   - pymdownx.details
   - pymdownx.tabbed:
@@ -88,11 +88,6 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
-
-extra_javascript:
-  - https://unpkg.com/mermaid@8.5.1/dist/mermaid.min.js
-  - https://unpkg.com/browse/mermaid@8.8.0/dist/mermaid.min.js
-
 
 extra_css:
   - stylesheets/extra.css

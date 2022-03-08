@@ -126,7 +126,7 @@
     BPにある`vrf.vkey`と`poolMetaDataHash.txt` をエアギャップオフラインマシンのcnodeディレクトリにコピーします。
     ``` mermaid
     graph LR
-        A[BP] -->|vrf.vkey / poolMetaDataHash.txt| B[エアギャップ];
+        A[BP] -->| vrf.vkey / poolMetaDataHash.txt | B[エアギャップ];
     ``` 
 
 ** BPとエアギャップで`vrf.vkey`ファイルハッシュを比較する **
