@@ -6,7 +6,7 @@
 
 !!! info "情報"
     このマニュアルは、カルダノノードv1.34.1に対応しています。  
-    最終更新日：2022年3月7日の時点guide version 11.0
+    最終更新日：2022年3月11日の時点guide version 11.1
 
 !!! tip "サポート"
     サポートが必要な場合は、[SPO JAPAN GUILDコミュニティ](https://discord.gg/U3gU54c)で現役のSPOに質問できます
