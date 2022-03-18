@@ -38,6 +38,10 @@
     fill: var(--md-scheme-node-fg-color--transparent) !important;
 }
 
+.note .quote{
+    word-break:break-word;
+}
+
 
 .mermaid .edgeLabel {
     padding: 10px;
