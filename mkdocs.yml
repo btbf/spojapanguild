@@ -125,3 +125,4 @@ nav:
       - '運用編':
         - 'ノード関連': './faq/node.md'
         - 'ブロックログ関連': './faq/blocklog.md'
+        - 'ノード監視関連': './faq/monitoring.md'
