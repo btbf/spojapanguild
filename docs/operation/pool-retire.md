@@ -238,40 +238,21 @@ chmod a-rwx $HOME/cold-keys
 
 ### **リタイア確認**
 
-* KOIOS APIを使用してリタイア処理ステータスを確認できます。
-
-stakepoolid_bech32.txtの作成
-
-=== "エアギャップオフラインマシン"
-    ```bash
-    cd $NODE_HOME
-    cardano-cli stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format bech32 > stakepoolid_bech32.txt
-    ```
-
-!!! important "ファイル転送"
-    エアギャップマシンの`stakepoolid_bech32.txt`をBPのcnodeディレクトリにコピーします。
-    ``` mermaid
-    graph LR
-        A[エアギャップ] -->|stakepoolid_bech32.txt| B[BP];
-    ```
+* リタイアエポックのあと、空の結果を返す次のクエリを使用して、プールが正常にリタイアされたことを確認できます。
 
 === "ブロックプロデューサノード"
     ```bash
     cd $NODE_HOME
-    curl -s "https://api.koios.rest/api/v0/pool_updates?_pool_bech32=$(cat stakepoolid_bech32.txt)" | jq '.[0].pool_status,.[0].retiring_epoch'
+    cardano-cli query ledger-state --mainnet > ledger-state.json
     ```
+    > このコマンドが完了するまでに数十分かかる場合があります。
 
     ```bash
-    #戻り値サンプル
-    "retired" # "retiring"でリタイア処理待ち "retired"でリタイア済み 
-    309 #リタイアエポック
+    jq -r '.esLState._delegationState._pstate._pParams."'"$(cat stakepoolid_hex.txt)"'"  // empty' ledger-state.json
     ```
     
 
 ## 2.**登録料返還確認**
-
-!!! caution "注意"
-    以降の処理は、プールのリタイア処理が完了してから実施してください
 
 !!! important "ファイル転送"
     
