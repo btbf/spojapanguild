@@ -266,7 +266,6 @@ stakepoolid_bech32.txtの作成
     "retired" # "retiring"でリタイア処理待ち "retired"でリタイア済み 
     309 #リタイアエポック
     ```
-    
 
 ## 2.**登録料返還確認**
 
