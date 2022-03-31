@@ -6,6 +6,7 @@
 
 main () {
 clear
+update
 if [ ${NETWORK_NAME} == "Testnet" ]; then
     networkmagic="--testnet-magic 1097911063"
 elif [ ${NETWORK_NAME} == "Mainnet" ]; then
@@ -585,13 +586,22 @@ scale3(){
 }
 
 update(){
-  wget 
+  cd /tmp/cnode
+  wget https://raw.githubusercontent.com/btbf/spojapanguild/master/script/sjgtool.sh -O sjgtool.sh.tmp
+  tmp256=`sha256sum sjgtool.sh.tmp`
+  sh256=`sha256sum $NODE_HOME/scripts/sjgtool.sh`
+  arr_tmp256=(${tmp256//,/})
+  arr_sh256=(${sh256//,/})
+  
+  echo ${arr_tmp256[0]}
+  echo
+  echo ${arr_sh256[0]}
+  rm sjgtool.sh.tmp
 }
 
 
 source ./env
 cd $NODE_HOME
-
 
 #ノード起動確認
 node_check=`ps -ef | grep cardano-node | grep -v grep | wc -l`
