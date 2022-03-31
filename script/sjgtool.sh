@@ -599,7 +599,7 @@ update(){
   echo ${arr_sh256[0]}
 
 
-  if [[ ! ${arr_tmp256[0]} -eq ${arr_sh256[0]} ]]; then
+  if [[ ! ${arr_tmp256[0]} == ${arr_sh256[0]} ]]; then
   cd $NODE_HOME/scripts
   wget -q https://raw.githubusercontent.com/btbf/spojapanguild/master/script/sjgtool.sh -O sjgtool.sh
   ./sjgtool.sh
