@@ -588,7 +588,7 @@ scale3(){
 
 update(){
   cd /tmp/cnode
-  wget https://raw.githubusercontent.com/btbf/spojapanguild/master/script/sjgtool.sh -O sjgtool.sh.tmp
+  wget -q https://raw.githubusercontent.com/btbf/spojapanguild/master/script/sjgtool.sh -O sjgtool.sh.tmp
   tmp256=`sha256sum sjgtool.sh.tmp`
   sh256=`sha256sum $NODE_HOME/scripts/sjgtool.sh`
   arr_tmp256=(${tmp256//,/})
