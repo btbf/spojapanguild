@@ -117,7 +117,7 @@ payment.addrの残高を出力します。
         --address $(cat payment.addr) \
         --mainnet > fullUtxo.out
 
-    tail -n +3 fullUtxo.out | sort -k3 -nr > balance.out
+    tail -n +3 fullUtxo.out | sort -k3 -nr | sed -e '/lovelace + [0-9]/d' > balance.out
 
     cat balance.out
     ```
