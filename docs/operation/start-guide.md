@@ -127,7 +127,7 @@
 
 :material-tooltip-edit-outline: **3か月毎作業**
 
-* [KES更新(1-KESの更新)](./kes-update.md.md)
+* [KES更新(1-KESの更新)](./kes-update.md)
 
 :material-tooltip-edit-outline: **不定期作業**
 

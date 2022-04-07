@@ -1,5 +1,13 @@
 # 変更履歴
 
+## v11.2
+!!! note ""
+    payment.addrにネイティブトークンが含まれている場合のトランザクション送信エラー修正  
+
+    [プール情報の更新](./operation/cert-update.md)  
+    [資金引き出し](./operation/withdrawal.md)  
+    [プール廃止](./operation/pool-retire.md)  
+
 ## v11.1
 !!! note ""
     [8-P2Pトポロジー設定](./setup/8.topology-setup.md) に[ノード起動最終調整](./setup/8.topology-setup.md#_4)を追加しました。
