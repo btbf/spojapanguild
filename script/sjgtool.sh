@@ -30,7 +30,7 @@ else
 fi
 
 echo '------------------------------------------------'
-echo -e ">> SPO JAPAN GUILD TOOL \e[33mv:0.1\e[m \e[32m-${NETWORK_NAME}-\e[m \e[33m-$node_name-\e[m <<"
+echo -e ">> SPO JAPAN GUILD TOOL \e[33mver.0.1\e[m \e[32m-${NETWORK_NAME}-\e[m \e[33m-$node_name-\e[m <<"
 echo '------------------------------------------------'
 echo '
 [1] ウォレット操作
@@ -884,8 +884,7 @@ update(){
 
 
   if [[ ! ${arr_tmp256[0]} == ${arr_sh256[0]} ]]; then
-  cd $NODE_HOME/scripts
-  wget -q https://raw.githubusercontent.com/btbf/spojapanguild/master/script/sjgtool.sh -O sjgtool.sh
+  wget -q https://raw.githubusercontent.com/btbf/spojapanguild/master/script/sjgtool.sh -O $NODE_HOME/scripts/sjgtool.sh
   restart.bash
   fi
   rm /tmp/cnode/sjgtool.sh.tmp
