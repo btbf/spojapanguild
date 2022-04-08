@@ -1,5 +1,5 @@
 #!/bin/bash
-#2022/03/31 v0.1 @btbf
+#2022/04/8 v0.3 @btbf
 
 #
 # 入力値チェック/セット
@@ -7,11 +7,15 @@
 
 main () {
 clear
-update
+#update
 if [ ${NETWORK_NAME} == "Testnet" ]; then
     networkmagic="--testnet-magic 1097911063"
+    koios="testnet"
+    config_name="testnet"
 elif [ ${NETWORK_NAME} == "Mainnet" ]; then
     networkmagic="--mainnet"
+    koios="api"
+    config_name="mainnet"
 else
     networkmagic=""
 fi
@@ -83,11 +87,10 @@ case ${num} in
           echo "■stakeアドレス"
           echo "$(cat $WALLET_STAKE_ADDR_FILENAME)"
           stake_json=`cardano-cli query stake-address-info --address $(cat $WALLET_STAKE_ADDR_FILENAME) $networkmagic > $NODE_HOME/scripts/stake_json.txt`
-          pool_reward=`cat $NODE_HOME/scripts/stake_json.txt | grep rewardAccountBalance`
+          pool_reward=`cat $NODE_HOME/scripts/stake_json.txt | grep rewardAccountBalance | awk '{ print $2 }'`
           #echo $pool_reward
-          pool_reward_split=(${pool_reward//,/})
-          pool_reward_Amount=`scale1 ${pool_reward_split[1]}`
-          echo "報酬額:$pool_reward_Amount ADA (${pool_reward_split[1]})"
+          pool_reward_Amount=`scale1 $pool_reward`
+          echo "報酬額:$pool_reward_Amount ADA ($pool_reward)"
           rm $NODE_HOME/scripts/stake_json.txt
         else
           echo "$WALLET_STAKE_ADDR_FILENAMEファイルが見つかりません"
@@ -298,9 +301,23 @@ case ${num} in
               echo "出金額をlovelaces形式で入力してください"
               echo '1 ADA = 1,000,000'
               echo
-              read -p "出金額： > " amountToSend
-              cal_amount=`scale1 $amountToSend`
+              
+
+              while :
+              do
+                read -p "出金額： > " amountToSend
+                if [[ "$amountToSend" -ge 1000000 ]]; then
+                  cal_amount=`scale1 $amountToSend`
+                  break
+                else
+                    echo
+                    echo "出金額は1000000 Lovelaces(1ADA)以上を指定してください"
+                    echo
+                fi
+              done
+
               echo
+              
 
               #現在のスロット
               current_Slot
@@ -379,9 +396,256 @@ case ${num} in
     echo $DOMAIN
     ;;
   3)
-    DOMAIN='b.example.com'
-    CF_ID='xxxxx'
-    echo $DOMAIN
+    clear
+    log_file="$HOME/dirname-`date +'%Y-%m-%d_%H-%M-%S'`.log"
+    echo '------------------------------------------------------------------------'
+    echo -e "> BPブロック生成可能状態チェック"
+    echo '------------------------------------------------------------------------'
+    idfile_check=`filecheck "$NODE_HOME/stakepoolid_bech32.txt"`
+    if [ $idfile_check == "false" ]; then
+      echo "stakepoolid_bech32.txtが見つかりません"
+      echo "エアギャップで作成し、$NODE_HOMEにコピーしてください"
+      echo
+      echo "エアギャップ stakepoolid_bech32.txt作成コマンド"
+      echo '---------------------------------------------------------------'
+      echo 'cardano-cli stake-pool id \'
+      echo    '--cold-verification-key-file $HOME/cold-keys/node.vkey \'
+      echo    '--output-format bech32 > $NODE_HOME/stakepoolid_bech32.txt'
+      echo '---------------------------------------------------------------'
+      select_rtn
+    fi
+
+    mempool_CHK=`cat $CONFIG | jq ".TraceMempool"`
+    if [ $mempool_CHK == "false" ]; then
+      echo "$config_name-config.jsonのTraceMempoolがfalseになっています"
+      echo "正確にチェックする場合は、trueへ変更しノードを再起動してください"
+      select_rtn
+    fi
+
+    #APIリクエストクエリjson生成
+    pId_json="{\""_pool_bech32_ids"\":[\""$(cat $NODE_HOME/stakepoolid_bech32.txt)"\"]}"
+
+    #API プールデータ取得
+    curl -s -X POST "https://$koios.koios.rest/api/v0/pool_info" \
+    -H "Accept: application/json" \
+    -H "Content-Type: application/json" \
+    -d $pId_json > $NODE_HOME/pooldata.txt
+    wait
+
+    pooldata_chk=`cat pooldata.txt`
+    if [[ $pooldata_chk != *"pool_id_bech32"* ]]; then
+      echo "APIからプールデータを取得できませんでした。再度お試しください"
+      select_rtn
+    fi
+
+    #メトリクスKES
+    metrics_KES=`curl -s localhost:12798/metrics | grep remainingKES | awk '{ print $2 }'`
+    Expiry_KES=`curl -s localhost:12798/metrics | grep ExpiryKES | awk '{ print $2 }'`
+    Start_KES=`curl -s localhost:12798/metrics | grep StartKES | awk '{ print $2 }'`
+    current_KES=`curl -s localhost:12798/metrics | grep currentKES | awk '{ print $2 }'`
+
+    if [ -z "$metrics_KES" ]; then
+      echo "KESメトリクスを取得できませんでした"
+      echo "このノードがBPであることを確認してください"
+      select_rtn
+    fi
+    
+    printf "ノード起動タイプ:BP \e[32mOK\e[m　ネットワーク:\e[33m$NETWORK_NAME\e[m\n"
+    echo
+    printf "対象プール :\e[36m[`cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_json.ticker"`] `cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_json.name"`\e[m\n"
+    printf "プールID　 :\e[36m`cat $NODE_HOME/pooldata.txt | jq -r ".[].pool_id_bech32"`\e[m\n"
+
+   #ノード起動スクリプトファイル名読み取り
+    exec_path=`grep -H "ExecStart" /etc/systemd/system/cardano-node.service`
+    exec_path=${exec_path##*/}
+    script_name=${exec_path/%?/}
+    script_path="$NODE_HOME/$script_name"
+    script_path=$script_path
+
+    #起動スクリプトからBP起動ファイル読み取り
+    kes_path=`grep -H "KES=" $script_path`
+    vrf_path=`grep -H "VRF=" $script_path`
+    cert_path=`grep -H "CERT=" $script_path`
+    echo
+    echo "■BPファイル存在確認"
+    if [ $kes_path ]; then
+      kes_name=${kes_path##*/}
+      kes_CHK=`filecheck "$NODE_HOME/$kes_name"`
+      if [ $kes_CHK == "true" ]; then
+        printf "　$kes_name : \e[32m\e[32mOK\e[m\n"
+      else
+        printf "　$kes_name : \e[31mNG\e[m\n"
+      fi
+
+    else
+      kes_name=""
+      kes_CHK="$NODE_HOME/relay"
+      echo kesファイルはありません
+    fi
+
+    if [ $vrf_path ]; then
+      vrf_name=${vrf_path##*/}
+      vrf_CHK=`filecheck "$NODE_HOME/$vrf_name"`
+      if [ $vrf_CHK == "true" ]; then
+        printf "　$vrf_name : \e[32mOK\e[m\n"
+      else
+        printf "　$vrf_name : \e[31mNG\e[m\n"
+      fi
+
+    else
+        vrf_name=""
+        vrf_CHK="$NODE_HOME/relay"
+        echo vrfファイルはありません
+    fi
+
+    if [ $cert_path ]; then
+    cert_name=${cert_path##*/}
+    cert_CHK=`filecheck "$NODE_HOME/$cert_name"`
+      if [ $cert_CHK == "true" ]; then
+        printf "　$cert_name: \e[32mOK\e[m\n"
+      else
+        printf "　$cert_name: \e[31mNG\e[m\n"
+      fi
+
+    else
+      cert_name=""
+      cert_CHK="$NODE_HOME/relay"
+      echo certファイルはありません
+    fi
+
+    #ノード同期状況確認
+    #APIから最新ブロックNo取得
+    koios_blockNo=`curl -s -X GET "https://$koios.koios.rest/api/v0/tip" -H "Accept: application/json" | grep -E -o "\"block_no\":[0-9A-Za-z]{7,}"`
+    koios_blockNo=${koios_blockNo#"\"block_no\":"}
+    
+
+    #ノードから同期済みブロック取得
+    currentblock=$(cardano-cli query tip $networkmagic | jq -r '.block')
+    
+
+    block_diff=$koios_blockNo-$currentblock
+    if [[ $block_diff -ge 2 ]]; then
+      clear
+      echo
+      echo "ノードが最新ブロックに同期してから再度ご確認ください"
+      select_rtn
+    else
+      echo
+      printf "■ノード同期状況： \e[32mOK\e[m\n"
+      printf "　ネットワーク最新ブロック　 :\e[33m$koios_blockNo\e[m\n"
+      printf "　ローカルノード最新ブロック :\e[33m$currentblock\e[m\n"
+    fi
+
+    #メトリクスTx数
+    metrics_tx=`curl -s localhost:12798/metrics | grep txsProcessedNum_int | awk '{ print $2 }'`
+
+    tx_chk(){
+      if [ $1 != 0 ]; then
+        printf "\e[32mOK\e[m"
+      else
+        printf "\e[31mNG\e[m Txが入ってきていません。リレーノードのトポロジーアップデーターを再確認してください"
+      fi
+    }
+
+    tx_count=`tx_chk $metrics_tx`
+    echo
+    printf "■Tx流入数:\e[33m$metrics_tx\e[m $tx_count\n"
+
+    echo
+    echo "■Peer接続状況"
+    peers_in=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | awk -v port=":${CNODE_PORT}" '$3 ~ port {print}' | wc -l)
+    peers_out=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | awk -v port=":(${CNODE_PORT}|${EKG_PORT}|${PROM_PORT})" '$3 !~ port {print}' | wc -l)
+
+    if [[ $peers_in -eq 0 ]]; then
+      peer_in_judge=" \e[31mNG\e[m リレーから接続されていません"
+    else
+      peer_in_judge=" \e[32mOK\e[m"
+    fi
+    if [[ $peers_out -eq 0 ]]; then
+      peer_out_judge=" \e[31mNG\e[m リレーに接続出来ていません"
+    else
+      peer_out_judge=" \e[32mOK\e[m"
+    fi
+    printf "　incoming :\e[33m$peers_in $peer_in_judge\e[m\n"
+    printf "　outgoing :\e[33m$peers_out $peer_out_judge\e[m\n"
+
+    chain_Vrf_hash=`cat $NODE_HOME/pooldata.txt | jq -r ".[].vrf_key_hash"`
+
+    #ローカルVRFファイル検証
+    mkdir $NODE_HOME/vrf_check
+    cp $NODE_HOME/vrf.skey $NODE_HOME/vrf_check/
+    cardano-cli key verification-key --signing-key-file $NODE_HOME/vrf_check/vrf.skey --verification-key-file $NODE_HOME/vrf_check/vrf.vkey
+    cardano-cli node key-hash-VRF --verification-key-file $NODE_HOME/vrf_check/vrf.vkey --out-file $NODE_HOME/vrf_check/vkeyhash.txt
+    local_vrf_hash=$(cat $NODE_HOME/vrf_check/vkeyhash.txt)
+    
+    if [ $chain_Vrf_hash == $local_vrf_hash ]; then
+      hash_check=" \e[32mOK\e[m\n"
+    else
+      hash_check=" \e[31mNG\e[m\n"
+    fi
+
+    echo
+    printf "■VRFハッシュ値チェック$hash_check" 
+    printf "　チェーン登録ハッシュ値　　　:\e[33m$chain_Vrf_hash\e[m\n"
+    printf "　ローカルファイルハッシュ値　:\e[33m$local_vrf_hash\e[m\n"
+
+    rm -rf $NODE_HOME/vrf_check
+
+    chain_cert_counter=`cat $NODE_HOME/pooldata.txt | jq -r ".[].op_cert_counter"`
+    local_cert_counter=`cardano-cli text-view decode-cbor --in-file $POOL_OPCERT_FILENAME | grep int | head -1 | cut -d"(" -f2 | cut -d")" -f1`
+    kes_remaining=`curl -s http://localhost:12798/metrics | grep KESPeriods_int | awk '{ print $2 }'`
+    kes_days=`bc <<< "$kes_remaining * 1.5"`
+    kes_cborHex=`cat $NODE_HOME/$POOL_HOTKEY_VK_FILENAME | jq '.cborHex' | tr -d '"'`
+    cert_cborHex=`cardano-cli text-view decode-cbor --in-file $NODE_HOME/$POOL_OPCERT_FILENAME | awk 'NR==4,NR==6 {print}' | sed 's/ //g' | sed 's/#.*//' | tr -d '\n'`
+
+    cert_counter(){
+      if [ $kes_cborHex == $cert_cborHex ]; then
+        if [ $1 != "null" ] && [[ $1 -ge $2 ]] && [[ $kes_remaining -ge 1 ]]; then
+          printf "\e[32mOK\e[m\n"
+        elif [ $1 != "null" ] && [[ $1 -lt $2 ]] && [[ $kes_remaining -ge 1 ]]; then
+          printf "\e[31mNG カウンター番号がチェーンより小さいです\e[m\n"
+        elif [ $1 == "null" ] && [[ $kes_remaining -ge 1 ]]; then
+          printf "\e[32mOK (ブロック未生成)\e[m\n"
+        else
+          printf "\e[31mNG KESの有効期限が切れています\e[m\n"
+        fi
+      else
+        printf "\e[31mNG CERTファイルに署名された$POOL_HOTKEY_VK_FILENAMEファイルが異なります。\e[m\n"
+      fi
+    }
+    cc=`cert_counter $chain_cert_counter $local_cert_counter`
+
+
+
+    echo
+    echo "プール運用証明書チェック(node.cert) $cc"
+    printf "　チェーン上カウンター    :\e[33m$chain_cert_counter\e[m\n"
+    printf "　CERTファイルカウンター　:\e[33m$local_cert_counter\e[m\n"
+    printf "　KES残り日数　　　　　　 :\e[33m$kes_days日\e[m\n"
+    printf "　CERTファイルKES-VK_Hex  :\e[33m$cert_cborHex\e[m\n"
+    printf "　ローカルKES-VK_Hex      :\e[33m$kes_cborHex\e[m\n"
+
+    echo
+    kes_int=$(($current_KES-$Start_KES+$metrics_KES))
+    kes_int_chk(){
+      if [ $1 == 62 ]; then
+        printf "\e[32mOK\e[m\n"
+      else
+        "\e[31mNG KES整合性は62である必要があります。KESファイルを作り直してください\e[m\n"
+      fi
+    }
+    kic=`kes_int_chk $kes_int`
+
+    printf "■KES整合性:\e[33m$kes_int\e[m $kic\n"
+    echo
+    echo
+    echo "ブロック生成可能状態チェックが完了しました"
+    echo
+    echo "--注意--------------------------------------------------------"
+    printf " > 1つでも \e[31mNG\e[m があった場合はプール構成を見直してください\n"
+    echo "--------------------------------------------------------------"
+    echo
+    select_rtn
     ;;
   0)
     exit
@@ -403,7 +667,7 @@ select_rtn(){
   read -n 1 retun_cmd
   case ${retun_cmd} in
     h) main ;;
-    q) 
+    *) 
       clear
       echo
       echo "SPO JAPAN GUILD TOOL Closed!" 
@@ -415,9 +679,9 @@ select_rtn(){
 air_gap(){
   echo
   echo
-  echo '■エアギャップ操作'
+  echo '■エアギャップオフラインマシンで以下の操作を実施してください'
   echo
-  echo -e "\e[33m1. tx.raw をエアギャップのcnodeディレクトリにコピーしてください\e[m"
+  echo -e "\e[33m1. BPのtx.raw をエアギャップのcnodeディレクトリにコピーしてください\e[m"
   echo '----------------------------------------'
   echo ">> [BP] ⇒ tx.raw ⇒ [エアギャップ]"
   echo '----------------------------------------'
@@ -438,7 +702,7 @@ air_gap(){
   echo ">> [エアギャップ] ⇒ tx.signed ⇒ [BP]"
   echo '----------------------------------------'
   echo
-  echo "1~3の操作が終わったらEnterを押してください"
+  echo "1～3の操作が終わったらEnterを押してください"
   read Wait
 }
 
@@ -463,9 +727,11 @@ reward_Balance(){
         $networkmagic \
         --address $(cat stake.addr) | jq -r ".[0].rewardAccountBalance")
     echo "プール報酬: `scale1 $rewardBalance` ADA"
+    echo
 
   if [ ${rewardBalance} == 0 ]; then
-    echo "出金可能な報酬はありません"
+    
+    printf "\e[31m出金可能な報酬はありません\e[m\n"
     select_rtn
   fi
 }
@@ -483,7 +749,7 @@ payment_utxo(){
     --address $(cat $WALLET_PAY_ADDR_FILENAME) \
     $networkmagic > fullUtxo.out
 
-  tail -n +3 fullUtxo.out | sort -k3 -nr > balance.out
+  tail -n +3 fullUtxo.out | sort -k3 -nr | sed -e '/lovelace + [0-9]/d' > balance.out
 
   tx_in=""
   total_balance=0
@@ -566,23 +832,26 @@ send_address(){
 
 #出金前チェック
 tx_Check(){
-  rows="%15s %-15s\n"
+  rows36="%15s \e[36m%-15s\e[m\n"
+  rows32="%15s \e[32m%-15s\e[m\n"
   #printf "$rows" "Send_Address:" "${destinationAddress::20}...${destinationAddress: -20}"
-  printf "$rows" "Send_Address:" "$destinationAddress"
-  printf "$rows" "Send_ADA:" "$cal_amount ADA"
-  printf "$rows" "Tx fee:" "`scale3 $fee` ADA"
-  printf "$rows" "Wallet_Amount:" "`scale1 ${total_balance}` ADA"
+  printf "$rows36" "送金先アドレス:" "$1"
+  printf "$rows32" "       送金ADA:" "$2 ADA"
+  printf "$rows32" "　　　  手数料:" "`scale3 $3` ADA"
+  printf "$rows32" "    Wallet残高:" "`scale1 $4` ADA"
 
 }
 
 #loverace変換
 scale1(){
-  r_amount=`echo "scale=1; $1 / 1000000" | bc`
+  #r_amount=`echo "scale=1; $1 / 1000000" | bc`
+  r_amount=`echo "scale=6; $1 / 1000000" | bc`
   echo $r_amount
 }
 
 scale3(){
-  r_amount=`echo "scale=3; $1 / 1000000" | bc | awk '{printf "%.5f\n", $0}'`
+  #r_amount=`echo "scale=3; $1 / 1000000" | bc | awk '{printf "%.5f\n", $0}'`
+  r_amount=`echo "scale=6; $1 / 1000000" | bc | awk '{printf "%.5f\n", $0}'`
   echo $r_amount
 }
 
@@ -602,7 +871,7 @@ update(){
   if [[ ! ${arr_tmp256[0]} == ${arr_sh256[0]} ]]; then
   cd $NODE_HOME/scripts
   wget -q https://raw.githubusercontent.com/btbf/spojapanguild/master/script/sjgtool.sh -O sjgtool.sh
-  ./sjgtool.sh
+  restart.bash
   fi
   rm sjgtool.sh.tmp
 }
