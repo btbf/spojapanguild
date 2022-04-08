@@ -1,5 +1,5 @@
 #!/bin/bash
-#2022/04/8 v0.3 @btbf
+#2022/04/08 v1.0 @btbf
 
 #
 # 入力値チェック/セット
@@ -7,7 +7,7 @@
 
 main () {
 clear
-#update
+update
 if [ ${NETWORK_NAME} == "Testnet" ]; then
     networkmagic="--testnet-magic 1097911063"
     koios="testnet"
@@ -34,8 +34,7 @@ echo -e ">> SPO JAPAN GUILD TOOL \e[33mv:0.1\e[m \e[32m-${NETWORK_NAME}-\e[m \e[
 echo '------------------------------------------------'
 echo '
 [1] ウォレット操作
-[2] KES更新チェック
-[3] ブロック生成状態チェック
+[2] ブロック生成状態チェック
 [0] 終了
 '
 read -n 1 num
@@ -391,11 +390,6 @@ case ${num} in
     esac
     ;;
   2)
-    DOMAIN='b.example.com'
-    CF_ID='xxxxx'
-    echo $DOMAIN
-    ;;
-  3)
     clear
     log_file="$HOME/dirname-`date +'%Y-%m-%d_%H-%M-%S'`.log"
     echo '------------------------------------------------------------------------'
@@ -416,11 +410,7 @@ case ${num} in
     fi
 
     mempool_CHK=`cat $CONFIG | jq ".TraceMempool"`
-    if [ $mempool_CHK == "false" ]; then
-      echo "$config_name-config.jsonのTraceMempoolがfalseになっています"
-      echo "正確にチェックする場合は、trueへ変更しノードを再起動してください"
-      select_rtn
-    fi
+
 
     #APIリクエストクエリjson生成
     pId_json="{\""_pool_bech32_ids"\":[\""$(cat $NODE_HOME/stakepoolid_bech32.txt)"\"]}"
@@ -449,11 +439,27 @@ case ${num} in
       echo "このノードがBPであることを確認してください"
       select_rtn
     fi
+
+    active_ST_check(){
+      if [ $1 != 0 ]; then
+        printf "\e[36m`scale1 $1`\e[m ADA"
+      else
+        printf "$1 ADA \n (ライブステークが有効になるまでスケジュール割り当てはありません)\n"
+      fi
+    }
+    live_Stake=`cat $NODE_HOME/pooldata.txt | jq -r ".[].live_stake"`
+    live_Stake=`scale1 $live_Stake`
+    active_Stake=`cat $NODE_HOME/pooldata.txt | jq -r ".[].active_stake"`
+
+    active_Stake=`active_ST_check $active_Stake`
     
     printf "ノード起動タイプ:BP \e[32mOK\e[m　ネットワーク:\e[33m$NETWORK_NAME\e[m\n"
     echo
-    printf "対象プール :\e[36m[`cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_json.ticker"`] `cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_json.name"`\e[m\n"
-    printf "プールID　 :\e[36m`cat $NODE_HOME/pooldata.txt | jq -r ".[].pool_id_bech32"`\e[m\n"
+    printf "　　対象プール :\e[36m[`cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_json.ticker"`] `cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_json.name"`\e[m\n"
+    printf "　　　プールID :\e[36m`cat $NODE_HOME/pooldata.txt | jq -r ".[].pool_id_bech32"`\e[m\n"
+    printf "ライブステーク :\e[32m$live_Stake\e[m ADA\n"
+    printf "　有効ステーク :$active_Stake\n"
+
 
    #ノード起動スクリプトファイル名読み取り
     exec_path=`grep -H "ExecStart" /etc/systemd/system/cardano-node.service`
@@ -467,14 +473,14 @@ case ${num} in
     vrf_path=`grep -H "VRF=" $script_path`
     cert_path=`grep -H "CERT=" $script_path`
     echo
-    echo "■BPファイル存在確認"
+    printf "\e[35;2m■BPファイル存在確認\e[m\n"
     if [ $kes_path ]; then
       kes_name=${kes_path##*/}
       kes_CHK=`filecheck "$NODE_HOME/$kes_name"`
       if [ $kes_CHK == "true" ]; then
-        printf "　$kes_name : \e[32m\e[32mOK\e[m\n"
+        printf "　 $kes_name: \e[32mOK\e[m\n"
       else
-        printf "　$kes_name : \e[31mNG\e[m\n"
+        printf "　 $kes_name: \e[31mNG\e[m\n"
       fi
 
     else
@@ -487,9 +493,9 @@ case ${num} in
       vrf_name=${vrf_path##*/}
       vrf_CHK=`filecheck "$NODE_HOME/$vrf_name"`
       if [ $vrf_CHK == "true" ]; then
-        printf "　$vrf_name : \e[32mOK\e[m\n"
+        printf "　 $vrf_name: \e[32mOK\e[m\n"
       else
-        printf "　$vrf_name : \e[31mNG\e[m\n"
+        printf "　 $vrf_name: \e[31mNG\e[m\n"
       fi
 
     else
@@ -531,8 +537,8 @@ case ${num} in
       select_rtn
     else
       echo
-      printf "■ノード同期状況： \e[32mOK\e[m\n"
-      printf "　ネットワーク最新ブロック　 :\e[33m$koios_blockNo\e[m\n"
+      printf "\e[35;2m■ノード同期状況\e[m： \e[32mOK\e[m\n"
+      printf "　  ネットワーク最新ブロック :\e[33m$koios_blockNo\e[m\n"
       printf "　ローカルノード最新ブロック :\e[33m$currentblock\e[m\n"
     fi
 
@@ -540,19 +546,23 @@ case ${num} in
     metrics_tx=`curl -s localhost:12798/metrics | grep txsProcessedNum_int | awk '{ print $2 }'`
 
     tx_chk(){
-      if [ $1 != 0 ]; then
-        printf "\e[32mOK\e[m"
+      if [[ "$2" != "false" ]] && [ $1 == " " ] ; then
+        if [[ "$2" = "true" ]] && [[ $1 > 0 ]]; then
+          printf "\e[32mOK\e[m"
+        else
+          printf "\e[31mNG\e[m Txが入ってきていません。リレーノードのトポロジーアップデーターを再確認してください\n"
+        fi
       else
-        printf "\e[31mNG\e[m Txが入ってきていません。リレーノードのトポロジーアップデーターを再確認してください"
+        printf "\e[32m条件付きOK\e[m"
       fi
     }
-
-    tx_count=`tx_chk $metrics_tx`
+  
+    tx_count=`tx_chk $metrics_tx $mempool_CHK`
     echo
-    printf "■Tx流入数:\e[33m$metrics_tx\e[m $tx_count\n"
+    printf "\e[35;2m■Tx流入数\e[m:\e[33m$metrics_tx\e[m $tx_count TraceMempool:\e[33m$mempool_CHK\e[m\n"
 
     echo
-    echo "■Peer接続状況"
+    printf "\e[35;2m■Peer接続状況\e[m\n"
     peers_in=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | awk -v port=":${CNODE_PORT}" '$3 ~ port {print}' | wc -l)
     peers_out=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | awk -v port=":(${CNODE_PORT}|${EKG_PORT}|${PROM_PORT})" '$3 !~ port {print}' | wc -l)
 
@@ -585,9 +595,9 @@ case ${num} in
     fi
 
     echo
-    printf "■VRFハッシュ値チェック$hash_check" 
-    printf "　チェーン登録ハッシュ値　　　:\e[33m$chain_Vrf_hash\e[m\n"
-    printf "　ローカルファイルハッシュ値　:\e[33m$local_vrf_hash\e[m\n"
+    printf "\e[35;2m■VRFハッシュ値チェック\e[m$hash_check" 
+    printf "　　　　チェーン登録ハッシュ値 :\e[33m$chain_Vrf_hash\e[m\n"
+    printf "　　ローカルファイルハッシュ値 :\e[33m$local_vrf_hash\e[m\n"
 
     rm -rf $NODE_HOME/vrf_check
 
@@ -618,12 +628,12 @@ case ${num} in
 
 
     echo
-    echo "プール運用証明書チェック(node.cert) $cc"
-    printf "　チェーン上カウンター    :\e[33m$chain_cert_counter\e[m\n"
-    printf "　CERTファイルカウンター　:\e[33m$local_cert_counter\e[m\n"
-    printf "　KES残り日数　　　　　　 :\e[33m$kes_days日\e[m\n"
-    printf "　CERTファイルKES-VK_Hex  :\e[33m$cert_cborHex\e[m\n"
-    printf "　ローカルKES-VK_Hex      :\e[33m$kes_cborHex\e[m\n"
+    printf "\e[35;2m■プール運用証明書チェック\e[m(node.cert) $cc\n"
+    printf "　    チェーン上カウンター :\e[33m$chain_cert_counter\e[m\n"
+    printf "　　CERTファイルカウンター :\e[33m$local_cert_counter\e[m\n"
+    printf "　　　　　　　 KES残り日数 :\e[33m$kes_days日\e[m\n"
+    printf "　  CERTファイルKES-VK_Hex :\e[33m$cert_cborHex\e[m\n"
+    printf "　      ローカルKES-VK_Hex :\e[33m$kes_cborHex\e[m\n"
 
     echo
     kes_int=$(($current_KES-$Start_KES+$metrics_KES))
@@ -636,10 +646,16 @@ case ${num} in
     }
     kic=`kes_int_chk $kes_int`
 
-    printf "■KES整合性:\e[33m$kes_int\e[m $kic\n"
+    printf "\e[35;2m■KES整合性\e[m:\e[33m$kes_int\e[m $kic\n"
     echo
     echo
     echo "ブロック生成可能状態チェックが完了しました"
+
+    if [ $mempool_CHK == "false" ]; then
+      printf "\e[31m$config_name-config.jsonのTraceMempoolがfalseになっています\n"
+      printf "\e[31m正確にチェックする場合はtrueへ変更し、ノード再起動後再度チェックしてください\e[m"
+      echo
+    fi
     echo
     echo "--注意--------------------------------------------------------"
     printf " > 1つでも \e[31mNG\e[m があった場合はプール構成を見直してください\n"
