@@ -30,7 +30,7 @@ else
 fi
 
 echo '------------------------------------------------'
-echo -e ">> SPO JAPAN GUILD TOOL \e[33mv:1.0\e[m \e[32m-${NETWORK_NAME}-\e[m \e[33m-$node_name-\e[m <<"
+echo -e ">> SPO JAPAN GUILD TOOL \e[33mv:0.1\e[m \e[32m-${NETWORK_NAME}-\e[m \e[33m-$node_name-\e[m <<"
 echo '------------------------------------------------'
 echo '
 [1] ウォレット操作
@@ -872,8 +872,7 @@ scale3(){
 }
 
 update(){
-  cd /tmp/cnode
-  wget -q https://raw.githubusercontent.com/btbf/spojapanguild/master/script/sjgtool.sh -O sjgtool.sh.tmp
+  wget -q https://raw.githubusercontent.com/btbf/spojapanguild/master/script/sjgtool.sh -O /tmp/cnode/sjgtool.sh.tmp
   tmp256=`sha256sum sjgtool.sh.tmp`
   sh256=`sha256sum $NODE_HOME/scripts/sjgtool.sh`
   arr_tmp256=(${tmp256//,/})
@@ -889,7 +888,7 @@ update(){
   wget -q https://raw.githubusercontent.com/btbf/spojapanguild/master/script/sjgtool.sh -O sjgtool.sh
   restart.bash
   fi
-  rm sjgtool.sh.tmp
+  rm /tmp/cnode/sjgtool.sh.tmp
 }
 
 
