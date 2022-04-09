@@ -9,7 +9,7 @@ main () {
 clear
 update
 if [ $? == 1 ]; then
-  $0 "$@" "-u";;
+  $0 "$@" "-u"
 fi
 
 if [ ${NETWORK_NAME} == "Testnet" ]; then
