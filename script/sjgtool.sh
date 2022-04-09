@@ -30,7 +30,7 @@ else
 fi
 
 echo '------------------------------------------------'
-echo -e ">> SPO JAPAN GUILD TOOL \e[33mver.0.1\e[m \e[32m-${NETWORK_NAME}-\e[m \e[33m-$node_name-\e[m <<"
+echo -e ">> SPO JAPAN GUILD TOOL \e[33mver.1.0\e[m \e[32m-${NETWORK_NAME}-\e[m \e[33m-$node_name-\e[m <<"
 echo '------------------------------------------------'
 echo '
 [1] ウォレット操作
@@ -473,7 +473,7 @@ case ${num} in
     vrf_path=`grep -H "VRF=" $script_path`
     cert_path=`grep -H "CERT=" $script_path`
     echo
-    printf "\e[35;2m■BPファイル存在確認\e[m\n"
+    printf "\e[35m■BPファイル存在確認\e[m\n"
     if [ $kes_path ]; then
       kes_name=${kes_path##*/}
       kes_CHK=`filecheck "$NODE_HOME/$kes_name"`
@@ -537,7 +537,7 @@ case ${num} in
       select_rtn
     else
       echo
-      printf "\e[35;2m■ノード同期状況\e[m： \e[32mOK\e[m\n"
+      printf "\e[35m■ノード同期状況\e[m： \e[32mOK\e[m\n"
       printf "　  ネットワーク最新ブロック :\e[33m$koios_blockNo\e[m\n"
       printf "　ローカルノード最新ブロック :\e[33m$currentblock\e[m\n"
     fi
@@ -559,10 +559,10 @@ case ${num} in
   
     tx_count=`tx_chk $metrics_tx $mempool_CHK`
     echo
-    printf "\e[35;2m■Tx流入数\e[m:\e[33m$metrics_tx\e[m $tx_count TraceMempool:\e[33m$mempool_CHK\e[m\n"
+    printf "\e[35m■Tx流入数\e[m:\e[33m$metrics_tx\e[m $tx_count TraceMempool:\e[33m$mempool_CHK\e[m\n"
 
     echo
-    printf "\e[35;2m■Peer接続状況\e[m\n"
+    printf "\e[35m■Peer接続状況\e[m\n"
     peers_in=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | awk -v port=":${CNODE_PORT}" '$3 ~ port {print}' | wc -l)
     peers_out=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | awk -v port=":(${CNODE_PORT}|${EKG_PORT}|${PROM_PORT})" '$3 !~ port {print}' | wc -l)
 
@@ -595,7 +595,7 @@ case ${num} in
     fi
 
     echo
-    printf "\e[35;2m■VRFハッシュ値チェック\e[m$hash_check" 
+    printf "\e[35m■VRFハッシュ値チェック\e[m$hash_check" 
     printf "　　　　チェーン登録ハッシュ値 :\e[33m$chain_Vrf_hash\e[m\n"
     printf "　　ローカルファイルハッシュ値 :\e[33m$local_vrf_hash\e[m\n"
 
@@ -628,7 +628,7 @@ case ${num} in
 
 
     echo
-    printf "\e[35;2m■プール運用証明書チェック\e[m(node.cert) $cc\n"
+    printf "\e[35m■プール運用証明書チェック\e[m(node.cert) $cc\n"
     printf "　    チェーン上カウンター :\e[33m$chain_cert_counter\e[m\n"
     printf "　　CERTファイルカウンター :\e[33m$local_cert_counter\e[m\n"
     printf "　　　　　　　 KES残り日数 :\e[33m$kes_days日\e[m\n"
@@ -646,7 +646,7 @@ case ${num} in
     }
     kic=`kes_int_chk $kes_int`
 
-    printf "\e[35;2m■KES整合性\e[m:\e[33m$kes_int\e[m $kic\n"
+    printf "\e[35m■KES整合性\e[m:\e[33m$kes_int\e[m $kic\n"
     echo
     echo
     echo "ブロック生成可能状態チェックが完了しました"
@@ -885,7 +885,7 @@ update(){
 
   if [[ ! ${arr_tmp256[0]} == ${arr_sh256[0]} ]]; then
   wget -q https://raw.githubusercontent.com/btbf/spojapanguild/master/script/sjgtool.sh -O $NODE_HOME/scripts/sjgtool.sh
-  restart.bash
+  exec $SHELL -l
   fi
   rm $NODE_HOME/scripts/sjgtool.sh.tmp
 }
