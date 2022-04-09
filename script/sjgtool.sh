@@ -889,6 +889,7 @@ update(){
 
   if [[ ! ${arr_tmp256[0]} == ${arr_sh256[0]} ]]; then
     mv $NODE_HOME/scripts/sjgtool.sh.tmp $NODE_HOME/scripts/sjgtool.sh
+    chmod 755 $NODE_HOME/scripts/sjgtool.sh
     return 1
   else
     return 2
