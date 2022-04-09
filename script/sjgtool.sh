@@ -8,6 +8,10 @@
 main () {
 clear
 update
+if [ $? == 1 ]; then
+  $0 "$@" "-u";;
+fi
+
 if [ ${NETWORK_NAME} == "Testnet" ]; then
     networkmagic="--testnet-magic 1097911063"
     koios="testnet"
@@ -883,9 +887,11 @@ update(){
   echo ${arr_sh256[0]}
 
 
-  if [[  ${arr_tmp256[0]} != ${arr_sh256[0]} ]]; then
-  wget -q https://raw.githubusercontent.com/btbf/spojapanguild/master/script/sjgtool.sh -O $NODE_HOME/scripts/sjgtool.sh
-  ./$NODE_HOME/scripts/sjgtool.sh
+  if [[ ! ${arr_tmp256[0]} == ${arr_sh256[0]} ]]; then
+    mv sjgtool.sh.tmp sjgtool.sh
+    return 1
+  else
+    return 2
   fi
   rm $NODE_HOME/scripts/sjgtool.sh.tmp
 }
