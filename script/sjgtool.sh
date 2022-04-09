@@ -900,7 +900,7 @@ scale3(){
 }
 
 update(){
-  Update Check...
+  printf "Update Check..."
   wget -q https://raw.githubusercontent.com/btbf/spojapanguild/master/script/sjgtool.sh -O $NODE_HOME/scripts/sjgtool.sh.tmp
   tmp256=`sha256sum $NODE_HOME/scripts/sjgtool.sh.tmp | awk '{ print $1 }'`
   sh256=`sha256sum $NODE_HOME/scripts/sjgtool.sh | awk '{ print $1 }'`
@@ -915,9 +915,10 @@ update(){
     read Wait
     return 1
   else
+    rm $NODE_HOME/scripts/sjgtool.sh.tmp
+    clear
     return 2
   fi
-  rm $NODE_HOME/scripts/sjgtool.sh.tmp
 }
 
 
