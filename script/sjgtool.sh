@@ -691,6 +691,7 @@ case ${num} in
     select_rtn
     ;;
   0)
+    clear
     exit
     ;;
   *)
