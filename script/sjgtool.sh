@@ -1,9 +1,9 @@
 #!/bin/bash
-#2022/04/08 v1.2 @btbf
-
 #
 # 入力値チェック/セット
 #
+
+TOOL_VERSION=1.0
 
 # General exit handler
 cleanup() {
@@ -900,20 +900,19 @@ scale3(){
 }
 
 update(){
+  Update Check...
   wget -q https://raw.githubusercontent.com/btbf/spojapanguild/master/script/sjgtool.sh -O $NODE_HOME/scripts/sjgtool.sh.tmp
-  tmp256=`sha256sum $NODE_HOME/scripts/sjgtool.sh.tmp`
-  sh256=`sha256sum $NODE_HOME/scripts/sjgtool.sh`
-  arr_tmp256=(${tmp256//,/})
-  arr_sh256=(${sh256//,/})
+  tmp256=`sha256sum $NODE_HOME/scripts/sjgtool.sh.tmp | awk '{ print $1 }'`
+  sh256=`sha256sum $NODE_HOME/scripts/sjgtool.sh | awk '{ print $1 }'`
   
-  echo ${arr_tmp256[0]}
-  echo
-  echo ${arr_sh256[0]}
-
-
-  if [[ ! ${arr_tmp256[0]} == ${arr_sh256[0]} ]]; then
+  if [[ ! $tmp256 == $sh256 ]]; then
     mv $NODE_HOME/scripts/sjgtool.sh.tmp $NODE_HOME/scripts/sjgtool.sh
     chmod 755 $NODE_HOME/scripts/sjgtool.sh
+    CUR_VERSION=$(grep -r ^TOOL_VERSION= "$NODE_HOME/scripts/sjgtool.sh" | cut -d'=' -f2)
+    GIT_VERSION=$(grep -r ^TOOL_VERSION= "$NODE_HOME/scripts/sjgtool.sh.tmp" | cut -d'=' -f2)
+    printf Ver.$CUR_VERSIONから$GIT_VERSIONへアップデートしました。
+    echo "Enterを押してリロードしてください"
+    read Wait
     return 1
   else
     return 2
