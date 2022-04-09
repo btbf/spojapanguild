@@ -10,7 +10,7 @@ cleanup() {
   [[ -n $1 ]] && err=$1 || err=$?
   [[ $err -eq 0 ]] && clear
   tput cnorm # restore cursor
-  [[ -n ${exit_msg} ]] && echo -e "\n${exit_msg}\n" || echo -e "\nGuild LiveView terminated, cleaning up...\n"
+  [[ -n ${exit_msg} ]] && echo -e "\n${exit_msg}\n" || echo -e "\nSPO JAPAN GUILD TOOLを終了しました。\n"
   tput sgr0  # turn off all attributes
   exit $err
 }
