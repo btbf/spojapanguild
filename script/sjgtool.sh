@@ -910,6 +910,7 @@ update(){
     chmod 755 $NODE_HOME/scripts/sjgtool.sh
     CUR_VERSION=$(grep -r ^TOOL_VERSION= "$NODE_HOME/scripts/sjgtool.sh" | cut -d'=' -f2)
     GIT_VERSION=$(grep -r ^TOOL_VERSION= "$NODE_HOME/scripts/sjgtool.sh.tmp" | cut -d'=' -f2)
+    printf "SPO JAPAN GUILD TOOL UPDATE"
     printf Ver.$CUR_VERSIONから$GIT_VERSIONへアップデートしました。
     echo "Enterを押してリロードしてください"
     read Wait
