@@ -5,11 +5,33 @@
 # 入力値チェック/セット
 #
 
+# General exit handler
+cleanup() {
+  [[ -n $1 ]] && err=$1 || err=$?
+  [[ $err -eq 0 ]] && clear
+  tput cnorm # restore cursor
+  [[ -n ${exit_msg} ]] && echo -e "\n${exit_msg}\n" || echo -e "\nGuild LiveView terminated, cleaning up...\n"
+  tput sgr0  # turn off all attributes
+  exit $err
+}
+trap cleanup HUP INT TERM
+trap 'stty echo' EXIT
+
+# Command     : myExit [exit code] [message]
+# Description : gracefully handle an exit and restore terminal to original state
+myExit() {
+  exit_msg="$2"
+  cleanup "$1"
+}
+
+
+
 main () {
 clear
 update
 if [ $? == 1 ]; then
   $NODE_HOME/scripts/$0 "$@" "-u"
+  myExit 0
 fi
 
 if [ ${NETWORK_NAME} == "Testnet" ]; then
