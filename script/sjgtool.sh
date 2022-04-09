@@ -1,5 +1,5 @@
 #!/bin/bash
-#2022/04/08 v1.0 @btbf
+#2022/04/08 v1.2 @btbf
 
 #
 # 入力値チェック/セット
@@ -30,7 +30,7 @@ else
 fi
 
 echo '------------------------------------------------'
-echo -e ">> SPO JAPAN GUILD TOOL \e[33mver.1.0\e[m \e[32m-${NETWORK_NAME}-\e[m \e[33m-$node_name-\e[m <<"
+echo -e ">> SPO JAPAN GUILD TOOL \e[33mver.1.2\e[m \e[32m-${NETWORK_NAME}-\e[m \e[33m-$node_name-\e[m <<"
 echo '------------------------------------------------'
 echo '
 [1] ウォレット操作
