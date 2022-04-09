@@ -913,7 +913,7 @@ update(){
     chmod 755 $NODE_HOME/scripts/sjgtool.sh
     printf "SPO JAPAN GUILD TOOL UPDATE\n"
     printf "Ver.\e[33m$CUR_VERSION\e[mから\e[32m$GIT_VERSION\e[mへアップデートしました\n"
-    echo "Enterを押してリロードしてください\n"
+    echo "Enterを押してリロードしてください"
     read Wait
     return 1
   else
