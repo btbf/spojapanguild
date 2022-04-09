@@ -34,7 +34,7 @@ else
 fi
 
 echo '------------------------------------------------'
-echo -e ">> SPO JAPAN GUILD TOOL \e[33mver.1.2\e[m \e[32m-${NETWORK_NAME}-\e[m \e[33m-$node_name-\e[m <<"
+echo -e ">> SPO JAPAN GUILD TOOL \e[33mver.1.0\e[m \e[32m-${NETWORK_NAME}-\e[m \e[33m-$node_name-\e[m <<"
 echo '------------------------------------------------'
 echo '
 [1] ウォレット操作
@@ -888,7 +888,7 @@ update(){
 
 
   if [[ ! ${arr_tmp256[0]} == ${arr_sh256[0]} ]]; then
-    mv sjgtool.sh.tmp sjgtool.sh
+    mv $NODE_HOME/scripts/sjgtool.sh.tmp $NODE_HOME/scripts/sjgtool.sh
     return 1
   else
     return 2
