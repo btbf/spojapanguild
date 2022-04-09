@@ -30,7 +30,8 @@ main () {
 clear
 update
 if [ $? == 1 ]; then
-  $NODE_HOME/scripts/$0 "$@" "-u"
+  cd $NODE_HOME/scripts
+  $0 "$@" "-u"
   myExit 0
 fi
 
