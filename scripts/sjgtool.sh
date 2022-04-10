@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=1.1-Beta
+TOOL_VERSION=1.2-Beta
 
 # General exit handler
 cleanup() {
@@ -446,12 +446,22 @@ case ${num} in
       echo
       echo "エアギャップ stakepoolid_bech32.txt作成コマンド"
       echo '---------------------------------------------------------------'
+      echo 'chmod u+rwx $HOME/cold-keys'
       echo 'cardano-cli stake-pool id \'
       echo    '--cold-verification-key-file $HOME/cold-keys/node.vkey \'
       echo    '--output-format bech32 > $NODE_HOME/stakepoolid_bech32.txt'
+      echo 'chmod a-rwx $HOME/cold-keys'
       echo '---------------------------------------------------------------'
       select_rtn
     fi
+
+    kes_vk_file_check=`filecheck "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME"`
+    if [ $kes_vk_file_check == "false" ]; then
+      printf "\n\e[31m$POOL_HOTKEY_VK_FILENAMEが見つかりません\e[m\n\n"
+      printf "エアギャップにある\e[32m$POOL_HOTKEY_VK_FILENAME\e[mをBPの\e[33m$NODE_HOME\e[mにコピーし再度実行してください\n"
+      select_rtn
+    fi
+
 
     mempool_CHK=`cat $CONFIG | jq ".TraceMempool"`
 
