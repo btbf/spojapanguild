@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=1.0-a
+TOOL_VERSION=1.0-Beta
 
 # General exit handler
 cleanup() {
@@ -28,7 +28,7 @@ myExit() {
 
 main () {
 clear
-update
+#update
 if [ $? == 1 ]; then
   cd $NODE_HOME/scripts
   $0 "$@" "-u"
@@ -56,15 +56,16 @@ else
     node_name="Relay"
 fi
 
-echo '------------------------------------------------'
+echo '---------------------------------------------------'
 echo -e ">> SPO JAPAN GUILD TOOL \e[33mver$TOOL_VERSION\e[m \e[32m-${NETWORK_NAME}-\e[m \e[33m-$node_name-\e[m <<"
-echo '------------------------------------------------'
+echo '---------------------------------------------------'
 echo '
 [1] ウォレット操作
 [2] ブロック生成状態チェック
 [q] 終了
 '
-read -n 1 num
+echo
+read -n 1 -p "メニュー番号を入力してください : >" num
 case ${num} in
   1)
     ################################################
@@ -80,7 +81,7 @@ case ${num} in
 [3] 報酬/資金出金
 [b] 戻る 
     '
-    read -n 1 wallet
+    read -n 1 -p "メニュー番号を入力してください : >" wallet
     case ${wallet} in
       1)
         clear
@@ -133,19 +134,20 @@ case ${num} in
         echo '>> 報酬/資金出金'
         echo '----------------------------'
         echo 
-        echo '■プール報酬出金(stake.addr)
+        printf "\e[35m■プール報酬出金($WALLET_STAKE_ADDR_FILENAME)\e[m
 ----------------------------
 [1] 任意のアドレスへ出金
-[2] payment.addrへ出金
-
-■プール資金出金(payment.addr)
+[2] $WALLET_PAY_ADDR_FILENAMEへ出金
+\n
+\e[35m■プール資金出金($WALLET_PAY_ADDR_FILENAME)\e[m
 ----------------------------
 [3] 任意のアドレスへ出金
-
-[h] ホームへ戻る
-[q] 終了
-                  '
-        read -n 1 withdrawl
+\n
+----------------------------
+[h] ホームへ戻る　[q] 終了
+\n
+"
+        read -n 1 -p "メニュー番号を入力してください : >" withdrawl
         case ${withdrawl} in
           #[START] payment.addr ⇒ 任意のアドレス [START] 
 
@@ -153,17 +155,18 @@ case ${num} in
             clear
             echo '------------------------------------------------------------------------'
             echo "資金移動"
-            echo -e ">> \e[33mstake.addr\e[m から \e[33m任意のアドレス\e[m への出金"
+            echo -e ">> \e[33m$WALLET_STAKE_ADDR_FILENAME\e[m から \e[33m任意のアドレス\e[m への出金"
             echo
             echo "■ 注意 ■"
             echo "報酬は全額引き出しのみとなります"
             echo '------------------------------------------------------------------------'
+            
             efile_check=`filecheck "$NODE_HOME/$WALLET_STAKE_ADDR_FILENAME"`
             if [ ${efile_check} == "true" ]; then
               #stake.addr残高算出
               echo
               reward_Balance
-              
+              printf '\n\e[33m出金をキャンセルする場合は 1 を入力してEnterを押してください\e[m\n'
               #出金先アドレスチェック
               send_address
 
@@ -174,12 +177,12 @@ case ${num} in
               #ウォレット残高とUTXO参照
               payment_utxo
 
-              withdrawalString="$(cat stake.addr)+${rewardBalance}"
+              withdrawalString="$(cat $WALLET_STAKE_ADDR_FILENAME)+${rewardBalance}"
 
               #トランザクションファイル仮作成
               cardano-cli transaction build-raw \
               ${tx_in} \
-              --tx-out $(cat payment.addr)+0 \
+              --tx-out $(cat $WALLET_PAY_ADDR_FILENAME)+0 \
               --tx-out ${destinationAddress}+0 \
               --invalid-hereafter $(( ${currentSlot} + 10000)) \
               --fee 0 \
@@ -207,7 +210,7 @@ case ${num} in
               #最終トランザクションファイル作成
               cardano-cli transaction build-raw \
               ${tx_in} \
-              --tx-out $(cat payment.addr)+${txOut} \
+              --tx-out $(cat $WALLET_PAY_ADDR_FILENAME)+${txOut} \
               --tx-out ${destinationAddress}+${rewardBalance} \
               --invalid-hereafter $(( ${currentSlot} + 10000)) \
               --fee ${fee} \
@@ -232,7 +235,7 @@ case ${num} in
             clear
             echo '------------------------------------------------------------------------'
             echo "資金移動"
-            echo -e ">> \e[33mstake.addr\e[m から \e[33mpayment.addr\e[m への出金"
+            echo -e ">> \e[33m$WALLET_STAKE_ADDR_FILENAME\e[m から \e[33m$WALLET_PAY_ADDR_FILENAME\e[m への出金"
             echo
             echo "■ 注意 ■"
             echo "報酬は全額引き出しのみとなります"
@@ -247,18 +250,17 @@ case ${num} in
               current_Slot
 
               #payment.addr
-              destinationAddress=$(cat payment.addr)
-              echo 出金先: $destinationAddress
+              destinationAddress=$(cat $WALLET_PAY_ADDR_FILENAME)
 
               #ウォレット残高とUTXO参照
               payment_utxo
 
-              withdrawalString="$(cat stake.addr)+${rewardBalance}"
+              withdrawalString="$(cat $WALLET_STAKE_ADDR_FILENAME)+${rewardBalance}"
 
               #トランザクションファイル仮作成
               cardano-cli transaction build-raw \
               ${tx_in} \
-              --tx-out $(cat payment.addr)+0 \
+              --tx-out $(cat $WALLET_PAY_ADDR_FILENAME)+0 \
               --invalid-hereafter $(( ${currentSlot} + 10000)) \
               --fee 0 \
               --withdrawal ${withdrawalString} \
@@ -284,7 +286,7 @@ case ${num} in
               #最終トランザクションファイル作成
               cardano-cli transaction build-raw \
                 ${tx_in} \
-                --tx-out $(cat payment.addr)+${txOut} \
+                --tx-out $(cat $WALLET_PAY_ADDR_FILENAME)+${txOut} \
                 --invalid-hereafter $(( ${currentSlot} + 10000)) \
                 --fee ${fee} \
                 --withdrawal ${withdrawalString} \
@@ -310,12 +312,13 @@ case ${num} in
             clear
             echo '------------------------------------------------------------------------'
             echo "資金移動"
-            echo -e ">> \e[33mpayment.addr\e[m から \e[33m任意のアドレス\e[m への出金"
+            echo -e ">> \e[33m$WALLET_PAY_ADDR_FILENAME\e[m から \e[33m任意のアドレス\e[m への出金"
             echo
             echo "■ 注意 ■"
-            echo "payment.addrには誓約で設定した額以上のADAが入金されてる必要があります"
+            echo "$WALLET_PAY_ADDR_FILENAMEには誓約で設定した額以上のADAが入金されてる必要があります"
             echo "出金には十分ご注意ください"
             echo '------------------------------------------------------------------------'
+            printf '\e[33m出金をキャンセルする場合は 1 を入力してEnterを押してください\e[m'
             efile_check=`filecheck "$NODE_HOME/$WALLET_PAY_ADDR_FILENAME"`
             if [ ${efile_check} == "true" ]; then
               #出金先アドレスチェック
@@ -325,7 +328,7 @@ case ${num} in
               #出金額指定
               clear
               echo '------------------------------------------------------------------------'
-              echo -e ">> \e[33mpayment.addr\e[m から \e[33m任意のアドレス\e[m への出金"
+              echo -e ">> \e[33m$WALLET_PAY_ADDR_FILENAME\e[m から \e[33m任意のアドレス\e[m への出金"
               echo '------------------------------------------------------------------------'
               echo
               echo "出金額をlovelaces形式で入力してください"
@@ -387,7 +390,7 @@ case ${num} in
               #最終トランザクションファイル作成
               cardano-cli transaction build-raw \
                   ${tx_in} \
-                  --tx-out $(cat payment.addr)+${txOut} \
+                  --tx-out $(cat $WALLET_PAY_ADDR_FILENAME)+${txOut} \
                   --tx-out ${destinationAddress}+${amountToSend} \
                   --invalid-hereafter $(( ${currentSlot} + 10000)) \
                   --fee ${fee} \
@@ -587,11 +590,15 @@ case ${num} in
     metrics_tx=`curl -s localhost:12798/metrics | grep txsProcessedNum_int | awk '{ print $2 }'`
 
     tx_chk(){
-      if [[ "$2" != "false" ]] && [ $1 == " " ] ; then
+      if [[ "$2" != "false" ]] && [ $1 != " " ] ; then
         if [[ "$2" = "true" ]] && [[ $1 > 0 ]]; then
           printf "\e[32mOK\e[m"
         else
-          printf "\e[31mNG\e[m Txが入ってきていません。リレーノードのトポロジーアップデーターを再確認してください\n"
+          printf "\e[31mNG\e[m Txが入ってきていません。1分後に再実行してください\n"
+          printf "再実行してもNGの場合は、以下の点を再確認してください\n"
+          printf "・当サーバーのFW\n"
+          printf "・リレーノードのトポロジーアップデーター設定(フェッチリストログファイルなど)\n"
+          printf "・リレーノードの$koios-topology.jsonに当サーバーのIPが含まれているか\n"
         fi
       else
         printf "\e[32m条件付きOK\e[m"
@@ -624,8 +631,8 @@ case ${num} in
 
     #ローカルVRFファイル検証
     mkdir $NODE_HOME/vrf_check
-    cp $NODE_HOME/vrf.skey $NODE_HOME/vrf_check/
-    cardano-cli key verification-key --signing-key-file $NODE_HOME/vrf_check/vrf.skey --verification-key-file $NODE_HOME/vrf_check/vrf.vkey
+    cp $NODE_HOME/$POOL_VRF_SK_FILENAME $NODE_HOME/vrf_check/
+    cardano-cli key verification-key --signing-key-file $NODE_HOME/vrf_check/$POOL_VRF_SK_FILENAME --verification-key-file $NODE_HOME/vrf_check/vrf.vkey
     cardano-cli node key-hash-VRF --verification-key-file $NODE_HOME/vrf_check/vrf.vkey --out-file $NODE_HOME/vrf_check/vkeyhash.txt
     local_vrf_hash=$(cat $NODE_HOME/vrf_check/vkeyhash.txt)
     
@@ -669,7 +676,7 @@ case ${num} in
 
 
     echo
-    printf "\e[35m■プール運用証明書チェック\e[m(node.cert) $cc\n"
+    printf "\e[35m■プール運用証明書チェック\e[m($POOL_OPCERT_FILENAME) $cc\n"
     printf "　    チェーン上カウンター :\e[33m$chain_cert_counter\e[m\n"
     printf "　　CERTファイルカウンター :\e[33m$local_cert_counter\e[m\n"
     printf "　　　　　　　 KES残り日数 :\e[33m$kes_days日\e[m\n"
@@ -740,7 +747,8 @@ select_rtn(){
 air_gap(){
   echo
   echo
-  echo '■エアギャップオフラインマシンで以下の操作を実施してください'
+  echo
+  echo '■Txファイルを作成しました。エアギャップオフラインマシンで以下の操作を実施してください'
   echo
   echo -e "\e[33m1. BPのtx.raw をエアギャップのcnodeディレクトリにコピーしてください\e[m"
   echo '----------------------------------------'
@@ -764,6 +772,7 @@ air_gap(){
   echo '----------------------------------------'
   echo
   echo "1～3の操作が終わったらEnterを押してください"
+  echo "出金をキャンセルする場合はEnterを押して2を入力してください"
   read Wait
 }
 
@@ -786,7 +795,7 @@ reward_Balance(){
   cd $NODE_HOME
     rewardBalance=$(cardano-cli query stake-address-info \
         $networkmagic \
-        --address $(cat stake.addr) | jq -r ".[0].rewardAccountBalance")
+        --address $(cat $WALLET_STAKE_ADDR_FILENAME) | jq -r ".[0].rewardAccountBalance")
     echo "プール報酬: `scale1 $rewardBalance` ADA"
     echo
 
@@ -868,25 +877,30 @@ send_address(){
     do
       read -p "出金先のアドレスを入力してください： > " destinationAddress
       if [[ "$destinationAddress" == *addr* ]]; then
+        if { [ ${NETWORK_NAME} == "Mainnet" ] && [[ "$destinationAddress" != *addr_test* ]]; } || [ ${NETWORK_NAME} == "Testnet" ] && [[ "$destinationAddress" == *addr_test* ]] ; then
+          echo
+          echo '------------------------------------------------'
+          echo 出金先: $destinationAddress
+          echo '------------------------------------------------'
+          echo
 
-        echo
-        echo '------------------------------------------------'
-        echo 出金先: $destinationAddress
-        echo '------------------------------------------------'
-        echo
-
-        read -n 1 -p "出金先はこちらでよろしいですか？：(y/n) > " send_check
-        if [ "$send_check" == "y" -o "$send_check" == "Y" ]; then
-            break 1
+          read -n 1 -p "出金先はこちらでよろしいですか？：(y/n) > " send_check
+          if [ "$send_check" == "y" -o "$send_check" == "Y" ]; then
+              break 1
+          else
+            printf "\n\e[31m出金先アドレスを再度入力してください\e[m\n\n"
+            continue 1
+          fi
         else
-          echo
-          echo "出金先アドレスを再度入力してください"
-          continue 1
+          printf "\n\e[31m現在のネットワーク\e[m(\e[32m${NETWORK_NAME}\e[m)\e[31mと異なるアドレスが入力されました。再度ご確認ください\e[m\n"
         fi
-
+      elif [ "$destinationAddress" == "1" ]; then
+        printf "\n\e[33m出金手続きをキャンセルしました\e[m\n"
+        select_rtn
+        break
       else
-          echo
-          echo "出金先アドレスを再度入力してください"
+          printf "\n\e[31m出金先アドレスを再度入力してください\e[m\n\n"
+
       fi
   done
 }
@@ -945,10 +959,9 @@ source ./env
 cd $NODE_HOME
 
 #ノード起動確認
-node_check=`ps -ef | grep cardano-node | grep -v grep | wc -l`
-echo $node_check
+CNODE_PID=$(pgrep -fn "$(basename ${CNODEBIN}).*.port ${CNODE_PORT}")
 clear
-if [ ${node_check} == "1" ]; then
+if [[ -n $CNODE_PID ]]; then
   while :
   do
     slot_check=`curl -s localhost:12798/metrics | grep slotNum_int`
@@ -963,6 +976,6 @@ if [ ${node_check} == "1" ]; then
   done
     
 else 
-    echo "ノードを起動して再度実行してください"
+    printf "\n\e[31mノードを起動して再度実行してください\e[m\n\n"
     exit
 fi
