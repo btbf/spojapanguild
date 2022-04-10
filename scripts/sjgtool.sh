@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=1.0-Beta
+TOOL_VERSION=1.1-Beta
 
 # General exit handler
 cleanup() {
@@ -931,7 +931,7 @@ scale3(){
 }
 
 update(){
-  printf "Update Check..."
+  printf "Update Check...\n"
   wget -q https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/sjgtool.sh -O $NODE_HOME/scripts/sjgtool.sh.tmp
   tmp256=`sha256sum $NODE_HOME/scripts/sjgtool.sh.tmp | awk '{ print $1 }'`
   sh256=`sha256sum $NODE_HOME/scripts/sjgtool.sh | awk '{ print $1 }'`
