@@ -1,6 +1,6 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2022/04/10 v1.0-a
+最終更新日：2022/04/11 v1.2-Beta
 
 !!! info "主な機能"
     * payment.addr 未使用UTXO照会  
@@ -29,8 +29,9 @@ chmod 755 sjgtool.sh
     POOL_OPCERT_FILENAME="node.cert"  
     POOL_VRF_SK_FILENAME="vrf.skey"  
 
+
+**envファイル修正　参考スクリプト**
 ```
-#参考スクリプト
 sed -i $NODE_HOME/scripts/env \
     -e '1,73s!#WALLET_PAY_ADDR_FILENAME="payment.addr"!WALLET_PAY_ADDR_FILENAME="payment.addr"!' \
     -e '1,73s!#WALLET_STAKE_ADDR_FILENAME="reward.addr"!WALLET_STAKE_ADDR_FILENAME="stake.addr"!' \
@@ -39,7 +40,13 @@ sed -i $NODE_HOME/scripts/env \
     -e '1,73s!#POOL_VRF_SK_FILENAME="vrf.skey"!POOL_VRF_SK_FILENAME="vrf.skey"!'
 ```
 
+**スクリプトへのパスを通し、任意の単語で起動出来るようにする**
+```
+echo alias gtool="'cd $NODE_HOME/scripts; ./sjgtool.sh'" >> $HOME/.bashrc
+source $HOME/.bashrc
+```
+
 TOOLを実行する
 ```
-./sjgtool.sh
+gtool
 ```
