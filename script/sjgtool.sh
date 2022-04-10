@@ -62,7 +62,7 @@ echo '------------------------------------------------'
 echo '
 [1] ウォレット操作
 [2] ブロック生成状態チェック
-[0] 終了
+[q] 終了
 '
 read -n 1 num
 case ${num} in
@@ -141,6 +141,9 @@ case ${num} in
               ■プール資金出金(payment.addr)
               ----------------------------
               [3] 任意のアドレスへ出金
+
+              [h] ホームへ戻る
+              [q] 終了
                   '
         read -n 1 withdrawl
         case ${withdrawl} in
@@ -404,14 +407,21 @@ case ${num} in
 
             select_rtn
             ;;
-          #[END] payment.addr ⇒ 任意のアドレス [END] 
+          h)
+            main ;;
+          q) 
+            clear
+            echo
+            echo "SPO JAPAN GUILD TOOL Closed!" 
+            echo
+            exit ;;
           *)
             echo '番号が不正です'
             select_rtn
             ;;
         esac
         ;;
-      4)
+      b)
         main ;;
       *)
         echo '番号が不正です'
@@ -694,8 +704,11 @@ case ${num} in
     echo
     select_rtn
     ;;
-  0)
+  q)
     clear
+    echo
+    echo "SPO JAPAN GUILD TOOL Closed!" 
+    echo
     exit
     ;;
   *)
