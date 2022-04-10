@@ -78,6 +78,7 @@ case ${num} in
 [1] ウォレット残高確認
 [2] プール報酬確認
 [3] 報酬/資金出金
+[b] 戻る 
     '
     read -n 1 wallet
     case ${wallet} in
@@ -133,14 +134,14 @@ case ${num} in
         echo '----------------------------'
         echo 
         echo '■プール報酬出金(stake.addr)
-----------------------------
-[1] 任意のアドレスへ出金
-[2] payment.addrへ出金
+              ----------------------------
+              [1] 任意のアドレスへ出金
+              [2] payment.addrへ出金
 
-■プール資金出金(payment.addr)
-----------------------------
-[3] 任意のアドレスへ出金
-    '
+              ■プール資金出金(payment.addr)
+              ----------------------------
+              [3] 任意のアドレスへ出金
+                  '
         read -n 1 withdrawl
         case ${withdrawl} in
           #[START] payment.addr ⇒ 任意のアドレス [START] 
@@ -410,12 +411,15 @@ case ${num} in
             ;;
         esac
         ;;
+      4)
+        main ;;
       *)
         echo '番号が不正です'
         select_rtn
         ;;
     esac
     ;;
+    
   2)
     clear
     log_file="$HOME/dirname-`date +'%Y-%m-%d_%H-%M-%S'`.log"
