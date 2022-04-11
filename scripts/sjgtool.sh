@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=1.2-Beta
+TOOL_VERSION=1.3-Beta
 
 # General exit handler
 cleanup() {
@@ -28,7 +28,7 @@ myExit() {
 
 main () {
 clear
-update
+#update
 if [ $? == 1 ]; then
   cd $NODE_HOME/scripts
   $0 "$@" "-u"
@@ -600,18 +600,16 @@ case ${num} in
     metrics_tx=`curl -s localhost:12798/metrics | grep txsProcessedNum_int | awk '{ print $2 }'`
 
     tx_chk(){
-      if [[ "$2" != "false" ]] && [ $1 != " " ] ; then
-        if [[ "$2" = "true" ]] && [[ $1 > 0 ]]; then
-          printf "\e[32mOK\e[m"
-        else
-          printf "\e[31mNG\e[m Txが入ってきていません。1分後に再実行してください\n"
-          printf "再実行してもNGの場合は、以下の点を再確認してください\n"
-          printf "・当サーバーのFW\n"
-          printf "・リレーノードのトポロジーアップデーター設定(フェッチリストログファイルなど)\n"
-          printf "・リレーノードの$koios-topology.jsonに当サーバーのIPが含まれているか\n"
-        fi
-      else
+      if [ "$2" = "true" ] && [ $1 > 0 ]; then
+        printf "\e[32mOK\e[m"
+      elif [ "$2" == "false" ] && [ $1 == " " ]; then
         printf "\e[32m条件付きOK\e[m"
+      else
+        printf "\e[31mNG\e[m Txが入ってきていません。1分後に再実行してください\n"
+        printf "\n再実行してもNGの場合は、以下の点を再確認してください\n"
+        printf "・当サーバーのFW\n"
+        printf "・リレーノードのトポロジーアップデーター設定(フェッチリストログファイルなど)\n"
+        printf "・リレーノードの$config_name-topology.jsonに当サーバーのIPが含まれているか\n"
       fi
     }
   
@@ -887,7 +885,7 @@ send_address(){
     do
       read -p "出金先のアドレスを入力してください： > " destinationAddress
       if [[ "$destinationAddress" == *addr* ]]; then
-        if { [ ${NETWORK_NAME} == "Mainnet" ] && [[ "$destinationAddress" != *addr_test* ]]; } || [ ${NETWORK_NAME} == "Testnet" ] && [[ "$destinationAddress" == *addr_test* ]] ; then
+        if { [ ${NETWORK_NAME} = "Mainnet" ] && [[ "$destinationAddress" != *_test* ]]; } || { [ ${NETWORK_NAME} = "Testnet" ] && [[ "$destinationAddress" = *_test* ]]; } ; then
           echo
           echo '------------------------------------------------'
           echo 出金先: $destinationAddress
