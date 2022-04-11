@@ -28,7 +28,7 @@ myExit() {
 
 main () {
 clear
-#update
+update
 if [ $? == 1 ]; then
   cd $NODE_HOME/scripts
   $0 "$@" "-u"
