@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=1.3-Beta
+TOOL_VERSION=1.4-Beta
 
 # General exit handler
 cleanup() {
