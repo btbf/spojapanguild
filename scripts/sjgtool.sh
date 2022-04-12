@@ -607,7 +607,7 @@ case ${num} in
       else
         printf "\e[31mNG\e[m Txが入ってきていません。1分後に再実行してください\n"
         printf "\n再実行してもNGの場合は、以下の点を再確認してください\n"
-        printf "・当サーバーのFW\n"
+        printf "・BPのファイアウォールの設定\n"
         printf "・リレーノードのトポロジーアップデーター設定(フェッチリストログファイルなど)\n"
         printf "・リレーノードの$config_name-topology.jsonに当サーバーのIPが含まれているか\n"
       fi
@@ -658,7 +658,8 @@ case ${num} in
     rm -rf $NODE_HOME/vrf_check
 
     chain_cert_counter=`cat $NODE_HOME/pooldata.txt | jq -r ".[].op_cert_counter"`
-    local_cert_counter=`cardano-cli text-view decode-cbor --in-file $POOL_OPCERT_FILENAME | grep int | head -1 | cut -d"(" -f2 | cut -d")" -f1`
+    #local_cert_counter=`cardano-cli text-view decode-cbor --in-file $POOL_OPCERT_FILENAME | grep int | head -1 | cut -d"(" -f2 | cut -d")" -f1`
+    local_cert_counter=5
     kes_remaining=`curl -s http://localhost:12798/metrics | grep KESPeriods_int | awk '{ print $2 }'`
     kes_days=`bc <<< "$kes_remaining * 1.5"`
     kes_cborHex=`cat $NODE_HOME/$POOL_HOTKEY_VK_FILENAME | jq '.cborHex' | tr -d '"'`
@@ -666,9 +667,9 @@ case ${num} in
 
     cert_counter(){
       if [ $kes_cborHex == $cert_cborHex ]; then
-        if [ $1 != "null" ] && [[ $1 -ge $2 ]] && [[ $kes_remaining -ge 1 ]]; then
+        if [ $1 != "null" ] && [[ $2 -ge $1 ]] && [[ $kes_remaining -ge 1 ]]; then
           printf "\e[32mOK\e[m\n"
-        elif [ $1 != "null" ] && [[ $1 -lt $2 ]] && [[ $kes_remaining -ge 1 ]]; then
+        elif [ $1 != "null" ] && [[ $2 -lt $1 ]] && [[ $kes_remaining -ge 1 ]]; then
           printf "\e[31mNG カウンター番号がチェーンより小さいです\e[m\n"
         elif [ $1 == "null" ] && [[ $kes_remaining -ge 1 ]]; then
           printf "\e[32mOK (ブロック未生成)\e[m\n"
