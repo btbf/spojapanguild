@@ -658,8 +658,7 @@ case ${num} in
     rm -rf $NODE_HOME/vrf_check
 
     chain_cert_counter=`cat $NODE_HOME/pooldata.txt | jq -r ".[].op_cert_counter"`
-    #local_cert_counter=`cardano-cli text-view decode-cbor --in-file $POOL_OPCERT_FILENAME | grep int | head -1 | cut -d"(" -f2 | cut -d")" -f1`
-    local_cert_counter=5
+    local_cert_counter=`cardano-cli text-view decode-cbor --in-file $POOL_OPCERT_FILENAME | grep int | head -1 | cut -d"(" -f2 | cut -d")" -f1`
     kes_remaining=`curl -s http://localhost:12798/metrics | grep KESPeriods_int | awk '{ print $2 }'`
     kes_days=`bc <<< "$kes_remaining * 1.5"`
     kes_cborHex=`cat $NODE_HOME/$POOL_HOTKEY_VK_FILENAME | jq '.cborHex' | tr -d '"'`
@@ -670,7 +669,7 @@ case ${num} in
         if [ $1 != "null" ] && [[ $2 -ge $1 ]] && [[ $kes_remaining -ge 1 ]]; then
           printf "\e[32mOK\e[m\n"
         elif [ $1 != "null" ] && [[ $2 -lt $1 ]] && [[ $kes_remaining -ge 1 ]]; then
-          printf "\e[31mNG CERTカウンター番号がチェーン上カウンターより小さいです\e[m\n"
+          printf "\e[31mNG カウンター番号がチェーンより小さいです\e[m\n"
         elif [ $1 == "null" ] && [[ $kes_remaining -ge 1 ]]; then
           printf "\e[32mOK (ブロック未生成)\e[m\n"
         else
