@@ -670,7 +670,7 @@ case ${num} in
         if [ $1 != "null" ] && [[ $2 -ge $1 ]] && [[ $kes_remaining -ge 1 ]]; then
           printf "\e[32mOK\e[m\n"
         elif [ $1 != "null" ] && [[ $2 -lt $1 ]] && [[ $kes_remaining -ge 1 ]]; then
-          printf "\e[31mNG カウンター番号がチェーンより小さいです\e[m\n"
+          printf "\e[31mNG CERTカウンター番号がチェーン上カウンターより小さいです\e[m\n"
         elif [ $1 == "null" ] && [[ $kes_remaining -ge 1 ]]; then
           printf "\e[32mOK (ブロック未生成)\e[m\n"
         else
