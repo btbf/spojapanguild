@@ -1,5 +1,9 @@
 # 変更履歴
 
+## 2022/04/14　ver. 11.3
+!!! note ""
+    ・[SPO JAPAN GUILD TOOL](./operation/tool.md)をリリース
+
 ## 2022/04/07　ver. 11.2
 !!! note ""
     ・payment.addrにネイティブトークンが含まれている場合のTx送信エラー修正  
