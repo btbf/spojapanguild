@@ -157,20 +157,11 @@ chmod a-rwx $HOME/cold-keys
 
 ## **5.KESチェックプログラム実行**
 
-2022/02/06 最新バージョン4.1
+**SPO JAPAN GUILD TOOLを実行する**
 
-!!! danger "注意"
-    *** ノードが同期したことを確認してから以下を実行してください ***
+```
+gtool
+```
+>[2] ブロック生成状態チェック を選択する
 
-=== "ブロックプロデューサーノード"
-    ```
-    cd $NODE_HOME
-    wget https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/kes_chk.sh -O kes_chk.sh
-    chmod 755 kes_chk.sh
-    ```
-    ```
-    ./kes_chk.sh
-    ```
-    > 最初に`pool`から始まるPoolIDを入力してください。[adapools.org](https://adapools.org/)  
-    > 表示された内容をご確認ください。  
-    > 最後に"KESは正常に更新されました"と表示されれば完了です  
+SPO JAPAN GUILD TOOLの導入は[こちら](./tool.md)をご参照ください
