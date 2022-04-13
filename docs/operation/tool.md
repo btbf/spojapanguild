@@ -1,6 +1,6 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2022/04/11 v1.2-Beta
+最終更新日：2022/04/14 v2.0
 
 !!! info "主な機能"
     * payment.addr 未使用UTXO照会  
@@ -15,7 +15,7 @@
 **スクリプトダウンロード**
 ```
 cd $NODE_HOME/scripts
-wget https://raw.githubusercontent.com/btbf/spojapanguild/master/script/sjgtool.sh -O sjgtool.sh
+wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/sjgtool.sh -O sjgtool.sh
 chmod 755 sjgtool.sh
 ```
 
@@ -50,3 +50,18 @@ TOOLを実行する
 ```
 gtool
 ```
+
+!!! bug "既知の不具合"
+
+    * **[2] ブロック生成状態チェック**
+
+    1.対象プール、プールIDがnullになる場合があります。  
+    2.エポック切り替わり後、半日～1日までは有効ステークが0ADAになります。  
+    3.過去にVRFキーを変更したことがある場合は、チェーン登録ハッシュ値が古いデータを参照することがあります。
+
+    上記の不具合は、チェーンデータ取得用APIの既知の不具合によるもので、現在修正依頼中です。
+    もしこの項目でNGが出た場合は、ディスコードでご質問ください。
+
+    また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
+
+
