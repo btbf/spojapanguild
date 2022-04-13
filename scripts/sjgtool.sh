@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=1.4-Beta
+TOOL_VERSION=2.0-RC
 
 # General exit handler
 cleanup() {
@@ -57,7 +57,7 @@ else
 fi
 
 echo '---------------------------------------------------'
-echo -e ">> SPO JAPAN GUILD TOOL \e[33mver$TOOL_VERSION\e[m \e[32m-${NETWORK_NAME}-\e[m \e[33m-$node_name-\e[m <<"
+echo -e ">> SPO JAPAN GUILD TOOL ${FG_YELLOW}ver$TOOL_VERSION${NC} ${FG_GREEN}-${NETWORK_NAME}-${NC} ${FG_YELLOW}-$node_name-${NC} <<"
 echo '---------------------------------------------------'
 echo '
 [1] ウォレット操作
@@ -76,7 +76,7 @@ case ${num} in
     echo '>> ウォレット操作'
     echo '----------------------------'
     echo '
-[1] ウォレット残高確認
+[1] ウォレット未使用UTXO確認
 [2] プール報酬確認
 [3] 報酬/資金出金
 [b] 戻る 
@@ -86,13 +86,13 @@ case ${num} in
       1)
         clear
         echo '----------------------------'
-        echo '>> ウォレット残高確認'
+        echo '>> ウォレット未使用UTXO確認'
         echo '----------------------------'
         echo
         efile_check=`filecheck "$NODE_HOME/$WALLET_PAY_ADDR_FILENAME"`
         if [ ${efile_check} == "true" ]; then
           echo "■paymentアドレス"
-          echo "$(cat $WALLET_PAY_ADDR_FILENAME)"
+          printf "${FG_YELLOW}$(cat $WALLET_PAY_ADDR_FILENAME)${NC}\n\n"
           cardano-cli query utxo \
             --address $(cat $WALLET_PAY_ADDR_FILENAME) \
             $networkmagic
@@ -113,13 +113,13 @@ case ${num} in
         efile_check=`filecheck "$NODE_HOME/$WALLET_STAKE_ADDR_FILENAME"`
         if [ ${efile_check} == "true" ]; then
           echo "■stakeアドレス"
-          echo "$(cat $WALLET_STAKE_ADDR_FILENAME)"
-          stake_json=`cardano-cli query stake-address-info --address $(cat $WALLET_STAKE_ADDR_FILENAME) $networkmagic > $NODE_HOME/scripts/stake_json.txt`
-          pool_reward=`cat $NODE_HOME/scripts/stake_json.txt | grep rewardAccountBalance | awk '{ print $2 }'`
+          printf "${FG_YELLOW}$(cat $WALLET_STAKE_ADDR_FILENAME)${NC}\n\n"
+          stake_json=`cardano-cli query stake-address-info --address $(cat $WALLET_STAKE_ADDR_FILENAME) $networkmagic > $PARENT/stake_json.txt`
+          pool_reward=`cat $PARENT/stake_json.txt | grep rewardAccountBalance | awk '{ print $2 }'`
           #echo $pool_reward
           pool_reward_Amount=`scale1 $pool_reward`
-          echo "報酬額:$pool_reward_Amount ADA ($pool_reward)"
-          rm $NODE_HOME/scripts/stake_json.txt
+          printf "報酬額:${FG_GREEN}$pool_reward_Amount${NC} ADA ($pool_reward Lovelace)\n"
+          rm $PARENT/stake_json.txt
         else
           echo "$WALLET_STAKE_ADDR_FILENAMEファイルが見つかりません"
           echo
@@ -134,12 +134,12 @@ case ${num} in
         echo '>> 報酬/資金出金'
         echo '----------------------------'
         echo 
-        printf "\e[35m■プール報酬出金($WALLET_STAKE_ADDR_FILENAME)\e[m
+        printf "${FG_MAGENTA}■プール報酬出金($WALLET_STAKE_ADDR_FILENAME)${NC}
 ----------------------------
 [1] 任意のアドレスへ出金
 [2] $WALLET_PAY_ADDR_FILENAMEへ出金
 \n
-\e[35m■プール資金出金($WALLET_PAY_ADDR_FILENAME)\e[m
+${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 ----------------------------
 [3] 任意のアドレスへ出金
 \n
@@ -155,7 +155,7 @@ case ${num} in
             clear
             echo '------------------------------------------------------------------------'
             echo "資金移動"
-            echo -e ">> \e[33m$WALLET_STAKE_ADDR_FILENAME\e[m から \e[33m任意のアドレス\e[m への出金"
+            echo -e ">> ${FG_YELLOW}$WALLET_STAKE_ADDR_FILENAME${NC} から ${FG_YELLOW}任意のアドレス${NC} への出金"
             echo
             echo "■ 注意 ■"
             echo "報酬は全額引き出しのみとなります"
@@ -166,10 +166,11 @@ case ${num} in
               #stake.addr残高算出
               echo
               reward_Balance
-              printf '\n\e[33m出金をキャンセルする場合は 1 を入力してEnterを押してください\e[m\n'
+              printf "\n${FG_YELLOW}出金をキャンセルする場合は 1 を入力してEnterを押してください${NC}\n\n"
               #出金先アドレスチェック
               send_address
 
+              printf "\n\nTx作成中...\n\n"
 
               #現在のスロット
               current_Slot
@@ -235,7 +236,7 @@ case ${num} in
             clear
             echo '------------------------------------------------------------------------'
             echo "資金移動"
-            echo -e ">> \e[33m$WALLET_STAKE_ADDR_FILENAME\e[m から \e[33m$WALLET_PAY_ADDR_FILENAME\e[m への出金"
+            echo -e ">> ${FG_YELLOW}$WALLET_STAKE_ADDR_FILENAME${NC} から ${FG_YELLOW}$WALLET_PAY_ADDR_FILENAME${NC} への出金"
             echo
             echo "■ 注意 ■"
             echo "報酬は全額引き出しのみとなります"
@@ -245,6 +246,8 @@ case ${num} in
             if [ ${payfile_check} == "true" ] && [ ${stakefile_check} == "true" ]; then
               #stake.addr残高算出
               reward_Balance
+
+              printf "\n\nTx作成中...\n\n"
 
               #現在のスロット
               current_Slot
@@ -312,13 +315,13 @@ case ${num} in
             clear
             echo '------------------------------------------------------------------------'
             echo "資金移動"
-            echo -e ">> \e[33m$WALLET_PAY_ADDR_FILENAME\e[m から \e[33m任意のアドレス\e[m への出金"
+            echo -e ">> ${FG_YELLOW}$WALLET_PAY_ADDR_FILENAME${NC} から ${FG_YELLOW}任意のアドレス${NC} への出金"
             echo
             echo "■ 注意 ■"
             echo "$WALLET_PAY_ADDR_FILENAMEには誓約で設定した額以上のADAが入金されてる必要があります"
             echo "出金には十分ご注意ください"
             echo '------------------------------------------------------------------------'
-            printf '\e[33m出金をキャンセルする場合は 1 を入力してEnterを押してください\e[m'
+            printf "${FG_YELLOW}出金をキャンセルする場合は 1 を入力してEnterを押してください${NC}\n\n"
             efile_check=`filecheck "$NODE_HOME/$WALLET_PAY_ADDR_FILENAME"`
             if [ ${efile_check} == "true" ]; then
               #出金先アドレスチェック
@@ -328,7 +331,7 @@ case ${num} in
               #出金額指定
               clear
               echo '------------------------------------------------------------------------'
-              echo -e ">> \e[33m$WALLET_PAY_ADDR_FILENAME\e[m から \e[33m任意のアドレス\e[m への出金"
+              echo -e ">> ${FG_YELLOW}$WALLET_PAY_ADDR_FILENAME${NC} から ${FG_YELLOW}任意のアドレス${NC} への出金"
               echo '------------------------------------------------------------------------'
               echo
               echo "出金額をlovelaces形式で入力してください"
@@ -349,9 +352,8 @@ case ${num} in
                 fi
               done
 
-              echo
+              printf "\n\nTx作成中...\n\n"
               
-
               #現在のスロット
               current_Slot
 
@@ -457,8 +459,8 @@ case ${num} in
 
     kes_vk_file_check=`filecheck "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME"`
     if [ $kes_vk_file_check == "false" ]; then
-      printf "\n\e[31m$POOL_HOTKEY_VK_FILENAMEが見つかりません\e[m\n\n"
-      printf "エアギャップにある\e[32m$POOL_HOTKEY_VK_FILENAME\e[mをBPの\e[33m$NODE_HOME\e[mにコピーし再度実行してください\n"
+      printf "\n${FG_RED}$POOL_HOTKEY_VK_FILENAMEが見つかりません${NC}\n\n"
+      printf "エアギャップにある${FG_GREEN}$POOL_HOTKEY_VK_FILENAME${NC}をBPの${FG_YELLOW}$NODE_HOME${NC}にコピーし再度実行してください\n"
       select_rtn
     fi
 
@@ -496,7 +498,7 @@ case ${num} in
 
     active_ST_check(){
       if [ $1 != 0 ]; then
-        printf "\e[36m`scale1 $1`\e[m ADA"
+        printf "${FG_CYAN}`scale1 $1`${NC} ADA"
       else
         printf "$1 ADA \n (ライブステークが有効になるまでスケジュール割り当てはありません)\n"
       fi
@@ -507,11 +509,11 @@ case ${num} in
 
     active_Stake=`active_ST_check $active_Stake`
     
-    printf "ノード起動タイプ:BP \e[32mOK\e[m　ネットワーク:\e[33m$NETWORK_NAME\e[m\n"
+    printf "ノード起動タイプ:BP ${FG_GREEN}OK${NC}　ネットワーク:${FG_YELLOW}$NETWORK_NAME${NC}\n"
     echo
-    printf "　　対象プール :\e[36m[`cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_json.ticker"`] `cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_json.name"`\e[m\n"
-    printf "　　　プールID :\e[36m`cat $NODE_HOME/pooldata.txt | jq -r ".[].pool_id_bech32"`\e[m\n"
-    printf "ライブステーク :\e[32m$live_Stake\e[m ADA\n"
+    printf "　　対象プール :${FG_CYAN}[`cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_json.ticker"`] `cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_json.name"`${NC}\n"
+    printf "　　　プールID :${FG_CYAN}`cat $NODE_HOME/pooldata.txt | jq -r ".[].pool_id_bech32"`${NC}\n"
+    printf "ライブステーク :${FG_GREEN}$live_Stake${NC} ADA\n"
     printf "　有効ステーク :$active_Stake\n"
 
 
@@ -527,14 +529,14 @@ case ${num} in
     vrf_path=`grep -H "VRF=" $script_path`
     cert_path=`grep -H "CERT=" $script_path`
     echo
-    printf "\e[35m■BPファイル存在確認\e[m\n"
+    printf "${FG_MAGENTA}■BPファイル存在確認${NC}\n"
     if [ $kes_path ]; then
       kes_name=${kes_path##*/}
       kes_CHK=`filecheck "$NODE_HOME/$kes_name"`
       if [ $kes_CHK == "true" ]; then
-        printf "　 $kes_name: \e[32mOK\e[m\n"
+        printf "　 $kes_name: ${FG_GREEN}OK${NC}\n"
       else
-        printf "　 $kes_name: \e[31mNG\e[m\n"
+        printf "　 $kes_name: ${FG_RED}NG${NC}\n"
       fi
 
     else
@@ -547,9 +549,9 @@ case ${num} in
       vrf_name=${vrf_path##*/}
       vrf_CHK=`filecheck "$NODE_HOME/$vrf_name"`
       if [ $vrf_CHK == "true" ]; then
-        printf "　 $vrf_name: \e[32mOK\e[m\n"
+        printf "　 $vrf_name: ${FG_GREEN}OK${NC}\n"
       else
-        printf "　 $vrf_name: \e[31mNG\e[m\n"
+        printf "　 $vrf_name: ${FG_RED}NG${NC}\n"
       fi
 
     else
@@ -562,9 +564,9 @@ case ${num} in
     cert_name=${cert_path##*/}
     cert_CHK=`filecheck "$NODE_HOME/$cert_name"`
       if [ $cert_CHK == "true" ]; then
-        printf "　$cert_name: \e[32mOK\e[m\n"
+        printf "　$cert_name: ${FG_GREEN}OK${NC}\n"
       else
-        printf "　$cert_name: \e[31mNG\e[m\n"
+        printf "　$cert_name: ${FG_RED}NG${NC}\n"
       fi
 
     else
@@ -591,9 +593,9 @@ case ${num} in
       select_rtn
     else
       echo
-      printf "\e[35m■ノード同期状況\e[m： \e[32mOK\e[m\n"
-      printf "　  ネットワーク最新ブロック :\e[33m$koios_blockNo\e[m\n"
-      printf "　ローカルノード最新ブロック :\e[33m$currentblock\e[m\n"
+      printf "${FG_MAGENTA}■ノード同期状況${NC}： ${FG_GREEN}OK${NC}\n"
+      printf "  ネットワーク最新ブロック :${FG_YELLOW}$koios_blockNo${NC}\n"
+      printf "ローカルノード最新ブロック :${FG_YELLOW}$currentblock${NC}\n"
     fi
 
     #メトリクスTx数
@@ -601,39 +603,39 @@ case ${num} in
 
     tx_chk(){
       if [ "$2" = "true" ] && [ $1 > 0 ]; then
-        printf "\e[32mOK\e[m"
+        printf "${FG_GREEN}OK${NC}"
       elif [ "$2" == "false" ] && [ $1 == " " ]; then
-        printf "\e[32m条件付きOK\e[m"
+        printf "${FG_GREEN}条件付きOK${NC}"
       else
-        printf "\e[31mNG\e[m Txが入ってきていません。1分後に再実行してください\n"
+        printf "${FG_RED}NG${NC} Txが入ってきていません。1分後に再実行してください\n"
         printf "\n再実行してもNGの場合は、以下の点を再確認してください\n"
         printf "・BPのファイアウォールの設定\n"
         printf "・リレーノードのトポロジーアップデーター設定(フェッチリストログファイルなど)\n"
-        printf "・リレーノードの$config_name-topology.jsonに当サーバーのIPが含まれているか\n"
+        printf "・リレーノードの$config_name-topology.jsonに当サーバーのIPが含まれているか\n\n"
       fi
     }
   
     tx_count=`tx_chk $metrics_tx $mempool_CHK`
     echo
-    printf "\e[35m■Tx流入数\e[m:\e[33m$metrics_tx\e[m $tx_count TraceMempool:\e[33m$mempool_CHK\e[m\n"
+    printf "${FG_MAGENTA}■Tx流入数${NC}:${FG_YELLOW}$metrics_tx${NC} $tx_count TraceMempool:${FG_YELLOW}$mempool_CHK${NC}\n"
 
     echo
-    printf "\e[35m■Peer接続状況\e[m\n"
+    printf "${FG_MAGENTA}■Peer接続状況${NC}\n"
     peers_in=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | awk -v port=":${CNODE_PORT}" '$3 ~ port {print}' | wc -l)
     peers_out=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | awk -v port=":(${CNODE_PORT}|${EKG_PORT}|${PROM_PORT})" '$3 !~ port {print}' | wc -l)
 
     if [[ $peers_in -eq 0 ]]; then
-      peer_in_judge=" \e[31mNG\e[m リレーから接続されていません"
+      peer_in_judge=" ${FG_RED}NG${NC} リレーから接続されていません"
     else
-      peer_in_judge=" \e[32mOK\e[m"
+      peer_in_judge=" ${FG_GREEN}OK${NC}"
     fi
     if [[ $peers_out -eq 0 ]]; then
-      peer_out_judge=" \e[31mNG\e[m リレーに接続出来ていません"
+      peer_out_judge=" ${FG_RED}NG${NC} リレーに接続出来ていません"
     else
-      peer_out_judge=" \e[32mOK\e[m"
+      peer_out_judge=" ${FG_GREEN}OK${NC}"
     fi
-    printf "　incoming :\e[33m$peers_in $peer_in_judge\e[m\n"
-    printf "　outgoing :\e[33m$peers_out $peer_out_judge\e[m\n"
+    printf "　incoming :${FG_YELLOW}$peers_in $peer_in_judge${NC}\n"
+    printf "　outgoing :${FG_YELLOW}$peers_out $peer_out_judge${NC}\n"
 
     chain_Vrf_hash=`cat $NODE_HOME/pooldata.txt | jq -r ".[].vrf_key_hash"`
 
@@ -645,15 +647,15 @@ case ${num} in
     local_vrf_hash=$(cat $NODE_HOME/vrf_check/vkeyhash.txt)
     
     if [ $chain_Vrf_hash == $local_vrf_hash ]; then
-      hash_check=" \e[32mOK\e[m\n"
+      hash_check=" ${FG_GREEN}OK${NC}\n"
     else
-      hash_check=" \e[31mNG\e[m\n"
+      hash_check=" ${FG_RED}NG${NC}\n"
     fi
 
     echo
-    printf "\e[35m■VRFハッシュ値チェック\e[m$hash_check" 
-    printf "　　　　チェーン登録ハッシュ値 :\e[33m$chain_Vrf_hash\e[m\n"
-    printf "　　ローカルファイルハッシュ値 :\e[33m$local_vrf_hash\e[m\n"
+    printf "${FG_MAGENTA}■VRFハッシュ値チェック${NC}$hash_check" 
+    printf "　　チェーン登録ハッシュ値 :${FG_YELLOW}$chain_Vrf_hash${NC}\n"
+    printf "ローカルファイルハッシュ値 :${FG_YELLOW}$local_vrf_hash${NC}\n"
 
     rm -rf $NODE_HOME/vrf_check
 
@@ -667,16 +669,16 @@ case ${num} in
     cert_counter(){
       if [ $kes_cborHex == $cert_cborHex ]; then
         if [ $1 != "null" ] && [[ $2 -ge $1 ]] && [[ $kes_remaining -ge 1 ]]; then
-          printf "\e[32mOK\e[m\n"
+          printf "${FG_GREEN}OK${NC}\n"
         elif [ $1 != "null" ] && [[ $2 -lt $1 ]] && [[ $kes_remaining -ge 1 ]]; then
-          printf "\e[31mNG カウンター番号がチェーンより小さいです\e[m\n"
+          printf "${FG_RED}NG カウンター番号がチェーンより小さいです${NC}\n"
         elif [ $1 == "null" ] && [[ $kes_remaining -ge 1 ]]; then
-          printf "\e[32mOK (ブロック未生成)\e[m\n"
+          printf "${FG_GREEN}OK (ブロック未生成)${NC}\n"
         else
-          printf "\e[31mNG KESの有効期限が切れています\e[m\n"
+          printf "${FG_RED}NG KESの有効期限が切れています${NC}\n"
         fi
       else
-        printf "\e[31mNG CERTファイルに署名された$POOL_HOTKEY_VK_FILENAMEファイルが異なります。\e[m\n"
+        printf "${FG_RED}NG CERTファイルに署名された$POOL_HOTKEY_VK_FILENAMEファイルが異なります。${NC}\n"
       fi
     }
     cc=`cert_counter $chain_cert_counter $local_cert_counter`
@@ -684,37 +686,37 @@ case ${num} in
 
 
     echo
-    printf "\e[35m■プール運用証明書チェック\e[m($POOL_OPCERT_FILENAME) $cc\n"
-    printf "　    チェーン上カウンター :\e[33m$chain_cert_counter\e[m\n"
-    printf "　　CERTファイルカウンター :\e[33m$local_cert_counter\e[m\n"
-    printf "　　　　　　　 KES残り日数 :\e[33m$kes_days日\e[m\n"
-    printf "　  CERTファイルKES-VK_Hex :\e[33m$cert_cborHex\e[m\n"
-    printf "　      ローカルKES-VK_Hex :\e[33m$kes_cborHex\e[m\n"
+    printf "${FG_MAGENTA}■プール運用証明書チェック${NC}($POOL_OPCERT_FILENAME) $cc\n"
+    printf "　    チェーン上カウンター :${FG_YELLOW}$chain_cert_counter${NC}\n"
+    printf "　　CERTファイルカウンター :${FG_YELLOW}$local_cert_counter${NC}\n"
+    printf "　　　　　　　 KES残り日数 :${FG_YELLOW}$kes_days日${NC}\n"
+    printf "　  CERTファイルKES-VK_Hex :${FG_YELLOW}$cert_cborHex${NC}\n"
+    printf "　      ローカルKES-VK_Hex :${FG_YELLOW}$kes_cborHex${NC}\n"
 
     echo
     kes_int=$(($current_KES-$Start_KES+$metrics_KES))
     kes_int_chk(){
       if [ $1 == 62 ]; then
-        printf "\e[32mOK\e[m\n"
+        printf "${FG_GREEN}OK${NC}\n"
       else
-        "\e[31mNG KES整合性は62である必要があります。KESファイルを作り直してください\e[m\n"
+        "${FG_RED}NG KES整合性は62である必要があります。KESファイルを作り直してください${NC}\n"
       fi
     }
     kic=`kes_int_chk $kes_int`
 
-    printf "\e[35m■KES整合性\e[m:\e[33m$kes_int\e[m $kic\n"
+    printf "${FG_MAGENTA}■KES整合性${NC}:${FG_YELLOW}$kes_int${NC} $kic\n"
     echo
     echo
     echo "ブロック生成可能状態チェックが完了しました"
 
     if [ $mempool_CHK == "false" ]; then
-      printf "\e[31m$config_name-config.jsonのTraceMempoolがfalseになっています\n"
-      printf "\e[31m正確にチェックする場合はtrueへ変更し、ノード再起動後再度チェックしてください\e[m"
+      printf "${FG_RED}$config_name-config.jsonのTraceMempoolがfalseになっています\n"
+      printf "${FG_RED}正確にチェックする場合はtrueへ変更し、ノード再起動後再度チェックしてください${NC}"
       echo
     fi
     echo
     echo "--注意--------------------------------------------------------"
-    printf " > 1つでも \e[31mNG\e[m があった場合はプール構成を見直してください\n"
+    printf " > 1つでも ${FG_RED}NG${NC} があった場合はプール構成を見直してください\n"
     echo "--------------------------------------------------------------"
     echo
     select_rtn
@@ -758,12 +760,12 @@ air_gap(){
   echo
   echo '■Txファイルを作成しました。エアギャップオフラインマシンで以下の操作を実施してください'
   echo
-  echo -e "\e[33m1. BPのtx.raw をエアギャップのcnodeディレクトリにコピーしてください\e[m"
+  echo -e "${FG_YELLOW}1. BPのtx.raw をエアギャップのcnodeディレクトリにコピーしてください${NC}"
   echo '----------------------------------------'
   echo ">> [BP] ⇒ tx.raw ⇒ [エアギャップ]"
   echo '----------------------------------------'
   echo
-  echo -e "\e[33m2. エアギャップでトランザクションファイルに署名してください\e[m"
+  echo -e "${FG_YELLOW}2. エアギャップでトランザクションファイルに署名してください${NC}"
   echo '----------------------------------------'
   echo 'cd $NODE_HOME'
   echo 'cardano-cli transaction sign \'
@@ -774,14 +776,13 @@ air_gap(){
   echo '  --out-file tx.signed'
   echo '----------------------------------------'
   echo
-  echo -e "\e[33m3. エアギャップの tx.signed をBPのcnodeディレクトリにコピーしてください\e[m"
+  echo -e "${FG_YELLOW}3. エアギャップの tx.signed をBPのcnodeディレクトリにコピーしてください${NC}"
   echo '----------------------------------------'
   echo ">> [エアギャップ] ⇒ tx.signed ⇒ [BP]"
   echo '----------------------------------------'
   echo
   echo "1～3の操作が終わったらEnterを押してください"
-  echo "出金をキャンセルする場合はEnterを押して2を入力してください"
-  read Wait
+  read -p "出金をキャンセルする場合はEnterを押して2を入力してください"
 }
 
 #ファイル存在確認
@@ -809,7 +810,7 @@ reward_Balance(){
 
   if [ ${rewardBalance} == 0 ]; then
     
-    printf "\e[31m出金可能な報酬はありません\e[m\n"
+    printf "${FG_RED}出金可能な報酬はありません${NC}\n"
     select_rtn
   fi
 }
@@ -859,14 +860,14 @@ tx_submit(){
         echo '----------------------------------------'
         echo $tx_result
         echo
-        echo 'Tx送信に成功しました。'
+        printf "${FG_GREEN}Tx送信に成功しました${NC}\n"
       else
         echo '----------------------------------------'
         echo 'Tx送信結果'
         echo '----------------------------------------'
         echo $tx_result
         echo
-        echo 'Tx送信に失敗しました'
+        printf "${FG_RED}Tx送信に失敗しました${NC}\n"
       fi
       ;;
     2) 
@@ -896,27 +897,26 @@ send_address(){
           if [ "$send_check" == "y" -o "$send_check" == "Y" ]; then
               break 1
           else
-            printf "\n\e[31m出金先アドレスを再度入力してください\e[m\n\n"
+            printf "\n${FG_RED}出金先アドレスを再度入力してください${NC}\n\n"
             continue 1
           fi
         else
-          printf "\n\e[31m現在のネットワーク\e[m(\e[32m${NETWORK_NAME}\e[m)\e[31mと異なるアドレスが入力されました。再度ご確認ください\e[m\n"
+          printf "\n${FG_RED}現在のネットワーク${NC}(${FG_GREEN}${NETWORK_NAME}${NC})${FG_RED}と異なるアドレスが入力されました。再度ご確認ください${NC}\n"
         fi
       elif [ "$destinationAddress" == "1" ]; then
-        printf "\n\e[33m出金手続きをキャンセルしました\e[m\n"
+        printf "\n${FG_YELLOW}出金手続きをキャンセルしました${NC}\n"
         select_rtn
         break
       else
-          printf "\n\e[31m出金先アドレスを再度入力してください\e[m\n\n"
-
+          printf "\n${FG_RED}出金先アドレスを再度入力してください${NC}\n\n"
       fi
   done
 }
 
 #出金前チェック
 tx_Check(){
-  rows36="%15s \e[36m%-15s\e[m\n"
-  rows32="%15s \e[32m%-15s\e[m\n"
+  rows36="%15s ${FG_CYAN}%-15s${NC}\n"
+  rows32="%15s ${FG_GREEN}%-15s${NC}\n"
   #printf "$rows" "Send_Address:" "${destinationAddress::20}...${destinationAddress: -20}"
   printf "$rows36" "送金先アドレス:" "$1"
   printf "$rows32" "       送金ADA:" "$2 ADA"
@@ -951,7 +951,7 @@ update(){
     mv $NODE_HOME/scripts/sjgtool.sh.tmp $NODE_HOME/scripts/sjgtool.sh
     chmod 755 $NODE_HOME/scripts/sjgtool.sh
     printf "SPO JAPAN GUILD TOOL UPDATE\n"
-    printf "Ver.\e[33m$CUR_VERSION\e[mから\e[32m$GIT_VERSION\e[mへアップデートしました\n"
+    printf "Ver.${FG_YELLOW}$CUR_VERSION${NC}から${FG_GREEN}$GIT_VERSION${NC}へアップデートしました\n"
     echo "Enterを押してリロードしてください"
     read Wait
     return 1
@@ -962,9 +962,18 @@ update(){
   fi
 }
 
+PARENT=$(cd $(dirname $0);pwd)
 
-source ./env
-cd $NODE_HOME
+env_chk=`filecheck $PARENT/env`
+if [ $env_chk == "true" ]; then
+  source ./env
+  cd $NODE_HOME
+else
+  clear
+  printf "\n\e[31menvファイルが見つかりません\e[0m\n"
+  printf "$PARENTディレクトリを確認してください\n"
+  select_rtn
+fi
 
 #ノード起動確認
 CNODE_PID=$(pgrep -fn "$(basename ${CNODEBIN}).*.port ${CNODE_PORT}")
@@ -984,6 +993,6 @@ if [[ -n $CNODE_PID ]]; then
   done
     
 else 
-    printf "\n\e[31mノードを起動して再度実行してください\e[m\n\n"
+    printf "\n${FG_RED}ノードを起動して再度実行してください${NC}\n\n"
     exit
 fi
