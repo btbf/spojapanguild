@@ -104,7 +104,7 @@
 
         ```
         cd $NODE_HOME/logs
-        cat cat node*./json | grep 55901248
+        cat node*.json | grep 55901248
         ```
 
         **該当スロットのログが表示される場合**  
