@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=2.0-RC2
+TOOL_VERSION=2.0
 
 # General exit handler
 cleanup() {
