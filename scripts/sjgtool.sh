@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=2.0-RC
+TOOL_VERSION=2.0-RC2
 
 # General exit handler
 cleanup() {
@@ -28,7 +28,7 @@ myExit() {
 
 main () {
 clear
-update
+#update
 if [ $? == 1 ]; then
   cd $NODE_HOME/scripts
   $0 "$@" "-u"
@@ -600,24 +600,30 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     #メトリクスTx数
     metrics_tx=`curl -s localhost:12798/metrics | grep txsProcessedNum_int | awk '{ print $2 }'`
-
+    if [ -z $metrics_tx ]; then
+      metrics_tx="0"
+    fi
+    
     tx_chk(){
-      if [ "$2" = "true" ] && [ $1 > 0 ]; then
+      if [ $2 = "true" ] && [ $1 -gt 0 ]; then
         printf "${FG_GREEN}OK${NC}"
-      elif [ "$2" == "false" ] && [ $1 == " " ]; then
+      elif [ $2 = "false" ] && [ $1 -eq 0 ]; then
         printf "${FG_GREEN}条件付きOK${NC}"
       else
-        printf "${FG_RED}NG${NC} Txが入ってきていません。1分後に再実行してください\n"
-        printf "\n再実行してもNGの場合は、以下の点を再確認してください\n"
-        printf "・BPのファイアウォールの設定\n"
-        printf "・リレーノードのトポロジーアップデーター設定(フェッチリストログファイルなど)\n"
-        printf "・リレーノードの$config_name-topology.jsonに当サーバーのIPが含まれているか\n\n"
+        printf "${FG_RED}NG${NC}"
       fi
     }
-  
     tx_count=`tx_chk $metrics_tx $mempool_CHK`
-    echo
-    printf "${FG_MAGENTA}■Tx流入数${NC}:${FG_YELLOW}$metrics_tx${NC} $tx_count TraceMempool:${FG_YELLOW}$mempool_CHK${NC}\n"
+    
+    printf "\n${FG_MAGENTA}■Tx流入数${NC}:${FG_YELLOW}$metrics_tx${NC} $tx_count TraceMempool:${FG_YELLOW}$mempool_CHK${NC}\n"
+
+    if [[ $tx_count = *NG* ]]; then
+      printf "\nTxが入ってきていません。1分後に再実行してください\n"
+      printf "\n再実行してもNGの場合は、以下の点を再確認してください\n"
+      printf "・BPのファイアウォールの設定\n"
+      printf "・リレーノードのトポロジーアップデーター設定(フェッチリストログファイルなど)\n"
+      printf "・リレーノードの$config_name-topology.jsonに当サーバーのIPが含まれているか\n\n"
+    fi
 
     echo
     printf "${FG_MAGENTA}■Peer接続状況${NC}\n"
@@ -710,8 +716,8 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     echo "ブロック生成可能状態チェックが完了しました"
 
     if [ $mempool_CHK == "false" ]; then
-      printf "${FG_RED}$config_name-config.jsonのTraceMempoolがfalseになっています\n"
-      printf "${FG_RED}正確にチェックする場合はtrueへ変更し、ノード再起動後再度チェックしてください${NC}"
+      printf "\n${FG_RED}$config_name-config.jsonのTraceMempoolが${NC}${FG_YELLOW}false${NC}${FG_RED}になっています${NC}\n"
+      printf "${FG_RED}正確にチェックする場合は${NC}${FG_GREEN}true${NC}${FG_RED}へ変更し、ノード再起動後再度チェックしてください${NC}"
       echo
     fi
     echo
@@ -919,7 +925,7 @@ tx_Check(){
   rows32="%15s ${FG_GREEN}%-15s${NC}\n"
   #printf "$rows" "Send_Address:" "${destinationAddress::20}...${destinationAddress: -20}"
   printf "$rows36" "送金先アドレス:" "$1"
-  printf "$rows32" "       送金ADA:" "$2 ADA"
+  printf "$rows32" "       送金ADA:" "`scale1 $2` ADA"
   printf "$rows32" "　　　  手数料:" "`scale3 $3` ADA"
   printf "$rows32" "    Wallet残高:" "`scale1 $4` ADA"
 
