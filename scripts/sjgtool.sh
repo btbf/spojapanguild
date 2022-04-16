@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=2.0
+TOOL_VERSION=2.1.0
 
 # General exit handler
 cleanup() {
@@ -385,7 +385,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               #残高-手数料-出金額
               txOut=$((${total_balance}-${fee}-${amountToSend}))
               
-              tx_Check $destinationAddress $cal_amount $fee ${txOut}
+              tx_Check $destinationAddress $amountToSend $fee ${txOut}
 
               #printf "$rows" "出金後残高:" "`scale1 ${txOut}` ADA"
 
@@ -891,7 +891,7 @@ send_address(){
   while :
     do
       read -p "出金先のアドレスを入力してください： > " destinationAddress
-      if [[ "$destinationAddress" == *addr* ]]; then
+      if [[ "$destinationAddress" == addr* ]] || [[ "$destinationAddress" == DdzF* ]]; then
         if { [ ${NETWORK_NAME} = "Mainnet" ] && [[ "$destinationAddress" != *_test* ]]; } || { [ ${NETWORK_NAME} = "Testnet" ] && [[ "$destinationAddress" = *_test* ]]; } ; then
           echo
           echo '------------------------------------------------'
