@@ -1,6 +1,6 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2022/04/14 v2.0
+最終更新日：2022/04/17 v2.1.0
 
 !!! info "主な機能"
     * payment.addr 未使用UTXO照会  
@@ -63,5 +63,14 @@ gtool
     もしこの項目でNGが出た場合は、ディスコードでご質問ください。
 
     また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
+
+## 更新履歴
+
+### 2.1.0
+
+!!! hint ""
+
+    * DdzFアドレスへの報酬/資金出金を許可
+    * payment.addr出金時、出金額表示単位バグを修正
 
 
