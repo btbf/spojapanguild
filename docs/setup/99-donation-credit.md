@@ -17,6 +17,9 @@ SPO JAPAN GUILDでは、ステークプール構築マニュアルの整備、�
 
 !!! quote "ADA Handle"
     ADA Handle対応ウォレットからなら 「$spojapanguild」宛てでも寄付いただけます！  
+    ```
+    $spojapanguild
+    ```
     ![](../images/handle.png)
 
 
