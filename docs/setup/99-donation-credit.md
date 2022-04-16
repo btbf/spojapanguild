@@ -12,8 +12,12 @@ SPO JAPAN GUILDでは、ステークプール構築マニュアルの整備、�
 
 !!! quote "ADAアドレス"
     ```bash
-    addr1qyl0nkx957hhn4c7lajlc3ghdzya4j8jlfwc04565807gkp2f4gnzre574n6an99yql25wcy09ygededc7e6f77jutvsreqldz
+    addr1qxq6jar2wtktu3nlak78ghugtd8vcxcze33wsk2ehlwkavp2f4gnzre574n6an99yql25wcy09ygededc7e6f77jutvs0lgxef
     ```
+
+!!! quote "ADA Handle"
+    ADA Handle対応ウォレットからなら 「$spojapanguild」宛てでも寄付いただけます！  
+    ![](../images/handle.png)
 
 
 ### X StakePoolへの委任 
