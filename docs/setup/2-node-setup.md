@@ -387,12 +387,18 @@ journalctl --unit=cardano-node --follow
     スクリプトへのパスを通し、任意の単語で起動出来るようにする。
     ```bash
     echo alias cnode='"journalctl -u cardano-node -f"' >> $HOME/.bashrc
+    echo alias cnstart='"sudo systemctl start cardano-node"' >> $HOME/.bashrc
+    echo alias cnrestart='"sudo systemctl reload-or-restart cardano-node"' >> $HOME/.bashrc
+    echo alias cnstop='"sudo systemctl stop cardano-node"' >> $HOME/.bashrc
     source $HOME/.bashrc
     ```
 
     単語を入力するだけで、起動状態(ログ)を確認できます。  
     ```
-    cnode
+    cnode ・・・ログ表示
+    cnstart ・・・ノード起動
+    cnrestart ・・・ノード再起動
+    cnstop ・・・ノード停止
     ```
 
 
@@ -489,24 +495,6 @@ mkdir -p $NODE_HOME
     以下は、systemdを有効活用するためのコマンドです。
     必要に応じで実行するようにし、一連の流れで実行しないでください
 
-
-#### 🔄 ノード再起動
-
-```text
-sudo systemctl reload-or-restart cardano-node
-```
-
-#### 🛑 ノード停止
-
-```text
-sudo systemctl stop cardano-node
-```
-
-#### ⯈ ノード起動
-
-```text
-sudo systemctl start cardano-node
-```
 
 #### 🗄 ログのフィルタリング
 
