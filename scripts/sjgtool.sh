@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=2.1.0
+TOOL_VERSION=2.1.1
 
 # General exit handler
 cleanup() {
@@ -727,6 +727,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     echo
     select_rtn
     ;;
+  
   q)
     clear
     echo
@@ -748,16 +749,26 @@ select_rtn(){
   echo
   echo '[h] メイン画面へ戻る　[q] 終了'
   echo
-  read -n 1 retun_cmd
-  case ${retun_cmd} in
-    h) main ;;
-    *) 
-      clear
-      echo
-      echo "SPO JAPAN GUILD TOOL Closed!" 
-      echo
-      exit ;;
-  esac
+  while :
+    do
+      read -n 1 retun_cmd
+      if [ "$retun_cmd" == "h" ] || [ "$retun_cmd" == "q" ]; then
+        case ${retun_cmd} in
+          h) main ;;
+          q) 
+            clear
+            echo
+            echo "SPO JAPAN GUILD TOOL Closed!" 
+            echo
+            exit ;;
+        esac
+        break
+      elif [ "$retun_cmd" == '' ]; then
+        printf "入力記号が不正です。再度入力してください\n"
+      else
+        printf "入力記号が不正です。再度入力してください\n"
+      fi
+  done
 }
 
 air_gap(){
@@ -855,35 +866,44 @@ tx_submit(){
   echo
   echo '[1] Txを送信する　[2] キャンセル'
   echo
-  read -n 1 retun_cmd
-  case ${retun_cmd} in
-    1) 
-      tx_result=`cardano-cli transaction submit --tx-file tx.signed $networkmagic`
-      echo
-      if [[ $tx_result == "Transaction"* ]]; then
-        echo '----------------------------------------'
-        echo 'Tx送信結果'
-        echo '----------------------------------------'
-        echo $tx_result
-        echo
-        printf "${FG_GREEN}Tx送信に成功しました${NC}\n"
+  while :
+    do
+      read -n 1 retun_cmd
+      if [ "$retun_cmd" == "1" ] || [ "$retun_cmd" == "2" ]; then
+        case ${retun_cmd} in
+          1) 
+            tx_result=`cardano-cli transaction submit --tx-file tx.signed $networkmagic`
+            echo
+            if [[ $tx_result == "Transaction"* ]]; then
+              echo '----------------------------------------'
+              echo 'Tx送信結果'
+              echo '----------------------------------------'
+              echo $tx_result
+              echo
+              printf "${FG_GREEN}Tx送信に成功しました${NC}\n"
+            else
+              echo '----------------------------------------'
+              echo 'Tx送信結果'
+              echo '----------------------------------------'
+              echo $tx_result
+              echo
+              printf "${FG_RED}Tx送信に失敗しました${NC}\n"
+            fi
+            ;;
+          2) 
+            echo
+            echo "送信をキャンセルしました"
+            echo
+            select_rtn
+            echo
+        esac
+        break
+      elif [ "$retun_cmd" == '' ]; then
+        printf "入力記号が不正です。再度入力してください\n"
       else
-        echo '----------------------------------------'
-        echo 'Tx送信結果'
-        echo '----------------------------------------'
-        echo $tx_result
-        echo
-        printf "${FG_RED}Tx送信に失敗しました${NC}\n"
-      fi
-      ;;
-    2) 
-      echo
-      echo "送信をキャンセルしました"
-      echo
-      select_rtn
-      echo
-  esac
-
+        printf "入力記号が不正です。再度入力してください\n"
+      fi 
+  done
 }
 
 #出金先アドレスチェック
