@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=2.1.1
+TOOL_VERSION=2.2-a
 
 # General exit handler
 cleanup() {
@@ -28,7 +28,7 @@ myExit() {
 
 main () {
 clear
-update
+#update
 if [ $? == 1 ]; then
   cd $NODE_HOME/scripts
   $0 "$@" "-u"
@@ -62,6 +62,7 @@ echo '---------------------------------------------------'
 echo '
 [1] ウォレット操作
 [2] ブロック生成状態チェック
+[3] KES更新
 [q] 終了
 '
 echo
@@ -728,6 +729,177 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     select_rtn
     ;;
   
+  3)
+    clear
+
+    #KEStimenig
+    slotNumInt=`curl -s http://localhost:12798/metrics | grep cardano_node_metrics_slotNum_int | awk '{ print $2 }'`
+    kesTiming=`echo "scale=6; ${slotNumInt} / 129600" | bc | awk '{printf "%.5f\n", $0}'`
+
+    echo '------------------------------------------------------------------------'
+    echo -e "> KES更新作業"
+    echo '------------------------------------------------------------------------'
+
+    printf "KESファイルを更新する前に、1時間以内にブロック生成スケジュールが無いことを確認してください\n"
+    echo "KES更新作業を開始しますか？"
+    echo
+    echo "[1] 開始　[2] キャンセル"
+
+    echo
+    while :
+      do
+        read -n 1 kesnum
+        if [ "$kesnum" == "1" ] || [ "$kesnum" == "2" ]; then
+          case ${kesnum} in
+            1) break ;;
+            2) 
+              clear
+              main
+              exit ;;
+          esac
+          break
+        elif [ "$kesnum" == '' ]; then
+          printf "入力記号が不正です。再度入力してください\n"
+        else
+          printf "入力記号が不正です。再度入力してください\n"
+        fi
+    done
+     
+    echo
+    printf "KES更新タイミングチェック:$kesTiming\n"
+    sleep 1
+
+    kesTimingDecimal=${kesTiming#*.}
+    if [ $kesTimingDecimal -ge 99800 ]; then
+      printf "KesStartがもうすぐ切り替わります($kesTiming)\n"
+      nextkes=`printf $kesTiming | awk '{printf("%d\n",$1+1)}'`
+      printf "startKesPeriodが$nextkesへ切り替わってから再度実行してください\n"
+      select_rtn
+    else
+      printf "OK\n\n"
+    fi
+    sleep 2
+  
+    #現在のKESPeriod算出
+    slotNo=$(cardano-cli query tip ${networkmagic} | jq -r '.slot')
+    slotsPerKESPeriod=$(cat $NODE_HOME/${NODE_CONFIG}-shelley-genesis.json | jq -r '.slotsPerKESPeriod')
+    kesPeriod=$((${slotNo} / ${slotsPerKESPeriod}))
+    startKesPeriod=${kesPeriod}
+    
+    kesfolder="$NODE_HOME/kes-backup"
+    if [ ! -d $kesfolder ]; then
+      mkdir $kesfolder
+      printf "$kesfolderディレクトリを作成しました\n"
+    fi
+
+    date=`date +\%Y\%m\%d`
+    printf "旧KESファイルのバックアップ...\n"
+    sleep 2
+    cp $NODE_HOME/$POOL_HOTKEY_VK_FILENAME $kesfolder/$date-$POOL_HOTKEY_VK_FILENAME
+    printf "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME を $kesfolder/$date-$POOL_HOTKEY_VK_FILENAMEへコピーしました\n"
+    cp $NODE_HOME/$POOL_HOTKEY_SK_FILENAME $kesfolder/$date-$POOL_HOTKEY_SK_FILENAME
+    printf "$NODE_HOME/$POOL_HOTKEY_SK_FILENAME を $kesfolder/$date-$POOL_HOTKEY_SK_FILENAMEへコピーしました\n\n"
+
+    kesVkey256=`sha256sum $POOL_HOTKEY_VK_FILENAME | awk '{ print $1 }'`
+    kesSkey256=`sha256sum $POOL_HOTKEY_SK_FILENAME | awk '{ print $1 }'`
+
+    printf "■旧KESファイルの削除...\n"
+    sleep 2
+    rm $NODE_HOME/$POOL_HOTKEY_VK_FILENAME
+    printf "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME を削除しました\n"
+    rm $NODE_HOME/$POOL_HOTKEY_SK_FILENAME
+    printf "$NODE_HOME/$POOL_HOTKEY_SK_FILENAME を削除しました\n\n"
+
+    printf "■新しいKESファイルの作成...\n"
+    cardano-cli node key-gen-KES \
+    --verification-key-file $NODE_HOME/$POOL_HOTKEY_VK_FILENAME \
+    --signing-key-file $NODE_HOME/$POOL_HOTKEY_SK_FILENAME
+    sleep 5
+    
+    kesVkey256=`sha256sum $POOL_HOTKEY_VK_FILENAME | awk '{ print $1 }'`
+    kesSkey256=`sha256sum $POOL_HOTKEY_SK_FILENAME | awk '{ print $1 }'`
+
+
+    printf "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME $kesVkey256を作成しました\n"
+    printf "$NODE_HOME/$POOL_HOTKEY_SK_FILENAME $kesSkey256を作成しました\n\n"
+
+    echo
+    printf "現在のstartKesPeriod: ${startKesPeriod}\n"
+    sleep 2
+
+    echo
+    echo
+    echo '■エアギャップオフラインマシンで以下の操作を実施してください'
+    sleep 2
+    echo
+    echo -e "${FG_YELLOW}1. BPの$POOL_HOTKEY_VK_FILENAMEと$POOL_HOTKEY_SK_FILENAME をエアギャップのcnodeディレクトリにコピーしてください${NC}"
+    echo '----------------------------------------'
+    echo ">> [BP] ⇒ $POOL_HOTKEY_VK_FILENAME / $POOL_HOTKEY_SK_FILENAME ⇒ [エアギャップ]"
+    echo '----------------------------------------'
+    sleep 1
+    echo
+    echo -e "${FG_YELLOW}2. ファイルハッシュ値確認${NC}"
+    echo '----------------------------------------'
+    echo 'cd $NODE_HOME'
+    echo "sha256sum $POOL_HOTKEY_VK_FILENAME"
+    echo "sha256sum $POOL_HOTKEY_SK_FILENAME"
+    echo '----------------------------------------'
+    echo '戻り値のハッシュ値が上記の[新しいKESファイルの作成]で表示されているハッシュ値と等しいか確認する'
+    sleep 1
+    echo
+    echo -e "${FG_YELLOW}3. node.certファイルを作成する${NC}"
+    echo '----------------------------------------'
+    echo 'cd $NODE_HOME'
+    echo 'chmod u+rwx $HOME/cold-keys'
+    echo 'cardano-cli node issue-op-cert \'
+    echo '  --kes-verification-key-file kes.vkey \'
+    echo '  --cold-signing-key-file $HOME/cold-keys/node.skey \'
+    echo '  --operational-certificate-issue-counter $HOME/cold-keys/node.counter \'
+    echo "  --kes-period ${startKesPeriod} "'\'
+    echo '  --out-file node.cert'
+    echo 'chmod a-rwx $HOME/cold-keys'
+    echo '----------------------------------------'
+    sleep 1
+    echo
+    echo -e "${FG_YELLOW}4. エアギャップの node.cert をBPのcnodeディレクトリにコピーしてください${NC}"
+    echo '----------------------------------------'
+    echo ">> [エアギャップ] ⇒ node.cert ⇒ [BP]"
+    echo '----------------------------------------'
+    echo
+    read -p "1～4の操作が終わったらEnterを押してください"
+
+    echo
+    echo "新しいKESファイルを有効化するにはノードを再起動する必要があります"
+    echo "ノードを再起動しますか？"
+    echo
+    echo "[1] このまま再起動する　[2] 手動で再起動する"
+    echo
+    while :
+      do
+        read -n 1 restartnum
+        if [ "$restartnum" == "1" ] || [ "$restartnum" == "2" ]; then
+          case ${restartnum} in
+            1) 
+              sudo systemctl reload-or-restart cardano-node
+              printf "\nノードを再起動しました。glive viewを起動して同期状況を確認してください\n"
+              printf "ノード同期完了後、当ツールの[2] ブロック生成状態チェックを実行してください\n"
+              break
+              ;;
+            2) 
+              clear
+              echo "SPO JAPAN GUILD TOOL Closed!" 
+              exit ;;
+          esac
+          break
+        elif [ "$kesnum" == '' ]; then
+          printf "入力記号が不正です。再度入力してください\n"
+        else
+          printf "入力記号が不正です。再度入力してください\n"
+        fi
+    done
+
+    exit
+    ;;
   q)
     clear
     echo
