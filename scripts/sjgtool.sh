@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=2.2-a
+TOOL_VERSION=3.0.0
 
 # General exit handler
 cleanup() {
@@ -28,7 +28,7 @@ myExit() {
 
 main () {
 clear
-#update
+update
 if [ $? == 1 ]; then
   cd $NODE_HOME/scripts
   $0 "$@" "-u"
@@ -458,12 +458,14 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       select_rtn
     fi
 
-    kes_vk_file_check=`filecheck "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME"`
-    if [ $kes_vk_file_check == "false" ]; then
-      printf "\n${FG_RED}$POOL_HOTKEY_VK_FILENAMEが見つかりません${NC}\n\n"
-      printf "エアギャップにある${FG_GREEN}$POOL_HOTKEY_VK_FILENAME${NC}をBPの${FG_YELLOW}$NODE_HOME${NC}にコピーし再度実行してください\n"
-      select_rtn
-    fi
+    kesfileCheck
+
+    #kes_vk_file_check=`filecheck "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME"`
+    #if [ $kes_vk_file_check == "false" ]; then
+    #  printf "\n${FG_RED}$POOL_HOTKEY_VK_FILENAMEが見つかりません${NC}\n\n"
+    #  printf "エアギャップにある${FG_GREEN}$POOL_HOTKEY_VK_FILENAME${NC}をBPの${FG_YELLOW}$NODE_HOME${NC}にコピーし再度実行してください\n"
+    #  select_rtn
+    #fi
 
 
     mempool_CHK=`cat $CONFIG | jq ".TraceMempool"`
@@ -740,9 +742,31 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     echo -e "> KES更新作業"
     echo '------------------------------------------------------------------------'
 
-    printf "KESファイルを更新する前に、1時間以内にブロック生成スケジュールが無いことを確認してください\n"
-    echo "KES更新作業を開始しますか？"
+    kesfileCheck
+
+    node_cert_file_check=`filecheck "$NODE_HOME/$POOL_OPCERT_FILENAME"`
+    if [ $node_cert_file_check == "false" ]; then
+      printf "\n${FG_RED}$POOL_OPCERT_FILENAMEが見つかりません${NC}\n\n"
+      printf "$NODE_HOME/scripts/envの${FG_YELLOW}[POOL_OPCERT_FILENAME]${NC}の値を正しいファイル名(例：${FG_GREEN}node.cert${NC})に書き換えてください\n"
+      select_rtn
+    fi
+
+
+    printf "KESファイルを更新する前に、1時間以内にブロック生成スケジュールが無いことを確認してください\n\n"
+    printf "${FG_YELLOW}KES更新作業を開始しますか？${NC}\n\n"
+    echo '------------------------------------------------------------------------'
+    echo -e "■ 実行フロー"
+    echo ' 1.既存のKESファイルバックアップ'
+    echo ' 2.既存のKESファイル削除'
+    echo ' 3.既存のKESファイルバックアップ'
+    echo ' 4.エアギャップ操作(手動)'
+    echo ' 5.ノード再起動(選択可)'
     echo
+    echo ' -------ここまで当ツールが実行--------'
+    echo
+    echo ' 6.ノード同期確認(手動)'
+    echo ' 7.GuildToolにてブロック生成可能状態確認(手動)'
+    echo '------------------------------------------------------------------------'
     echo "[1] 開始　[2] キャンセル"
 
     echo
@@ -766,7 +790,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     done
      
     echo
-    printf "KES更新タイミングチェック:$kesTiming\n"
+    printf "${FG_MAGENTA}KES更新タイミングチェック${NC}:$kesTiming\n"
     sleep 1
 
     kesTimingDecimal=${kesTiming#*.}
@@ -776,7 +800,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       printf "startKesPeriodが$nextkesへ切り替わってから再度実行してください\n"
       select_rtn
     else
-      printf "OK\n\n"
+      printf "${FG_GREEN}OK${NC}\n\n"
     fi
     sleep 2
   
@@ -792,8 +816,8 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       printf "$kesfolderディレクトリを作成しました\n"
     fi
 
-    date=`date +\%Y\%m\%d`
-    printf "旧KESファイルのバックアップ...\n"
+    date=`date +\%Y\%m\%d\%H\%M`
+    printf "${FG_MAGENTA}■旧KESファイルのバックアップ...${NC}\n"
     sleep 2
     cp $NODE_HOME/$POOL_HOTKEY_VK_FILENAME $kesfolder/$date-$POOL_HOTKEY_VK_FILENAME
     printf "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME を $kesfolder/$date-$POOL_HOTKEY_VK_FILENAMEへコピーしました\n"
@@ -803,14 +827,14 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     kesVkey256=`sha256sum $POOL_HOTKEY_VK_FILENAME | awk '{ print $1 }'`
     kesSkey256=`sha256sum $POOL_HOTKEY_SK_FILENAME | awk '{ print $1 }'`
 
-    printf "■旧KESファイルの削除...\n"
+    printf "${FG_MAGENTA}■旧KESファイルの削除...${NC}\n"
     sleep 2
     rm $NODE_HOME/$POOL_HOTKEY_VK_FILENAME
     printf "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME を削除しました\n"
     rm $NODE_HOME/$POOL_HOTKEY_SK_FILENAME
     printf "$NODE_HOME/$POOL_HOTKEY_SK_FILENAME を削除しました\n\n"
 
-    printf "■新しいKESファイルの作成...\n"
+    printf "${FG_MAGENTA}■新しいKESファイルの作成...${NC}\n"
     cardano-cli node key-gen-KES \
     --verification-key-file $NODE_HOME/$POOL_HOTKEY_VK_FILENAME \
     --signing-key-file $NODE_HOME/$POOL_HOTKEY_SK_FILENAME
@@ -820,11 +844,11 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     kesSkey256=`sha256sum $POOL_HOTKEY_SK_FILENAME | awk '{ print $1 }'`
 
 
-    printf "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME $kesVkey256を作成しました\n"
-    printf "$NODE_HOME/$POOL_HOTKEY_SK_FILENAME $kesSkey256を作成しました\n\n"
+    printf "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME ${FG_YELLOW}$kesVkey256${NC}を作成しました\n"
+    printf "$NODE_HOME/$POOL_HOTKEY_SK_FILENAME ${FG_YELLOW}$kesSkey256${NC}を作成しました\n\n"
 
     echo
-    printf "現在のstartKesPeriod: ${startKesPeriod}\n"
+    printf "${FG_MAGENTA}現在のstartKesPeriod${NC}: ${FG_YELLOW}${startKesPeriod}${NC}\n"
     sleep 2
 
     echo
@@ -847,7 +871,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     echo '戻り値のハッシュ値が上記の[新しいKESファイルの作成]で表示されているハッシュ値と等しいか確認する'
     sleep 1
     echo
-    echo -e "${FG_YELLOW}3. node.certファイルを作成する${NC}"
+    echo -e "${FG_YELLOW}3. $POOL_OPCERT_FILENAMEファイルを作成する${NC}"
     echo '----------------------------------------'
     echo 'cd $NODE_HOME'
     echo 'chmod u+rwx $HOME/cold-keys'
@@ -856,14 +880,14 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     echo '  --cold-signing-key-file $HOME/cold-keys/node.skey \'
     echo '  --operational-certificate-issue-counter $HOME/cold-keys/node.counter \'
     echo "  --kes-period ${startKesPeriod} "'\'
-    echo '  --out-file node.cert'
+    echo "  --out-file $POOL_OPCERT_FILENAME"
     echo 'chmod a-rwx $HOME/cold-keys'
     echo '----------------------------------------'
     sleep 1
     echo
-    echo -e "${FG_YELLOW}4. エアギャップの node.cert をBPのcnodeディレクトリにコピーしてください${NC}"
+    echo -e "${FG_YELLOW}4. エアギャップの $POOL_OPCERT_FILENAME をBPのcnodeディレクトリにコピーしてください${NC}"
     echo '----------------------------------------'
-    echo ">> [エアギャップ] ⇒ node.cert ⇒ [BP]"
+    echo ">> [エアギャップ] ⇒ $POOL_OPCERT_FILENAME ⇒ [BP]"
     echo '----------------------------------------'
     echo
     read -p "1～4の操作が終わったらEnterを押してください"
@@ -881,8 +905,8 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
           case ${restartnum} in
             1) 
               sudo systemctl reload-or-restart cardano-node
-              printf "\nノードを再起動しました。glive viewを起動して同期状況を確認してください\n"
-              printf "ノード同期完了後、当ツールの[2] ブロック生成状態チェックを実行してください\n"
+              printf "\n${FG_GREEN}ノードを再起動しました。${NC}\nglive viewを起動して同期状況を確認してください\n\n"
+              printf "${FG_RED}ノード同期完了後、当ツールの[2] ブロック生成状態チェックを実行してください${NC}\n\n"
               break
               ;;
             2) 
@@ -941,6 +965,24 @@ select_rtn(){
         printf "入力記号が不正です。再度入力してください\n"
       fi
   done
+}
+
+kesfileCheck(){
+  kes_vk_file_check=`filecheck "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME"`
+  if [ $kes_vk_file_check == "false" ]; then
+    printf "\n${FG_RED}$POOL_HOTKEY_VK_FILENAMEが見つかりません${NC}\n\n"
+    printf "$NODE_HOME/scripts/envの${FG_YELLOW}[POOL_HOTKEY_VK_FILENAME]${NC}の値を正しいファイル名(例：${FG_GREEN}kes.vkey${NC})に書き換えるか\n"
+    printf "または、エアギャップにある${FG_GREEN}$POOL_HOTKEY_VK_FILENAME${NC}をBPの${FG_YELLOW}$NODE_HOME${NC}にコピーし再度実行してください\n"
+    select_rtn
+  fi
+
+  kes_sk_file_check=`filecheck "$NODE_HOME/$POOL_HOTKEY_SK_FILENAME"`
+  if [ $kes_sk_file_check == "false" ]; then
+    printf "\n${FG_RED}$POOL_HOTKEY_SK_FILENAMEが見つかりません${NC}\n\n"
+    printf "$NODE_HOME/scripts/envの${FG_YELLOW}[POOL_HOTKEY_SK_FILENAME]${NC}の値を正しいファイル名(例：${FG_GREEN}kes.skey${NC})に書き換えるか\n"
+    printf "または、エアギャップにある${FG_GREEN}$POOL_HOTKEY_SK_FILENAME${NC}をBPの${FG_YELLOW}$NODE_HOME${NC}にコピーし再度実行してください\n"
+    select_rtn
+  fi
 }
 
 air_gap(){
