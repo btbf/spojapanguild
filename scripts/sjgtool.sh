@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=3.0.0
+TOOL_VERSION=3.1.0
 
 # General exit handler
 cleanup() {
@@ -756,10 +756,10 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     printf "${FG_YELLOW}KES更新作業を開始しますか？${NC}\n\n"
     echo '------------------------------------------------------------------------'
     echo -e "■ 実行フロー"
-    echo ' 1.既存のKESファイルバックアップ'
-    echo ' 2.既存のKESファイル削除'
-    echo ' 3.既存のKESファイルバックアップ'
-    echo ' 4.エアギャップ操作(手動)'
+    echo ' 1.既存のKESファイル/CERTファイルバックアップ'
+    echo ' 2.既存のKESファイル/CERTファイル削除'
+    echo ' 3.新規KESファイル作成'
+    echo ' 4.エアギャップ操作/CERTファイル移動(手動)'
     echo ' 5.ノード再起動(選択可)'
     echo
     echo ' -------ここまで当ツールが実行--------'
@@ -822,7 +822,9 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     cp $NODE_HOME/$POOL_HOTKEY_VK_FILENAME $kesfolder/$date-$POOL_HOTKEY_VK_FILENAME
     printf "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME を $kesfolder/$date-$POOL_HOTKEY_VK_FILENAMEへコピーしました\n"
     cp $NODE_HOME/$POOL_HOTKEY_SK_FILENAME $kesfolder/$date-$POOL_HOTKEY_SK_FILENAME
-    printf "$NODE_HOME/$POOL_HOTKEY_SK_FILENAME を $kesfolder/$date-$POOL_HOTKEY_SK_FILENAMEへコピーしました\n\n"
+    printf "$NODE_HOME/$POOL_HOTKEY_SK_FILENAME を $kesfolder/$date-$POOL_HOTKEY_SK_FILENAMEへコピーしました\n"
+    cp $NODE_HOME/$POOL_OPCERT_FILENAME $kesfolder/$date-$POOL_OPCERT_FILENAME
+    printf "$NODE_HOME/$POOL_OPCERT_FILENAME を $kesfolder/$date-$POOL_OPCERT_FILENAMEへコピーしました\n\n"
 
     kesVkey256=`sha256sum $POOL_HOTKEY_VK_FILENAME | awk '{ print $1 }'`
     kesSkey256=`sha256sum $POOL_HOTKEY_SK_FILENAME | awk '{ print $1 }'`
@@ -832,7 +834,9 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     rm $NODE_HOME/$POOL_HOTKEY_VK_FILENAME
     printf "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME を削除しました\n"
     rm $NODE_HOME/$POOL_HOTKEY_SK_FILENAME
-    printf "$NODE_HOME/$POOL_HOTKEY_SK_FILENAME を削除しました\n\n"
+    printf "$NODE_HOME/$POOL_HOTKEY_SK_FILENAME を削除しました\n"
+    rm $NODE_HOME/$POOL_OPCERT_FILENAME
+    printf "$NODE_HOME/$POOL_OPCERT_FILENAME を削除しました\n\n"
 
     printf "${FG_MAGENTA}■新しいKESファイルの作成...${NC}\n"
     cardano-cli node key-gen-KES \
