@@ -195,6 +195,7 @@ sudo apt autoclean
 ```
 
 自動更新を有効にすると、手動でインストールする手間を省けます。
+> `YES`を選択しEnter
 
 ```text
 sudo apt install unattended-upgrades
@@ -281,6 +282,8 @@ sudo nano /etc/fail2ban/jail.local
 ```
 
 ファイルの最後に次の行を追加し保存します。
+
+> コマンド中の (SSHポートを入力してください) については1-3で設定したSSHポートを入力してください。()は不要です。
 
 ```bash
 [sshd]

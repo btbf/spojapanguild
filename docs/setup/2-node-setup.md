@@ -383,7 +383,8 @@ journalctl --unit=cardano-node --follow
 ```
 > コマンド入力に戻る場合は「Ctrl＋C」（この場合ノードは終了しません）
 
-!!! hint "ヒント"
+### 便利なエイリアス設定
+!!! hint "エイリアス設定"
     スクリプトへのパスを通し、任意の単語で起動出来るようにする。
     ```bash
     echo alias cnode='"journalctl -u cardano-node -f"' >> $HOME/.bashrc
@@ -418,6 +419,8 @@ Guild LiveViewをインストールします。
 mkdir $NODE_HOME/scripts
 cd $NODE_HOME/scripts
 sudo apt install bc tcptraceroute -y
+```
+```bash
 curl -s -o gLiveView.sh https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/gLiveView.sh
 curl -s -o env https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/env
 chmod 755 gLiveView.sh
