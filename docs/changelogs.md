@@ -1,5 +1,13 @@
 # 変更履歴
 
+## 2022/05/10　ver. 12.0
+!!! note ""
+    * [エアギャップマシン作成手順](../setup/0-start-guide/#0-4)を追加  
+    * [Linuxコマンド集](./operation/command.md)を追加
+    * [SJG Tool](./operation/tool.md)のバージョンアップ
+    * その他軽微な修正
+    
+
 ## 2022/04/20　ver. 11.4
 !!! note ""
     * ノード起動・再起動・停止エイリアスコマンド追加  

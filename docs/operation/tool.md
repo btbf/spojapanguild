@@ -1,6 +1,6 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2022/04/17 v2.1.0
+最終更新日：2022/05/10 v3.1.0
 
 !!! info "主な機能"
     * payment.addr 未使用UTXO照会  
@@ -36,6 +36,7 @@ sed -i $NODE_HOME/scripts/env \
     -e '1,73s!#WALLET_PAY_ADDR_FILENAME="payment.addr"!WALLET_PAY_ADDR_FILENAME="payment.addr"!' \
     -e '1,73s!#WALLET_STAKE_ADDR_FILENAME="reward.addr"!WALLET_STAKE_ADDR_FILENAME="stake.addr"!' \
     -e '1,73s!#POOL_HOTKEY_VK_FILENAME="hot.vkey"!POOL_HOTKEY_VK_FILENAME="kes.vkey"!' \
+    -e '1,73s!#POOL_HOTKEY_SK_FILENAME="hot.skey"!POOL_HOTKEY_SK_FILENAME="kes.skey"!' \
     -e '1,73s!#POOL_OPCERT_FILENAME="op.cert"!POOL_OPCERT_FILENAME="node.cert"!' \
     -e '1,73s!#POOL_VRF_SK_FILENAME="vrf.skey"!POOL_VRF_SK_FILENAME="vrf.skey"!'
 ```
@@ -73,4 +74,20 @@ gtool
     * DdzFアドレスへの報酬/資金出金を許可
     * payment.addr出金時、出金額表示単位バグを修正
 
+### 3.0.0
 
+!!! hint ""
+
+    * KES更新機能追加
+
+    このアップデートに伴い、envファイルの修正が必要となります。
+    v2.x.x以上をすでにインストールされていて、プールのKES秘密鍵のファイル名がkes.skeyの場合は以下のコードを1回だけ実行してください。
+    違うファイル名をご利用の場合は任意に書き換えてください。
+    ```
+    sed -i $NODE_HOME/scripts/env \
+    -e '1,73s!#POOL_HOTKEY_SK_FILENAME="hot.skey"!POOL_HOTKEY_SK_FILENAME="kes.skey"!'
+    ```
+
+### 3.1.0
+
+    * KES更新時のnode.certバックアップ/削除追加

@@ -401,8 +401,10 @@
 
 === "エアギャップオフラインマシン"
     ```bash
+    chmod u+rwx $HOME/cold-keys
     cardano-cli stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format bech32 > stakepoolid_bech32.txt
     cardano-cli stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format hex > stakepoolid_hex.txt
+    chmod a-rwx $HOME/cold-keys
     ```
 
 !!! important "ファイル転送"
