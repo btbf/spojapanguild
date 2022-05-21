@@ -225,7 +225,7 @@ source $HOME/.bashrc
     DB_PATH=\${DIRECTORY}/db
     SOCKET_PATH=\${DIRECTORY}/db/socket
     CONFIG=\${DIRECTORY}/${NODE_CONFIG}-config.json
-    /usr/local/bin/cardano-node run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
+    /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.3 -Iw300 -A16m -F1.5 -H2500M -T -S -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
     EOF
     ```
 
@@ -242,7 +242,7 @@ source $HOME/.bashrc
     DB_PATH=\${DIRECTORY}/db
     SOCKET_PATH=\${DIRECTORY}/db/socket
     CONFIG=\${DIRECTORY}/${NODE_CONFIG}-config.json
-    /usr/local/bin/cardano-node run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
+    /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.3 -Iw300 -A16m -F1.5 -H2500M -T -S -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
     EOF
     ```
 
