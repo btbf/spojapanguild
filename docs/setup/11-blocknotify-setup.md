@@ -258,7 +258,7 @@ tmux a -t blockcheck
     wget https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/block_notify/block_check.py -O block_check.py
     ```
 
-    各通知先の設定は[2.通知アプリの設定](./README.md#2-apurinolinediscordtelegramslackni)を参照してください
+    各通知先の設定は[11-2.通知アプリの設定](./11-blocknotify-setup#11-2)を参照してください
 
     設定ファイルを変更する
     ```
