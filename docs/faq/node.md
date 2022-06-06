@@ -52,18 +52,18 @@
 ## Q2.BPノードが再起動を繰り返します
 
 ??? note "A.SWAPを設定してください"
-    ** 1. Swap設定確認 **
+    ** 1. メモリ領域の確認 **
     ```
     free -h
     ```
-    !!! example "戻り値"
-        * Mem:Total⇒`15Gi`以下 
-        * Swap:Total⇒`8.0Gi`以下
+    !!! example "戻り値が以下の条件をみたしているか確認"
+        * Mem:Total⇒`15Gi`以上 
+        * Swap:Total⇒`8.0Gi`以上
 
-    === "Mem:Total⇒ 15Gi 以下の場合"
+    === "Mem:Total⇒ 15Gi 未満の場合"
         サーバーメモリを16GB以上にスケールアップするか、16GBスペックを再契約し再構築する
 
-    === "Swap:Total⇒ 8.0Gi 以下の場合"
+    === "Swap:Total⇒ 8.0Gi 未満の場合"
         ** 既存のスワップファイルを削除する **
         ```
         sudo swapoff /swapfile
