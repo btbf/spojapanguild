@@ -379,7 +379,7 @@ stakepoolid_bech32.txtの作成
         --tx-out $(cat payment.addr)+0 \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
         --fee 0 \
-        --certificate stake-dereg.cert
+        --certificate stake-dereg.cert \
         --out-file tx.tmp
     ```
 
