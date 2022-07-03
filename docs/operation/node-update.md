@@ -11,11 +11,7 @@
 
 
 ### **主な変更点と新機能**
-* Cabalアップデート v3.6.2.0
-* CLIリーダーシップのスケジュールコマンド追加
-* ステークプール運用証明書の有効性チェックコマンド追加
-* トランザクションビルドコマンドでのCDDL形式CBORエンコーディングのサポート
-* その他開発者用コマンドも多数追加
+
 
 ## **1.ノードアップデート**
 
@@ -38,7 +34,7 @@ sudo reboot
 
 SSHで再接続する
 
-### **1-2. cabal/GHCアップデート**
+### **1-2. cabal/GHCバージョン確認**
 
 **cabalパス確認**
 ```
@@ -61,23 +57,22 @@ which cabal
     mv cabal cabal_bk
     ```
 
-
-**cabalバージョンアップ**
-```
-ghcup upgrade
-ghcup install cabal 3.6.2.0
-ghcup set cabal 3.6.2.0
-```
-
 cabalバージョン確認
 ```
-which cabal
 cabal --version
 ```
 > 以下の戻り値ならOK  
-> /home/user/.ghcup/bin/cabal  
 cabal-install version 3.6.2.0
-compiled using version 3.6.2.0 of the Cabal library  
+compiled using version 3.6.2.0 of the Cabal library
+
+!!! danger "確認"
+    **cabal 3.6.2.0以下だった場合のみ実行**
+    **cabalバージョンアップ**
+    ```
+    ghcup upgrade
+    ghcup install cabal 3.6.2.0
+    ghcup set cabal 3.6.2.0
+    ```
 
 
 
@@ -100,8 +95,38 @@ ghc --version
     > GHCのバージョンは「8.10.7」であればOK
 
 
+### **1-4.Secp256k1のインストール**
+
+```
+cd $HOME/git
+git clone https://github.com/bitcoin-core/secp256k1.git
+```
+
+```
+cd secp256k1/
+git reset --hard ac83be33d0956faf6b7f61a60ab524ef7d6a473a
+./autogen.sh
+./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
+make
+make check
+sudo make install
+```
+
+### **1-5.環境変数追加**
+```
+echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
+source $HOME/.bashrc
+```
+
+
 
 ### **1-3.ソースコードダウンロード**
+
+新しいセッションを開く。SSH接続が途中で切断されても処理が止まりません。
+
+```
+tmux new -s build
+```
 
 ```bash
 cd $HOME/git
@@ -123,7 +148,7 @@ cabal update
 -->
 ```
 git fetch --all --recurse-submodules --tags
-git checkout tags/1.34.1
+git checkout tags/1.35.0
 cabal configure -O0 -w ghc-8.10.7
 ```
 
@@ -133,9 +158,6 @@ echo -e "package cardano-crypto-praos\n flags: -external-libsodium-vrf" > cabal.
 ```bash
 cabal build cardano-node cardano-cli
 ```
-> 'hackage.haskell.org'! Falling back to older state (2021-12-06T23:34:30Z).
-Resolving dependencies...
-と表示され止まったように見えますが、動くまでお待ちください
 
 ビルド完了までに数十分ほどかかります。  
 
@@ -146,11 +168,11 @@ $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-cli") 
 $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-node") version  
 ```
 以下の戻り値を確認する  
->cardano-cli 1.34.1 - linux-x86_64 - ghc-8.10  
-git rev 73f9a746362695dc2cb63ba757fbcabb81733d23  
+>cardano-cli 1.35.0 - linux-x86_64 - ghc-8.10  
+git rev 9f1d7dc163ee66410d912e48509d6a2300cfa68a
 
->cardano-node 1.34.1 - linux-x86_64 - ghc-8.10  
-git rev 73f9a746362695dc2cb63ba757fbcabb81733d23  
+>cardano-node 1.35.0 - linux-x86_64 - ghc-8.10  
+git rev 9f1d7dc163ee66410d912e48509d6a2300cfa68a
 
 
 **ノードをストップする** 
@@ -176,12 +198,16 @@ cardano-node version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 1.34.1 - linux-x86_64 - ghc-8.10  
-git rev 73f9a746362695dc2cb63ba757fbcabb81733d23  
+>cardano-cli 1.35.0 - linux-x86_64 - ghc-8.10  
+git rev 9f1d7dc163ee66410d912e48509d6a2300cfa68a
 
->cardano-node 1.34.1 - linux-x86_64 - ghc-8.10  
-git rev 73f9a746362695dc2cb63ba757fbcabb81733d23   
+>cardano-node 1.35.0 - linux-x86_64 - ghc-8.10  
+git rev 9f1d7dc163ee66410d912e48509d6a2300cfa68a 
 
+ビルド用セッションを終了する
+```
+exit
+```
 
 ### **1-5.ノード起動**
 
@@ -294,61 +320,61 @@ sudo systemctl daemon-reload
 
 !!! info "確認"
     * BPのみで実施します
-    * CNCLI4.0.4以下の場合に実施してください
+    * CNCLI4→5へバージョンアップします。
+
+
+**サービスを止める**
+```
+sudo systemctl stop cnode-cncli-sync.service
+```
+
+**CNCLIリポジトリを再構築する**
 
 ```
+cd $HOME/git
+rm -rf cncli
+git clone --recurse-submodules https://github.com/cardano-community/cncli
+```
+
+**CNCLIをアップデートする**
+
+```bash
+rustup update
+cd $HOME/git/cncli
+git fetch --all --prune
+git checkout $(curl -s https://api.github.com/repos/cardano-community/cncli/releases/latest | jq -r .tag_name)
+cargo install --path . --force
 cncli --version
 ```
+> cncli 5.0.1になったことを確認する
 
-=== "cncli 4.0.3以下の場合"
+**ノードを再起動する**
+```
+sudo systemctl reload-or-restart cardano-node
+```
 
-    **サービスを止める**
-    ```
-    sudo systemctl stop cnode-cncli-sync.service
-    ```
+**サービス起動を確認する**
 
-    **CNCLIをアップデートする**
+```bash
+tmux ls
+```
 
-    ```bash
-    rustup update
-    cd $HOME/git/cncli
-    git fetch --all --prune
-    git checkout $(curl -s https://api.github.com/repos/AndrewWestberg/cncli/releases/latest | jq -r .tag_name)
-    cargo install --path . --force
-    cncli --version
-    ```
-    > cncli 4.0.4になったことを確認する
+!!! info "ヒント"
+    ノードを再起動してから、約20秒後に5プログラムがバックグラウンドで起動中であればOKです
+    * cncli
+    * leaderlog
+    * validate
+    * logmonitor
+    * blockcheck(ブロック生成ステータス通知を導入している場合)
 
-    **ノードを再起動する**
-    ```
-    sudo systemctl reload-or-restart cardano-node
-    ```
-
-    **サービス起動を確認する**
-
-    ```bash
-    tmux ls
-    ```
-
-    !!! info "ヒント"
-        ノードを再起動してから、約20秒後に5プログラムがバックグラウンドで起動中であればOKです
-        * cncli
-        * leaderlog
-        * validate
-        * logmonitor
-        * blockcheck(ブロック生成ステータス通知を導入している場合)
-
-    ```
-    tmux a -t cncli
-    ```
-    >「100.00% synced」になるまで待ちます。
-    100%になったら、Ctrl+bを押した後に d を押し元の画面に戻ります
-    (バックグラウンド実行に切り替え)
+```
+tmux a -t cncli
+```
+>「100.00% synced」になるまで待ちます。
+100%になったら、Ctrl+bを押した後に d を押し元の画面に戻ります
+(バックグラウンド実行に切り替え)
 
 
-=== "cncli 4.0.4の場合"
-
-    最新バージョンです。
 
 
 ## 3. エアギャップマシンアップデート
@@ -391,11 +417,11 @@ cardano-node version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 1.34.1 - linux-x86_64 - ghc-8.10  
-git rev 73f9a746362695dc2cb63ba757fbcabb81733d23  
+>cardano-cli 1.35.0 - linux-x86_64 - ghc-8.10  
+git rev 9f1d7dc163ee66410d912e48509d6a2300cfa68a
 
->cardano-node 1.34.1 - linux-x86_64 - ghc-8.10  
-git rev 73f9a746362695dc2cb63ba757fbcabb81733d23 
+>cardano-node 1.35.0 - linux-x86_64 - ghc-8.10  
+git rev 9f1d7dc163ee66410d912e48509d6a2300cfa68a
 
 
 <!--

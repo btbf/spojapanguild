@@ -238,7 +238,7 @@ tmpfs	/run/shm	tmpfs	ro,noexec,nosuid	0 0
 
 ```
 cd $HOME
-sudo fallocate -l 8G /swapfile
+sudo fallocate -l 16G /swapfile
 ```
 ```
 sudo chmod 600 /swapfile
