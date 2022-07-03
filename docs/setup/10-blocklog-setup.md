@@ -145,7 +145,7 @@ echo "BPポートは${b_PORT}です"
 ```
 ```bash
 sed -i $NODE_HOME/scripts/env \
-  -e '1,73s!#CCLI="${HOME}/.cabal/bin/cardano-cli"!CCLI="/usr/local/bin/cardano-cli +RTS -M10G -RTS"!' \
+  -e '1,73s!#CCLI="${HOME}/.cabal/bin/cardano-cli"!CCLI="/usr/local/bin/cardano-cli"!' \
   -e '1,73s!#CNODE_HOME="/opt/cardano/cnode"!CNODE_HOME='${NODE_HOME}'!' \
   -e '1,73s!#CNODE_PORT=6000!CNODE_PORT='${b_PORT}'!' \
   -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/mainnet-config.json"!' \
