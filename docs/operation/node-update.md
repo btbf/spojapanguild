@@ -109,6 +109,21 @@ git reset --hard ac83be33d0956faf6b7f61a60ab524ef7d6a473a
 ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
 make
 make check
+```
+```
+Testsuite summary for libsecp256k1 0.1.0-pre
+============================================================================
+# TOTAL: 2
+# PASS:  2
+# SKIP:  0
+# XFAIL: 0
+# FAIL:  0
+# XPASS: 0
+# ERROR: 0
+============================================================================
+```
+
+```
 sudo make install
 ```
 
@@ -148,7 +163,7 @@ cabal update
 -->
 ```
 git fetch --all --recurse-submodules --tags
-git checkout tags/1.35.0
+git checkout tags/1.35.1
 cabal configure -O0 -w ghc-8.10.7
 ```
 

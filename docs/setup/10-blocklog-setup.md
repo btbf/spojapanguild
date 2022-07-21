@@ -88,9 +88,9 @@ rustup component add clippy rustfmt
 source $HOME/.cargo/env
 sudo apt-get update -y && sudo apt-get install -y automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool autoconf
 cd $HOME/git
-git clone https://github.com/AndrewWestberg/cncli
+git clone https://github.com/cardano-community/cncli
 cd cncli
-git checkout $(curl -s https://api.github.com/repos/AndrewWestberg/cncli/releases/latest | jq -r .tag_name)
+git checkout $(curl -s https://api.github.com/repos/cardano-community/cncli/releases/latest | jq -r .tag_name)
 cargo install --path . --force
 ```
 
@@ -116,12 +116,11 @@ cd $NODE_HOME
 mkdir scripts
 cd $NODE_HOME/scripts
 wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cncli.sh -O ./cncli.sh
-wget https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/cntools.library -O ./cntools.library
-wget https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/cntools.config -O ./cntools.config
+wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/cntools.library -O ./cntools.library
 wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/env -O ./env
 wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/logMonitor.sh -O ./logMonitor.sh
 wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/gLiveView.sh -O ./gLiveView.sh
-wget https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/blocks.sh -O ./blocks.sh 
+wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/blocks.sh -O ./blocks.sh 
 ```
 
 **パーミッションを設定する**
@@ -145,7 +144,7 @@ echo "BPポートは${b_PORT}です"
 ```
 ```bash
 sed -i $NODE_HOME/scripts/env \
-  -e '1,73s!#CCLI="${HOME}/.cabal/bin/cardano-cli"!CCLI="/usr/local/bin/cardano-cli +RTS -M10G -RTS"!' \
+  -e '1,73s!#CCLI="${HOME}/.cabal/bin/cardano-cli"!CCLI="/usr/local/bin/cardano-cli"!' \
   -e '1,73s!#CNODE_HOME="/opt/cardano/cnode"!CNODE_HOME='${NODE_HOME}'!' \
   -e '1,73s!#CNODE_PORT=6000!CNODE_PORT='${b_PORT}'!' \
   -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/mainnet-config.json"!' \

@@ -220,10 +220,11 @@ BPノードを一旦停止する
     DB_PATH=\${DIRECTORY}/db
     SOCKET_PATH=\${DIRECTORY}/db/socket
     CONFIG=\${DIRECTORY}/${NODE_CONFIG}-config.json
+    SNAPSHOT=43200
     KES=\${DIRECTORY}/kes.skey
     VRF=\${DIRECTORY}/vrf.skey
     CERT=\${DIRECTORY}/node.cert
-    /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A32m -n4m -F1.5 -H2500M -T -S -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG} --shelley-kes-key \${KES} --shelley-vrf-key \${VRF} --shelley-operational-certificate \${CERT}
+    /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A32m -n4m -F1.5 -H2500M -T -S -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG} --shelley-kes-key \${KES} --shelley-vrf-key \${VRF} --shelley-operational-certificate \${CERT} --snapshot-interval ${SNAPSHOT}
     EOF
     ```
 
