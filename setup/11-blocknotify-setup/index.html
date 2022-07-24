@@ -1,0 +1,2050 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="SPO JAPAN GUILD監修のステークプール構築ガイド。私たちは日本におけるステークプール構築を促進しカルダノ分散化に貢献してまいります。">
+      
+      
+      
+        <link rel="canonical" href="https://docs.spojapanguild.net/setup/11-blocknotify-setup/">
+      
+      
+        
+      
+      <link rel="icon" href="../../images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.3.9+insiders-4.21.0">
+    
+    
+      
+        <title>11.ブロック生成ステータス通知セットアップ - SPO JAPAN GUILD DOCS</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.846d444e.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+Japanese:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Noto Sans Japanese";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+
+  <script id="__analytics">function __md_analytics(){function n(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],n("js",new Date),n("config","G-R9C48XMXE5"),document.addEventListener("DOMContentLoaded",function(){if(document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&n("event","search",{search_term:this.value})}),document.forms.feedback){var e,a=document.forms.feedback;for(e of a.querySelectorAll("[type=submit]"))e.addEventListener("click",function(e){e.preventDefault();var t=document.location.pathname,e=this.getAttribute("data-md-value");n("event","feedback",{page:t,data:e}),a.firstElementChild.disabled=!0;e=a.querySelector(".md-feedback__note [data-md-value='"+e+"']");e&&(e.hidden=!1)}),a.hidden=!1}"undefined"!=typeof location$&&location$.subscribe(function(e){n("config","G-R9C48XMXE5",{page_path:e.pathname})})});var e=document.createElement("script");e.async=!0,e.src="https://www.googletagmanager.com/gtag/js?id=G-R9C48XMXE5",document.getElementById("__analytics").insertAdjacentElement("afterEnd",e)}</script>
+
+  
+    <script>var consent;"undefined"==typeof __md_analytics||(consent=__md_get("__consent"))&&consent.analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  
+  
+    
+  
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="SPO JAPAN GUILD DOCS - 11.ブロック生成ステータス通知セットアップ" />
+  <meta property="og:description" content="SPO JAPAN GUILD監修のステークプール構築ガイド。私たちは日本におけるステークプール構築を促進しカルダノ分散化に貢献してまいります。" />
+  <meta property="og:url" content="https://docs.spojapanguild.net/setup/11-blocknotify-setup/" />
+  <meta property="og:image" content="https://docs.spojapanguild.net/images/ogp-image.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SPO JAPAN GUILD DOCS - 11.ブロック生成ステータス通知セットアップ" />
+  <meta name="twitter:description" content="SPO JAPAN GUILD監修のステークプール構築ガイド。私たちは日本におけるステークプール構築を促進しカルダノ分散化に貢献してまいります。" />
+  <meta name="twitter:image" content="https://docs.spojapanguild.net/images/sjg-docs-card.png" />
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href="../.." title="SPO JAPAN GUILD DOCS" class="md-header__button md-logo" aria-label="SPO JAPAN GUILD DOCS" data-md-component="logo">
+      
+  <img src="../../images/logo-white.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SPO JAPAN GUILD DOCS
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              11.ブロック生成ステータス通知セットアップ
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="cyan" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/btbf/spojapanguild" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    btbf/spojapanguild
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      <nav class="md-tabs" aria-label="タブ" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+
+
+
+
+  
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../.." class="md-tabs__link">
+          
+  
+    
+  
+  HOME
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+
+  
+
+
+
+
+  
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../0-start-guide/" class="md-tabs__link md-tabs__link--active">
+          
+  
+  プール構築マニュアル
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+
+
+
+
+  
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../operation/start-guide/" class="md-tabs__link">
+          
+  
+  プール運用マニュアル
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+
+
+
+
+  
+    
+    
+    
+      
+  
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../faq/node/" class="md-tabs__link">
+          
+  
+  よくある質問
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="SPO JAPAN GUILD DOCS" class="md-nav__button md-logo" aria-label="SPO JAPAN GUILD DOCS" data-md-component="logo">
+      
+  <img src="../../images/logo-white.png" alt="logo">
+
+    </a>
+    SPO JAPAN GUILD DOCS
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/btbf/spojapanguild" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    btbf/spojapanguild
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+        
+        
+          <label class="md-nav__link" for="__nav_1">
+            
+  
+  <span class="md-ellipsis">
+    HOME
+  </span>
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" aria-label="HOME" data-md-level="1">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            HOME
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    スタートガイド
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0-start-guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    プール構築マニュアル
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/start-guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    プール運用マニュアル
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/node/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    よくある質問
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelogs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    更新履歴
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+
+
+  
+  
+    
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+        
+        
+          <label class="md-nav__link" for="__nav_2">
+            
+  
+  <span class="md-ellipsis">
+    プール構築マニュアル
+  </span>
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" aria-label="プール構築マニュアル" data-md-level="1">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            プール構築マニュアル
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0-start-guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    0-はじめに
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1-ubuntu-setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-Ubuntu初期設定
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2-node-setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-ノードインストール
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../3-relay-bp-setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-リレー/BPの接続
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../4-bp-setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-BPセットアップ
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../5-generate-address/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-アドレスの作成
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../6-register-stakeaddress/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-ステークアドレスの登録
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../7-register-stakepool/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7-ステークプールの登録
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../8.topology-setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8-P2Pトポロジー設定
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../9-monitoring-tools-setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9.監視ツールセットアップ
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-blocklog-setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10.ブロックログセットアップ
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    11.ブロック生成ステータス通知セットアップ
+  </span>
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    11.ブロック生成ステータス通知セットアップ
+  </span>
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#11-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      11-1. 依存プログラムをインストールする
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11-1. 依存プログラムをインストールする">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python環境をセットアップする
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      実行スクリプトと設定ファイルをダウンロードする
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      11-2. 通知アプリの設定
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      11-3. 通知プログラムの設定
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11-3. 通知プログラムの設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      設定ファイルの編集
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      サービスファイルを設定する
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      起動確認
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      通知確認
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      11-4. バージョンアップ手順
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      11-5.通知を停止(アンインストール)する手順
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../99-donation-credit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ＊寄付とクレジット
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+
+
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+        
+        
+          <label class="md-nav__link" for="__nav_3">
+            
+  
+  <span class="md-ellipsis">
+    プール運用マニュアル
+  </span>
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" aria-label="プール運用マニュアル" data-md-level="1">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            プール運用マニュアル
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/start-guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    運用ガイド
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/kes-update/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KESの更新
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/cert-update/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    プール情報の更新
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/node-update/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ノードアップデート
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/withdrawal/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    資金引き出し
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/pool-retire/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    プール廃止
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/tool/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SJG TOOL
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/rsync-ssh/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    rsync+ssh設定
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/sjg-fixed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SJG修正プログラム
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/command/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Linuxコマンド集
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+
+
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+        
+        
+          <label class="md-nav__link" for="__nav_4">
+            
+  
+  <span class="md-ellipsis">
+    よくある質問
+  </span>
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" aria-label="よくある質問" data-md-level="1">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            よくある質問
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_1" type="checkbox" id="__nav_4_1" >
+        
+        
+          <label class="md-nav__link" for="__nav_4_1">
+            
+  
+  <span class="md-ellipsis">
+    運用編
+  </span>
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" aria-label="運用編" data-md-level="2">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            運用編
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/node/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ノード関連
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/blocklog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ブロックログ関連
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/monitoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ノード監視関連
+  </span>
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#11-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      11-1. 依存プログラムをインストールする
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11-1. 依存プログラムをインストールする">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python環境をセットアップする
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      実行スクリプトと設定ファイルをダウンロードする
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      11-2. 通知アプリの設定
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      11-3. 通知プログラムの設定
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11-3. 通知プログラムの設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      設定ファイルの編集
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      サービスファイルを設定する
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      起動確認
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      通知確認
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      11-4. バージョンアップ手順
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      11-5.通知を停止(アンインストール)する手順
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+  <a href="https://github.com/btbf/spojapanguild/edit/master/docs/setup/11-blocknotify-setup.md" title="編集" class="md-content__button md-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
+
+
+
+<h1 id="_1"><strong> ブロック生成ステータス通知 </strong><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<div class="admonition info">
+<p class="admonition-title">概要</p>
+<ul>
+<li>
+<p>ブロックログで表示されるブロック生成結果をお好みのソーシャルアプリへ通知します。 
+<img alt="*" src="../../images/block_notify/image.png" /></p>
+</li>
+<li>
+<p>対応アプリ LINE/Slack/discord/telegram</p>
+</li>
+<li>
+<p>ブロックログと連動しておりますので、まだ設定されてない場合は<a href="../10-blocklog-setup/">ブロックログ導入手順</a>を先に導入してください。</p>
+</li>
+<li>
+<p>以下の作業はguild-dbが存在するBPサーバーのみで実施し、ブロック生成スケジュールがないタイミングで実施してください。 </p>
+</li>
+<li>
+<p>設定は任意です。(設定しなくてもブロック生成に影響はありません)</p>
+</li>
+</ul>
+</div>
+<div class="admonition info">
+<p>最終更新日：2022/02/15  v1.6</p>
+</div>
+<details class="info">
+<summary>更新履歴▼</summary>
+<ul>
+<li>1.6 ブロック未生成プールで使用する場合の起動時エラーを修正</li>
+<li>1.5 10分以内に複数のスケジュールがある場合の通知バグ修正</li>
+<li>1.4 次のスケジュールを表示</li>
+<li>1.3 ノード再起動時の不具合を修正</li>
+<li>1.2.3 エポック取得フロー修正</li>
+<li>1.2.2 通知バグ修正</li>
+<li>1.2 ・Telegram、Slackに対応<br />
+    ・通知基準設定( 全て/confirm以外全て/Missedとivaildのみ)<br />
+    ・通知内容を変更(X番目/トータルスケジュール数)  </li>
+<li>1.1 スケジュール取得時、その他通知判定修正  </li>
+<li>1.0.1 軽微な修正  </li>
+<li>1.0 初版リリース  </li>
+</ul>
+</details>
+<h2 id="11-1"><strong>11-1. 依存プログラムをインストールする</strong><a class="headerlink" href="#11-1" title="Permanent link">&para;</a></h2>
+<h3 id="python"><strong>Python環境をセットアップする</strong><a class="headerlink" href="#python" title="Permanent link">&para;</a></h3>
+<p>pythonバージョンを確認する
+<div class="highlight"><pre><span></span><code>python3 -V
+</code></pre></div></p>
+<blockquote>
+<p>Python 3.8.10以上 </p>
+</blockquote>
+<p>パッケージを更新する
+<div class="highlight"><pre><span></span><code>sudo apt update -y
+</code></pre></div></p>
+<p><div class="highlight"><pre><span></span><code>sudo apt install -y python3-watchdog python3-tz python3-dateutil python3-requests build-essential libssl-dev libffi-dev python3-dev python3-pip
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>pip install discordwebhook python-dotenv slackweb
+</code></pre></div></p>
+<h3 id="_2"><strong>実行スクリプトと設定ファイルをダウンロードする</strong><a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="nv">$NODE_HOME</span>/guild-db/blocklog
+wget -N https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/block_notify/block_check.py
+wget -N https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/block_notify/.env
+chmod <span class="m">755</span> block_check.py
+</code></pre></div>
+<h2 id="11-2"><strong>11-2. 通知アプリの設定</strong><a class="headerlink" href="#11-2" title="Permanent link">&para;</a></h2>
+<p>通知させたいアプリのタブをクリックし設定を確認してください。</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">LINE</label><label for="__tabbed_1_2">Discord</label><label for="__tabbed_1_3">Telegram</label><label for="__tabbed_1_4">Slack</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<ul>
+<li>
+<p>1.<a href="https://notify-bot.line.me/my/">LINE Notifyマイページ</a>にアクセスする  </p>
+</li>
+<li>
+<p>2.トークンを発行するをクリックします<br />
+<img alt="*" src="../../images/block_notify/2-1-1.jpg" /></p>
+</li>
+<li>
+<p>3.トークン名「ブロック生成通知」(任意)を入力し、「1：1でLINE Notifyから通知を受け取る」を選択する<br />
+<img alt="*" src="../../images/block_notify/2-1-2.JPG" /></p>
+</li>
+<li>
+<p>4.「発行する」をクリックする</p>
+</li>
+<li>
+<p>5.表示されたトークンをコピーし、一旦メモ帳などに貼り付ける（発行されたトークンを閉じると2度と確認できませんのでご注意ください）<br />
+<img alt="*" src="../../images/block_notify/2-1-3.jpg" /></p>
+</li>
+</ul>
+</div>
+<div class="tabbed-block">
+<ul>
+<li>
+<p>1.サーバーを追加する<br />
+<img alt="*" src="../../images/block_notify/3-1-1.jpg" /></p>
+</li>
+<li>
+<p>2.「オリジナルの作成」を選択する<br />
+<img alt="*" src="../../images/block_notify/3-1-2.jpg" /></p>
+</li>
+<li>
+<p>3.「自分と友達のため」を選択する<br />
+<img alt="*" src="../../images/block_notify/3-1-3.jpg" /></p>
+</li>
+<li>
+<p>4.任意のサーバー名を入力して「新規作成」をクリックする<br />
+<img alt="*" src="../../images/block_notify/3-1-4.jpg" /></p>
+</li>
+<li>
+<p>5.通知したいチャンネルの歯車マークをクリックする<br />
+<img alt="*" src="../../images/block_notify/3-1-5.jpg" /></p>
+</li>
+<li>
+<p>6.「連携サービス」をクリックし、「ウェブフックを作成」をクリックする<br />
+<img alt="*" src="../../images/block_notify/3-1-6.jpg" /></p>
+</li>
+<li>
+<p>7.「ウェブフックURLをコピー」をクリックし、一旦メモ帳などに貼り付ける<br />
+<img alt="*" src="../../images/block_notify/3-1-7.jpg" /></p>
+</li>
+</ul>
+</div>
+<div class="tabbed-block">
+<ul>
+<li>
+<p>1.Telegramの検索欄で「@botFather」を検索して認証マーク付きのアカウントをクリックする<br />
+<img alt="*" src="../../images/block_notify/4-1-1.jpg" /></p>
+</li>
+<li>
+<p>2.「START」をクリックする<br />
+<img alt="*" src="../../images/block_notify/4-1-2.jpg" /></p>
+</li>
+<li>
+<p>3.「/newbot」コマンドを入力する<br />
+<img alt="*" src="../../images/block_notify/4-1-3.jpg" /></p>
+</li>
+<li>
+<p>4.任意のbot名を入力する 例）「btbf_bot」最後は必ず<code>_bot</code>で終わるようにする<br />
+<img alt="*" src="../../images/block_notify/4-1-4.jpg" /></p>
+</li>
+<li>
+<p>5.緑で隠した部分のAPIトークンをメモ帳に控える<br />
+<img alt="*" src="../../images/block_notify/4-1-4.jpg" /></p>
+</li>
+<li>
+<p>6.赤枠で囲ったbotチャンネルに参加する<br />
+<img alt="*" src="../../images/block_notify/4-1-4-1.jpg" /></p>
+</li>
+<li>
+<p>7.検索欄で「@RawDataBot」を検索してクリックする<br />
+<img alt="*" src="../../images/block_notify/4-1-5.jpg" /></p>
+</li>
+<li>
+<p>8.「START」をクリックする<br />
+<img alt="*" src="../../images/block_notify/4-1-6.jpg" /></p>
+</li>
+<li>
+<p>9.「Chat id」をメモ帳に控える<br />
+<img alt="*" src="../../images/block_notify/4-1-7.jpg" /></p>
+</li>
+</ul>
+</div>
+<div class="tabbed-block">
+<ul>
+<li>
+<p>1.Slackを起動し、通知用のワークスペースとチャンネルを設定する</p>
+</li>
+<li>
+<p>2.<a href="https://my.slack.com/services/new/incoming-webhook/">Incoming Webhook</a>の設定ページへアクセスする</p>
+</li>
+<li>
+<p>3.通知したいワークスペースとチャンネルを選択する<br />
+<img alt="*" src="../../images/block_notify/5-1-1.jpg" /></p>
+</li>
+<li>
+<p>4.「Webhook URL」をメモ帳に控える<br />
+<img alt="*" src="../../images/block_notify/5-1-2.jpg" /></p>
+</li>
+<li>
+<p>5.ページ下部の「設定を保存する」をクリックする<br />
+<img alt="*" src="../../images/block_notify/5-1-3.jpg" /></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<h2 id="11-3"><strong>11-3. 通知プログラムの設定</strong><a class="headerlink" href="#11-3" title="Permanent link">&para;</a></h2>
+<h3 id="_3"><strong>設定ファイルの編集</strong><a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> <span class="nv">$NODE_HOME</span>/guild-db/blocklog
+nano .env
+</code></pre></div>
+<blockquote>
+<p>.envは隠しファイルになっているので、<code>ls -a</code>コマンドで一覧表示されます。</p>
+</blockquote>
+<div class="admonition hint">
+<p class="admonition-title">envファイル内容詳細</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>使用用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ticker</code></td>
+<td>プールティッカー名を入力する</td>
+</tr>
+<tr>
+<td><code>line_notify_token</code></td>
+<td>Line Notifyトークンを入力する</td>
+</tr>
+<tr>
+<td><code>dc_notify_url</code></td>
+<td>DiscordウェブフックURLを入力する</td>
+</tr>
+<tr>
+<td><code>slack_notify_url</code></td>
+<td>SlackウェブフックURLを入力する</td>
+</tr>
+<tr>
+<td><code>teleg_token</code></td>
+<td>Telegram APIトークンを入力する</td>
+</tr>
+<tr>
+<td><code>teleg_id</code></td>
+<td>Telegram ChatIDを入力する</td>
+</tr>
+<tr>
+<td><code>b_timezone</code></td>
+<td>お住いのタイムゾーンを指定する</td>
+</tr>
+<tr>
+<td><code>bNotify</code></td>
+<td>通知先を指定する</td>
+</tr>
+<tr>
+<td><code>bNotify_st</code></td>
+<td>通知基準を設定する</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="_4"><strong>サービスファイルを設定する</strong><a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">ブロックプロデューサーノード</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>cat &gt; <span class="nv">$NODE_HOME</span>/service/cnode-blockcheck.service <span class="s">&lt;&lt; EOF </span>
+<span class="s"># file: /etc/systemd/system/cnode-blockcheck.service</span>
+
+<span class="s">[Unit]</span>
+<span class="s">Description=Cardano Node - CNCLI blockcheck</span>
+<span class="s">BindsTo=cnode-cncli-sync.service</span>
+<span class="s">After=cnode-cncli-sync.service</span>
+
+<span class="s">[Service]</span>
+<span class="s">Type=oneshot</span>
+<span class="s">RemainAfterExit=yes</span>
+<span class="s">Restart=on-failure</span>
+<span class="s">RestartSec=20</span>
+<span class="s">User=$(whoami)</span>
+<span class="s">WorkingDirectory=$NODE_HOME</span>
+<span class="s">ExecStart=/usr/bin/tmux new -d -s blockcheck</span>
+<span class="s">ExecStartPost=/usr/bin/tmux send-keys -t blockcheck &#39;cd $NODE_HOME/guild-db/blocklog&#39; Enter</span>
+<span class="s">ExecStartPost=/usr/bin/tmux send-keys -t blockcheck python3 Space block_check.py Enter</span>
+<span class="s">ExecStop=/usr/bin/tmux kill-session -t blockcheck</span>
+<span class="s">KillSignal=SIGINT</span>
+<span class="s">RestartKillSignal=SIGINT</span>
+<span class="s">SuccessExitStatus=143</span>
+<span class="s">StandardOutput=syslog</span>
+<span class="s">StandardError=syslog</span>
+<span class="s">SyslogIdentifier=cnode-blockcheck</span>
+<span class="s">TimeoutStopSec=5</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=cnode-cncli-sync.service</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sudo cp $NODE_HOME/service/cnode-blockcheck.service /etc/systemd/system/cnode-blockcheck.service
+sudo chmod 644 /etc/systemd/system/cnode-blockcheck.service
+</code></pre></div>
+<p><div class="highlight"><pre><span></span><code>sudo systemctl daemon-reload
+sudo systemctl enable cnode-blockcheck.service
+</code></pre></div>
+ノードを再起動する
+<div class="highlight"><pre><span></span><code>sudo systemctl reload-or-restart cardano-node
+</code></pre></div></p>
+</div>
+</div>
+</div>
+<h3 id="_5"><strong>起動確認</strong><a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>tmux a -t blockcheck
+</code></pre></div>
+<blockquote>
+<p>「db-monitoring started」 が表示されていればOKです<br />
+cnode-cncli-sync.serviceと同じく、node再起動・停止と連動します</p>
+</blockquote>
+<h3 id="_6"><strong>通知確認</strong><a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>ブロック生成スケジュール予定時刻が過ぎてから、約15分以内に通知が届きます。</p>
+<h2 id="11-4"><strong>11-4. バージョンアップ手順</strong><a class="headerlink" href="#11-4" title="Permanent link">&para;</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">1.2以降から最新へのアップデート</label><label for="__tabbed_3_2">1.1から最新へのアップデート</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>cd $NODE_HOME/guild-db/blocklog
+wget https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/block_notify/block_check.py -O block_check.py
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>Slack用モジュールをインストールする
+<div class="highlight"><pre><span></span><code>pip install slackweb
+</code></pre></div></p>
+<p>既に設定済みの通知用トークンやURLを控える
+<div class="highlight"><pre><span></span><code>cd $NODE_HOME/guild-db/blocklog
+nano .env
+</code></pre></div></p>
+<p>設定ファイル、プログラムを更新する
+<div class="highlight"><pre><span></span><code>cd $NODE_HOME/guild-db/blocklog
+wget https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/block_notify/.env -O .env
+wget https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/block_notify/block_check.py -O block_check.py
+</code></pre></div></p>
+<p>各通知先の設定は<a href="./11-blocknotify-setup#11-2">11-2.通知アプリの設定</a>を参照してください</p>
+<p>設定ファイルを変更する
+<div class="highlight"><pre><span></span><code>nano .env
+</code></pre></div></p>
+<blockquote>
+<p>Ticker、通知先、通知基準などを変更する</p>
+</blockquote>
+</div>
+</div>
+</div>
+<p>サービスを再起動する
+<div class="highlight"><pre><span></span><code>sudo systemctl reload-or-restart cnode-blockcheck.service
+</code></pre></div></p>
+<p>サービス起動確認
+<div class="highlight"><pre><span></span><code>tmux a -t blockcheck
+</code></pre></div></p>
+<blockquote>
+<p>「db-monitoring started」 が表示されていればOKです。(デタッチして戻る)  </p>
+</blockquote>
+<p><strong>バージョン確認</strong>
+<div class="highlight"><pre><span></span><code>cd $NODE_HOME/guild-db/blocklog
+cat block_check.py | grep -HnI -m1 -r btbf
+</code></pre></div></p>
+<blockquote>
+<p>block_check.py:1:#2022/02/15 v1.6 @btbf</p>
+</blockquote>
+<h2 id="11-5"><strong>11-5.通知を停止(アンインストール)する手順</strong><a class="headerlink" href="#11-5" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>sudo systemctl stop cnode-blockcheck.service
+sudo systemctl disable cnode-blockcheck.service
+sudo rm /etc/systemd/system/cnode-blockcheck.service
+</code></pre></div>
+
+  
+    
+  
+  
+
+
+  <aside class="md-source-file">
+    
+      <span class="md-source-file__fact">
+        <span class="md-icon" title="最終更新日">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
+        </span>
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime">July 24, 2022 12:24:46</span>
+      </span>
+    
+    
+    
+    
+  </aside>
+
+
+  
+
+
+
+              
+            </article>
+            
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var input,hash=location.hash.slice(1);hash.startsWith("__tabbed_")&&((input=document.getElementById(hash)).checked=!0)</script>
+          </div>
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="フッター" >
+      
+        
+        <a href="../10-blocklog-setup/" class="md-footer__link md-footer__link--prev" aria-label="前: 10.ブロックログセットアップ" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                前
+              </span>
+              10.ブロックログセットアップ
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../99-donation-credit/" class="md-footer__link md-footer__link--next" aria-label="次: ＊寄付とクレジット" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                次
+              </span>
+              ＊寄付とクレジット
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2020 - 2022 CARDANO COMMUNITY SPO JAPAN GUILD
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-consent" data-md-component="consent" id="__consent" hidden>
+        <div class="md-consent__overlay"></div>
+        <aside class="md-consent__inner">
+          <form class="md-consent__form md-grid md-typeset" name="consent">
+            
+
+
+
+
+  
+
+<h4>Cookieの使用許諾</h4>
+<p>当サイトは、ドキュメントの効果測定や利用者確認のため、クッキーを使用しGoogle アナリティクスによるトラフィックの分析を行っています。 ご同意いただける場合は「Accept」をクリックしてください。</p>
+<input type="checkbox" class="md-toggle" id="__settings">
+<div class="md-consent__settings">
+  <ul class="task-list">
+    
+      
+        
+        
+      
+      <li class="task-list-item">
+        <label class="task-list-control">
+          <input type="checkbox" name="analytics" checked>
+          <span class="task-list-indicator"></span>
+          Google Analytics
+        <label>
+      </li>
+    
+  </ul>
+</div>
+<div class="md-consent__controls">
+  
+    
+      <button class="md-button md-button--primary">Accept</button>
+    
+    
+    
+  
+    
+    
+    
+      <label class="md-button" for="__settings">Manage settings</label>
+    
+  
+</div>
+          </form>
+        </aside>
+      </div>
+      <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout(function(){document.querySelector("[data-md-component=consent]").hidden=!1},250);var action,form=document.forms.consent;for(action of["submit","reset"])form.addEventListener(action,function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);console.log(new FormData(form)),__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map(function(e){return[e,!0]}))),location.hash="",location.reload()})</script>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.tabs.link", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.instant", "navigation.tracking", "search.suggest", "search.highlight", "search.share"], "search": "../../assets/javascripts/workers/search.720157f5.min.js", "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.config.lang": "ja", "search.config.pipeline": "stemmer", "search.config.separator": "[\\s\\-\u3000\u3001\u3002\uff0c\uff0e]+", "search.placeholder": "\u691c\u7d22", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.15234abc.min.js"></script>
+      
+    
+  </body>
+</html>
