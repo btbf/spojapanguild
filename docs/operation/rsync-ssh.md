@@ -83,7 +83,9 @@ chmod 600 ~/.ssh/config
 
 ### 1-3.SSH公開鍵設定用ファイル転送
 
-!!! important "ファイル転送"
+**転送元にある`rsync.txt`を転送先へコピーしてください。**
+
+!!! danger "【重要】ファイル転送"
     転送元サーバーの`cnode`直下にある公開鍵設定用ファイル`rsync.txt`を、転送先サーバーの`cnode`フォルダへコピーする
     
     ``` mermaid
@@ -152,7 +154,8 @@ EOF
     ```
     rsync -P --rsh=ssh $NODE_HOME/params-test.json Relay2::Server/params-test.json
     ```
-    > 初回接続時のみフィンガープリントの確認が入るので`yes`を入力する
+    > * 初回接続時のみフィンガープリントの確認が入るので`yes`を入力する  
+    > * `Verification code:` が表示される場合は、転送先サーバーの2段階認証コードを入力してください。
 
 転送先で受信したファイルを確認する。
 === "転送先サーバー"
