@@ -80,7 +80,7 @@ sha256sum kes.vkey
 ## **4.オンチェーンカウンター取得**
 === "ブロックプロデューサーノード"
     ```
-    lastBlockCnt=$(cardano-cli query kes-period-info --mainnet --op-cert-file $NODE_HOME/node.cert | sed -e '1,2d' | jq -r '.qKesNodeStateOperationalCertificateNumber //empty')
+    lastBlockCnt=$(cardano-cli query kes-period-info $NODE_NETWORK --op-cert-file $NODE_HOME/node.cert | sed -e '1,3d' | jq -r '.qKesNodeStateOperationalCertificateNumber //empty')
     if expr "$lastBlockCnt" : "[0-9]*$" >&/dev/null; then
     echo '----------------------------------------------'
     echo オンチェーンカウンター番号は: $lastBlockCnt です。
@@ -128,7 +128,7 @@ sha256sum kes.vkey
 === "ブロックプロデューサーノード"
     ```bash
     cd $NODE_HOME
-    slotNo=$(cardano-cli query tip --mainnet | jq -r '.slot')
+    slotNo=$(cardano-cli query tip $NODE_NETWORK | jq -r '.slot')
     slotsPerKESPeriod=$(cat $NODE_HOME/${NODE_CONFIG}-shelley-genesis.json | jq -r '.slotsPerKESPeriod')
     kesPeriod=$((${slotNo} / ${slotsPerKESPeriod}))
     startKesPeriod=${kesPeriod}

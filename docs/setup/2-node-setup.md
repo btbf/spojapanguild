@@ -133,6 +133,7 @@ echo export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH" >> $HOME/.bashrc
 echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
 echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
 echo export NODE_CONFIG=mainnet>> $HOME/.bashrc
+echo export NODE_NETWORK="--mainnet">> $HOME/.bashrc
 echo export NODE_BUILD_NUM=$(curl https://hydra.iohk.io/job/Cardano/iohk-nix/cardano-deployment/latest-finished/download/1/index.html | grep -e "build" | sed 's/.*build\/\([0-9]*\)\/download.*/\1/g') >> $HOME/.bashrc
 source $HOME/.bashrc
 ```
@@ -468,7 +469,7 @@ chmod 755 gLiveView.sh
 sed -i $NODE_HOME/scripts/env \
     -e '1,73s!#CNODE_HOME="/opt/cardano/cnode"!CNODE_HOME=${NODE_HOME}!' \
     -e '1,73s!#CNODE_PORT=6000!CNODE_PORT=6000!' \
-    -e '1,73s!#UPDATE_CHECK="Y"!UPDATE_CHECK="N"!'
+    -e '1,73s!#UPDATE_CHECK="Y"!UPDATE_CHECK="N"!' \
     -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/mainnet-config.json"!' \
     -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node0.socket"!SOCKET="${CNODE_HOME}/db/socket"!'
 ```

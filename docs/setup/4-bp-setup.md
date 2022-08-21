@@ -78,7 +78,7 @@
     ```
     同期済みslotNoを算出します。
     ```bash
-    slotNo=$(cardano-cli query tip --mainnet | jq -r '.slot')
+    slotNo=$(cardano-cli query tip $NODE_NETWORK | jq -r '.slot')
     echo slotNo: ${slotNo}
     ```
 
