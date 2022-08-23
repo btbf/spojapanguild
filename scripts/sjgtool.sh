@@ -3,7 +3,8 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=3.1.0
+TOOL_VERSION=3.2.0
+COLDKEYS_DIR="$HOME/cold-keys"
 
 # General exit handler
 cleanup() {
@@ -28,27 +29,20 @@ myExit() {
 
 main () {
 clear
-update
+#update
+#getEraIdentifier
 if [ $? == 1 ]; then
   cd $NODE_HOME/scripts
   $0 "$@" "-u"
   myExit 0
 fi
 
-if [ ${NETWORK_NAME} == "Testnet" ]; then
-    networkmagic="--testnet-magic 1097911063"
-    koios="testnet"
-    config_name="testnet"
-elif [ ${NETWORK_NAME} == "Mainnet" ]; then
-    networkmagic="--mainnet"
-    koios="api"
-    config_name="mainnet"
-else
-    networkmagic=""
-fi
+echo $NETWORK_IDENTIFIER
+echo $NETWORK_NAME
+echo $KOIOS_API
 
 node_type=`filecheck "$NODE_HOME/$POOL_OPCERT_FILENAME"`
-
+NETWORK_ERA=$(${CCLI} query tip ${NETWORK_IDENTIFIER} 2>/dev/null | jq -r '.era //empty')
 
 if [ ${node_type} == "true" ]; then
     node_name="BP"
@@ -56,9 +50,11 @@ else
     node_name="Relay"
 fi
 
+
 echo '---------------------------------------------------'
-echo -e ">> SPO JAPAN GUILD TOOL ${FG_YELLOW}ver$TOOL_VERSION${NC} ${FG_GREEN}-${NETWORK_NAME}-${NC} ${FG_YELLOW}-$node_name-${NC} <<"
+echo -e ">> SPO JAPAN GUILD TOOL ${FG_YELLOW}ver$TOOL_VERSION${NC} | Server:${FG_YELLOW}-$node_name-${NC} <<"
 echo '---------------------------------------------------'
+echo -e "| NodeVer:${FG_YELLOW}${node_version}${NC} | NetWork:${FG_GREEN}-${NETWORK_NAME}-${NC} | Era:${FG_YELLOW}${NETWORK_ERA}${NC} |"
 echo '
 [1] ウォレット操作
 [2] ブロック生成状態チェック
@@ -96,7 +92,7 @@ case ${num} in
           printf "${FG_YELLOW}$(cat $WALLET_PAY_ADDR_FILENAME)${NC}\n\n"
           cardano-cli query utxo \
             --address $(cat $WALLET_PAY_ADDR_FILENAME) \
-            $networkmagic
+            $NETWORK_IDENTIFIER
         else
           echo "$WALLET_PAY_ADDR_FILENAMEファイルが見つかりません"
           echo
@@ -115,7 +111,7 @@ case ${num} in
         if [ ${efile_check} == "true" ]; then
           echo "■stakeアドレス"
           printf "${FG_YELLOW}$(cat $WALLET_STAKE_ADDR_FILENAME)${NC}\n\n"
-          stake_json=`cardano-cli query stake-address-info --address $(cat $WALLET_STAKE_ADDR_FILENAME) $networkmagic > $PARENT/stake_json.txt`
+          stake_json=`cardano-cli query stake-address-info --address $(cat $WALLET_STAKE_ADDR_FILENAME) $NETWORK_IDENTIFIER > $PARENT/stake_json.txt`
           pool_reward=`cat $PARENT/stake_json.txt | grep rewardAccountBalance | awk '{ print $2 }'`
           #echo $pool_reward
           pool_reward_Amount=`scale1 $pool_reward`
@@ -196,7 +192,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
                   --tx-body-file tx.tmp \
                   --tx-in-count ${txcnt} \
                   --tx-out-count 2 \
-                  $networkmagic \
+                  $NETWORK_IDENTIFIER \
                   --witness-count 2 \
                   --byron-witness-count 0 \
                   --protocol-params-file params.json | awk '{ print $1 }')
@@ -275,7 +271,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
                   --tx-body-file tx.tmp \
                   --tx-in-count ${txcnt} \
                   --tx-out-count 1 \
-                  $networkmagic \
+                  $NETWORK_IDENTIFIER \
                   --witness-count 2 \
                   --byron-witness-count 0 \
                   --protocol-params-file params.json | awk '{ print $1 }')
@@ -377,7 +373,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               --tx-body-file tx.tmp \
               --tx-in-count ${txcnt} \
               --tx-out-count 2 \
-              $networkmagic \
+              $NETWORK_IDENTIFIER \
               --witness-count 1 \
               --byron-witness-count 0 \
               --protocol-params-file params.json | awk '{ print $1 }')
@@ -449,11 +445,11 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       echo
       echo "エアギャップ stakepoolid_bech32.txt作成コマンド"
       echo '---------------------------------------------------------------'
-      echo 'chmod u+rwx $HOME/cold-keys'
+      echo "chmod u+rwx $COLDKEYS_DIR"
       echo 'cardano-cli stake-pool id \'
-      echo    '--cold-verification-key-file $HOME/cold-keys/node.vkey \'
+      echo    "--cold-verification-key-file $COLDKEYS_DIR/$POOL_COLDKEY_VK_FILENAME"' \'
       echo    '--output-format bech32 > $NODE_HOME/stakepoolid_bech32.txt'
-      echo 'chmod a-rwx $HOME/cold-keys'
+      echo "chmod a-rwx $COLDKEYS_DIR"
       echo '---------------------------------------------------------------'
       select_rtn
     fi
@@ -475,7 +471,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     pId_json="{\""_pool_bech32_ids"\":[\""$(cat $NODE_HOME/stakepoolid_bech32.txt)"\"]}"
 
     #API プールデータ取得
-    curl -s -X POST "https://$koios.koios.rest/api/v0/pool_info" \
+    curl -s -X POST "$KOIOS_API/pool_info" \
     -H "Accept: application/json" \
     -H "Content-Type: application/json" \
     -d $pId_json > $NODE_HOME/pooldata.txt
@@ -511,6 +507,10 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     active_Stake=`cat $NODE_HOME/pooldata.txt | jq -r ".[].active_stake"`
 
     active_Stake=`active_ST_check $active_Stake`
+    pledge=`cat $NODE_HOME/pooldata.txt | jq -r ".[].pledge"`
+    pledge_scale=`scale1 $pledge`
+
+    payment_utxo
     
     printf "ノード起動タイプ:BP ${FG_GREEN}OK${NC}　ネットワーク:${FG_YELLOW}$NETWORK_NAME${NC}\n"
     echo
@@ -519,6 +519,17 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     printf "ライブステーク :${FG_GREEN}$live_Stake${NC} ADA\n"
     printf "　有効ステーク :$active_Stake\n"
 
+
+
+    if [[ $utxo_balance -ge $pledge ]]; then
+      echo
+      printf "${FG_MAGENTA}■誓約チェック${NC}： ${FG_GREEN}OK${NC}\n"
+    else
+      echo
+      printf "${FG_MAGENTA}■誓約チェック${NC}： ${FG_RED}NG${NC} ${FG_YELLOW}payment.addrに宣言済み誓約(Pledge)以上のADAを入金してください${NC}\n"
+    fi
+      printf "　宣言済み誓約 :${FG_YELLOW}$pledge_scale${NC} ADA\n"
+      printf "　　Wallet残高 :$(scale1 ${utxo_balance}) ADA\n"
 
    #ノード起動スクリプトファイル名読み取り
     exec_path=`grep -H "ExecStart" /etc/systemd/system/cardano-node.service`
@@ -580,12 +591,12 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     #ノード同期状況確認
     #APIから最新ブロックNo取得
-    koios_blockNo=`curl -s -X GET "https://$koios.koios.rest/api/v0/tip" -H "Accept: application/json" | grep -E -o "\"block_no\":[0-9A-Za-z]{7,}"`
+    koios_blockNo=`curl -s -X GET "$KOIOS_API/tip" -H "Accept: application/json" | grep -E -o "\"block_no\":[0-9A-Za-z]{7,}"`
     koios_blockNo=${koios_blockNo#"\"block_no\":"}
     
 
     #ノードから同期済みブロック取得
-    currentblock=$(cardano-cli query tip $networkmagic | jq -r '.block')
+    currentblock=$(cardano-cli query tip $NETWORK_IDENTIFIER | jq -r '.block')
     
 
     block_diff=$koios_blockNo-$currentblock
@@ -625,7 +636,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       printf "\n再実行してもNGの場合は、以下の点を再確認してください\n"
       printf "・BPのファイアウォールの設定\n"
       printf "・リレーノードのトポロジーアップデーター設定(フェッチリストログファイルなど)\n"
-      printf "・リレーノードの$config_name-topology.jsonに当サーバーのIPが含まれているか\n\n"
+      printf "・リレーノードの$TOPOLOGYに当サーバーのIPが含まれているか\n\n"
     fi
 
     echo
@@ -677,11 +688,13 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     cert_counter(){
       if [ $kes_cborHex == $cert_cborHex ]; then
-        if [ $1 != "null" ] && [[ $2 -ge $1 ]] && [[ $kes_remaining -ge 1 ]]; then
+        if [ $1 != "null" ] && [ $2 -ge $(($1+2)) ] && [ $kes_remaining -ge 1 ]; then
+          printf "${FG_RED}NG カウンター番号がチェーンより2以上大きいです${NC}\n"
+        elif [ $1 != "null" ] && [ $2 -ge $1 ] && [ $kes_remaining -ge 1 ] ; then
           printf "${FG_GREEN}OK${NC}\n"
-        elif [ $1 != "null" ] && [[ $2 -lt $1 ]] && [[ $kes_remaining -ge 1 ]]; then
+        elif [ $1 != "null" ] && [ $2 -lt $1 ] && [ $kes_remaining -ge 1 ]; then
           printf "${FG_RED}NG カウンター番号がチェーンより小さいです${NC}\n"
-        elif [ $1 == "null" ] && [[ $kes_remaining -ge 1 ]]; then
+        elif [ $1 == "null" ] && [ $kes_remaining -ge 1 ]; then
           printf "${FG_GREEN}OK (ブロック未生成)${NC}\n"
         else
           printf "${FG_RED}NG KESの有効期限が切れています${NC}\n"
@@ -719,7 +732,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     echo "ブロック生成可能状態チェックが完了しました"
 
     if [ $mempool_CHK == "false" ]; then
-      printf "\n${FG_RED}$config_name-config.jsonのTraceMempoolが${NC}${FG_YELLOW}false${NC}${FG_RED}になっています${NC}\n"
+      printf "\n${FG_RED}$CONFIGのTraceMempoolが${NC}${FG_YELLOW}false${NC}${FG_RED}になっています${NC}\n"
       printf "${FG_RED}正確にチェックする場合は${NC}${FG_GREEN}true${NC}${FG_RED}へ変更し、ノード再起動後再度チェックしてください${NC}"
       echo
     fi
@@ -751,9 +764,6 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       select_rtn
     fi
 
-
-    printf "KESファイルを更新する前に、1時間以内にブロック生成スケジュールが無いことを確認してください\n\n"
-    printf "${FG_YELLOW}KES更新作業を開始しますか？${NC}\n\n"
     echo '------------------------------------------------------------------------'
     echo -e "■ 実行フロー"
     echo ' 1.既存のKESファイル/CERTファイルバックアップ'
@@ -767,6 +777,9 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     echo ' 6.ノード同期確認(手動)'
     echo ' 7.GuildToolにてブロック生成可能状態確認(手動)'
     echo '------------------------------------------------------------------------'
+    echo
+    printf "KESファイルを更新する前に、1時間以内にブロック生成スケジュールが無いことを確認してください\n\n"
+    printf "${FG_YELLOW}KES更新作業を開始しますか？${NC}\n\n"
     echo "[1] 開始　[2] キャンセル"
 
     echo
@@ -803,9 +816,14 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       printf "${FG_GREEN}OK${NC}\n\n"
     fi
     sleep 2
+
+    #最新ブロックカウンター番号チェック
+    kesperiodinfo=$(cardano-cli query kes-period-info ${NETWORK_IDENTIFIER} --op-cert-file $NODE_HOME/$POOL_OPCERT_FILENAME --out-file $NODE_HOME/kesperiod.json)
+    lastBlockCnt=`cat kesperiod.json | jq -r '.qKesNodeStateOperationalCertificateNumber'`
+    rm $NODE_HOME/kesperiod.json
   
     #現在のKESPeriod算出
-    slotNo=$(cardano-cli query tip ${networkmagic} | jq -r '.slot')
+    slotNo=$(cardano-cli query tip ${NETWORK_IDENTIFIER} | jq -r '.slot')
     slotsPerKESPeriod=$(cat $NODE_HOME/${NODE_CONFIG}-shelley-genesis.json | jq -r '.slotsPerKESPeriod')
     kesPeriod=$((${slotNo} / ${slotsPerKESPeriod}))
     startKesPeriod=${kesPeriod}
@@ -835,8 +853,8 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     printf "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME を削除しました\n"
     rm $NODE_HOME/$POOL_HOTKEY_SK_FILENAME
     printf "$NODE_HOME/$POOL_HOTKEY_SK_FILENAME を削除しました\n"
-    rm $NODE_HOME/$POOL_OPCERT_FILENAME
-    printf "$NODE_HOME/$POOL_OPCERT_FILENAME を削除しました\n\n"
+    #rm $NODE_HOME/$POOL_OPCERT_FILENAME
+    #printf "$NODE_HOME/$POOL_OPCERT_FILENAME を削除しました\n\n"
 
     printf "${FG_MAGENTA}■新しいKESファイルの作成...${NC}\n"
     cardano-cli node key-gen-KES \
@@ -850,14 +868,15 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     printf "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME ${FG_YELLOW}$kesVkey256${NC}を作成しました\n"
     printf "$NODE_HOME/$POOL_HOTKEY_SK_FILENAME ${FG_YELLOW}$kesSkey256${NC}を作成しました\n\n"
+    sleep 5
+    clear
 
-    echo
-    printf "${FG_MAGENTA}現在のstartKesPeriod${NC}: ${FG_YELLOW}${startKesPeriod}${NC}\n"
     sleep 2
-
     echo
     echo
     echo '■エアギャップオフラインマシンで以下の操作を実施してください'
+    echo '(項目1～6まであります)'
+    echo
     sleep 2
     echo
     echo -e "${FG_YELLOW}1. BPの$POOL_HOTKEY_VK_FILENAMEと$POOL_HOTKEY_SK_FILENAME をエアギャップのcnodeディレクトリにコピーしてください${NC}"
@@ -872,29 +891,76 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     echo "sha256sum $POOL_HOTKEY_VK_FILENAME"
     echo "sha256sum $POOL_HOTKEY_SK_FILENAME"
     echo '----------------------------------------'
-    echo '戻り値のハッシュ値が上記の[新しいKESファイルの作成]で表示されているハッシュ値と等しいか確認する'
+    echo '上記コマンドの戻り値が以下のハッシュ値と等しいか確認する'
+    echo
+    echo -e "$POOL_HOTKEY_VK_FILENAME >> ${FG_YELLOW}$kesVkey256${NC}"
+    echo -e "$POOL_HOTKEY_SK_FILENAME >> ${FG_YELLOW}$kesSkey256${NC}"
+    echo
+    read -p "上記を終えたらEnterを押して次の操作を表示します"
+
+    clear
+    echo
+    #lastBlockCnt=" "
+    echo "■カウンター番号情報"
+    if expr "$lastBlockCnt" : "[0-9]*$" >&/dev/null; then
+      counterValue=$(( $lastBlockCnt +1 ))
+      printf "${FG_MAGENTA}チェーン上カウンター番号${NC}: ${FG_YELLOW}${lastBlockCnt}${NC} \n\n"
+      printf "${FG_MAGENTA}今回更新のカウンター番号${NC}: ${FG_YELLOW}$counterValue${NC} \n\n"
+      printf "node.cert生成時に指定するカウンター番号は\n必ずチェーン上カウンター番号 ${FG_YELLOW}+1${NC} を指定する必要があります\n\n\n"
+    else
+      counterValue=0
+      echo
+      echo "ブロック未生成です"
+      echo -e "今回更新のカウンター番号は ${FG_YELLOW}$counterValue${NC} で更新します"
+    fi
+    echo '■エアギャップオフラインマシンで以下の操作を実施してください'
+    echo
+    echo -e "${FG_YELLOW}3. カウンターファイル生成${NC} (生成カウンター ${FG_YELLOW}$counterValue${NC} )"
+    echo '----------------------------------------'
+    echo "chmod u+rwx $COLDKEYS_DIR"
+    echo 'cardano-cli node new-counter \'
+    echo "  --cold-verification-key-file $COLDKEYS_DIR/$POOL_COLDKEY_VK_FILENAME"' \'
+    echo '  --counter-value '$counterValue' \'
+    echo "  --operational-certificate-issue-counter-file $COLDKEYS_DIR/$POOL_OPCERT_COUNTER_FILENAME"
+    echo '----------------------------------------'
     sleep 1
     echo
-    echo -e "${FG_YELLOW}3. $POOL_OPCERT_FILENAMEファイルを作成する${NC}"
+    echo -e "${FG_YELLOW}4. カウンター番号確認${NC}"
+    echo '----------------------------------------'
+    echo 'cardano-cli text-view decode-cbor \'
+    echo " --in-file  $COLDKEYS_DIR/$POOL_OPCERT_COUNTER_FILENAME"' \'
+    echo ' | grep int | head -1 | cut -d"(" -f2 | cut -d")" -f1'
+    echo '----------------------------------------'
+    echo -e "${FG_RED}上記コマンド実行の戻り値が ${FG_YELLOW}$counterValue ${FG_RED}であることを確認してください${NC}"
+    echo
+    read -p "上記を終えたらEnterを押して次の操作を表示します"
+
+    clear
+    echo
+    echo '■エアギャップオフラインマシンで以下の操作を実施してください'
+    echo
+    printf "${FG_MAGENTA}現在のstartKesPeriod${NC}: ${FG_YELLOW}${startKesPeriod}${NC}\n\n"
+    sleep 2
+    echo
+    echo -e "${FG_YELLOW}5. $POOL_OPCERT_FILENAMEファイルを作成する${NC}"
     echo '----------------------------------------'
     echo 'cd $NODE_HOME'
-    echo 'chmod u+rwx $HOME/cold-keys'
     echo 'cardano-cli node issue-op-cert \'
-    echo '  --kes-verification-key-file kes.vkey \'
-    echo '  --cold-signing-key-file $HOME/cold-keys/node.skey \'
-    echo '  --operational-certificate-issue-counter $HOME/cold-keys/node.counter \'
+    echo "  --kes-verification-key-file $POOL_HOTKEY_VK_FILENAME "'\'
+    echo "  --cold-signing-key-file $COLDKEYS_DIR/$POOL_COLDKEY_SK_FILENAME"' \'
+    echo "  --operational-certificate-issue-counter $COLDKEYS_DIR/$POOL_OPCERT_COUNTER_FILENAME"' \'
     echo "  --kes-period ${startKesPeriod} "'\'
     echo "  --out-file $POOL_OPCERT_FILENAME"
-    echo 'chmod a-rwx $HOME/cold-keys'
+    echo "chmod a-rwx $COLDKEYS_DIR"
     echo '----------------------------------------'
     sleep 1
     echo
-    echo -e "${FG_YELLOW}4. エアギャップの $POOL_OPCERT_FILENAME をBPのcnodeディレクトリにコピーしてください${NC}"
+    echo -e "${FG_YELLOW}6. エアギャップの $POOL_OPCERT_FILENAME をBPのcnodeディレクトリにコピーしてください${NC}"
     echo '----------------------------------------'
     echo ">> [エアギャップ] ⇒ $POOL_OPCERT_FILENAME ⇒ [BP]"
     echo '----------------------------------------'
     echo
-    read -p "1～4の操作が終わったらEnterを押してください"
+    read -p "操作が終わったらEnterを押してください"
 
     echo
     echo "新しいKESファイルを有効化するにはノードを再起動する必要があります"
@@ -989,6 +1055,7 @@ kesfileCheck(){
   fi
 }
 
+
 air_gap(){
   echo
   echo
@@ -1007,7 +1074,7 @@ air_gap(){
   echo '  --tx-body-file tx.raw \'
   echo '  --signing-key-file payment.skey \'
   echo '  --signing-key-file stake.skey \'
-  echo "  $networkmagic "'\'
+  echo "  $NETWORK_IDENTIFIER "'\'
   echo '  --out-file tx.signed'
   echo '----------------------------------------'
   echo
@@ -1038,7 +1105,7 @@ filecheck(){
 reward_Balance(){
   cd $NODE_HOME
     rewardBalance=$(cardano-cli query stake-address-info \
-        $networkmagic \
+        $NETWORK_IDENTIFIER \
         --address $(cat $WALLET_STAKE_ADDR_FILENAME) | jq -r ".[0].rewardAccountBalance")
     echo "プール報酬: `scale1 $rewardBalance` ADA"
     echo
@@ -1053,7 +1120,7 @@ reward_Balance(){
 
 #現在のスロット
 current_Slot(){
-  currentSlot=$(cardano-cli query tip $networkmagic | jq -r '.slot')
+  currentSlot=$(cardano-cli query tip $NETWORK_IDENTIFIER | jq -r '.slot')
   #echo Current Slot: $currentSlot
 }
 
@@ -1061,7 +1128,7 @@ current_Slot(){
 payment_utxo(){
   cardano-cli query utxo \
     --address $(cat $WALLET_PAY_ADDR_FILENAME) \
-    $networkmagic > fullUtxo.out
+    $NETWORK_IDENTIFIER > fullUtxo.out
 
   tail -n +3 fullUtxo.out | sort -k3 -nr | sed -e '/lovelace + [0-9]/d' > balance.out
 
@@ -1090,7 +1157,7 @@ tx_submit(){
       if [ "$retun_cmd" == "1" ] || [ "$retun_cmd" == "2" ]; then
         case ${retun_cmd} in
           1) 
-            tx_result=`cardano-cli transaction submit --tx-file tx.signed $networkmagic`
+            tx_result=`cardano-cli transaction submit --tx-file tx.signed $NETWORK_IDENTIFIER`
             echo
             if [[ $tx_result == "Transaction"* ]]; then
               echo '----------------------------------------'
@@ -1130,7 +1197,7 @@ send_address(){
     do
       read -p "出金先のアドレスを入力してください： > " destinationAddress
       if [[ "$destinationAddress" == addr* ]] || [[ "$destinationAddress" == DdzF* ]]; then
-        if { [ ${NETWORK_NAME} = "Mainnet" ] && [[ "$destinationAddress" != *_test* ]]; } || { [ ${NETWORK_NAME} = "Testnet" ] && [[ "$destinationAddress" = *_test* ]]; } ; then
+        if { [ ${NETWORK_NAME} = "Mainnet" ] && [[ "$destinationAddress" != *_test* ]]; } || { [ ${NETWORK_NAME} != "Mainnet" ] && [[ "$destinationAddress" = *_test* ]]; } ; then
           echo
           echo '------------------------------------------------'
           echo 出金先: $destinationAddress
