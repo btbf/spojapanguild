@@ -29,7 +29,7 @@ myExit() {
 
 main () {
 clear
-#update
+update
 #getEraIdentifier
 if [ $? == 1 ]; then
   cd $NODE_HOME/scripts
@@ -37,9 +37,9 @@ if [ $? == 1 ]; then
   myExit 0
 fi
 
-echo $NETWORK_IDENTIFIER
-echo $NETWORK_NAME
-echo $KOIOS_API
+#echo $NETWORK_IDENTIFIER
+#echo $NETWORK_NAME
+#echo $KOIOS_API
 
 node_type=`filecheck "$NODE_HOME/$POOL_OPCERT_FILENAME"`
 NETWORK_ERA=$(${CCLI} query tip ${NETWORK_IDENTIFIER} 2>/dev/null | jq -r '.era //empty')
