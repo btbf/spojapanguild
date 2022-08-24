@@ -120,8 +120,7 @@ nav:
       - '資金引き出し': './operation/withdrawal.md'
       - 'プール廃止': './operation/pool-retire.md'
       - 'SJG TOOL': './operation/tool.md'
-      - 'rsync+ssh設定': './operation/rsync-ssh.md'
-      - 'SFTPソフト設定': './operation/sftp.md'
+      - 'RSYNC+SSH設定': './operation/rsync-ssh.md'
       - 'SJG修正プログラム': './operation/sjg-fixed.md'
       - 'Linuxコマンド集': './operation/command.md'
     - 'よくある質問':
