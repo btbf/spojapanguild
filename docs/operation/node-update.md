@@ -606,11 +606,16 @@ tmux new -s tar
 
 
     !!! hint "確認"
-        ノードの同期が成功しブロック生成に成功し数エポック様子を見たあと、バックアップDBを削除してください
-        ```
-        rm -rf $NODE_HOME/db_134
-        rm $NODE_HOME/1.35.3-db.tar.gz
-        ```
+        ノードの同期が成功しブロック生成に成功し数エポック様子を見たあと、転送用ファイル・バックアップDBを削除してください
+        === "転送元"
+            ```
+            rm -rf $NODE_HOME/Transfer
+            ```
+        === "転送先"
+            ```
+            rm -rf $NODE_HOME/db_134
+            rm $NODE_HOME/1.35.3-db.tar.gz
+            ```
 
 
 

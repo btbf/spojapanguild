@@ -1,7 +1,7 @@
 # 変更履歴
 
 ## 2022/08/25　ver. 12.3.0
- !!! note ""
+!!! note ""
     * cardano-node v1.35.3 に対応
     * [エアギャップ作成手順](./setup/0-start-guide.md#0-4)更新
     * [ノードアップデート手順](./operation/node-update.md)更新
@@ -10,10 +10,6 @@
 ## 2022/07/24　ver. 12.2.0
 !!! note ""
     * [RSYNC+SSHサーバー間転送設定](./operation/rsync-ssh.md)手順追加
-=======
-## 2022/07/24　ver. 12.2.0
-!!! note ""
-    * RSYNC+SSHサーバー間転送設定手順追加
 
 ## 2022/06/06　ver. 12.1.1
 !!! note ""
