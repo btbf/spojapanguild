@@ -25,7 +25,7 @@
 
 === "ブロックプロデューサノード"
     ```bash
-    currentSlot=$(cardano-cli query tip --mainnet | jq -r '.slot')
+    currentSlot=$(cardano-cli query tip $NODE_NETWORK | jq -r '.slot')
     echo Current Slot: $currentSlot
     ```
 
@@ -36,7 +36,7 @@
     ```bash
     cd $NODE_HOME
     rewardBalance=$(cardano-cli query stake-address-info \
-        --mainnet \
+        $NODE_NETWORK \
         --address $(cat stake.addr) | jq -r ".[0].rewardAccountBalance")
     echo rewardBalance: $rewardBalance
     ```
@@ -61,7 +61,7 @@ payment.addrの残高を算出します
     ```bash
     cardano-cli query utxo \
         --address $(cat payment.addr) \
-        --mainnet > fullUtxo.out
+        $NODE_NETWORK > fullUtxo.out
 
     tail -n +3 fullUtxo.out | sort -k3 -nr | sed -e '/lovelace + [0-9]/d' > balance.out
 
@@ -116,7 +116,7 @@ build-raw transactionコマンドを実行します。
         --tx-body-file tx.tmp \
         --tx-in-count ${txcnt} \
         --tx-out-count 1 \
-        --mainnet \
+        $NODE_NETWORK \
         --witness-count 2 \
         --byron-witness-count 0 \
         --protocol-params-file params.json | awk '{ print $1 }')
@@ -162,7 +162,7 @@ build-raw transactionコマンドを実行します。
         --tx-body-file tx.raw \
         --signing-key-file payment.skey \
         --signing-key-file stake.skey \
-        --mainnet \
+        $NODE_NETWORK \
         --out-file tx.signed
     ```
 
@@ -181,7 +181,7 @@ build-raw transactionコマンドを実行します。
     ```bash
     cardano-cli transaction submit \
         --tx-file tx.signed \
-        --mainnet
+        $NODE_NETWORK
     ```
 
 資金が到着したか確認します。
@@ -191,7 +191,7 @@ build-raw transactionコマンドを実行します。
     ```bash
     cardano-cli query utxo \
         --address ${destinationAddress} \
-        --mainnet
+        $NODE_NETWORK
     ```
 > Transacsion Successfully submittedと表示されれば成功
 
@@ -211,7 +211,7 @@ build-raw transactionコマンドを実行します。
 
 === "ブロックプロデューサノード"
     ```bash
-    currentSlot=$(cardano-cli query tip --mainnet | jq -r '.slot')
+    currentSlot=$(cardano-cli query tip $NODE_NETWORK | jq -r '.slot')
     echo Current Slot: $currentSlot
     ```
 
@@ -233,7 +233,7 @@ build-raw transactionコマンドを実行します。
     ```bash
     cd $NODE_HOME
     rewardBalance=$(cardano-cli query stake-address-info \
-        --mainnet \
+        $NODE_NETWORK \
         --address $(cat stake.addr) | jq -r ".[0].rewardAccountBalance")
     echo rewardBalance: $rewardBalance
     ```
@@ -245,7 +245,7 @@ payment.addr の残高を算出
     ```bash
     cardano-cli query utxo \
         --address $(cat payment.addr) \
-        --mainnet > fullUtxo.out
+        $NODE_NETWORK > fullUtxo.out
 
     tail -n +3 fullUtxo.out | sort -k3 -nr | sed -e '/lovelace + [0-9]/d' > balance.out
 
@@ -301,7 +301,7 @@ build-raw transactionコマンドを実行します。
         --tx-body-file tx.tmp \
         --tx-in-count ${txcnt} \
         --tx-out-count 2 \
-        --mainnet \
+        $NODE_NETWORK \
         --witness-count 2 \
         --byron-witness-count 0 \
         --protocol-params-file params.json | awk '{ print $1 }')
@@ -354,7 +354,7 @@ build-raw transactionコマンドを実行します。
         --tx-body-file tx.raw \
         --signing-key-file payment.skey \
         --signing-key-file stake.skey \
-        --mainnet \
+        $NODE_NETWORK \
         --out-file tx.signed
     ```
 
@@ -375,7 +375,7 @@ build-raw transactionコマンドを実行します。
     ```bash
     cardano-cli transaction submit \
         --tx-file tx.signed \
-        --mainnet
+        $NODE_NETWORK
     ```
 
 > Transacsion Successfully submittedと表示されれば成功
@@ -388,7 +388,7 @@ build-raw transactionコマンドを実行します。
     ```bash
     cardano-cli query utxo \
         --address ${destinationAddress} \
-        --mainnet
+        $NODE_NETWORK
     ```
 
 
@@ -419,7 +419,7 @@ build-raw transactionコマンドを実行します。
 === "ブロックプロデューサーノード"
     ```bash
     cd $NODE_HOME
-    currentSlot=$(cardano-cli query tip --mainnet | jq -r '.slot')
+    currentSlot=$(cardano-cli query tip $NODE_NETWORK | jq -r '.slot')
     echo Current Slot: $currentSlot
     ```
 
@@ -449,7 +449,7 @@ payment.addrの残高を算出します。
     ```bash
     cardano-cli query utxo \
         --address $(cat payment.addr) \
-        --mainnet > fullUtxo.out
+        $NODE_NETWORK > fullUtxo.out
 
     tail -n +3 fullUtxo.out | sort -k3 -nr | sed -e '/lovelace + [0-9]/d' > balance.out
 
@@ -497,7 +497,7 @@ build-rawトランザクションコマンドを実行します。
         --tx-body-file tx.tmp \
         --tx-in-count ${txcnt} \
         --tx-out-count 2 \
-        --mainnet \
+        $NODE_NETWORK \
         --witness-count 1 \
         --byron-witness-count 0 \
         --protocol-params-file params.json | awk '{ print $1 }')
@@ -547,7 +547,7 @@ build-rawトランザクションコマンドを実行します。
     cardano-cli transaction sign \
         --tx-body-file tx.raw \
         --signing-key-file payment.skey \
-        --mainnet \
+        $NODE_NETWORK \
         --out-file tx.signed
     ```
 
@@ -566,7 +566,7 @@ build-rawトランザクションコマンドを実行します。
     ```bash
     cardano-cli transaction submit \
         --tx-file tx.signed \
-        --mainnet
+        $NODE_NETWORK
     ```
 
 > Transacsion Successfully submittedと表示されれば成功
@@ -578,7 +578,7 @@ build-rawトランザクションコマンドを実行します。
     ```bash
     cardano-cli query utxo \
         --address ${destinationAddress} \
-        --mainnet \
+        $NODE_NETWORK \
     ```
 
 

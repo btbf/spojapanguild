@@ -31,7 +31,7 @@
 
 
 === "リレーノード"
-**「xxx.xxx.xxx.xxx」はBPのパブリックIP(静的)アドレス**に置き換えて下さい
+**「xxx.xxx.xxx.xxx」はBPのパブリックIP(静的)アドレスとポート番号**に置き換えて下さい
 
 ```bash
 cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF 
@@ -44,7 +44,7 @@ cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
       },
       {
         "addr": "xxx.xxx.xxx.xxx",
-        "port": 6000,
+        "port": xxxxx,
         "valency": 1
       }
     ]

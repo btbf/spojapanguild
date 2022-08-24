@@ -1,6 +1,6 @@
 # **2. ノードインストール**
 
-## **2-1. Cabal/GHCインストール**
+## **2-1. 依存関係インストール**
 
 ターミナルを起動し、以下のコマンドを入力しましょう！
 
@@ -16,7 +16,7 @@ sudo apt upgrade -y
 sudo apt install git jq bc automake tmux rsync htop curl build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ wget libncursesw5 libtool autoconf -y
 ```
 
-次に、Libsodiumをインストールします。
+### **Libsodiumインストール**
 
 ```bash
 mkdir $HOME/git
@@ -30,7 +30,42 @@ make
 sudo make install
 ```
 
-GHCUPをインストールします。
+### **Secp256k1ライブラリインストール**
+
+```
+cd $HOME/git
+git clone https://github.com/bitcoin-core/secp256k1.git
+```
+
+```
+cd secp256k1/
+git reset --hard ac83be33d0956faf6b7f61a60ab524ef7d6a473a
+./autogen.sh
+./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
+make
+make check
+```
+!!! note "戻り値確認"
+    ```
+    Testsuite summary for libsecp256k1 0.1.0-pre
+    ============================================================================
+    # TOTAL: 2
+    # PASS:  2
+    # SKIP:  0
+    # XFAIL: 0
+    # FAIL:  0
+    # XPASS: 0
+    # ERROR: 0
+    ============================================================================
+    ```
+    > PASS:2であることを確認する
+
+**インストールコマンドを必ず実行する**
+```
+sudo make install
+```
+
+### **GHCUPインストール**
 
 ```bash
 cd $HOME
@@ -95,8 +130,10 @@ ghcup set ghc 8.10.7
 ```bash
 echo PATH="$HOME/.local/bin:$PATH" >> $HOME/.bashrc
 echo export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH" >> $HOME/.bashrc
+echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
 echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
 echo export NODE_CONFIG=mainnet>> $HOME/.bashrc
+echo export NODE_NETWORK="--mainnet">> $HOME/.bashrc
 echo export NODE_BUILD_NUM=$(curl https://hydra.iohk.io/job/Cardano/iohk-nix/cardano-deployment/latest-finished/download/1/index.html | grep -e "build" | sed 's/.*build\/\([0-9]*\)\/download.*/\1/g') >> $HOME/.bashrc
 source $HOME/.bashrc
 ```
@@ -128,7 +165,7 @@ cd $HOME/git
 git clone https://github.com/input-output-hk/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/1.34.1
+git checkout tags/1.35.3
 ```
 
 Cabalのビルドオプションを構成します。
@@ -214,35 +251,50 @@ source $HOME/.bashrc
 全行をコピーしコマンドラインに送信します。
 
 === "リレーノード"
+    リレーノードポート番号を指定する
+    ```bash
+    PORT=6000
+    ```
 
     ```bash
     cat > $NODE_HOME/startRelayNode1.sh << EOF 
     #!/bin/bash
     DIRECTORY=$NODE_HOME
-    PORT=6000
+    PORT=${PORT}
     HOSTADDR=0.0.0.0
     TOPOLOGY=\${DIRECTORY}/${NODE_CONFIG}-topology.json
     DB_PATH=\${DIRECTORY}/db
     SOCKET_PATH=\${DIRECTORY}/db/socket
     CONFIG=\${DIRECTORY}/${NODE_CONFIG}-config.json
-    /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A32m -n4m -F1.5 -H2500M -T -S -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
+    /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A16m -F1.5 -H2500M -T -S -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
     EOF
     ```
 
 
 === "ブロックプロデューサーノード"
 
+    !!! error "注意"
+        * BPノードで使用するポートはセキュリティを高めるために、49513～65535までの任意番号を設定してください。
+        * ここで設定するBPノード用ポート番号は、[「1-9.ファイアウォールを構成する」](./1-ubuntu-setup.md#1-9)で設定した同じ番号を指定してください。
+
+    BPノードポート番号を指定する
+    ```bash
+    PORT=xxxxx
+    ```
+    > xxxxxを49513～65535までの任意番号で指定してください
+
+    起動スクリプトファイルを作成する
     ```bash
     cat > $NODE_HOME/startBlockProducingNode.sh << EOF 
     #!/bin/bash
     DIRECTORY=$NODE_HOME
-    PORT=6000
+    PORT=${PORT}
     HOSTADDR=0.0.0.0
     TOPOLOGY=\${DIRECTORY}/${NODE_CONFIG}-topology.json
     DB_PATH=\${DIRECTORY}/db
     SOCKET_PATH=\${DIRECTORY}/db/socket
     CONFIG=\${DIRECTORY}/${NODE_CONFIG}-config.json
-    /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A32m -n4m -F1.5 -H2500M -T -S -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
+    /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A16m -F1.5 -H2500M -T -S -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
     EOF
     ```
 
@@ -431,12 +483,11 @@ chmod 755 gLiveView.sh
 ```bash
 sed -i $NODE_HOME/scripts/env \
     -e '1,73s!#CNODE_HOME="/opt/cardano/cnode"!CNODE_HOME=${NODE_HOME}!' \
-    -e '1,73s!#CNODE_PORT=6000!CNODE_PORT=6000!' \
+    -e '1,73s!#CNODE_PORT=6000!CNODE_PORT='${PORT}'!' \
+    -e '1,73s!#UPDATE_CHECK="Y"!UPDATE_CHECK="N"!' \
     -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/mainnet-config.json"!' \
     -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node0.socket"!SOCKET="${CNODE_HOME}/db/socket"!'
 ```
-!!! warning "ポート修正"
-    ノードのポート番号を6000以外に設定している場合は、個別にenvファイルを開いてポート番号を修正してください。
     
 Guild Liveviewを起動します。
 

@@ -11,7 +11,7 @@
     ```bash
     cd $NODE_HOME
     cardano-cli query protocol-parameters \
-        --mainnet \
+        $NODE_NETWORK \
         --out-file params.json
     ```
 
@@ -49,7 +49,7 @@ cardano-cli stake-address key-gen \
 cardano-cli stake-address build \
     --stake-verification-key-file stake.vkey \
     --out-file stake.addr \
-    --mainnet
+    $NODE_NETWORK
 ```
 
 ## **5.支払い用アドレスの作成**
@@ -60,7 +60,7 @@ cardano-cli address build \
     --payment-verification-key-file payment.vkey \
     --stake-verification-key-file stake.vkey \
     --out-file payment.addr \
-    --mainnet
+    $NODE_NETWORK
 ```
 
 上書き・削除されないようパーミッションを変更する。
@@ -188,7 +188,7 @@ echo
 # XPrv/XPub conversion to normal private and public key, keep in mind the 
 # keypars are not a valind Ed25519 signing keypairs.
 TESTNET_MAGIC="--testnet-magic 42"
-MAINNET_MAGIC="--mainnet"
+MAINNET_MAGIC="$NODE_NETWORK"
 MAGIC="\$MAINNET_MAGIC"
 
 SESKEY=\$( cat stake.xprv | bech32 | cut -b -128 )\$( cat stake.xpub | bech32)
@@ -345,7 +345,7 @@ rm -rf $NODE_HOME/cardano-wallet-shelley-2020.7.28
     ```bash
     cardano-cli query utxo \
         --address $(cat payment.addr) \
-        --mainnet
+        $NODE_NETWORK
     ```
 
     次のように表示されたら入金完了です。

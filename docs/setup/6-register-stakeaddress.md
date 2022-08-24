@@ -26,7 +26,7 @@
 === "ブロックプロデューサーノード"
     ```bash
     cd $NODE_HOME
-    currentSlot=$(cardano-cli query tip --mainnet | jq -r '.slot')
+    currentSlot=$(cardano-cli query tip $NODE_NETWORK | jq -r '.slot')
     echo Current Slot: $currentSlot
     ```
 
@@ -36,7 +36,7 @@ payment.addrの残高を出力します。
     ```bash
     cardano-cli query utxo \
         --address $(cat payment.addr) \
-        --mainnet > fullUtxo.out
+        $NODE_NETWORK > fullUtxo.out
 
     tail -n +3 fullUtxo.out | sort -k3 -nr > balance.out
 
@@ -92,7 +92,7 @@ keyDepositの値を出力します。
         --tx-body-file tx.tmp \
         --tx-in-count ${txcnt} \
         --tx-out-count 1 \
-        --mainnet \
+        $NODE_NETWORK \
         --witness-count 2 \
         --byron-witness-count 0 \
         --protocol-params-file params.json | awk '{ print $1 }')
@@ -139,7 +139,7 @@ paymentとstakeの秘密鍵でトランザクションファイルに署名し�
         --tx-body-file tx.raw \
         --signing-key-file payment.skey \
         --signing-key-file stake.skey \
-        --mainnet \
+        $NODE_NETWORK \
         --out-file tx.signed
     ```
 
@@ -157,6 +157,6 @@ paymentとstakeの秘密鍵でトランザクションファイルに署名し�
     ```bash
     cardano-cli transaction submit \
         --tx-file tx.signed \
-        --mainnet
+        $NODE_NETWORK
     ```
     > Transacsion Successfully submittedと表示されれば成功

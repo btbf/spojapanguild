@@ -71,7 +71,7 @@ poolMetaData.jsonをGithubでホストしている場合はダウンロードす
         --pool-margin 0.05 \
         --pool-reward-account-verification-key-file stake.vkey \
         --pool-owner-stake-verification-key-file stake.vkey \
-        --mainnet \
+        $NODE_NETWORK \
         --pool-relay-ipv4 ***.***.***.*** \
         --pool-relay-port 6000 \
         --metadata-url https://xxx.xxx.xxx/poolMetaData.json \
@@ -105,7 +105,7 @@ poolMetaData.jsonをGithubでホストしている場合はダウンロードす
 === "ブロックプロデューサーノード"
     ```bash
     cd $NODE_HOME
-    currentSlot=$(cardano-cli query tip --mainnet | jq -r '.slot')
+    currentSlot=$(cardano-cli query tip $NODE_NETWORK | jq -r '.slot')
     echo Current Slot: $currentSlot
     ```
 
@@ -115,7 +115,7 @@ payment.addrの残高を出力します。
     ```bash
     cardano-cli query utxo \
         --address $(cat payment.addr) \
-        --mainnet > fullUtxo.out
+        $NODE_NETWORK > fullUtxo.out
 
     tail -n +3 fullUtxo.out | sort -k3 -nr | sed -e '/lovelace + [0-9]/d' > balance.out
 
@@ -164,7 +164,7 @@ build-rawトランザクションコマンドを実行します。
         --tx-body-file tx.tmp \
         --tx-in-count ${txcnt} \
         --tx-out-count 1 \
-        --mainnet \
+        $NODE_NETWORK \
         --witness-count 3 \
         --byron-witness-count 0 \
         --protocol-params-file params.json | awk '{ print $1 }')
@@ -211,7 +211,7 @@ build-rawトランザクションコマンドを実行します。
         --signing-key-file payment.skey \
         --signing-key-file $HOME/cold-keys/node.skey \
         --signing-key-file stake.skey \
-        --mainnet \
+        $NODE_NETWORK \
         --out-file tx.signed
     chmod a-rwx $HOME/cold-keys
     ```
@@ -229,6 +229,6 @@ build-rawトランザクションコマンドを実行します。
     ```bash
     cardano-cli transaction submit \
         --tx-file tx.signed \
-        --mainnet
+        $NODE_NETWORK
     ```
     > Transacsion Successfully submittedと表示されれば成功

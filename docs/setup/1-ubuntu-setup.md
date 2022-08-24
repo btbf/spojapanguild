@@ -307,6 +307,9 @@ sudo systemctl restart fail2ban
 !!! tip "AWSをご利用の場合"
     AWS系の場合は以下の設定は行わず、「セキュリティグループの設定(インバウンド)」画面にて個別に行ってください。
 
+!!! tip "さくらVPSをご利用の場合"
+    管理画面からパケットフィルターを、”利用しない”に設定してください。    
+
 新規インストール時点では、デフォルトでufwが無効になっているため、以下のコマンドで有効にしてください。
 
 * SSH接続用のポート22番\(または設定したランダムなポート番号)
@@ -328,9 +331,13 @@ sudo systemctl restart fail2ban
     ```
 
 === "ブロックプロデューサーノード"
+    !!! error "注意"
+        * BPノードで使用するポートはセキュリティを高めるために、49513～65535までの任意番号を設定してください。
+        * ここで設定したBPノード用ポート番号は、[「2-4. ノード起動スクリプトの作成」](./2-node-setup.md#2-4)でも使用します。
+
     ```bash
     sudo ufw allow <22またはランダムなポート番号>/tcp
-    sudo ufw allow from <リレーノードIP> to any port <BP用のポート番号(6000)>
+    sudo ufw allow from <リレーノードIP> to any port <BP用のポート番号(xxxxx)>
     sudo ufw allow from <リレーノードIP> to any port 12798
     sudo ufw allow from <リレーノードIP> to any port 9100
     sudo ufw enable

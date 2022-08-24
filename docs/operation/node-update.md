@@ -1,23 +1,31 @@
 # **ノードアップデートマニュアル**
 
 !!! note "対応バージョン" 
-    2022年3月7日時点でこのガイドは v.1.34.1に対応しています
+    2022年8月24日時点でこのガイドは v.1.35.3に対応しています
 
 
 !!! info "概要"
     * 以下、バージョンアップ作業を行う場合、ブロック生成スケジュールがないタイミングで実施してください。
     * 以下手順実施後、ブロック生成確認済みです。
-    * 今回のアップデートに期限はありませんが、なるべく早めの実施をお願いします
+    * 1.35.3初回起動時に2~4時間以上のDBの再検証処理が行われますので時間に余裕を持った作業をお願いします。
+    * RSYNCアップデートを使用しない場合は、 3.RSYNC+SSHアップデート の作業は実施不要
 
 
-### **主な変更点と新機能**
-* Cabalアップデート v3.6.2.0
-* CLIリーダーシップのスケジュールコマンド追加
-* ステークプール運用証明書の有効性チェックコマンド追加
-* トランザクションビルドコマンドでのCDDL形式CBORエンコーディングのサポート
-* その他開発者用コマンドも多数追加
+!!! info "v.1.35.3主な変更点と新機能"
+    
+    * KES更新時の証明書カウンター番号を直近で自プールが生成したブロックに刻まれてる番号の「＋1した数字」である必要があります。
 
-## **1.ノードアップデート**
+
+!!! error "よくお読みになって進めてください"
+    ご自身のアップデートスタイルによって手順が異なります。  
+    更新フローチャートとアップデートマニュアルを照らし合わせながら、アップデート作業を進めてください。
+
+### **更新フローチャート**
+更新フローチャートは、画像をクリックすると別ウィンドウで開きます。
+<a href="../../images/1.35.3-update.png" target=_blank><img src="../../images/1.35.3-update.png"></a>
+
+
+## **1.依存環境アップデート**
 
 ### **1-1. システムアップデート**
 
@@ -38,7 +46,7 @@ sudo reboot
 
 SSHで再接続する
 
-### **1-2. cabal/GHCアップデート**
+### **1-2. cabal/GHCバージョン確認**
 
 **cabalパス確認**
 ```
@@ -46,7 +54,7 @@ which cabal
 ```
 > /home/user/.ghcup/bin/cabal なら正常
 
-!!! danger "確認"
+??? danger "戻り値が[/home/user/.local/bin/cabal]だった場合(クリックして開く)"
     **戻り値が[/home/user/.local/bin/cabal]だった場合のみ以下を実行**  
     
     パスを追加する
@@ -61,23 +69,22 @@ which cabal
     mv cabal cabal_bk
     ```
 
-
-**cabalバージョンアップ**
-```
-ghcup upgrade
-ghcup install cabal 3.6.2.0
-ghcup set cabal 3.6.2.0
-```
-
 cabalバージョン確認
 ```
-which cabal
 cabal --version
 ```
 > 以下の戻り値ならOK  
-> /home/user/.ghcup/bin/cabal  
-cabal-install version 3.6.2.0
-compiled using version 3.6.2.0 of the Cabal library  
+cabal-install version 3.6.2.0  
+compiled using version 3.6.2.0 of the Cabal library
+
+??? danger "cabal 3.6.1.0以下だった場合(クリックして開く)"
+    **cabal 3.6.1.0以下だった場合のみ実行**
+    **cabalバージョンアップ**
+    ```
+    ghcup upgrade
+    ghcup install cabal 3.6.2.0
+    ghcup set cabal 3.6.2.0
+    ```
 
 
 
@@ -87,7 +94,7 @@ ghc --version
 ```
 > GHCのバージョンは「8.10.7」であることを確認してください。
 
-!!! danger "確認"
+??? danger "GHC 8.10.4以下だった場合(クリックして開く)"
     **GHC 8.10.4以下だった場合のみ実行**
     ```bash
     ghcup upgrade
@@ -100,8 +107,199 @@ ghc --version
     > GHCのバージョンは「8.10.7」であればOK
 
 
+### **1-3.Secp256k1のインストール**
 
-### **1-3.ソースコードダウンロード**
+```
+cd $HOME/git
+git clone https://github.com/bitcoin-core/secp256k1.git
+```
+
+```
+cd secp256k1/
+git reset --hard ac83be33d0956faf6b7f61a60ab524ef7d6a473a
+./autogen.sh
+./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
+make
+make check
+```
+!!! hint "確認"
+    以下の戻り値であることを確認する
+    ```
+    Testsuite summary for libsecp256k1 0.1.0-pre
+    ============================================================================
+    # TOTAL: 2
+    # PASS:  2
+    # SKIP:  0
+    # XFAIL: 0
+    # FAIL:  0
+    # XPASS: 0
+    # ERROR: 0
+    ============================================================================
+    ```
+インストールコマンドを実行
+```
+sudo make install
+```
+
+### **1-4.環境変数追加**
+```
+echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
+echo export NODE_NETWORK="--mainnet" >> $HOME/.bashrc
+source $HOME/.bashrc
+```
+
+### **1-5.Guildスクリプト再取得**
+!!! error "注意"
+    * リレーとBPでコマンドが異なりますので、タブを切り替えてください。
+
+
+=== "リレーノード"
+
+    ```
+    cd $NODE_HOME/scripts
+    wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/gLiveView.sh -O ./gLiveView.sh
+    wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/env -O ./env
+    ```
+
+    ノードポート番号を確認する
+    ```
+    PORT=`grep "PORT=" $NODE_HOME/startRelayNode1.sh`
+    b_PORT=${PORT#"PORT="}
+    echo "リレーポートは${b_PORT}です"
+    ```
+    > ↑そのまま実行する
+
+
+    envファイルを修正します
+    ```
+    sed -i $NODE_HOME/scripts/env \
+    -e '1,73s!#CNODE_HOME="/opt/cardano/cnode"!CNODE_HOME=${NODE_HOME}!' \
+    -e '1,73s!#CNODE_PORT=6000!CNODE_PORT='${b_PORT}'!' \
+    -e '1,73s!#UPDATE_CHECK="Y"!UPDATE_CHECK="N"!' \
+    -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/'${NODE_CONFIG}'-config.json"!' \
+    -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node0.socket"!SOCKET="${CNODE_HOME}/db/socket"!'
+    ```
+
+    
+
+=== "ブロックプロデューサーノード"
+
+    !!! hint "確認"
+        各ファイル名を変更している場合はご自身の環境に合わせて修正してください
+
+    **サービスを止める**
+    ```
+    sudo systemctl stop cnode-cncli-sync.service
+    ```
+
+    スクリプトをダウンロードする(上書き)
+    ```
+    cd $NODE_HOME/scripts
+    wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cncli.sh -q -O ./cncli.sh
+    wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/env -q -O ./env
+    wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/logMonitor.sh -q -O ./logMonitor.sh
+    wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/gLiveView.sh -q -O ./gLiveView.sh
+    wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/cntools.library -q -O ./cntools.library
+    wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/blocks.sh -q -O ./blocks.sh
+    rm cntools.config
+    ```
+
+    ノードポート番号を確認する
+    ```
+    PORT=`grep "PORT=" $NODE_HOME/startBlockProducingNode.sh`
+    b_PORT=${PORT#"PORT="}
+    echo "BPポートは${b_PORT}です"
+    ```
+
+    envファイルを修正します
+    ```
+    sed -i $NODE_HOME/scripts/env \
+    -e '1,73s!#CCLI="${HOME}/.cabal/bin/cardano-cli"!CCLI="/usr/local/bin/cardano-cli"!' \
+    -e '1,73s!#CNODE_HOME="/opt/cardano/cnode"!CNODE_HOME='${NODE_HOME}'!' \
+    -e '1,73s!#CNODE_PORT=6000!CNODE_PORT='${b_PORT}'!' \
+    -e '1,73s!#UPDATE_CHECK="Y"!UPDATE_CHECK="N"!' \
+    -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/'${NODE_CONFIG}'-config.json"!' \
+    -e '1,73s!#TOPOLOGY="${CNODE_HOME}/files/topology.json"!TOPOLOGY="${CNODE_HOME}/'${NODE_CONFIG}'-topology.json"!' \
+    -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node0.socket"!SOCKET="${CNODE_HOME}/db/socket"!' \
+    -e '1,73s!#BLOCKLOG_TZ="UTC"!BLOCKLOG_TZ="Asia/Tokyo"!' \
+    -e '1,73s!#WALLET_PAY_ADDR_FILENAME="payment.addr"!WALLET_PAY_ADDR_FILENAME="payment.addr"!' \
+    -e '1,73s!#WALLET_STAKE_ADDR_FILENAME="reward.addr"!WALLET_STAKE_ADDR_FILENAME="stake.addr"!' \
+    -e '1,73s!#POOL_HOTKEY_VK_FILENAME="hot.vkey"!POOL_HOTKEY_VK_FILENAME="kes.vkey"!' \
+    -e '1,73s!#POOL_HOTKEY_SK_FILENAME="hot.skey"!POOL_HOTKEY_SK_FILENAME="kes.skey"!' \
+    -e '1,73s!#POOL_COLDKEY_VK_FILENAME="cold.vkey"!POOL_COLDKEY_VK_FILENAME="node.vkey"!' \
+    -e '1,73s!#POOL_COLDKEY_SK_FILENAME="cold.skey"!POOL_COLDKEY_SK_FILENAME="node.skey"!' \
+    -e '1,73s!#POOL_OPCERT_COUNTER_FILENAME="cold.counter"!POOL_OPCERT_COUNTER_FILENAME="node.counter"!' \
+    -e '1,73s!#POOL_OPCERT_FILENAME="op.cert"!POOL_OPCERT_FILENAME="node.cert"!' \
+    -e '1,73s!#POOL_VRF_SK_FILENAME="vrf.skey"!POOL_VRF_SK_FILENAME="vrf.skey"!'
+    ```
+
+    プールIDを確認する
+    ```
+    pool_ID=`cat $NODE_HOME/stakepoolid_hex.txt`
+    echo "プールIDは${pool_ID}です"
+    ```
+
+    cncli.shファイルを修正します
+    ```
+    sed -i $NODE_HOME/scripts/cncli.sh \
+    -e '1,73s!#POOL_ID=""!POOL_ID='${pool_ID}'!' \
+    -e '1,73s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
+    -e '1,73s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
+    ```
+
+### **1-6.CNCLIバージョンアップ(BPのみ)**
+
+!!! info "確認"
+    * BPのみで実施します
+    * CNCLI4→5へバージョンアップします。
+
+
+**CNCLIリポジトリを再構築する**
+
+```
+cd $HOME/git
+rm -rf cncli
+git clone --recurse-submodules https://github.com/cardano-community/cncli
+```
+
+**CNCLIをアップデートする**
+
+```bash
+rustup update
+cd $HOME/git/cncli
+git fetch --all --prune
+git checkout $(curl -s https://api.github.com/repos/cardano-community/cncli/releases/latest | jq -r .tag_name)
+cargo install --path . --force
+```
+
+バージョン確認
+```
+cncli --version
+```
+> cncli 5.1.2になったことを確認する  
+
+
+
+** cncli.dbを初期化する **
+```
+cd $NODE_HOME/guild-db/
+rm -rf cncli
+```
+> ここではまだサービスを再起動しない
+
+## 2.通常アップデート
+
+### **2-1.ビルド準備**
+
+新しいTMUXセッションを開く
+
+```
+tmux new -s build
+```
+TMUXセッション内(緑帯が表示されてる状態)で  
+以下の2-2.ソースコードダウンロード及びビルドを実行します
+
+### **2-2.ソースコードダウンロード**
 
 ```bash
 cd $HOME/git
@@ -110,20 +308,22 @@ git clone https://github.com/input-output-hk/cardano-node.git cardano-node2
 cd cardano-node2/
 ```
 
-### **1-4.ソースコードからビルド**
+!!! hint "ヒント"
+
+    * SSH接続が途中で切断されても処理が止まりません。  
+    * ビルド中にデタッチ(Ctrl+B D)してバックグラウンド処理へ切り替えられます。
+
+### **2-3.ソースコードからビルド**
+
 
 ```bash
 cabal clean
 cabal update
 ```
 
-
-<!--#git fetch --all --recurse-submodules --tags
-#git checkout $(curl -s https://api.github.com/repos/input-output-hk/cardano-node/releases/latest | jq -r .tag_name)
--->
 ```
 git fetch --all --recurse-submodules --tags
-git checkout tags/1.34.1
+git checkout tags/1.35.3
 cabal configure -O0 -w ghc-8.10.7
 ```
 
@@ -133,9 +333,6 @@ echo -e "package cardano-crypto-praos\n flags: -external-libsodium-vrf" > cabal.
 ```bash
 cabal build cardano-node cardano-cli
 ```
-> 'hackage.haskell.org'! Falling back to older state (2021-12-06T23:34:30Z).
-Resolving dependencies...
-と表示され止まったように見えますが、動くまでお待ちください
 
 ビルド完了までに数十分ほどかかります。  
 
@@ -146,11 +343,11 @@ $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-cli") 
 $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-node") version  
 ```
 以下の戻り値を確認する  
->cardano-cli 1.34.1 - linux-x86_64 - ghc-8.10  
-git rev 73f9a746362695dc2cb63ba757fbcabb81733d23  
+>cardano-cli 1.35.3 - linux-x86_64 - ghc-8.10  
+git rev 950c4e222086fed5ca53564e642434ce9307b0b9  
 
->cardano-node 1.34.1 - linux-x86_64 - ghc-8.10  
-git rev 73f9a746362695dc2cb63ba757fbcabb81733d23  
+>cardano-node 1.35.3 - linux-x86_64 - ghc-8.10  
+git rev 950c4e222086fed5ca53564e642434ce9307b0b9  
 
 
 **ノードをストップする** 
@@ -176,32 +373,36 @@ cardano-node version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 1.34.1 - linux-x86_64 - ghc-8.10  
-git rev 73f9a746362695dc2cb63ba757fbcabb81733d23  
+>cardano-cli 1.35.3 - linux-x86_64 - ghc-8.10  
+git rev 950c4e222086fed5ca53564e642434ce9307b0b9  
 
->cardano-node 1.34.1 - linux-x86_64 - ghc-8.10  
-git rev 73f9a746362695dc2cb63ba757fbcabb81733d23   
+>cardano-node 1.35.3 - linux-x86_64 - ghc-8.10  
+git rev 950c4e222086fed5ca53564e642434ce9307b0b9  
 
+ビルド用TMUXセッションを終了する
+```
+exit
+```
 
-### **1-5.ノード起動**
+### **2-4.ノード起動**
 
 ```bash
 sudo systemctl start cardano-node
 ```
 
+**DB再構築処理状況確認する**
+
+```
+journalctl -u cardano-node -f
+```
+
 !!! info "ヒント"
-    DBの同期が完了するまで数十分かかります
-
-**ノード状況を確認する**
-
-```
-cd $NODE_HOME/scripts
-./gLiveView.sh
-```
+    * 1.35.3初回起動時に2~4時間以上のDBの再検証処理が行われます。  
+    * ノードログの進捗状況%を確認し、通常ログが流れ出したらGliveViewでノード状況を確認する
+    * Syncing 100%がTip(diff): ** :)となるまで待つ
 
 
-
-### **1-6.作業フォルダリネーム**
+### **2-5.作業フォルダリネーム**
 前バージョンで使用していたバイナリフォルダをリネームし、バックアップとして保持します。最新バージョンを構築したフォルダをcardano-nodeとして使用します。
 
 ```bash
@@ -209,6 +410,216 @@ cd $HOME/git
 mv cardano-node/ cardano-node-old/
 mv cardano-node2/ cardano-node/
 ```
+
+## 3.RSYNC+SSHアップデート
+
+
+!!! note "メリット"
+    **複数台のサーバーがある場合に、以下の処理を行うことでビルド時間の短縮やノードのダウンタイムを抑えることが出来ます。**
+
+!!! error "デメリット"
+    * RSYNC+SSHを利用したアップデート方法は、転送元・転送先サーバーのディスク空き容量が150GB以上必要となります。
+
+!!! hint "はじめに"
+
+    * RSYNCを使用する場合、最初に[事前設定](./rsync-ssh.md)を行ってください
+    * 転送元サーバーで [2.通常アップデート](./node-update.md#2)を実施してください
+    * 転送先サーバーで [1.依存環境アップデート](./node-update.md#1)を実施してください
+
+### 3-1.容量確認
+**転送元・転送先サーバー両方で確認してください**
+```
+df -h /usr
+```
+> Availが150GB以上あることを確認してください。
+
+
+### 3-2.転送元サーバー作業
+!!! hint "確認"
+    この作業(3-2)は1回で大丈夫です。
+
+=== "転送元サーバー"
+    **バイナリーファイルを転送フォルダ用にコピーする**
+    ```
+    mkdir $NODE_HOME/Transfer
+    cp $(find $HOME/git/cardano-node/dist-newstyle/build -type f -name "cardano-cli") $NODE_HOME/Transfer/cardano-cli
+    cp $(find $HOME/git/cardano-node/dist-newstyle/build -type f -name "cardano-node") $NODE_HOME/Transfer/cardano-node
+    ```
+
+    バージョン確認
+    ```
+    $NODE_HOME/Transfer/cardano-cli version
+    $NODE_HOME/Transfer/cardano-node version
+    ```
+    以下の戻り値を確認する
+    >cardano-cli 1.35.3 - linux-x86_64 - ghc-8.10  
+    git rev 950c4e222086fed5ca53564e642434ce9307b0b9  
+
+    >cardano-node 1.35.3 - linux-x86_64 - ghc-8.10  
+    git rev 950c4e222086fed5ca53564e642434ce9307b0b9  
+    
+    **ノードを停止する**
+    ```
+    sudo systemctl stop cardano-node
+    ```
+
+    **DBフォルダを圧縮する**
+
+    新しいTMUXセッションを開く
+    ```
+    tmux new -s tar
+    ```
+
+    ```
+    tar cvzf $NODE_HOME/Transfer/1.35.3-db.tar.gz -C $NODE_HOME db
+    ```
+
+    圧縮が終了したらTMUXを閉じる
+    ```
+    exit
+    ```
+
+    **ノードをスタートする**
+    ```
+    sudo systemctl start cardano-node
+    ```
+
+
+### 3-3.転送元から転送先へ転送する
+
+変数`for`に転送先エイリアスを代入する
+
+=== "転送元サーバー"
+
+    新しいTMUXセッションを開く
+    ```
+    tmux new -s rsync
+    ```
+
+    転送先エイリアスを指定する
+
+    ```
+    for=xxxx
+    ```
+    > 転送先エイリアスは、事前設定の [1-2.SSH設定ファイル作成](./rsync-ssh.md#1-2ssh) で設定した転送先Host名(エイリアス)を指定します。
+
+    ファイルを転送する
+    ```
+    rsync -P --rsh=ssh $NODE_HOME/Transfer/1.35.3-db.tar.gz $for::Server/1.35.3-db.tar.gz
+    ```
+    > 転送が完了するまで待つ
+
+    ```
+    rsync -P --rsh=ssh $NODE_HOME/Transfer/cardano-cli $for::Server/cardano-cli
+    ```
+    > 転送が完了するまで待つ
+
+    ```
+    rsync -P --rsh=ssh $NODE_HOME/Transfer/cardano-node $for::Server/cardano-node
+    ```
+    > 転送が完了するまで待つ
+
+    転送が終了したらTMUXを閉じる
+    ```
+    exit
+    ```
+
+
+
+### 3-4.転送先サーバー作業
+
+新しいTMUXセッションを開く
+```
+tmux new -s tar
+```
+
+=== "転送先サーバー"
+
+    DBを解凍する
+    ```
+    mkdir $NODE_HOME/temp
+    tar -xzvf $NODE_HOME/1.35.3-db.tar.gz -C $NODE_HOME/temp/
+    ```
+    > DBの解凍が終わるまで待ちます
+
+    解凍が終わったらTMUXを閉じる
+    ```
+    exit
+    ```
+
+    SSDの空き容量を再確認する
+    ```
+    df -h /usr
+    ```
+    > Availが90GB以上あることを確認してください。
+
+
+    ノードを停止する
+    ```
+    sudo systemctl stop cardano-node
+    ```
+
+    バイナリーファイルをシステムフォルダーへコピーする
+    ```
+    sudo cp $NODE_HOME/cardano-cli /usr/local/bin/cardano-cli
+    sudo cp $NODE_HOME/cardano-node /usr/local/bin/cardano-node
+    ```
+    バージョン確認
+    ```
+    cardano-cli version
+    cardano-node version
+    ```
+    以下の戻り値を確認する
+    >cardano-cli 1.35.3 - linux-x86_64 - ghc-8.10  
+    git rev 950c4e222086fed5ca53564e642434ce9307b0b9  
+
+    >cardano-node 1.35.3 - linux-x86_64 - ghc-8.10  
+    git rev 950c4e222086fed5ca53564e642434ce9307b0b9 
+
+    DBフォルダを入れ替える
+    ```
+    mv $NODE_HOME/db $NODE_HOME/db_134
+    mv $NODE_HOME/temp/db $NODE_HOME/db
+    ```
+    
+
+
+    ノードを起動する
+    ```
+    sudo systemctl start cardano-node
+    ```
+
+    !!! info "ヒント"  
+        * GliveViewでノード状況を確認する
+        * Syncing 100%がTip(diff): ** :)となるまで待つ
+
+
+    バイナリーファイルを移動する
+    ```
+    cd $HOME/git
+    rm -rf cardano-node-old/
+    mv $HOME/git/cardano-node/ $HOME/git/cardano-node-old/
+    mkdir cardano-node
+    mv $NODE_HOME/cardano-cli $HOME/git/cardano-node/
+    mv $NODE_HOME/cardano-node $HOME/git/cardano-node/
+    ```
+
+
+    !!! hint "確認"
+        ノードの同期が成功しブロック生成に成功し数エポック様子を見たあと、転送用ファイル・バックアップDBを削除してください
+        === "転送元"
+            ```
+            rm -rf $NODE_HOME/Transfer
+            ```
+        === "転送先"
+            ```
+            rm -rf $NODE_HOME/db_134
+            rm $NODE_HOME/1.35.3-db.tar.gz
+            ```
+
+
+
+
 
 
 <!--
@@ -289,113 +700,118 @@ sudo systemctl daemon-reload
 ```
 -->
 
+## **4. サービス起動を確認する(BPのみ)**
 
-## **2.CNCLIバージョンアップ**
-
-!!! info "確認"
-    * BPのみで実施します
-    * CNCLI4.0.4以下の場合に実施してください
-
-```
-cncli --version
+BPノードが完全に同期した後、サービス起動状態を確認する
+```bash
+tmux ls
 ```
 
-=== "cncli 4.0.3以下の場合"
+!!! info "ヒント"
+    ノードを再起動してから、約20秒後に5プログラムがバックグラウンドで起動中であればOKです  
 
-    **サービスを止める**
-    ```
-    sudo systemctl stop cnode-cncli-sync.service
-    ```
+    * cncli  
+    * leaderlog  
+    * validate  
+    * logmonitor  
+    * blockcheck(ブロック生成ステータス通知を導入している場合)
 
-    **CNCLIをアップデートする**
+```
+tmux a -t cncli
+```
+>「100.00% synced」になるまで待ちます。
+100%になったら、Ctrl+bを押した後に d を押し元の画面に戻ります
+(バックグラウンド実行に切り替え)
+
+## 5. KESカウンターを確認する(BP)
+
+**SJG Tool を起動する**　未導入の場合は[こちら](./tool.md)から導入してください
+```
+gtool
+```
+
+* [2] ブロック生成状態チェックを選択する
+* [プール運用証明書チェック]に、以下の警告が表示されている場合はKESを更新する  
+　<font color=red>「NG カウンター番号がチェーンより2以上大きいです」</font>
+
+■**KESを更新する場合**
+
+SJGToolのホームに戻り、[3] KES更新を選択し、画面に表示された手順に沿ってKESを更新する
+
+
+## 6. エアギャップマシンアップデート
+!!! hint "SFTP機能ソフト導入"
+    ファイル転送に便利な[SFTP機能ソフトの導入手順はこちら](./sftp.md)
+
+**### 6-1.エアギャップマシン用にバイナリファイルをコピーする**
+
+=== "1.RSYNC+SSHでアップデートを行った場合"
+
+    === "転送元サーバー"
+        ```
+        cp $HOME/git/secp256k1/.libs/libsecp256k1.so.0 $NODE_HOME/Transfer/
+        ```
+
+    SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し、/home/usr/cnode/Transfer/ 直下にある  
+    
+    * cardano-cli
+    * libsecp256k1.so.0
+    
+    をローカルパソコンにダウンロードします  
+    (エアギャップUbuntuとの共有フォルダ)
+
+=== "2.通常アップデートのみで行った場合"
+
+    2.通常アップデートを終えたBPかリレーサーバーで以下を実行する
 
     ```bash
-    rustup update
-    cd $HOME/git/cncli
-    git fetch --all --prune
-    git checkout $(curl -s https://api.github.com/repos/AndrewWestberg/cncli/releases/latest | jq -r .tag_name)
-    cargo install --path . --force
-    cncli --version
-    ```
-    > cncli 4.0.4になったことを確認する
-
-    **ノードを再起動する**
-    ```
-    sudo systemctl reload-or-restart cardano-node
+    sudo cp $(find $HOME/git/cardano-node/dist-newstyle/build -type f -name "cardano-cli") ~/cardano-cli
+    cp $HOME/git/secp256k1/.libs/libsecp256k1.so.0 ~/libsecp256k1.so.0
     ```
 
-    **サービス起動を確認する**
-
-    ```bash
-    tmux ls
-    ```
-
-    !!! info "ヒント"
-        ノードを再起動してから、約20秒後に5プログラムがバックグラウンドで起動中であればOKです
-        * cncli
-        * leaderlog
-        * validate
-        * logmonitor
-        * blockcheck(ブロック生成ステータス通知を導入している場合)
-
-    ```
-    tmux a -t cncli
-    ```
-    >「100.00% synced」になるまで待ちます。
-    100%になったら、Ctrl+bを押した後に d を押し元の画面に戻ります
-    (バックグラウンド実行に切り替え)
-
-
-=== "cncli 4.0.4の場合"
-
-    最新バージョンです。
-
-
-## 3. エアギャップマシンアップデート
-
- **エアギャップマシン用にバイナリファイルをコピーする**
-
-更新手順１を終えたBPかリレーサーバーで以下を実行する
-```bash
-sudo cp $(find $HOME/git/cardano-node/dist-newstyle/build -type f -name "cardano-cli") ~/cardano-cli
-```
-
-```bash
-sudo cp $(find $HOME/git/cardano-node/dist-newstyle/build -type f -name "cardano-node") ~/cardano-node
-```
-
-１．R-loginの転送機能を開き、ユーザーフォルダ直下にある「cardano-cli」と「cardano-node」をローカルパソコンにダウンロードします(エアギャップUbuntuとの共有フォルダ)
+    SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し、ユーザーフォルダ 直下にある  
+    
+    * cardano-cli
+    * libsecp256k1.so.0
+    
+    をローカルパソコンにダウンロードします(エアギャップUbuntuとの共有フォルダ)
 
 !!! hint "ヒント"
     R-loginの転送機能が遅いので、大容量ファイルをダウン・アップロードする場合は、SFTP接続可能なソフトを使用すると効率的です。（FileZilaなど）
 
+<BR>
+** ２．エアギャップマシンの $HOME/git/cardano-node2 ディレクトリに**  
+<font color=red>(無ければ作成してください)</font>
 
-２．エアギャップマシンの $HOME/git/cardano-node2 ディレクトリ(無ければ作成)に「cardano-cli」と「cardano-node」をコピーする
+* cardano-cli
+* libsecp256k1.so.0
 
-**エアギャップマシンのシステムフォルダへコピーする**
+をコピーする
+
+**### 6-2.エアギャップマシンのシステムフォルダへコピーする**
 
 エアギャップマシンで以下を実行する
 ```bash
+sudo mv $HOME/git/cardano-node2/libsecp256k1.so.0 /usr/local/lib/
+```
+```
 sudo cp $(find $HOME/git/cardano-node2 -type f -name "cardano-cli") /usr/local/bin/cardano-cli
 ```
 
-```bash
-sudo cp $(find $HOME/git/cardano-node2 -type f -name "cardano-node") /usr/local/bin/cardano-node
-```
 
-**システムに反映されたノードバージョンを確認する**
+**### 6-3.システムに反映されたノードバージョンを確認する**
 
 ```bash
 cardano-cli version
-cardano-node version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 1.34.1 - linux-x86_64 - ghc-8.10  
-git rev 73f9a746362695dc2cb63ba757fbcabb81733d23  
+>cardano-cli 1.35.3 - linux-x86_64 - ghc-8.10  
+git rev 950c4e222086fed5ca53564e642434ce9307b0b9  
 
->cardano-node 1.34.1 - linux-x86_64 - ghc-8.10  
-git rev 73f9a746362695dc2cb63ba757fbcabb81733d23 
+
+!!! denger "確認"
+    エアギャップではcardano-nodeは使用しないため転送してもしなくてもOKです。
 
 
 <!--
