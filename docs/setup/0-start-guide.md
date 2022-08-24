@@ -5,8 +5,8 @@
 -->
 
 !!! info "情報"
-    このマニュアルは、カルダノノードv1.35.2に対応しています。  
-    最終更新日：2022年7月30日の時点guide version 12.2.0
+    このマニュアルは、カルダノノードv1.35.3に対応しています。  
+    最終更新日：2022年8月24日の時点guide version 12.3.0
 
 !!! tip "サポート"
     サポートが必要な場合は、[SPO JAPAN GUILDコミュニティ](https://discord.gg/U3gU54c)で現役のSPOに質問できます
@@ -104,244 +104,289 @@
 
 
 **環境**
-・Windows10/11  
-・64ビット  
-・メモリ8GB以上
+
+* Windows10/11 Home (Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz   1.80 GHz)  
+* 実装RAM 8.00 GB (7.90 GB 使用可能)  
+* 64 ビット オペレーティング システム、x64 ベース プロセッサ  
 
 **ダウンロード/インストール**
-- Ubuntu Desktop 20.04.4 LTS  
-- VirtualBox 6.1.14
+
+* Ubuntu Desktop 20.04.4 LTS  
+* VirtualBox-6.1.36  
+---
 
 
 #### **1- VirtualBoxのダウンロード**
-[公式ORACLE社のダウンロードサイト](https://www.oracle.com/jp/virtualization/technologies/vm/downloads/virtualbox-downloads.html)
-にアクセスし、「3.環境の確認」の②のシステム情報は64ビットなので、下の赤い四角の線で囲まれた
-”windowsインストーラ”をクリックする。  
-![](../images/win/VirtualBoxubuntu-1.jpg)
+1-1. VirtualBoxのダウンロードサイトにアクセスし、`VirtualBox 6.1.36 platform packages`の`Windows hosts`をタップしダウンロードする。
+
+ * [VirtualBoxの入手](https://www.virtualbox.org/wiki/Downloads)
 
 #### **2- VirtualBoxのインストール**
 
-2-1.ダウンロードしたvirtualbox6.1.14のインストーラをダブルクリックで起動する。  
-![](../images/win/VirtualBoxubuntu-2.jpg)
+2-1.ダウンロードしたvirtualbox6.1.36のインストーラをダブルクリックで起動する。
 
-2-2.Nextをクリック  
-![](../images/win/VirtualBoxubuntu-3.jpg)
+| ファイル名 |
+| ------------- |
+|VirtualBox-6.1.36-152435-Win.exe|
 
-2-3.Nextをクリック  
-![](../images/win/VirtualBoxubuntu-4.jpg)
+![1virtualbox](https://user-images.githubusercontent.com/80440848/184325406-c8453b6f-0912-467f-bad3-f0b2466066f3.png)
 
-2-4.Nextをクリック  
-![](../images/win/VirtualBoxubuntu-5.jpg)
+2-2.ダウンロードが完了したら、左下の赤い四角のインストーラーをタップして起動する。
 
-2-5.Yesをクリック  
-![](../images/win/VirtualBoxubuntu-6.jpg)
+![2 virtualbox_setup](https://user-images.githubusercontent.com/80440848/184338728-9a1a783f-6ee5-4c8e-a5b2-9ccec5e1dbf0.PNG)
 
-2-6.Installをクリック  
-![](../images/win/VirtualBoxubuntu-7.jpg)
+2-3.この画面になったら、`Next>`をタップ。
 
-2-7.インストールをクリック  
-![](../images/win/VirtualBoxubuntu-8.jpg)
+![3 virtualbox_setup](https://user-images.githubusercontent.com/80440848/184339305-fc9e9dab-6314-46a7-afc7-630209297b1f.PNG)
 
-2-8.VirtualBoxの管理画面が立ち上がり、インストールが完了しました。
-![](../images/win/VirtualBoxubuntu-9.jpg)
+2-4.続けてそのまま`Next>`をタップし、下の画面になったら`Install`をタップする。
+
+![7 virtualbox_setup](https://user-images.githubusercontent.com/80440848/184339928-0b689ef2-4bb2-4c23-b2f4-151a4f2e44ce.PNG)
+
+2-5.Windowsセキュリティが作動し、デバイスのソフトウェアをインストールしますか？と聞かれたら`インストール(I)`をタップし、下の画像の赤い四角で囲まれた`Finish`をタップする。
+
+![10 virtualbox_setup](https://user-images.githubusercontent.com/80440848/184340436-fca6347b-ff73-4d00-8593-033da52aad5e.PNG)
+
+2-6.VirtualBoxの管理画面が立ち上がり、インストールが完了しました。
+
+![15](https://user-images.githubusercontent.com/80440848/184341211-b58971af-5abc-4d32-8d44-788810e07f2b.PNG)
 
 #### **3- OS Ubuntuの入手**
-3-1.UbuntuのIOSイメージをダウンロードします。
-[https://www.ubuntulinux.jp/download ](https://www.ubuntulinux.jp/download) 
-![](../images/win/VirtualBoxubuntu-10.jpg)
+3-1.下の画像の赤い四角のところをタップしてダウンロードします。
 
-3-2.Ubuntu 20.04.1 LTS のubuntu-ja-20.04.1-desktop-amd64.iso(ISO)をクリック。
-![](../images/win/VirtualBoxubuntu-11.jpg)
+- [Ubuntu20.04.4 LTSの入手](https://releases.ubuntu.com/20.04.4/?_ga=2.145106481.424434523.1659109603-1752942665.1659109603)
 
-3-3.ubuntu-ja-20.04.1-desktop-amd64.isoをダウンロードしたら、その IOSディスクの置き場所(フォルダ)を
-決めてそこに移動しておく。今回はテスト用として作成したTest_CNodeというフォルダを作成し移動した。
-![](../images/win/VirtualBoxubuntu-12.jpg)
+![2-1](https://user-images.githubusercontent.com/80440848/184349563-06b3ad6d-5295-4225-bd7f-6cc880e3d174.png)
+
+3-2.ダウンロードしたubuntu-20.04.4-desktop-amd64を作成したフォルダ(ここではTest_CNodeというフォルダ)に移動しておく。
+
+![4-Ubuntu_download](https://user-images.githubusercontent.com/80440848/184369093-df29585b-bb75-44c4-a3e6-fb411046b7da.PNG)
+
 
 #### **4- VirtualBoxのインストール後の環境設定**
-4-1.VirtualBoxの起動画面を開く。(下の画像のこと)
-![](../images/win/VirtualBoxubuntu-13.jpg)
+4-1.マシンを作成する為に下の画像の赤い四角の`新規(N)`をタップする。
 
+![15](https://user-images.githubusercontent.com/80440848/184372736-01258bc7-1d91-441d-9551-1945dac351d9.PNG)
 
-4-2.環境設定を選択。
-![](../images/win/VirtualBoxubuntu-14.jpg)
+4-2.名前とオペレーティングシステムの画面になったら、①マシンの名前、②マシンのフォルダーパス指定、③Linux、④Linux(64bit)を選択する。
 
+![VirtualMashine-1](https://user-images.githubusercontent.com/80440848/184377673-e74f5eec-4398-4c26-903f-fe08dc551ec0.PNG)
 
-4-3.一般>ディフォルトの仮想マシンフォルダ(M)のプルダウンリストから”その他”を選択し、VirtualBox上で動作
-させるOS(ゲストOS)ファイルの置き場所を選択する。
-![](../images/win/VirtualBoxubuntu-15.jpg)
+4-3.メモリサイズは、4GB(4000MB)に変更する。
 
+![VirtualMashine-2](https://user-images.githubusercontent.com/80440848/184456824-af083067-728d-499a-ac2a-7d2129fbc9c9.png)
 
-4-4.先程の3-3で移動したIOSディスクの置き場所(フォルダ)を選択しOKボタンを押す。
-設定は完了。
+4-4.下の画像の状態で「仮想ハードディスクを作成する(C)」を選択した状態のまま下の`作成`をタップ。
 
+![VirtualMashine-3](https://user-images.githubusercontent.com/80440848/184457064-512963cb-5144-4dff-92c7-b5c20c9460f5.png)
+
+4-5.「VDI(VirtualBox Disc Image)」の状態のまま、`次へ(N)`をタップ。
+
+![VirtualMashine-4](https://user-images.githubusercontent.com/80440848/184457609-bbbb30ca-8532-4dfc-88e3-68e461c8c14c.png)
+
+4-6.「可変サイズ(D)」の状態のまま`次へ(N)`をタップ。
+
+![VirtualMashine-5](https://user-images.githubusercontent.com/80440848/184457983-b7fd39f8-b760-4d67-8e14-5f65cc0183e0.png)
+
+4-7.ハードディスクのサイズを50GBに変更し`作成`をタップ。
+
+![VirtualMashine-6](https://user-images.githubusercontent.com/80440848/184458184-e63329cc-4265-4fd5-a6b0-85fbcb2507b7.png)
+
+4-8.おめでとうございます！仮想マシンが作成されました。
+
+![VirtualMashine-7](https://user-images.githubusercontent.com/80440848/184459602-b88ad8ae-7a94-41e2-bb40-4a44aac4f238.PNG)
 
 #### **5- VirtualBoxの仮想マシンの作成**
 
-5-1.VirtualBoxの環境設定内容を確認  
-・OSはUbuntu20.04  
-・ハードディスクは50GB  
-・メモリは4GB  
-・スワップ設定は8GB  
-※スワップとは、メモリが足りない時にメモリの中身をハードディスクに移す機能の事  
+5-1.VirtualBoxが終了している状態から、下の画像の四角をダブルクリックして、VirtualBoxを起動する。
 
-5-2.新規(N)をクリック。  
-![](../images/win/VirtualBoxubuntu-16.jpg)
+![Setting_Mashine-1](https://user-images.githubusercontent.com/80440848/184461165-f5690181-46ac-4501-beb6-9d91f2bab20a.PNG)
 
+5-2.ファイル > `環境設定(P)...`をタップ。
 
-5-3.仮想マシンの名前、マシンのデータ関係の保存先を指定する。①は仮想マシンの名前を入力。②のマシンフォルダは
-仮想マシン用として作成したTest_CNodeというフォルダを指定。③はLinux、④は3の「環境の確認」で、
-システム情報に記載されていた64bitを選択する。  
-![](../images/win/VirtualBoxubuntu-17.jpg)
+![Setting_Mashine-2](https://user-images.githubusercontent.com/80440848/184461509-39b2f551-7094-40ab-acda-c54d90d52e9f.PNG)
 
+5-3.一般 > デフォルトの仮想マシンフォルダー(M)の 下の画像の赤い四角をタップし`その他`を選択。
 
-5-4.メモリーサイズは4GB(4000MB)に変更する。  
-![](../images/win/VirtualBoxubuntu-18.jpg)
+![Setting_Mashine-3](https://user-images.githubusercontent.com/80440848/184462645-502725ab-e9f8-4413-89cc-c92d74fa983a.PNG)
 
+5-4.仮想マシンの関連ファイル等の置き場所を決める為、フォルダ(ここではTest_CNodeフォルダ)を選択し、`OK`をタップし環境設定を完了する。
 
-5-5.下の画像のように「仮想ハードディスクを作成する( C )」のまま”作成”をクリック。  
-![](../images/win/VirtualBoxubuntu-19.jpg)
-
-
-5-6.「VDI(VirtualBox Disc Image)」のまま、”次へ(N)”をクリック。  
-![](../images/win/VirtualBoxubuntu-20.jpg)
-
-
-5-7.「可変サイズ(D)」のまま”次へ(N)”をクリック。  
-![](../images/win/VirtualBoxubuntu-21.jpg)
-
-5-8.ハードディスクのサイズを50GBに変更し”作成”をクリック。  
-![](../images/win/VirtualBoxubuntu-22.jpg)
-
-5-9.仮想マシンが作成された。   
-![](../images/win/VirtualBoxubuntu-23.jpg)
+![Setting_Mashine-4](https://user-images.githubusercontent.com/80440848/184462980-4acdccd3-214f-4771-9336-35e0e1b97733.PNG)
 
 
 #### **6- VirtualBoxの仮想マシンの環境設定**
 
-6-1.対象の仮想マシンを選択したまま赤い四角の線に囲まれた”設定”をクリック。  
-![](../images/win/VirtualBoxubuntu-24.jpg)
+6-1.対象の仮想マシンを選択したまま、赤い四角の線に囲まれた`設定`をタップ。
 
+![Setting_Mashine-1](https://user-images.githubusercontent.com/80440848/184465981-d70cd0cb-a06f-4d53-87a0-63f2369da05f.PNG)
 
+6-2.一般 > 高度(A)へと移動し、クリップボードの共有とドラック&ドロップを`無効`から`双方向`へ変更する。
 
-6-2.一般>高度(A)へと移動し、クリップボードの共有とドラッグ&ドロップを”無効”から”双方向”へ変更する。  
-![](../images/win/VirtualBoxubuntu-25.jpg)
-![](../images/win/VirtualBoxubuntu-26.jpg)
+![Setting_Mashine-2](https://user-images.githubusercontent.com/80440848/184466214-f00c4119-04f6-4beb-b9c1-5a9946e16c5c.PNG)
 
+6-3.次に、システム > マザーボード(M)へ移動し、起動順序の`フロッピー`のチェックマークを外し、`ネットワーク`にチェックマークを入れる。その他は、デフォルトのままで良い。
 
+![Setting_Mashine-3](https://user-images.githubusercontent.com/80440848/184466552-1c02f7f2-cf4e-4b4f-b0c5-70a6f1a2bc14.PNG)
 
-6-3.システム>マザーボードへ移動し、起動順序のフロッピーのチェックマークを外し、ネットワークに
-チェックマークを入れる。
-チップセットはPIIX3からICH9に変更し、拡張機能I/O APICを有効化(I)にチェックマークを入れ
-る。  
-![](../images/win/VirtualBoxubuntu-27.jpg)
-![](../images/win/VirtualBoxubuntu-28.jpg)
+6-4.システム > プロセッサー(P)に移動し、プロセッサー数(P)を`2`に変更する。※ディスクを起動してUbuntuのインストールの際にKernelPanicで先に進めない状況になるので、ご自身のPC状況に応じて2以上に設定して下さい。
 
+![Setting_Mashine-4](https://user-images.githubusercontent.com/80440848/184466800-bcc15b4f-fa88-4319-b601-83ae5b690f28.PNG)
 
-6-4.システム>プロセッサーに移動し、プロセッサー数を2に変更する。  
-![](../images/win/VirtualBoxubuntu-29.jpg)
-![](../images/win/VirtualBoxubuntu-30.jpg)
+6-5.ストレージに移動し、赤い四角の`空`を選択したまま、右の赤い四角のディスクのようなマークが表示されるので、そのディスクマークをタップする。
 
+![Setting_Mashine5](https://user-images.githubusercontent.com/80440848/184466892-c17b8f39-5255-4ec4-a2f9-644ddac9c1e2.png)
 
-6-5.ストレージは、空のところを選択した状態にすると、右のディスクのマークが表示されるので
-そのディスクのマークをクリックする。
-いくつかリストが表示され、「仮想光学ディスクの選択/作成」を選択し、3-3移動したubuntu-ja-20.04.1-desktop-amd64.isoを選択する。  
-![](../images/win/VirtualBoxubuntu-31.jpg)
-![](../images/win/VirtualBoxubuntu-32.jpg)
+6-6.ディスクマークをタップしたら、`ディスクファイルを選択...`を選択。
 
+![Setting_Mashine-6](https://user-images.githubusercontent.com/80440848/184467440-65ab8f20-a3b5-4260-a445-4741770447d8.PNG)
 
-6-6.ネットワークのアダプター1のネットワークアダプターを有効化(E)にチェックを入れておく。  
-![](../images/win/VirtualBoxubuntu-33.jpg)
+6-7.3-2で移動したフォルダを選択して、Ubuntu-20.04.4-desktop-amd64を選択する。
 
+![Setting_Mashine-7](https://user-images.githubusercontent.com/80440848/184467480-91534242-b20c-4485-beca-7481caf1ab53.PNG)
 
-6-7.メニューから設定より共有フォルダを開きます。
-![](../images/win/VirtualBoxubuntu-45.jpg)
+![Setting_Mashine-8](https://user-images.githubusercontent.com/80440848/184467707-ad80d336-138c-441b-a720-902b2a26bfdb.PNG)
 
-6-8.下の画像のように、フォルダのパスから「その他」を選択し、ホスト PC の共有するフォルダ名を選択する。
-![](../images/win/VirtualBoxubuntu-46.jpg)
+6-8.ネットワークのアダプター1の`ネットワークアダプターを有効化(E)`にチェックを入れておく。**※全てのセッティングが終わった後、セキュリティを堅牢にする為、チェックマークを外したままKESの更新作業等を行う。**
 
-6-9. 「自動マウント」にチェックマークを入れる。
-マウントポイントは空欄で構いません。
-マウントポイントの下に「永続化する」が表示されたら、こちらもチェックマークを入れる。
-![](../images/win/VirtualBoxubuntu-47.jpg)
+![Setting_Mashine-9](https://user-images.githubusercontent.com/80440848/184467931-80da9d62-98d0-4e6b-b336-d76e1957f307.png)
 
-6-10.⑩OK を押した後、下の画像のような状態になる。
-![](../images/win/VirtualBoxubuntu-48.jpg)
+6-9.**共有フォルダの設定** です。メニュー > 共有フォルダーをタップ。
+
+![共有フォルダ_1](https://user-images.githubusercontent.com/80440848/184518168-a7e59e32-23ea-4ac1-be42-1618267045a8.PNG)
+
+6-10.下の画像のように、フォルダのパスから「その他」を選択し、**ホストPCにある共有するフォルダ名**を選択する。
+
+![共有フォルダ_2-1](https://user-images.githubusercontent.com/80440848/184518243-ef50b2cc-8bb7-4647-8a00-3accf0c584ac.png)
+
+※ホスト側でのフォルダを追加して作成する事も可能です。
+
+6-11.フォルダーのパスのところには、ホストPCに用意してある共有フォルダを選択する。すると自動で下のスペースの`フォルダ名`にも追加される。そして、自動マウントにチェックを入れる。
+
+![共有フォルダ_3](https://user-images.githubusercontent.com/80440848/184518546-593cc394-2583-45c2-8d0b-96b3ced50c1b.png)
+
+6-12.`OK`すると下の画像のようになる。
+
+![共有フォルダ_4](https://user-images.githubusercontent.com/80440848/184518719-56b691c2-82f8-4383-871d-40b3a0f7382c.PNG)
+
+**※共有フォルダの機能が有効になる為には他の設定が必要になります。とりあえず、仮想マシンの環境設定を完了してます。**
 
 
 #### **7- Ubuntuのインストール**
 
-7-1. 起動をクリック  
-![](../images/win/VirtualBoxubuntu-34.jpg)
+7-1.`起動`をタップ。
 
-7-2. 起動ハードディスクを選択する為、3-3で移動したubuntu-ja-20.04.1-desktop-amd64.isoを選択し起動をクリック。  
-![](../images/win/VirtualBoxubuntu-35.jpg)
+![install_ubuntu-1](https://user-images.githubusercontent.com/80440848/184519159-4dc7e22d-b97d-4561-ad71-58f48697025e.PNG)
 
+7-2.VirtualBoxの環境設定や仮想マシンのストレージの設定により下の画像がスキップされることがある。もし、下の画像の表示があれば3-2のディスクを選択し、`起動`をタップ。
 
-7-3. Ubuntuのインストールの準備が始まる。  
-![](../images/win/VirtualBoxubuntu-36.jpg)
+![install_ubuntu-2](https://user-images.githubusercontent.com/80440848/184519224-d27eaa1b-40c3-4138-836b-15a93aebdb53.png)
 
+7-3.下の画像のようにディスクが起動し始めます。
 
-7-4. 「Ubuntuをインストール」をクリックする。  
-![](../images/win/VirtualBoxubuntu-37.jpg)
+![install_ubuntu-3](https://user-images.githubusercontent.com/80440848/184519354-4a60ea8e-267c-4cda-952b-5fce4de835aa.png)
 
-7-5. 下の画像のまま”続ける”をクリック。  
-![](../images/win/VirtualBoxubuntu-38.jpg)
+7-4.左の枠の中から`日本語`を選択し`Ubuntuをインストール`をタップします。
 
-7-6. 下の画像のまま、”続ける”をクリック。  
-![](../images/win/VirtualBoxubuntu-39.jpg)
+![install_ubuntu-4](https://user-images.githubusercontent.com/80440848/184519425-07bb4035-2db2-4488-aeaa-166ad6afe889.png)
 
-7-7. 「ディスクを削除してUbuntuをインストール」にチェックしたまま”インストール”をクリック。  
-![](../images/win/VirtualBoxubuntu-40.jpg)
+7-5.そのまま`続ける`をタップ。
 
-7-8. “続ける”をクリック。  
-![](../images/win/VirtualBoxubuntu-41.jpg)
+![install_ubuntu-5](https://user-images.githubusercontent.com/80440848/184519500-d4cd960c-2773-4ffc-9845-9f32c7806190.png)
 
+7-6.下の画像の状態のまま、`続ける`をタップ
 
-7-9. 下の画像のまま、”続ける”をクリック。  
-![](../images/win/VirtualBoxubuntu-42.jpg)
+![install_ubuntu-6](https://user-images.githubusercontent.com/80440848/184528936-4809b68b-75e9-413d-9ce8-f84efb28a45e.png)
 
-7-10 それぞれ入力する。  
-![](../images/win/VirtualBoxubuntu-43.jpg)
+7-7.下の画像の状態のまま、`インストール`をタップ。
 
+![install_ubuntu-7](https://user-images.githubusercontent.com/80440848/184528995-44737e97-0bcd-4c64-9571-d3a20782a4b6.png)
 
-7-11 インストールが完了したので、”今すぐ再起動する”をクリック  
-![](../images/win/VirtualBoxubuntu-44.jpg)
+7-8.`続ける`をタップします。
 
+![install_ubuntu-8](https://user-images.githubusercontent.com/80440848/184529041-e35ff5d2-d244-45fd-965d-ae73e7c3f156.png)
 
-#### **8- Guest Additionsのインストール**
+7-9.下の画像の状態のまま、`続ける`をタップします。
 
-6-1. ホストメイン画面上部の「Devices」タブから「Insert Guest Additions CD image...」→「OK」をクリックします。
+![install_ubuntu-9](https://user-images.githubusercontent.com/80440848/184529073-b356baeb-6a27-4602-bca4-3afaf92a3631.png)
 
----
+7-10.`あなたの名前`はマシン名を入れると、その下の`コンピューターの名前`、`ユーザー名の入力`にも自動で入力されます。そして、パスワードをご自身で決めて入力を済ませて下さい。終わりましたら、`続ける`をタップ。
 
-6-2. 以下のメッセージが表示されたら「実行」をクリックした後、パスワードを入力します。
+![install_ubuntu-10](https://user-images.githubusercontent.com/80440848/184529128-0285558b-b30d-43c1-87eb-3af228d931ac.png)
 
-![BootVirtualMachine-15](../images/mac/159217595-93ffe2a5-ed89-4924-a3da-ece4791fbe25.png)
+7-11.Ubuntuのインストールが始まりました。しばらくお待ちください。
 
----
+![install_ubuntu-11](https://user-images.githubusercontent.com/80440848/184529318-1eb3cfd5-ab0d-4fbf-bedd-9749a714baa0.png)
 
-6-3. 処理完了のメッセージが表示されたらEnterキーを押下します。
+7-12.しばらく、お待ちください。
 
-![BootVirtualMachine-16](../images/mac/159153823-eb6c79b5-a6d8-46e8-9ae9-a392ed33de8e.png)
+![install_ubuntu-12](https://user-images.githubusercontent.com/80440848/184529346-8647772e-7cc7-4ab7-9b8d-88d35a0ee789.png)
 
----
-- うまくインストールできていない場合は、以下のコマンドを入力し、処理完了のメッセージが表示されたらEnterキーを押下します。
+7-13.画面が切り替わります。
+
+![install_ubuntu-13](https://user-images.githubusercontent.com/80440848/184529400-840e64dc-c7e4-4ac3-9f09-2a5256b6ab8c.png)
+
+7-14.この画像になりましたら、右上の`スキップ(S)`をタップします。
+
+![install_ubuntu-14](https://user-images.githubusercontent.com/80440848/184529444-ac73d9bb-9a10-457b-9301-d1f2d530b057.png)
+
+7-15.`次へ`をタップします。
+
+![install_ubuntu-15](https://user-images.githubusercontent.com/80440848/184529489-6e26c7a0-1afc-4429-8618-1ce80a98b160.png)
+
+7-16.そのまま、`次へ（N)`をタップ。
+
+![install_ubuntu-16](https://user-images.githubusercontent.com/80440848/184529565-da681e94-671b-4f50-9e54-2ab38b18ff75.png)
+
+7-17.`いいえ、送信しません`を選択し、右上の`次へ(N)`をタップします。
+
+![install_ubuntu-17](https://user-images.githubusercontent.com/80440848/184529605-d90d782a-f16f-4844-b41e-d9801ab9b61f.png)
+
+7-18.インストールが終わりました。`今すぐ再起動する`をタップして下さい。
+
+![install_ubuntu-18](https://user-images.githubusercontent.com/80440848/184529664-a2ccb0e8-ce6b-496f-9b1b-3a3380223f77.png)
+
+7-19.再起動後、ソフトウェアの更新案内があるので、`今すぐインストールする`をタップ。
+
+![install_ubuntu20](https://user-images.githubusercontent.com/80440848/184534669-9db15ca6-8304-4a6f-b940-a9746a2ab97d.png)
+
+7-20.ソフトウェアの更新が完了したら、`すぐに再起動`する。
+
+![install_ubuntu21](https://user-images.githubusercontent.com/80440848/184534823-ccb8769c-6477-40e6-afc2-35998cd1b24a.png)
+
+7-21.Ubuntu画面でマウスを右クリックして、`端末を開く`をタップし、下のコマンドを実行する。
 
 ```
+sudo apt updata -y
+sudo apt upgrade -y
 sudo apt install gcc make perl -y
 ```
 
-![BootVirtualMachine-17](../images/mac/159153843-49688be7-1537-407b-b3af-c11751b2bf91.png)
+#### **8- Guest Additionsのインストール**
 
----
+8-1.ホストメイン画面上部の「Devices」タブから「Insert Guest Additions CD image...」⇒`OK`をクリックします。
 
-6-4. 仮想マシンを再起動し、「View」→「Auto-resize　Guest　Display」にチェックが入っている事を確認します。
+![共有フォルダ_5](https://user-images.githubusercontent.com/80440848/184529831-1af5010c-3969-47c6-8dd4-5efa5e23d87c.PNG)
 
----
+8-2.以下のメッセージが表示されたら`実行`をクリックした後、パスワードを入力します。
 
-6-5. Guest Additionsが機能していれば「取り出す」をクリックします。
+![共有フォルダ_6](https://user-images.githubusercontent.com/80440848/184529906-0a2fc427-786a-40f0-b433-a7d38f72b6ab.PNG)
 
-![BootVirtualMachine-18](../images/mac/159217747-5601d4d0-2c97-4464-b270-a5ae61ef29ee.png)
+8-3処理完了のメッセージが表示されましたら`Enter`キーをタップします。
+
+![共有フォルダ_7](https://user-images.githubusercontent.com/80440848/184530144-5c95c10c-4197-4316-96e5-1b6cd8f78e4b.PNG)
+
+8-4.ユーザーをグループ化するコマンドを実行。
+
+```
+sudo adduser <ユーザー名> vboxsf
+```
+
+8-5.共有フォルダが作成できたか下の画像のように表示されていればOK、コピー＆ペーストできるかホストPCでコマンドを`コピー`してゲストOSの端末で右クリックして`貼り付け`してみる。問題なければ、これで終了です。お疲れ様でした！
+
+![共有フォルダ_6](https://user-images.githubusercontent.com/80440848/184537923-5b153aa4-889c-43ff-8b39-2840c50e664f.png)
+
+![コピ＆ペイスト-7](https://user-images.githubusercontent.com/80440848/184537933-f3f645ed-1afe-48aa-9a0e-0cafb257a333.png)
 
 ---
 
@@ -358,7 +403,7 @@ sudo apt install gcc make perl -y
 **環境**  
 
 * MacBook Pro (13-inch, 2019, Two Thunderbolt 3 ports)
-* Monterey 12.2.1
+* Monterey 12.5
 
 **ダウンロード/インストール**  
 
@@ -371,7 +416,7 @@ sudo apt install gcc make perl -y
 
 1-1. 以下のリンク先からISOイメージファイルをダウンロードします。
 
-  - [Ubuntuを入手する](https://releases.ubuntu.com/20.04.4/?_ga=2.3031408.1104974490.1657888076-1965680263.1657888076)  
+  - [Ubuntuを入手する](https://releases.ubuntu.com/20.04.4/?_ga=2.145106481.424434523.1659109603-1752942665.1659109603)  
 ※ ダウンロード完了まで少しかかるのでしばらくお待ちください
 
 | ファイル名 |
@@ -390,14 +435,13 @@ sudo apt install gcc make perl -y
 
 | ファイル名 |
 |-------------|
-|VirtualBox-6.1.32-149290-OSX.dmg|
+|VirtualBox-6.1.36-152435-OSX.dmg|
 
 ![VirtualBoxInstall-1](../images/mac/158052058-ab11df3f-3372-46e0-b438-f2bc63ed974a.png)
 
 ---
 
-2-2. ダウンロードしたファイルをクリックし、インストールウィザードに従ってインストールします。  
-完了したら「閉じる」をクリックして終了します。
+2-2. ダウンロードしたファイルをクリックし、インストールウィザードに従ってインストールします。完了したら「閉じる」をクリックして終了します。
 
 
 > macOS BigSur 以降では、インストールしたカーネル拡張をロードできるようにするために再起動が必要です。
@@ -462,6 +506,9 @@ sudo apt install gcc make perl -y
 
 > 「OK」をクリックしたら「Oracle VM VirtualBox マネージャー」画面に遷移するので設定毎に「設定」をクリックしてください。
 
+<br><br>
+<span style="font-size: 200%;"><u>一般</u></span>
+
 4-1. 歯車マークの「設定」をクリックします。
 
 ![UbuntuSpecSettings-1](../images/mac/159109074-94571ed6-ec42-4c64-9fab-14eb8f1c72ba.png)
@@ -473,6 +520,8 @@ sudo apt install gcc make perl -y
 ![UbuntuSpecSettings-2](../images/mac/159109569-30d3557b-047f-4bfb-ac49-5ef66d7534c7.png)
 
 ---
+
+<span style="font-size: 200%;"><u>システム</u></span>
 
 4-3. 「マザーボード」タブと「プロセッサー」タブを以下の設定にし、「OK」をクリックします。
 
@@ -490,6 +539,8 @@ sudo apt install gcc make perl -y
 
 ---
 
+<span style="font-size: 200%;"><u>ディスプレイ</u></span>
+
 4-4. 「スクリーン」タブから以下の設定にし、「OK」をクリックします。
 
 | ビデオメモリー | 128MB |
@@ -501,6 +552,7 @@ sudo apt install gcc make perl -y
 ![UbuntuSpecSettings-4](../images/mac/159127356-0a509093-8739-479d-ab24-7c711e43a599.png)
 
 ---
+<span style="font-size: 200%;"><u>ストレージ</u></span>
 
 > イメージファイルはダウンロードフォルダにあると思いますので、そちらを選択するかお好きなフォルダに移動させてください。
 
@@ -510,14 +562,14 @@ sudo apt install gcc make perl -y
 
 ---
 
+<span style="font-size: 200%;"><u>共有フォルダ</u></span>
+
 4-6. ホスト側で共有させたいフォルダを事前に作成しておきます。  
 例）「AirGap」フォルダを作成後、配下に「share」フォルダを作成。
 
 `Mac Terminal`
 ```
-mkdir AirGap
-cd AirGap
-mkdir share
+mkdir -p $HOME/AirGap/share
 ```
 
 ---
@@ -629,7 +681,20 @@ mkdir share
 
 #### **6- Guest Additionsのインストール**
 
-6-1. ホストメイン画面上部の「Devices」タブから「Insert Guest Additions CD image...」→「OK」をクリックします。
+6-1. ターミナルを開いて以下を実行します。
+
+>Guest Additionsがインストールされていない状態なのでホストからゲストにコピーアンドペーストできません。タイプミスに留意してください。
+また以下の手順を行なっても、共有フォルダがGUIで表示されない、共有フォルダ化されていない場合は、一度VBox_GAs_6.1.36をアンマウントしてから再度挿入し、再起動すると共有フォルダは完了します。 それでもダメなら[GUI操作でGuest Additionsがインストールできなかった場合](./0-start-guide.md#guiguest-additions)を試してください。
+
+```
+sudo apt update -y
+sudo apt upgrade -y
+sudo apt install gcc make perl -y
+```
+
+---
+
+6-2. ホストメイン画面上部の「Devices」タブから「Insert Guest Additions CD image...」→「OK」をクリックします。
 
 ---
 
@@ -644,11 +709,7 @@ mkdir share
 ![BootVirtualMachine-16](../images/mac/159153823-eb6c79b5-a6d8-46e8-9ae9-a392ed33de8e.png)
 
 ---
-- うまくインストールできていない場合は、以下のコマンドを入力し、処理完了のメッセージが表示されたらEnterキーを押下します。
-
-```
-sudo apt install gcc make perl -y
-```
+6-4. 処理完了のメッセージが表示されたらEnterキーを押下します。
 
 ![BootVirtualMachine-17](../images/mac/159153843-49688be7-1537-407b-b3af-c11751b2bf91.png)
 
@@ -658,26 +719,68 @@ sudo apt install gcc make perl -y
 
 ---
 
-6-5. Guest Additionsが機能していれば「取り出す」をクリックします。
-
-![BootVirtualMachine-18](../images/mac/159217747-5601d4d0-2c97-4464-b270-a5ae61ef29ee.png)
-
----
-
-### 共通補足
-
-#### 共有フォルダが機能しているか確認する。
-
-共有フォルダがきちんと機能しているかを確認しておきます。添付画像の場合、機能していないので以下のコマンドを実行します。
-
-- 補足：マウントには成功しているが、共有フォルダにアクセスできていない場合、ゲスト側（VirtualBox内）のコマンドツールを開き、以下のコマンドを実行しましょう。この時、求められるパスワードは、VirtualBox内でのパスワードです。
+6-5. ユーザーをvboxsfグループに追加して再起動します。
 
 ```
 sudo adduser $USER vboxsf
 sudo reboot
 ```
 
-![BootVirtualMachine-19](../images/mac/159154694-dbae2192-9fd3-45bc-9fc3-19159f9d68f1.png)
+6-6. 「View」→「Auto-resize　Guest　Display」にチェックが入っている事を確認します。
+>確認後、右クリック→「取り出す」をクリックします。
+
+![BootVirtualMachine-18](../images/mac/159217747-5601d4d0-2c97-4464-b270-a5ae61ef29ee.png)
+
+---
+
+6-7. テストファイル作成
+ターミナルを開いて以下を実行します。
+>共有フォルダにテストファイルを作成してホスト側で確認できたら成功です。
+
+```
+touch /media/sf_share/test
+```
+
+
+### 共通補足
+
+#### GUI操作でGuest Additionsがインストールできなかった場合
+
+Virtualbox guest addition packagesをインストールします。
+> ターミナルを開いて以下のコマンドを実行してください。  
+> Guest Additionsがインストールされていない状態なのでホストからゲストにコピーアンドペーストできません。タイプミスに留意してください。  
+> 成功していれば再起動後、コピーアンドペーストできます。
+```console
+sudo apt update -y
+sudo apt upgrade -y
+sudo add-apt-repository multiverse
+sudo apt install virtualbox-guest-dkms virtualbox-guest-x11 -y
+```
+
+ユーザーを`vboxsf`グループに追加して再起動します。
+```console
+sudo adduser $USER vboxsf
+sudo reboot
+```
+
+共有フォルダが追加されているか確認
+```console
+df
+```
+> `share`          488245288 203122832 285122456  42% `/media/sf_share`
+
+共有フォルダのグループを確認
+```console
+ls -l /media
+```
+> drwxrwx--- 1 root `vboxsf` 96  x月 xx xx:xx sf_share
+
+テストファイル作成  
+> 共有フォルダにテストファイルを作成してホスト側で確認できたら成功です。
+
+```console
+touch /media/sf_share/test
+```
 
 ---
 

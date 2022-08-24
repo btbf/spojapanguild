@@ -61,28 +61,28 @@
 ## ** 各ファイルの役割と保管場所 **
 
 ### 証明書とペアキー
-🔐・・・ロック必須・再作成不可・紛失不可  
+:lock:・・・ロック必須・再作成不可・紛失不可  
 🔄・・・更新時書き換え・再作成可能  
 🔴・・・BP起動で使用  
 🔷・・・ブロックログで使用
 
 | ファイル      | 用途                          | 推奨保管場所 | 重要度 |
 | ----------- | ------------------------------------ | ---------------- | :------: | 
-| **payment.vkey**       | paymentアドレス公開鍵  | エアギャップ ／ USB | 🔐 |
-| **payment.skey**       | paymentアドレス秘密鍵 | エアギャップ ／ USB | 🔐 |
-| **stake.vkey**      | ステークアドレス公開鍵  | エアギャップ ／ USB | 🔐 |
-| **stake.skey**      | ステークアドレス秘密鍵  | エアギャップ ／ USB | 🔐 |
-| **vrf.vkey**🔷    | VRF公開鍵 | **BP** ／ エアギャップ ／ USB | 🔐 |
-| **vrf.skey**🔴    | VRF秘密鍵 | **BP** ／ エアギャップ ／ USB | 🔐 |
-| **node.vkey**    | コールド公開鍵 | エアギャップ ／ USB | 🔐 |
-| **node.skey**    | コールド秘密鍵 | エアギャップ ／ USB | 🔐 |
-| **payment.addr**    | paymentアドレスファイル | **BP** ／ エアギャップ ／ USB | 🔄 |
-| **stake.addr**       | ステークアドレス秘密鍵 | **BP** ／ エアギャップ ／ USB | 🔄 |
-| **kes.vkey**    | KES公開鍵 | エアギャップ ／ USB | 🔄 |
-| **kes.skey**🔴    | KES秘密鍵 | **BP** ／ エアギャップ ／ USB | 🔄 |
-| **node.cert**🔴    | プール運用証明書 | **BP** ／ エアギャップ ／ USB | 🔄 |
-| **pool.cert**    | プール登録証明書 | エアギャップ ／ USB | 🔄 |
-| **node.counter**    | カウンターファイル | エアギャップ ／ USB | 🔄 |
+| **payment.vkey**       | paymentアドレス公開鍵  | エアギャップ ／ USB | :lock: |
+| **payment.skey**       | paymentアドレス秘密鍵 | エアギャップ ／ USB | :lock: |
+| **stake.vkey**      | ステークアドレス公開鍵  | エアギャップ ／ USB | :lock: |
+| **stake.skey**      | ステークアドレス秘密鍵  | エアギャップ ／ USB | :lock: |
+| **vrf.vkey**🔷    | VRF公開鍵 | **BP** ／ エアギャップ ／ USB | :lock: |
+| **vrf.skey**🔴    | VRF秘密鍵 | **BP** ／ エアギャップ ／ USB | :lock: |
+| **node.vkey**    | コールド公開鍵 | エアギャップ ／ USB | :lock: |
+| **node.skey**    | コールド秘密鍵 | エアギャップ ／ USB | :lock: |
+| **payment.addr**    | paymentアドレスファイル | **BP** ／ エアギャップ ／ USB | :arrows_clockwise: |
+| **stake.addr**       | ステークアドレス秘密鍵 | **BP** ／ エアギャップ ／ USB | :arrows_clockwise: |
+| **kes.vkey**    | KES公開鍵 | エアギャップ ／ USB | :arrows_clockwise: |
+| **kes.skey**🔴    | KES秘密鍵 | **BP** ／ エアギャップ ／ USB | :arrows_clockwise: |
+| **node.cert**🔴    | プール運用証明書 | **BP** ／ エアギャップ ／ USB | :arrows_clockwise: |
+| **pool.cert**    | プール登録証明書 | エアギャップ ／ USB | :arrows_clockwise: |
+| **node.counter**    | カウンターファイル | エアギャップ ／ USB | :arrows_clockwise: |
 
 ### ノード起動用設定ファイル
 
@@ -98,14 +98,14 @@
 
 | ファイル      | 用途                          | 推奨保管場所 | 重要度 |
 | ----------- | ------------------------------------ | ---------------- | :------: | 
-| **startRelayNode1.sh**       | リレー用ノード起動スクリプト  | リレー | 🔄 |
-| **startBlockProducingNode.sh**       | BP用ノード起動スクリプト | BP | 🔄 |
-| **gLiveView.sh**      | ノードGUI用スクリプト  | リレー/BP | 🔄 |
-| **topologyUpdater.sh**    | トポロジーフェッチ登録スクリプト | リレー | 🔄 |
-| **relay-topology_pull.sh**      | トポロジーファイル生成スクリプト  | リレー | 🔄 |
-| **params.json**      | パラメーターファイル  | BP | 🔄 |
-| **poolMetaData.json**      | プール情報JSON  | BP | 🔄 |
-| **poolMetaDataHash.txt**      | poolMetaData.jsonハッシュ値ファイル  | BP | 🔄 |
+| **startRelayNode1.sh**       | リレー用ノード起動スクリプト  | リレー | :arrows_clockwise: |
+| **startBlockProducingNode.sh**       | BP用ノード起動スクリプト | BP | :arrows_clockwise: |
+| **gLiveView.sh**      | ノードGUI用スクリプト  | リレー/BP | :arrows_clockwise: |
+| **topologyUpdater.sh**    | トポロジーフェッチ登録スクリプト | リレー | :arrows_clockwise: |
+| **relay-topology_pull.sh**      | トポロジーファイル生成スクリプト  | リレー | :arrows_clockwise: |
+| **params.json**      | パラメーターファイル  | BP | :arrows_clockwise: |
+| **poolMetaData.json**      | プール情報JSON  | BP | :arrows_clockwise: |
+| **poolMetaDataHash.txt**      | poolMetaData.jsonハッシュ値ファイル  | BP | :arrows_clockwise: |
 | **fullUtxo.out**    | UTXO出力ファイル | 使用後削除可 | - |
 | **balance.out**    | ウォレット残高出力ファイル | 使用後削除可 | - |
 | **tx.tmp**    | 仮トランザクションファイル | 使用後削除可 | - |

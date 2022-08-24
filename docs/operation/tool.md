@@ -1,14 +1,9 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2022/05/10 v3.1.0
+最終更新日：2022/08/25 v3.2.0
 
 !!! info "主な機能"
-    * payment.addr 未使用UTXO照会  
-    * stake.addr オペレータ報酬照会
-    * 報酬・資金出金
-    * ブロック生成可能状態/KES整合性チェック
-    * プログラム自動更新
-    * Mainnet / Testnet 自動認識
+
 
 ## **設定**
 
@@ -28,6 +23,9 @@ chmod 755 sjgtool.sh
     POOL_HOTKEY_VK_FILENAME="kes.vkey"  
     POOL_OPCERT_FILENAME="node.cert"  
     POOL_VRF_SK_FILENAME="vrf.skey"  
+    POOL_OPCERT_COUNTER_FILENAME="node.counter"  
+    POOL_OPCERT_FILENAME="node.cert  
+    POOL_VRF_SK_FILENAME="vrf.skey
 
 
 **envファイル修正　参考スクリプト**
@@ -70,12 +68,14 @@ gtool
 
 ## 更新履歴
 
-### 2.1.0
+### 3.2.0
 
-!!! hint ""
+    * KES更新時のカウンターファイルチェック・作成手順追加
+    * ブロック生成状態チェック KESファイルチェックルール変更
 
-    * DdzFアドレスへの報酬/資金出金を許可
-    * payment.addr出金時、出金額表示単位バグを修正
+### 3.1.0
+
+    * KES更新時のnode.certバックアップ/削除追加
 
 ### 3.0.0
 
@@ -91,6 +91,9 @@ gtool
     -e '1,73s!#POOL_HOTKEY_SK_FILENAME="hot.skey"!POOL_HOTKEY_SK_FILENAME="kes.skey"!'
     ```
 
-### 3.1.0
+### 2.1.0
 
-    * KES更新時のnode.certバックアップ/削除追加
+!!! hint ""
+
+    * DdzFアドレスへの報酬/資金出金を許可
+    * payment.addr出金時、出金額表示単位バグを修正

@@ -98,6 +98,8 @@ CNCLIのバージョンを確認します。
 ```bash
 cncli --version
 ```
+> 5.1.2 が最新バージョンです
+
 ## **10-2. sqlite3インストール**
 
 ```bash
@@ -116,10 +118,10 @@ cd $NODE_HOME
 mkdir scripts
 cd $NODE_HOME/scripts
 wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cncli.sh -O ./cncli.sh
-wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/cntools.library -O ./cntools.library
 wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/env -O ./env
 wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/logMonitor.sh -O ./logMonitor.sh
 wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/gLiveView.sh -O ./gLiveView.sh
+wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/cntools.library -O ./cntools.library
 wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/blocks.sh -O ./blocks.sh 
 ```
 
@@ -626,7 +628,7 @@ cncli旧バージョンからの更新手順
 rustup update
 cd $HOME/git/cncli
 git fetch --all --prune
-git checkout $(curl -s https://api.github.com/repos/AndrewWestberg/cncli/releases/latest | jq -r .tag_name)
+git checkout $(curl -s https://api.github.com/repos/cardano-community/cncli/releases/latest | jq -r .tag_name)
 cargo install --path . --force
 ```
 バージョンを確認する

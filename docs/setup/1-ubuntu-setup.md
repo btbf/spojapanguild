@@ -331,9 +331,13 @@ sudo systemctl restart fail2ban
     ```
 
 === "ブロックプロデューサーノード"
+    !!! error "注意"
+        * BPノードで使用するポートはセキュリティを高めるために、49513～65535までの任意番号を設定してください。
+        * ここで設定したBPノード用ポート番号は、[「2-4. ノード起動スクリプトの作成」](./2-node-setup.md#2-4)でも使用します。
+
     ```bash
     sudo ufw allow <22またはランダムなポート番号>/tcp
-    sudo ufw allow from <リレーノードIP> to any port <BP用のポート番号(6000)>
+    sudo ufw allow from <リレーノードIP> to any port <BP用のポート番号(xxxxx)>
     sudo ufw allow from <リレーノードIP> to any port 12798
     sudo ufw allow from <リレーノードIP> to any port 9100
     sudo ufw enable

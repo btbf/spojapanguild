@@ -80,7 +80,9 @@ sha256sum kes.vkey
 ## **4.オンチェーンカウンター取得**
 === "ブロックプロデューサーノード"
     ```
-    lastBlockCnt=$(cardano-cli query kes-period-info $NODE_NETWORK --op-cert-file $NODE_HOME/node.cert | sed -e '1,3d' | jq -r '.qKesNodeStateOperationalCertificateNumber //empty')
+    kesperiodinfo=$(cardano-cli query kes-period-info $NODE_NETWORK --op-cert-file $NODE_HOME/node.cert --out-file kesperiod.json)
+    lastBlockCnt=`cat kesperiod.json | jq -r '.qKesNodeStateOperationalCertificateNumber'`
+
     if expr "$lastBlockCnt" : "[0-9]*$" >&/dev/null; then
     echo '----------------------------------------------'
     echo オンチェーンカウンター番号は: $lastBlockCnt です。
@@ -92,6 +94,7 @@ sha256sum kes.vkey
     echo 更新カウンター番号は: "0" です。
     echo '----------------------------'
     fi
+    rm kesperiod.json
     ```
     > ↑このままコピーしてコマンドに入力してください 
 

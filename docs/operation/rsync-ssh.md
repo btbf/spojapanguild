@@ -40,12 +40,6 @@ ssh-keygen -t ed25519 -N '' -C Data_Transfer -f ~/.ssh/rsync_ed25519
     この2つのファイルが生成されていることを確認する。USBなどへバックアップ推奨
 
 
-
-転送先へアップロードする公開鍵を出力する
-```
-echo 'command="rsync --server --daemon --config='$NODE_HOME'/rsyncd.conf .",no-pty,no-port-forwarding,no-X11-forwarding,no-agent-forwarding '$(cat ~/.ssh/rsync_ed25519.pub)'' > $NODE_HOME/rsync.txt
-```
-
 ### 1-2.SSH設定ファイル作成
 
 !!! note "コマンド内訳"
@@ -81,20 +75,36 @@ EOF
 chmod 600 ~/.ssh/config
 ```
 
-### 1-3.SSH公開鍵設定用ファイル転送
+### 1-3.SSH公開鍵ファイル転送
 
-!!! important "ファイル転送"
-    転送元サーバーの`cnode`直下にある公開鍵設定用ファイル`rsync.txt`を、転送先サーバーの`cnode`フォルダへコピーする
-    
-    ``` mermaid
-    graph LR
-        A[転送元] -->|rsync.txt| B[転送先];
-    ``` 
+公開鍵を`cnode`へ移動する
+```
+mv ~/.ssh/rsync_ed25519.pub $NODE_HOME/
+```
+
 
 ## **2.転送先サーバー設定**
 
+
+**転送元にある`rsync_ed25519.pub`を転送先へコピーしてください。**
+
+
+!!! danger "【重要】ファイル転送"
+    転送元サーバーの`cnode`直下にある公開鍵ファイル`rsync_ed25519.pub`を、転送先サーバーの`cnode`フォルダへコピーする
+    
+    ``` mermaid
+    graph LR
+        A[転送元] -->|rsync_ed25519.pub| B[転送先];
+    ``` 
+
 ### 2-1.SSH公開鍵の追記
 
+コマンドと公開鍵の組み合わせでファイルを生成する
+```
+echo 'command="rsync --server --daemon --config='$NODE_HOME'/rsyncd.conf .",no-pty,no-port-forwarding,no-X11-forwarding,no-agent-forwarding '$(cat $NODE_HOME/rsync_ed25519.pub)'' > $NODE_HOME/rsync.txt
+```
+
+公開鍵コマンドを`authorized_keys`に追記する
 ```
 cat $NODE_HOME/rsync.txt >> ~/.ssh/authorized_keys
 ```
@@ -152,7 +162,8 @@ EOF
     ```
     rsync -P --rsh=ssh $NODE_HOME/params-test.json Relay2::Server/params-test.json
     ```
-    > 初回接続時のみフィンガープリントの確認が入るので`yes`を入力する
+    > * 初回接続時のみフィンガープリントの確認が入るので`yes`を入力する  
+    > * `Verification code:` が表示される場合は、転送先サーバーの2段階認証コードを入力してください。
 
 転送先で受信したファイルを確認する。
 === "転送先サーバー"
@@ -166,4 +177,3 @@ EOF
     * 1-2のSSH設定ファイルに転送先を追記する
     * 1-3の`rsync.txt`を転送先にコピーする
     * 2と3を実施する
-
