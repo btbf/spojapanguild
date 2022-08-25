@@ -154,9 +154,15 @@ source $HOME/.bashrc
 
 
 === "リレーノード"
-
+    スクリプトをバックアップ
     ```
     cd $NODE_HOME/scripts
+    cp gLiveView.sh gLiveView-1.34.1.sh
+    cp env env-1.34.1
+    ```
+
+    スクリプトをダウンロードする(上書き)
+    ```
     wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/gLiveView.sh -O ./gLiveView.sh
     wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/env -O ./env
     ```
@@ -192,9 +198,18 @@ source $HOME/.bashrc
     sudo systemctl stop cnode-cncli-sync.service
     ```
 
-    スクリプトをダウンロードする(上書き)
+    スクリプトをバックアップ
     ```
     cd $NODE_HOME/scripts
+    cp gLiveView.sh gLiveView-1.34.1.sh
+    cp env env-1.34.1
+    cp cncli.sh cncli-1.34.1.sh
+    cp cntools.library cntools-1.34.1.library
+    cp cntools.config cntools-1.34.1.config
+    ```
+
+    スクリプトをダウンロードする(上書き)
+    ```
     wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cncli.sh -q -O ./cncli.sh
     wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/env -q -O ./env
     wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/logMonitor.sh -q -O ./logMonitor.sh
@@ -395,6 +410,8 @@ sudo systemctl start cardano-node
 ```
 journalctl -u cardano-node -f
 ```
+Progressが100%になるまで待ちます
+![](../images/1.35.3node-syncing.png)
 
 !!! info "ヒント"
     * 1.35.3初回起動時に2~4時間以上のDBの再検証処理が行われます。  
@@ -431,7 +448,7 @@ mv cardano-node2/ cardano-node/
 ```
 df -h /usr
 ```
-> Availが150GB以上あることを確認してください。
+<strong><font color=red>Availが150GB以上あることを確認してください。</font></strong>
 
 
 ### 3-2.転送元サーバー作業
@@ -551,7 +568,7 @@ tmux new -s tar
     ```
     df -h /usr
     ```
-    > Availが90GB以上あることを確認してください。
+    <strong><font color=red>Availが90GB以上あることを確認してください。</font></strong>
 
 
     ノードを停止する
