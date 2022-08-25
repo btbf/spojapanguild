@@ -1,6 +1,6 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2022/08/25 v3.2.0
+最終更新日：2022/08/25 v3.2.1
 
 !!! info "主な機能"
 
@@ -67,6 +67,10 @@ gtool
     また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
 
 ## 更新履歴
+
+### 3.2.1
+
+    * エアギャップコマンドを修正
 
 ### 3.2.0
 

@@ -1,5 +1,10 @@
 # 変更履歴
 
+## 2022/08/25　ver. 12.3.1
+
+!!! note ""
+    * [ノードアップデート手順](./operation/node-update.md)一部修正 
+
 ## 2022/08/25　ver. 12.3.0
 !!! note ""
     * cardano-node v1.35.3 に対応
