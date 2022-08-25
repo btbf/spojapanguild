@@ -3,8 +3,8 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=3.2.0
-COLDKEYS_DIR="$HOME/cold-keys"
+TOOL_VERSION=3.2.1
+COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
 cleanup() {
