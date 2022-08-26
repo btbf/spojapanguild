@@ -1,5 +1,11 @@
 # 変更履歴
 
+## 2022/08/27　ver. 12.3.2
+
+!!! note ""
+    * [ノードアップデート手順](./operation/node-update.md)一部修正 
+    * [SSH認証鍵ファイル生成コード](./setup/1-ubuntu-setup.md#1-3ssh)をSHA2に変更
+
 ## 2022/08/25　ver. 12.3.1
 
 !!! note ""

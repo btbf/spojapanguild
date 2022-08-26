@@ -208,13 +208,20 @@ BPノードを一旦停止する
     sudo systemctl stop cardano-node
     ```
 
+    ノードポート番号を確認する
+    ```
+    PORT=`grep "PORT=" $NODE_HOME/startBlockProducingNode.sh`
+    b_PORT=${PORT#"PORT="}
+    echo "BPポートは${b_PORT}です"
+    ```
+
     起動スクリプトにKES、VRF、運用証明書のパスを追記し更新します。
 
     ```bash
     cat > $NODE_HOME/startBlockProducingNode.sh << EOF 
     #!/bin/bash
     DIRECTORY=$NODE_HOME
-    PORT=6000
+    PORT=${b_PORT}
     HOSTADDR=0.0.0.0
     TOPOLOGY=\${DIRECTORY}/${NODE_CONFIG}-topology.json
     DB_PATH=\${DIRECTORY}/db

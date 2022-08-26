@@ -80,39 +80,30 @@ exit
 **ペア鍵の作成**
 
 ```sh
-ssh-keygen -t rsa
+ssh-keygen -t ed25519 -N '' -C ssh_connect -f ~/.ssh/ssh_ed25519
 ```
-次のような戻り値があります。  
-それぞれ何も入力せずにEnterを押してください
-```
-Enter file in which to save the key (/home/cardano/.ssh/id_rsa):  #このままEnter
-lsEnter passphrase (empty for no passphrase): #このままEnter
-Enter same passphrase again: #このままEnter
-```
-> パスワードは設定しなくてもOK
 
 ```sh
 cd ~/.ssh
 ls
 ```
-id_rsa（秘密鍵）とid_rsa.pub（公開鍵）というファイルが作成されているか確認する。
+ssh_ed25519（秘密鍵）とssh_ed25519.pub（公開鍵）というファイルが作成されているか確認する。
 
 ```sh
 cd ~/.ssh/
-cat id_rsa.pub >> authorized_keys
+cat ssh_ed25519.pub >> authorized_keys
 chmod 600 authorized_keys
 chmod 700 ~/.ssh
-rm id_rsa.pub
 ```
 
-**id_rsaをダウンロードする** 
+**SSH鍵ファイルをダウンロードする** 
 
 1.R-loginの場合はファイル転送ウィンドウを開く  
 2.左側ウィンドウ(ローカル側)は任意の階層にフォルダを作成する。  
 3.右側ウィンドウ(サーバ側)は「.ssh」フォルダを選択する  
-4.右側ウィンドウから、id_rsaファイルの上で右クリックして「ファイルのダウンロード」を選択する  
+4.右側ウィンドウから、ssh_ed25519とssh_ed25519.pubの上で右クリックして「ファイルのダウンロード」を選択する  
 5.一旦サーバからログアウトする  
-6.R-Loginのサーバ接続編集画面を開き、「SSH認証鍵」をクリックし4でダウンロードしたファイルを選ぶ  
+6.R-Loginのサーバ接続編集画面を開き、「SSH認証鍵」をクリックし4でダウンロードしたssh_ed25519ファイルを選ぶ  
 7.サーバへ接続する  
 
 **SSHの設定変更**
