@@ -312,7 +312,7 @@ rm -rf cncli
 tmux new -s build
 ```
 TMUXセッション内(緑帯が表示されてる状態)で  
-以下の2-2.ソースコードダウンロード及びビルドを実行します
+ソースコードダウンロード(2-2)及びビルド(2-3)を実行します
 
 ### **2-2.ソースコードダウンロード**
 
@@ -552,6 +552,13 @@ tmux new -s tar
 
 === "転送先サーバー"
 
+    SSDの空き容量を再確認する
+    ```
+    df -h /usr
+    ```
+    <strong><font color=red>Availが90GB以上あることを確認してください。</font></strong>
+
+
     DBを解凍する
     ```
     mkdir $NODE_HOME/temp
@@ -564,13 +571,6 @@ tmux new -s tar
     exit
     ```
 
-    SSDの空き容量を再確認する
-    ```
-    df -h /usr
-    ```
-    <strong><font color=red>Availが90GB以上あることを確認してください。</font></strong>
-
-
     ノードを停止する
     ```
     sudo systemctl stop cardano-node
@@ -579,6 +579,8 @@ tmux new -s tar
     バイナリーファイルをシステムフォルダーへコピーする
     ```
     sudo cp $NODE_HOME/cardano-cli /usr/local/bin/cardano-cli
+    ```
+    ```
     sudo cp $NODE_HOME/cardano-node /usr/local/bin/cardano-node
     ```
     バージョン確認

@@ -1,12 +1,9 @@
 # **カルダノステークプール構築手順**
 
-<!--!!! summary "概要"
-    このマニュアルは、[X Stake Pool](https://xstakepool.com)オペレータの[BTBF](https://twitter.com/btbfpark)が[CoinCashew](https://www.coincashew.com/coins/overview-ada/guide-how-to-build-a-haskell-stakepool-node#9-register-your-stakepool)より許可を得て、日本語翻訳しております。
--->
 
 !!! info "情報"
     このマニュアルは、カルダノノードv1.35.3に対応しています。  
-    最終更新日：2022年8月25日の時点guide version 12.3.1
+    最終更新日：2022年8月27日の時点guide version 12.3.2
 
 !!! tip "サポート"
     サポートが必要な場合は、[SPO JAPAN GUILDコミュニティ](https://discord.gg/U3gU54c)で現役のSPOに質問できます
