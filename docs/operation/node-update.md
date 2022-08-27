@@ -212,10 +212,10 @@ source $HOME/.bashrc
     ```
     wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cncli.sh -q -O ./cncli.sh
     wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/env -q -O ./env
-    wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/logMonitor.sh -q -O ./logMonitor.sh
     wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/gLiveView.sh -q -O ./gLiveView.sh
     wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/cntools.library -q -O ./cntools.library
     wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/blocks.sh -q -O ./blocks.sh
+    wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/logMonitor.sh -q -O ./logMonitor.sh
     rm cntools.config
     ```
 
