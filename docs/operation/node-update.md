@@ -253,7 +253,10 @@ source $HOME/.bashrc
     pool_ID=`cat $NODE_HOME/stakepoolid_hex.txt`
     echo "プールIDは${pool_ID}です"
     ```
-
+    <strong><font color=red>ご自身のプールIDが表示されていることを確認してください</font></strong>  
+    プールIDが表示されていない場合は、[こちらの手順](../setup/7-register-stakepool.md#4)を実行してください  
+    
+    <br>
     cncli.shファイルを修正します
     ```
     sed -i $NODE_HOME/scripts/cncli.sh \
@@ -762,22 +765,18 @@ SJGToolのホームに戻り、[3] KES更新を選択し、画面に表示され
 !!! hint "SFTP機能ソフト導入"
     ファイル転送に便利な[SFTP機能ソフトの導入手順はこちら](./sftp.md)
 
-**### 6-1.エアギャップマシン用にバイナリファイルをコピーする**
+### **6-1.エアギャップマシン用にバイナリファイルをコピーする**
 
 === "1.RSYNC+SSHでアップデートを行った場合"
 
     === "転送元サーバー"
-        ```
-        cp $HOME/git/secp256k1/.libs/libsecp256k1.so.0 $NODE_HOME/Transfer/
-        ```
-
-    SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し、/home/usr/cnode/Transfer/ 直下にある  
-    
-    * cardano-cli
-    * libsecp256k1.so.0
-    
-    をローカルパソコンにダウンロードします  
-    (エアギャップUbuntuとの共有フォルダ)
+        SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し以下をダウンロードする 
+        
+        * /home/usr/cnode/Transfer/cardano-cli
+        * /home/usr/git/secp256k1 (フォルダごと)
+        
+        をローカルパソコンにダウンロードします  
+        (エアギャップUbuntuとの共有フォルダ)
 
 === "2.通常アップデートのみで行った場合"
 
@@ -785,40 +784,83 @@ SJGToolのホームに戻り、[3] KES更新を選択し、画面に表示され
 
     ```bash
     sudo cp $(find $HOME/git/cardano-node/dist-newstyle/build -type f -name "cardano-cli") ~/cardano-cli
-    cp $HOME/git/secp256k1/.libs/libsecp256k1.so.0 ~/libsecp256k1.so.0
     ```
 
-    SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し、ユーザーフォルダ 直下にある  
+    SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し、以下をダウンロードする 
     
-    * cardano-cli
-    * libsecp256k1.so.0
+    * /home/usr/cardano-cli
+    * /home/usr/git/secp256k1 (フォルダごと)
     
-    をローカルパソコンにダウンロードします(エアギャップUbuntuとの共有フォルダ)
+    をローカルパソコンにダウンロードします  
+    (エアギャップUbuntuとの共有フォルダ)
 
 !!! hint "ヒント"
     R-loginの転送機能が遅いので、大容量ファイルをダウン・アップロードする場合は、SFTP接続可能なソフトを使用すると効率的です。（FileZilaなど）
 
 <BR>
-** ２．エアギャップマシンの $HOME/git/cardano-node2 ディレクトリに**  
-<font color=red>(無ければ作成してください)</font>
+** ２．エアギャップマシンにファイルを入れる**  
+=== "エアギャップ"
 
-* cardano-cli
-* libsecp256k1.so.0
+    * $HOME/git/cardano-node2/ に`cardano-cli`を入れる   
+      <font color=red>(cardano-node2が無ければ作成する)</font>
+    * $HOME/git/ に `secp256k1`フォルダを入れる
 
-をコピーする
 
-**### 6-2.エアギャップマシンのシステムフォルダへコピーする**
+### **6-2.エアギャップマシンにインストールする**
 
 エアギャップマシンで以下を実行する
-```bash
-sudo mv $HOME/git/cardano-node2/libsecp256k1.so.0 /usr/local/lib/
-```
-```
-sudo cp $(find $HOME/git/cardano-node2 -type f -name "cardano-cli") /usr/local/bin/cardano-cli
-```
+=== "エアギャップ"
+    cardano-cliをシステムフォルダへコピーする
+    ```bash
+    sudo cp $(find $HOME/git/cardano-node2 -type f -name "cardano-cli") /usr/local/bin/cardano-cli
+    ```
+
+    `make`がインストールされていることを確認する
+
+    ```
+    apt list make
+    ```
+    以下の戻り値を確認する
+    >make/focal,now 4.2.1-1.2 amd64 [インストール済み]  
+    make/focal 4.2.1-1.2 i386
+
+    secp256k1をインストールする
+    ```
+    cd $HOME/git/secp256k1/
+    ./autogen.sh
+    ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
+    make
+    make check
+    ```
+    !!! hint "確認"
+        以下の戻り値であることを確認する
+        ```
+        Testsuite summary for libsecp256k1 0.1.0-pre
+        ============================================================================
+        # TOTAL: 2
+        # PASS:  2
+        # SKIP:  0
+        # XFAIL: 0
+        # FAIL:  0
+        # XPASS: 0
+        # ERROR: 0
+        ============================================================================
+        ```
+
+    インストールコマンドを実行する
+    ```
+    sudo make install
+    ```
+
+    環境変数を設定する
+    ```
+    echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
+    echo export NODE_NETWORK="--mainnet" >> $HOME/.bashrc
+    source $HOME/.bashrc
+    ```
 
 
-**### 6-3.システムに反映されたノードバージョンを確認する**
+### **6-3.システムに反映されたノードバージョンを確認する**
 
 ```bash
 cardano-cli version
