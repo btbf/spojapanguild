@@ -535,11 +535,13 @@ Guild Liveviewを起動します。
     * ネットワーク上にあるVMマシンではありません。
     * エアギャップについて更に詳しく知りたい場合は、[こちら](https://ja.wikipedia.org/wiki/%E3%82%A8%E3%82%A2%E3%82%AE%E3%83%A3%E3%83%83%E3%83%97)を参照下さい。
 
-１．「2-1. Cabal/GHCインストール」と「2-2. ソースコードからビルド」をエアギャップオフラインマシンで実行します。  
+１．「2-1. 依存関係インストール」と「2-2. ソースコードからビルド」をエアギャップオフラインマシンで実行する  
 ２．以下のパスを環境変数にセットし、フォルダを作成します。
 
 ```
 echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
+echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
+echo export NODE_NETWORK="--mainnet" >> $HOME/.bashrc
 source $HOME/.bashrc
 mkdir -p $NODE_HOME
 ```
