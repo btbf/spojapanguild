@@ -827,6 +827,8 @@ SJGToolのホームに戻り、[3] KES更新を選択し、画面に表示され
     secp256k1をインストールする
     ```
     cd $HOME/git/secp256k1/
+    chmod +x autogen.sh
+    make clean
     ./autogen.sh
     ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
     make
