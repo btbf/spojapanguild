@@ -173,7 +173,7 @@ source $HOME/.bashrc
     b_PORT=${PORT#"PORT="}
     echo "リレーポートは${b_PORT}です"
     ```
-    > ↑そのまま実行する
+    > > ↑そのまま実行し、リレーのポート番号が表示されることを確認する
 
 
     envファイルを修正します
@@ -225,6 +225,7 @@ source $HOME/.bashrc
     b_PORT=${PORT#"PORT="}
     echo "BPポートは${b_PORT}です"
     ```
+    > > ↑そのまま実行し、BPのポート番号が表示されることを確認する
 
     envファイルを修正します
     ```
