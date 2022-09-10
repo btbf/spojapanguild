@@ -153,7 +153,7 @@ prometheus.ymlを移動します
 6. 名前は **Prometheus**としてください。
 7. **URL** を [http://localhost:9090](http://localhost:9090)に設定します。
 8. **Save & Test**をクリックします。
-9. こちらの[JSONファイル](https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/grafana-monitor-cardano-nodes-by-kaze.json)を開き、内容を全選択してコピーします。
+9. こちらの[JSONファイル](https://raw.githubusercontent.com/akyo3/Extends-SJG-Knowledge/main/SJG_Grafana_Dashboard.json)を開き、内容を全選択してコピーします。
 10. 左メニューから**Create +** iconを選択 &gt; **Import**をクリックします。
 11. 9でコピーした内容を「Import via panel json」に貼り付けます
 12. **Load**ボタンをクリックし、次の画面で***Import**ボタンをクリックします。
