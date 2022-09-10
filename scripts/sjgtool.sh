@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=3.2.1
+TOOL_VERSION=3.3.0
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -133,12 +133,12 @@ case ${num} in
         echo 
         printf "${FG_MAGENTA}■プール報酬出金($WALLET_STAKE_ADDR_FILENAME)${NC}
 ----------------------------
-[1] 任意のアドレスへ出金
+[1] 任意のアドレス(ADAHandle)へ出金
 [2] $WALLET_PAY_ADDR_FILENAMEへ出金
 \n
 ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 ----------------------------
-[3] 任意のアドレスへ出金
+[3] 任意のアドレス(ADAHandle)へ出金
 \n
 ----------------------------
 [h] ホームへ戻る　[q] 終了
@@ -146,13 +146,13 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 "
         read -n 1 -p "メニュー番号を入力してください : >" withdrawl
         case ${withdrawl} in
-          #[START] payment.addr ⇒ 任意のアドレス [START] 
+          #[START] payment.addr ⇒ 任意のアドレス(ADAHandle) [START] 
 
           1)
             clear
             echo '------------------------------------------------------------------------'
             echo "資金移動"
-            echo -e ">> ${FG_YELLOW}$WALLET_STAKE_ADDR_FILENAME${NC} から ${FG_YELLOW}任意のアドレス${NC} への出金"
+            echo -e ">> ${FG_YELLOW}$WALLET_STAKE_ADDR_FILENAME${NC} から ${FG_YELLOW}任意のアドレス(ADAHandle)${NC} への出金"
             echo
             echo "■ 注意 ■"
             echo "報酬は全額引き出しのみとなります"
@@ -168,7 +168,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               send_address
 
               printf "\n\nTx作成中...\n\n"
-
+              
               #現在のスロット
               current_Slot
 
@@ -312,7 +312,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
             clear
             echo '------------------------------------------------------------------------'
             echo "資金移動"
-            echo -e ">> ${FG_YELLOW}$WALLET_PAY_ADDR_FILENAME${NC} から ${FG_YELLOW}任意のアドレス${NC} への出金"
+            echo -e ">> ${FG_YELLOW}$WALLET_PAY_ADDR_FILENAME${NC} から ${FG_YELLOW}任意のアドレス(ADAHandle)${NC} への出金"
             echo
             echo "■ 注意 ■"
             echo "$WALLET_PAY_ADDR_FILENAMEには誓約で設定した額以上のADAが入金されてる必要があります"
@@ -328,7 +328,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               #出金額指定
               clear
               echo '------------------------------------------------------------------------'
-              echo -e ">> ${FG_YELLOW}$WALLET_PAY_ADDR_FILENAME${NC} から ${FG_YELLOW}任意のアドレス${NC} への出金"
+              echo -e ">> ${FG_YELLOW}$WALLET_PAY_ADDR_FILENAME${NC} から ${FG_YELLOW}任意のアドレス(ADAHandle)${NC} への出金"
               echo '------------------------------------------------------------------------'
               echo
               echo "出金額をlovelaces形式で入力してください"
@@ -1195,12 +1195,13 @@ tx_submit(){
 send_address(){
   while :
     do
-      read -p "出金先のアドレスを入力してください： > " destinationAddress
-      if [[ "$destinationAddress" == addr* ]] || [[ "$destinationAddress" == DdzF* ]]; then
+      read -p "出金先のアドレス(またはADAHandle)を入力してください： > " destinationAddress
+      cntDestADDRESS=`echo ${#destinationAddress}`
+      if { [ $cntDestADDRESS -ge 30 ]; } && { [[ "$destinationAddress" == addr* ]] || [[ "$destinationAddress" == DdzF* ]]; }; then
         if { [ ${NETWORK_NAME} = "Mainnet" ] && [[ "$destinationAddress" != *_test* ]]; } || { [ ${NETWORK_NAME} != "Mainnet" ] && [[ "$destinationAddress" = *_test* ]]; } ; then
           echo
           echo '------------------------------------------------'
-          echo 出金先: $destinationAddress
+          printf "出金先: ${FG_GREEN}$destinationAddress${NC}\n"
           echo '------------------------------------------------'
           echo
 
@@ -1211,6 +1212,7 @@ send_address(){
             printf "\n${FG_RED}出金先アドレスを再度入力してください${NC}\n\n"
             continue 1
           fi
+
         else
           printf "\n${FG_RED}現在のネットワーク${NC}(${FG_GREEN}${NETWORK_NAME}${NC})${FG_RED}と異なるアドレスが入力されました。再度ご確認ください${NC}\n"
         fi
@@ -1218,10 +1220,51 @@ send_address(){
         printf "\n${FG_YELLOW}出金手続きをキャンセルしました${NC}\n"
         select_rtn
         break
+      elif [ -z $destinationAddress ]; then
+        printf "\n${FG_RED}出金先アドレスを再度入力してください${NC}\n\n"
       else
-          printf "\n${FG_RED}出金先アドレスを再度入力してください${NC}\n\n"
+      #adahandle
+        adahandleADDRESS=`adahandleConvert $destinationAddress`
+        #echo $adahandleADDRESS
+        if [ -n "$adahandleADDRESS" ]; then
+          echo
+          echo '------------------------------------------------'
+          printf "ADA Handle　　: ${FG_YELLOW}$destinationAddress${NC}\n"
+          printf "出金先アドレス: ${FG_GREEN}$adahandleADDRESS${NC}\n"
+          echo '------------------------------------------------'
+          echo
+          destinationAddress=$adahandleADDRESS
+          read -n 1 -p "出金先はこちらでよろしいですか？：(y/n) > " send_check
+          if [ "$send_check" == "y" -o "$send_check" == "Y" ]; then
+              break 1
+          else
+            printf "\n${FG_RED}出金先アドレスを再度入力してください${NC}\n\n"
+            continue 1
+          fi
+        else
+          printf "\n${FG_RED}ADAHandleが見つかりません。再度入力してください${NC}\n\n"
+          continue 1
+        fi
       fi
   done
+}
+
+#アドレス確認繰り返し
+send_address_CHECK(){
+    read -n 1 -p "出金先はこちらでよろしいですか？：(y/n) > " send_check
+  if [ "$send_check" == "y" -o "$send_check" == "Y" ]; then
+      break 1
+  else
+    printf "\n${FG_RED}出金先アドレスを再度入力してください${NC}\n\n"
+    continue 1
+  fi
+}
+
+#adahandleConvert
+adahandleConvert(){
+  adahandlePolicyID="f0ff48bbb7bbe9d59a40f1ce90e9e9d0ff5002ec48f232b49ca0fb9a"
+  assetNameHex=`echo -n "${1}" | xxd -b -ps -c 80 | tr -d '\n'`
+  curl -s -X GET "https://api.koios.rest/api/v0/asset_address_list?_asset_policy=${adahandlePolicyID}&_asset_name=${assetNameHex}" -H "Accept: application/json" | jq -r '.[].payment_address'
 }
 
 #出金前チェック
