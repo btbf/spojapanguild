@@ -1,5 +1,11 @@
 # 変更履歴
 
+## 2022/09/10　ver. 12.3.5
+
+!!! note ""
+    * [9.監視ツールセットアップ](./setup/9-monitoring-tools-setup.md#4grafana) (項目9のJSONファイルを変更)
+    * [SPO JAPAN GUILD TOOL](./operation/tool.md) v3.3.0 リリース
+
 ## 2022/08/28　ver. 12.3.4
 
 !!! note ""
