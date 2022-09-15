@@ -351,7 +351,10 @@
 
 ![install_ubuntu21](https://user-images.githubusercontent.com/80440848/184534823-ccb8769c-6477-40e6-afc2-35998cd1b24a.png)
 
-7-21.Ubuntu画面でマウスを右クリックして、`端末を開く`をタップし、下のコマンドを実行する。
+7-21.Ubuntuで`端末`を起動し、下のコマンドを実行する。
+
+>Guest Additionsがインストールされていない状態なのでホストからゲストにコピーアンドペーストできません。タイプミスに留意してください。
+また以下の手順を行なっても、共有フォルダがGUIで表示されない、共有フォルダ化されていない場合は、一度VBox_GAs_6.1.36をアンマウントしてから再度挿入し、再起動すると共有フォルダは完了します。 それでもダメなら[GUI操作でGuest Additionsがインストールできなかった場合](./0-start-guide.md#guiguest-additions)を試してください。
 
 ```
 sudo apt updata -y
@@ -413,7 +416,7 @@ sudo adduser <ユーザー名> vboxsf
 
 1-1. 以下のリンク先からISOイメージファイルをダウンロードします。
 
-  - [Ubuntuを入手する](https://releases.ubuntu.com/20.04.4/?_ga=2.145106481.424434523.1659109603-1752942665.1659109603)  
+  - [Ubuntuを入手する](https://releases.ubuntu.com/20.04/)  
 ※ ダウンロード完了まで少しかかるのでしばらくお待ちください
 
 | ファイル名 |

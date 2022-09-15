@@ -122,7 +122,8 @@ nav:
       - 'SJG TOOL': './operation/tool.md'
       - 'rsync+ssh設定': './operation/rsync-ssh.md'
       - 'SFTPソフト設定': './operation/sftp.md'
-      - 'SJG修正プログラム': './operation/sjg-fixed.md'
+      - 'BPポート変更': './operation/bpport.md'
+      #- 'SJG修正プログラム': './operation/sjg-fixed.md'
       - 'Linuxコマンド集': './operation/command.md'
     - 'よくある質問':
       - '運用編':

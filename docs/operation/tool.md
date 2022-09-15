@@ -16,19 +16,7 @@ chmod 755 sjgtool.sh
 
 **envファイル修正**
 
-~/cnode/scripts/envファイル内の以下の変数に対し、先頭の#を削除しご自身の環境に合わせてファイル名を設定してください。  
-!!! memo ""
-    WALLET_PAY_ADDR_FILENAME="payment.addr"  
-    WALLET_STAKE_ADDR_FILENAME="stake.addr"  
-    POOL_HOTKEY_VK_FILENAME="kes.vkey"  
-    POOL_OPCERT_FILENAME="node.cert"  
-    POOL_VRF_SK_FILENAME="vrf.skey"  
-    POOL_OPCERT_COUNTER_FILENAME="node.counter"  
-    POOL_OPCERT_FILENAME="node.cert  
-    POOL_VRF_SK_FILENAME="vrf.skey
-
-
-**envファイル修正　参考スクリプト**
+そのまま全コピーして実行してください。
 ```
 sed -i $NODE_HOME/scripts/env \
     -e '1,73s!#WALLET_PAY_ADDR_FILENAME="payment.addr"!WALLET_PAY_ADDR_FILENAME="payment.addr"!' \
@@ -41,6 +29,19 @@ sed -i $NODE_HOME/scripts/env \
     -e '1,73s!#POOL_OPCERT_FILENAME="op.cert"!POOL_OPCERT_FILENAME="node.cert"!' \
     -e '1,73s!#POOL_VRF_SK_FILENAME="vrf.skey"!POOL_VRF_SK_FILENAME="vrf.skey"!'
 ```
+
+=== "各ファイル名を独自のファイル名変更している場合"
+    ~/cnode/scripts/envファイル内の以下の変数に対し、先頭の#を削除しご自身の環境に合わせてファイル名を設定してください。  
+    !!! memo ""
+        WALLET_PAY_ADDR_FILENAME="payment.addr"  
+        WALLET_STAKE_ADDR_FILENAME="stake.addr"  
+        POOL_HOTKEY_VK_FILENAME="kes.vkey"  
+        POOL_OPCERT_FILENAME="node.cert"  
+        POOL_VRF_SK_FILENAME="vrf.skey"  
+        POOL_OPCERT_COUNTER_FILENAME="node.counter"  
+        POOL_OPCERT_FILENAME="node.cert  
+        POOL_VRF_SK_FILENAME="vrf.skey
+
 
 **スクリプトへのパスを通し、任意の単語で起動出来るようにする**
 ```

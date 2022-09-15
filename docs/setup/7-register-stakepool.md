@@ -79,12 +79,6 @@
         wget -O poolMetaData.json https://bit.ly/****
         ```
 
-    メタデータファイルのハッシュ値を計算します。
-    === "ブロックプロデューサーノード"
-        ```bash
-        cardano-cli stake-pool metadata-hash --pool-metadata-file poolMetaData.json > poolMetaDataHash.txt
-        ```
-
 
 === "ご自身のホームページサーバでホストする方法"
     !!! example ""
@@ -109,15 +103,26 @@
             }
             EOF
             ```
-
-        メタデータファイルのハッシュ値を計算します。
-
-        ```bash
-        cardano-cli stake-pool metadata-hash --pool-metadata-file poolMetaData.json > poolMetaDataHash.txt
-        ```
         
         !!! danger "注意"
             **poolMetaData.json**をあなたの公開用WEBサーバへアップロードしてください。 
+
+メタデータJSONをチェックする
+```
+cat $NODE_HOME/poolMetaData.json | jq .
+```
+
+!!! error "戻り値にエラーが表示される場合"
+    戻り価に`parse error:`が表示される場合は、JSON構文に誤りがあります。
+    作成したメタデータJSONファイルをご確認ください。
+
+
+メタデータファイルのハッシュ値を計算します。
+=== "ブロックプロデューサーノード"
+    ```bash
+    cd $NODE_HOME
+    cardano-cli stake-pool metadata-hash --pool-metadata-file poolMetaData.json > poolMetaDataHash.txt
+    ```
 
 
 ## **2.プール登録証明書の作成**
@@ -414,15 +419,13 @@
         A[エアギャップ] -->|stakepoolid_bech32.txt / stakepoolid_hex.txt| B[BP];
     ```
 
-**以下のコマンドを実行し、赤文字の戻り値があればブロックチェーンに登録されています**
+**以下のコマンドを実行し、プール情報が表示されればブロックチェーンに登録されています**
 === "ブロックプロデューサーノード"
-    ```bash
-    cd $NODE_HOME
-    cardano-cli query stake-pools $NODE_NETWORK --out-file allpoolsID.txt
     ```
-
-    ```bash
-    cat allpoolsID.txt | grep $(cat stakepoolid_bech32.txt)
+    curl -s -X POST "https://api.koios.rest/api/v0/pool_info" \
+        -H "Accept: application/json" \
+        -H "Content-Type: application/json" \
+        -d '{"_pool_bech32_ids":["'$(cat $NODE_HOME/stakepoolid_bech32.txt)'"]}' | jq .
     ```
 
 
