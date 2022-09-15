@@ -151,7 +151,7 @@
 #### **3- OS Ubuntuの入手**
 3-1.下の画像の赤い四角のところをタップしてダウンロードします。
 
-- [Ubuntu20.04.4 LTSの入手](https://releases.ubuntu.com/20.04.4/?_ga=2.145106481.424434523.1659109603-1752942665.1659109603)
+- [Ubuntu20.04.4 LTSの入手](https://releases.ubuntu.com/20.04/)
 
 ![2-1](https://user-images.githubusercontent.com/80440848/184349563-06b3ad6d-5295-4225-bd7f-6cc880e3d174.png)
 
