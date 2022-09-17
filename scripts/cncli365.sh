@@ -323,7 +323,7 @@ cncliLeaderlog() {
       if [[ ${LEDGER_API} = false || ${NWMAGIC} -ne 764824073 ]]; then 
         if ! getLedgerData; then sleep 300; continue; else stake_param_next="--active-stake ${active_stake_mark} --pool-stake ${pool_stake_mark}"; fi # Sleep for 5 min before retrying to query stake snapshot in case of error
       fi
-      if [[ ${NETWORK_ERA} = "Babbage" || ( ${NETWORK_ERA} = "Alonzo" &&  ${next_epoch} -eq 22 ) ]]; then consensus="praos"; else consensus="tpraos"; fi #365スケジュール取得NextEpochコンセンサスフラグ切り替え
+      if [[ ${NETWORK_ERA} = "Babbage" || ( ${NETWORK_ERA} = "Alonzo" &&  ${next_epoch} -eq 365 ) ]]; then consensus="praos"; else consensus="tpraos"; fi #365スケジュール取得NextEpochコンセンサスフラグ切り替え
       echo "--consensus $consensus を使用します"
       cncli_leaderlog=$(${CNCLI} leaderlog --consensus "${consensus}" --db "${CNCLI_DB}" --byron-genesis "${BYRON_GENESIS_JSON}" --shelley-genesis "${GENESIS_JSON}" --ledger-set next ${stake_param_next} --pool-id "${POOL_ID}" --pool-vrf-skey "${POOL_VRF_SKEY}" --tz UTC)
       if [[ $(jq -r .status <<< "${cncli_leaderlog}") != ok ]]; then
