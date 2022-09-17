@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=3.3.0
+TOOL_VERSION=3.3.1
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -59,6 +59,7 @@ echo '
 [1] ウォレット操作
 [2] ブロック生成状態チェック
 [3] KES更新
+[4] 364エポック特別対応
 [q] 終了
 '
 echo
@@ -993,6 +994,115 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     done
 
     exit
+    ;;
+
+  4)
+  clear
+    echo '------------------------------------------------------------------------'
+    echo -e "> 364エポック特別対応"
+    echo '------------------------------------------------------------------------'
+    echo
+    echo 'この作業は364エポック残り1.5日から計算可能な365エポックスケジュールを正しく取得するため、cncli.shファイルを修正します。'
+    echo
+    echo '■手順'
+    echo '1.364エポックに実施する365スケジュール取得前までに「1.cnlci.shパッチ適用」を実施'
+    echo '2.364エポック残り1.5日以降にノードを再起動し365スケジュールを取得'
+    echo '3.スケジュール取得後「2.cnlci.shパッチ解除」を実施'
+    echo
+    echo '------------------------------------------------------------------------'
+printf "
+\n
+[1] ${FG_GREEN}cnlci.shパッチ適用${NC}
+[2] ${FG_RED}cnlci.shパッチ解除${NC}
+\n
+----------------------------
+[h] ホームへ戻る　[q] 終了
+\n
+"
+patchFlag=`sed -n 1P $NODE_HOME/scripts/cncli.sh`
+read -n 1 -p "メニュー番号を入力してください : >" patch
+    case ${patch} in
+      1)
+        clear
+        if [[ $patchFlag == "#BabbageMOD適用済み" ]]; then
+          printf "\n\n${FG_RED}364限定パッチ適用済みです${NC}\n"
+          select_rtn
+        else
+          wget -q https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/cncli365.sh -O $NODE_HOME/scripts/cncli365.sh
+          chmod 755 $NODE_HOME/scripts/cncli365.sh
+
+          idfile_check=`filecheck "$NODE_HOME/stakepoolid_hex.txt"`
+          if [ $idfile_check == "false" ]; then
+            echo
+            printf "${FG_RED}stakepoolid_hex.txtが見つかりません${NC}\n"
+            echo "エアギャップで以下コマンドを実行し、stakepoolid_hex.txtを$NODE_HOMEにコピーしてください"
+            echo
+            echo '---------------------------------------------------------------'
+            echo "chmod u+rwx $COLDKEYS_DIR"
+            echo 'cardano-cli stake-pool id \'
+            echo    "--cold-verification-key-file $COLDKEYS_DIR/$POOL_COLDKEY_VK_FILENAME"' \'
+            echo    '--output-format hex > $NODE_HOME/stakepoolid_hex.txt'
+            echo "chmod a-rwx $COLDKEYS_DIR"
+            echo '---------------------------------------------------------------'
+            select_rtn
+          fi
+
+          pool_ID=`cat $NODE_HOME/stakepoolid_hex.txt`
+          sed -i $NODE_HOME/scripts/cncli365.sh \
+            -e '1,73s!#POOL_ID=""!POOL_ID='${pool_ID}'!' \
+            -e '1,73s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
+            -e '1,73s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
+          
+          mv $NODE_HOME/scripts/cncli.sh $NODE_HOME/scripts/cncli364.sh
+          mv $NODE_HOME/scripts/cncli365.sh $NODE_HOME/scripts/cncli.sh
+
+          patchFlag=`sed -n 1P $NODE_HOME/scripts/cncli.sh`
+          if [[ $patchFlag == "#BabbageMOD適用済み" ]]; then
+            printf "\n\n"
+            sed -n 1P $NODE_HOME/scripts/cncli.sh
+            printf "${FG_GREEN}cncli.shに364限定パッチが適用されました${NC}\n"
+            select_rtn
+          else
+            printf "${FG_RED}'cncli.shの364限定パッチ適用に失敗しました${NC}\n"
+            select_rtn
+          fi
+        fi
+      ;;
+
+      2)
+        clear
+        if [[ $patchFlag == "#BabbageMOD適用済み" ]]; then
+          rm $NODE_HOME/scripts/cncli.sh
+          mv $NODE_HOME/scripts/cncli364.sh $NODE_HOME/scripts/cncli.sh
+
+          patchFlag=`sed -n 1P $NODE_HOME/scripts/cncli.sh`
+          if [[ $patchFlag != "#BabbageMOD適用済み" ]]; then
+            printf "\n\n"
+            printf "${FG_GREEN}cncli.shの364限定パッチが解除されました${NC}\n"
+            select_rtn
+          else
+            printf "${FG_RED}'cncli.shの364限定パッチ解除に失敗しました${NC}\n"
+            select_rtn
+          fi
+        else
+          printf "\n\n${FG_RED}364限定パッチ未適用です${NC}\n"
+          select_rtn
+        fi
+      ;;
+
+      h)
+        main ;;
+      q) 
+        clear
+        echo
+        echo "SPO JAPAN GUILD TOOL Closed!" 
+        echo
+        exit ;;
+      *)
+        echo '番号が不正です'
+        select_rtn
+        ;;
+      esac
     ;;
   q)
     clear
