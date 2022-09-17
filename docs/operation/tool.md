@@ -1,6 +1,6 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2022/09/10 v3.3.0
+最終更新日：2022/09/18 v3.3.1
 
 !!! info "主な機能"
 
@@ -67,6 +67,10 @@ gtool
     また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
 
 ## 更新履歴
+
+### 3.3.1
+
+    * 364エポック特別対応 cncli.shパッチ適用追加
 
 ### 3.3.0
 
