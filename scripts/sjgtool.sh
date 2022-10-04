@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=3.4.1
+TOOL_VERSION=3.4.2
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -29,7 +29,7 @@ myExit() {
 
 main () {
 clear
-#update
+update
 #getEraIdentifier
 if [ $? == 1 ]; then
   cd $NODE_HOME/scripts
