@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=3.4.0
+TOOL_VERSION=3.4.1
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -29,7 +29,7 @@ myExit() {
 
 main () {
 clear
-update
+#update
 #getEraIdentifier
 if [ $? == 1 ]; then
   cd $NODE_HOME/scripts
@@ -1044,14 +1044,14 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
           echo -e "envファイルのUpdateチェックを${FG_GREEN} $upFlag_fix ${NC}にしました。"
           echo "GliveViewを起動し、UpdateチェックでYを入力してください"
           echo
-          exit
+          select_rtn
 
         else
           echo
-          echo "現在のフラグはYになっています"
+          echo -e "現在のフラグは${FG_GREEN} Y ${NC}になっています"
           echo "GliveViewを起動し、UpdateチェックでYを入力してください"
           echo
-          exit
+          select_rtn
         fi
 
       ;;
@@ -1068,7 +1068,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
           select_rtn
         else
           echo
-          echo "現在のフラグはNになっています"
+          echo -e "現在のフラグは${FG_GREEN} N ${NC}になっています"
           echo
           select_rtn
         fi
