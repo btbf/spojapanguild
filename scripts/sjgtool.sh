@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=3.3.1
+TOOL_VERSION=3.4.0
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -59,7 +59,7 @@ echo '
 [1] ウォレット操作
 [2] ブロック生成状態チェック
 [3] KES更新
-[4] 364エポック特別対応
+[4] envUpdateチェックフラグ切替
 [q] 終了
 '
 echo
@@ -998,94 +998,78 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
   4)
   clear
+
+  envCheck=`cat $NODE_HOME/scripts/env | grep "#UPDATE_CHECK="`
+  if [ -n "$envCheck" ]; then
+    sed -i $NODE_HOME/scripts/env \
+      -e '1,77s!#UPDATE_CHECK!UPDATE_CHECK!'
+  fi
+
+  upFlag=`sed -n '1,77p' $NODE_HOME/scripts/env | grep "UPDATE_CHECK=" | cut -c 15`
+
     echo '------------------------------------------------------------------------'
-    echo -e "> 364エポック特別対応"
+    echo -e "> envUpdateチェックフラグ切替　　　現在のフラグ状態：${FG_GREEN} $upFlag${NC}"   
     echo '------------------------------------------------------------------------'
     echo
-    echo 'この作業は364エポック残り1.5日から計算可能な365エポックスケジュールを正しく取得するため、cncli.shファイルを修正します。'
+    echo 'この作業はGliveView、cncli.shに関連するファイルの自動更新フラグを切り替えます'
     echo
-    echo '■手順'
-    echo '1.364エポックに実施する365スケジュール取得前までに「1.cnlci.shパッチ適用」を実施'
-    echo '2.364エポック残り1.5日以降にノードを再起動し365スケジュールを取得'
-    echo '3.スケジュール取得後「2.cnlci.shパッチ解除」を実施'
+    echo '■手順（Yにする場合）'
+    echo '[1]Yes(Y)にするを選択'
+    echo 'GliveViewを起動し、アップデートメッセージにYを入力してEnter'
+    echo 'SJGToolを再度起動し、[2]No(N)にするを選択'
     echo
     echo '------------------------------------------------------------------------'
 printf "
 \n
-[1] ${FG_GREEN}cnlci.shパッチ適用${NC}
-[2] ${FG_RED}cnlci.shパッチ解除${NC}
+Updateチェックフラグを
+[1] ${FG_GREEN}Yes(Y)にする${NC}
+[2] ${FG_RED}No(N)にする${NC}
 \n
 ----------------------------
 [h] ホームへ戻る　[q] 終了
 \n
 "
-patchFlag=`sed -n 1P $NODE_HOME/scripts/cncli.sh`
+
 read -n 1 -p "メニュー番号を入力してください : >" patch
     case ${patch} in
       1)
         clear
-        if [[ $patchFlag == "#BabbageMOD適用済み" ]]; then
-          printf "\n\n${FG_RED}364限定パッチ適用済みです${NC}\n"
-          select_rtn
-        else
-          wget -q https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/cncli365.sh -O $NODE_HOME/scripts/cncli365.sh
-          chmod 755 $NODE_HOME/scripts/cncli365.sh
 
-          idfile_check=`filecheck "$NODE_HOME/stakepoolid_hex.txt"`
-          if [ $idfile_check == "false" ]; then
-            echo
-            printf "${FG_RED}stakepoolid_hex.txtが見つかりません${NC}\n"
-            echo "エアギャップで以下コマンドを実行し、stakepoolid_hex.txtを$NODE_HOMEにコピーしてください"
-            echo
-            echo '---------------------------------------------------------------'
-            echo "chmod u+rwx $COLDKEYS_DIR"
-            echo 'cardano-cli stake-pool id \'
-            echo    "--cold-verification-key-file $COLDKEYS_DIR/$POOL_COLDKEY_VK_FILENAME"' \'
-            echo    '--output-format hex > $NODE_HOME/stakepoolid_hex.txt'
-            echo "chmod a-rwx $COLDKEYS_DIR"
-            echo '---------------------------------------------------------------'
-            select_rtn
-          fi
-
-          pool_ID=`cat $NODE_HOME/stakepoolid_hex.txt`
-          sed -i $NODE_HOME/scripts/cncli365.sh \
-            -e '1,73s!#POOL_ID=""!POOL_ID='${pool_ID}'!' \
-            -e '1,73s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
-            -e '1,73s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
+        if [ $upFlag = "N" ]; then
+          sed -i $NODE_HOME/scripts/env \
+            -e '1,77s!UPDATE_CHECK="N"!UPDATE_CHECK="Y"!'
           
-          mv $NODE_HOME/scripts/cncli.sh $NODE_HOME/scripts/cncli364.sh
-          mv $NODE_HOME/scripts/cncli365.sh $NODE_HOME/scripts/cncli.sh
+          upFlag_fix=`sed -n '1,77p' $NODE_HOME/scripts/env | grep "UPDATE_CHECK=" | cut -c 15`
+          echo
+          echo -e "envファイルのUpdateチェックを${FG_GREEN} $upFlag_fix ${NC}にしました。"
+          echo "GliveViewを起動し、UpdateチェックでYを入力してください"
+          echo
+          exit
 
-          patchFlag=`sed -n 1P $NODE_HOME/scripts/cncli.sh`
-          if [[ $patchFlag == "#BabbageMOD適用済み" ]]; then
-            printf "\n\n"
-            sed -n 1P $NODE_HOME/scripts/cncli.sh
-            printf "${FG_GREEN}cncli.shに364限定パッチが適用されました${NC}\n"
-            select_rtn
-          else
-            printf "${FG_RED}'cncli.shの364限定パッチ適用に失敗しました${NC}\n"
-            select_rtn
-          fi
+        else
+          echo
+          echo "現在のフラグはYになっています"
+          echo "GliveViewを起動し、UpdateチェックでYを入力してください"
+          echo
+          exit
         fi
+
       ;;
 
       2)
         clear
-        if [[ $patchFlag == "#BabbageMOD適用済み" ]]; then
-          rm $NODE_HOME/scripts/cncli.sh
-          mv $NODE_HOME/scripts/cncli364.sh $NODE_HOME/scripts/cncli.sh
-
-          patchFlag=`sed -n 1P $NODE_HOME/scripts/cncli.sh`
-          if [[ $patchFlag != "#BabbageMOD適用済み" ]]; then
-            printf "\n\n"
-            printf "${FG_GREEN}cncli.shの364限定パッチが解除されました${NC}\n"
-            select_rtn
-          else
-            printf "${FG_RED}'cncli.shの364限定パッチ解除に失敗しました${NC}\n"
-            select_rtn
-          fi
+        if [ $upFlag = "Y" ]; then
+          sed -i $NODE_HOME/scripts/env \
+            -e '1,77s!UPDATE_CHECK="Y"!UPDATE_CHECK="N"!'
+          
+          upFlag_fix=`sed -n '1,77p' $NODE_HOME/scripts/env | grep "UPDATE_CHECK=" | cut -c 15`
+          echo
+          echo -e "envファイルのUpdateチェックを${FG_GREEN} $upFlag_fix ${NC}にしました。"
+          select_rtn
         else
-          printf "\n\n${FG_RED}364限定パッチ未適用です${NC}\n"
+          echo
+          echo "現在のフラグはNになっています"
+          echo
           select_rtn
         fi
       ;;
@@ -1267,6 +1251,7 @@ tx_submit(){
       if [ "$retun_cmd" == "1" ] || [ "$retun_cmd" == "2" ]; then
         case ${retun_cmd} in
           1) 
+            tx_id=`cardano-cli transaction txid --tx-body-file tx.raw`
             tx_result=`cardano-cli transaction submit --tx-file tx.signed $NETWORK_IDENTIFIER`
             echo
             if [[ $tx_result == "Transaction"* ]]; then
@@ -1275,7 +1260,19 @@ tx_submit(){
               echo '----------------------------------------'
               echo $tx_result
               echo
-              printf "${FG_GREEN}Tx送信に成功しました${NC}\n"
+              echo 'トランザクションURL'
+              if [ ${NETWORK_NAME} == 'Mainnet' ]; then
+                echo "https://cardanoscan.io/transaction/$tx_id"
+              elif [ ${NETWORK_NAME} == 'PreProd' ]; then
+                echo "https://preprod.cardanoscan.io/transaction/$tx_id"
+              elif [ ${NETWORK_NAME} == 'Preview' ]; then
+                echo "https://preview.cexplorer.io/tx/$tx_id"
+              else
+                echo "TxID:$tx_id"
+              fi
+              
+              printf "\n${FG_GREEN}Tx送信に成功しました${NC}\n"
+
             else
               echo '----------------------------------------'
               echo 'Tx送信結果'
@@ -1374,7 +1371,7 @@ send_address_CHECK(){
 adahandleConvert(){
   adahandlePolicyID="f0ff48bbb7bbe9d59a40f1ce90e9e9d0ff5002ec48f232b49ca0fb9a"
   assetNameHex=`echo -n "${1}" | xxd -b -ps -c 80 | tr -d '\n'`
-  curl -s -X GET "https://api.koios.rest/api/v0/asset_address_list?_asset_policy=${adahandlePolicyID}&_asset_name=${assetNameHex}" -H "Accept: application/json" | jq -r '.[].payment_address'
+  curl -s -X GET "$KOIOS_API/asset_address_list?_asset_policy=${adahandlePolicyID}&_asset_name=${assetNameHex}" -H "Accept: application/json" | jq -r '.[].payment_address'
 }
 
 #出金前チェック
