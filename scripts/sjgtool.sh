@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=3.4.2
+TOOL_VERSION=3.4.3
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -522,7 +522,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
 
 
-    if [[ $utxo_balance -ge $pledge ]]; then
+    if [[ $total_balance -ge $pledge ]]; then
       echo
       printf "${FG_MAGENTA}■誓約チェック${NC}： ${FG_GREEN}OK${NC}\n"
     else
@@ -530,7 +530,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       printf "${FG_MAGENTA}■誓約チェック${NC}： ${FG_RED}NG${NC} ${FG_YELLOW}payment.addrに宣言済み誓約(Pledge)以上のADAを入金してください${NC}\n"
     fi
       printf "　宣言済み誓約 :${FG_YELLOW}$pledge_scale${NC} ADA\n"
-      printf "　　Wallet残高 :$(scale1 ${utxo_balance}) ADA\n"
+      printf "　　Wallet残高 :$(scale1 ${total_balance}) ADA\n"
 
    #ノード起動スクリプトファイル名読み取り
     exec_path=`grep -H "ExecStart" /etc/systemd/system/cardano-node.service`
