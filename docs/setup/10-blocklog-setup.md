@@ -357,57 +357,6 @@ cd $NODE_HOME/scripts
 ./cncli.sh init
 ```
 
-
-## **10-7. ログファイル生成設定**
-
-```bash
-cd $NODE_HOME
-nano mainnet-config.json
-```
-
-* defaultScribesを下記のように書き換える
-
-```bash
-  "defaultScribes": [
-    [
-      "FileSK",
-      "logs/node.json"
-    ],
-    [
-      "StdoutSK",
-      "stdout"
-    ]
-  ],
-```
-* setupScribesを下記のように書き換える
-```bash
-   "setupScribes": [
-    {
-      "scFormat": "ScJson",
-      "scKind": "FileSK",
-      "scName": "logs/node.json"
-    },
-    {
-      "scFormat": "ScText",
-      "scKind": "StdoutSK",
-      "scName": "stdout",
-      "scRotation": null
-    }
-  ]
-```
-Ctrl+Oでファイルを保存し、Ctrl+Xで閉じる
-
-ノードを再起動する
-```bash
-sudo systemctl reload-or-restart cardano-node
-```
-> cardano-nodeを再起動すると、以下サービスも連動して5秒間隔で再起動されます 
-> cnode-cncli-sync.service  
-> cnode-cncli-validate.service  
-> cnode-cncli-leaderlog.service  
-> cnode-logmonitor.service  
-
-
 tmux起動確認
 
 ```bash

@@ -39,7 +39,7 @@ git clone https://github.com/bitcoin-core/secp256k1.git
 
 ```
 cd secp256k1/
-git reset --hard ac83be33d0956faf6b7f61a60ab524ef7d6a473a
+git checkout ac83be33
 ./autogen.sh
 ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
 make
@@ -96,11 +96,11 @@ Also see https://github.com/haskell/haskell-language-server/blob/master/README.m
 
 ⇒Nと入力しEnter
 
-> Do you want to install stack?
-Stack is a haskell build tool similar to cabal that is used by some projects.
-Also see https://docs.haskellstack.org/
-
->[Y] Yes  [N] No  [?] Help (default is "N").
+> Do you want to enable better integration of stack with GHCup?
+This means that stack won't install its own GHC versions, but uses GHCup's.
+For more information see:
+https://docs.haskellstack.org/en/stable/yaml_configuration/#ghc-installation-customisation-experimental
+If you want to keep stacks vanilla behavior, answer 'No'.
 
 ⇒Nと入力しEnter
 
@@ -132,9 +132,29 @@ echo PATH="$HOME/.local/bin:$PATH" >> $HOME/.bashrc
 echo export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH" >> $HOME/.bashrc
 echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
 echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
-echo export NODE_CONFIG=mainnet>> $HOME/.bashrc
-echo export NODE_NETWORK="--mainnet">> $HOME/.bashrc
-echo export NODE_BUILD_NUM=$(curl https://hydra.iohk.io/job/Cardano/iohk-nix/cardano-deployment/latest-finished/download/1/index.html | grep -e "build" | sed 's/.*build\/\([0-9]*\)\/download.*/\1/g') >> $HOME/.bashrc
+```
+接続するネットワークを指定する
+!!! info "確認"
+    通常はメインネットを選択してください。2種類のテストネットは一部パラメーターが異なります。
+
+=== "メインネット"
+    ```
+    echo export NODE_CONFIG=mainnet >> $HOME/.bashrc
+    echo export NODE_NETWORK="--mainnet" >> $HOME/.bashrc
+    ```
+
+=== "Preview(テストネット)"
+    ```
+    echo export NODE_CONFIG=preview >> $HOME/.bashrc
+    echo export NODE_NETWORK="--testnet-magic 2" >> $HOME/.bashrc
+    ```
+
+=== "PreProd(テストネット)"
+    ```
+    echo export NODE_CONFIG=preprod >> $HOME/.bashrc
+    echo export NODE_NETWORK="--testnet-magic 1" >> $HOME/.bashrc
+    ```
+```
 source $HOME/.bashrc
 ```
 
@@ -221,20 +241,23 @@ config.json、genesis.json、topology.json
 ```bash
 mkdir $NODE_HOME
 cd $NODE_HOME
-wget -N https://hydra.iohk.io/build/${NODE_BUILD_NUM}/download/1/${NODE_CONFIG}-byron-genesis.json
-wget -N https://hydra.iohk.io/build/${NODE_BUILD_NUM}/download/1/${NODE_CONFIG}-topology.json
-wget -N https://hydra.iohk.io/build/${NODE_BUILD_NUM}/download/1/${NODE_CONFIG}-shelley-genesis.json
-wget -N https://hydra.iohk.io/build/${NODE_BUILD_NUM}/download/1/${NODE_CONFIG}-alonzo-genesis.json
-wget -N https://hydra.iohk.io/build/${NODE_BUILD_NUM}/download/1/${NODE_CONFIG}-config.json
+wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/byron-genesis.json -O ${NODE_CONFIG}-byron-genesis.json
+wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/topology.json -O ${NODE_CONFIG}-topology.json
+wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
+wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
+wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/config.json -O ${NODE_CONFIG}-config.json
 ```
 
 以下のコードを実行し **config.json**ファイルを更新します。  
 
-* TraceBlockFetchDecisionsを「true」に変更します。
-
 ```bash
 sed -i ${NODE_CONFIG}-config.json \
-    -e "s/TraceBlockFetchDecisions\": false/TraceBlockFetchDecisions\": true/g"
+    -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
+    -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
+    -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
+    -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
+    -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
+    -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},'
 ```
 
 環境変数を追加し、.bashrcファイルを更新します。
