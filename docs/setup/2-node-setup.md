@@ -140,19 +140,19 @@ echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
 === "メインネット"
     ```
     echo export NODE_CONFIG=mainnet >> $HOME/.bashrc
-    echo export NODE_NETWORK="--mainnet" >> $HOME/.bashrc
+    echo export NODE_NETWORK='"--mainnet"' >> $HOME/.bashrc
     ```
 
 === "Preview(テストネット)"
     ```
     echo export NODE_CONFIG=preview >> $HOME/.bashrc
-    echo export NODE_NETWORK="--testnet-magic 2" >> $HOME/.bashrc
+    echo export NODE_NETWORK='"--testnet-magic 2"' >> $HOME/.bashrc
     ```
 
 === "PreProd(テストネット)"
     ```
     echo export NODE_CONFIG=preprod >> $HOME/.bashrc
-    echo export NODE_NETWORK="--testnet-magic 1" >> $HOME/.bashrc
+    echo export NODE_NETWORK='"--testnet-magic 1"' >> $HOME/.bashrc
     ```
 ```
 source $HOME/.bashrc
