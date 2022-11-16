@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=3.4.3
+TOOL_VERSION=3.4.4
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -520,11 +520,13 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     printf "ライブステーク :${FG_GREEN}$live_Stake${NC} ADA\n"
     printf "　有効ステーク :$active_Stake\n"
 
+    okCnt=1
 
 
     if [[ $total_balance -ge $pledge ]]; then
       echo
       printf "${FG_MAGENTA}■誓約チェック${NC}： ${FG_GREEN}OK${NC}\n"
+      okCnt=$((${okCnt}+1))
     else
       echo
       printf "${FG_MAGENTA}■誓約チェック${NC}： ${FG_RED}NG${NC} ${FG_YELLOW}payment.addrに宣言済み誓約(Pledge)以上のADAを入金してください${NC}\n"
@@ -550,6 +552,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       kes_CHK=`filecheck "$NODE_HOME/$kes_name"`
       if [ $kes_CHK == "true" ]; then
         printf "　 $kes_name: ${FG_GREEN}OK${NC}\n"
+        okCnt=$((${okCnt}+1))
       else
         printf "　 $kes_name: ${FG_RED}NG${NC}\n"
       fi
@@ -565,6 +568,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       vrf_CHK=`filecheck "$NODE_HOME/$vrf_name"`
       if [ $vrf_CHK == "true" ]; then
         printf "　 $vrf_name: ${FG_GREEN}OK${NC}\n"
+        okCnt=$((${okCnt}+1))
       else
         printf "　 $vrf_name: ${FG_RED}NG${NC}\n"
       fi
@@ -580,6 +584,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     cert_CHK=`filecheck "$NODE_HOME/$cert_name"`
       if [ $cert_CHK == "true" ]; then
         printf "　$cert_name: ${FG_GREEN}OK${NC}\n"
+        okCnt=$((${okCnt}+1))
       else
         printf "　$cert_name: ${FG_RED}NG${NC}\n"
       fi
@@ -592,8 +597,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     #ノード同期状況確認
     #APIから最新ブロックNo取得
-    koios_blockNo=`curl -s -X GET "$KOIOS_API/tip" -H "Accept: application/json" | grep -E -o "\"block_no\":[0-9A-Za-z]{7,}"`
-    koios_blockNo=${koios_blockNo#"\"block_no\":"}
+    koios_blockNo=`curl -s -X GET "$KOIOS_API/tip" -H "Accept: application/json" | jq -r '.[].block_no'`
     
 
     #ノードから同期済みブロック取得
@@ -611,6 +615,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       printf "${FG_MAGENTA}■ノード同期状況${NC}： ${FG_GREEN}OK${NC}\n"
       printf "  ネットワーク最新ブロック :${FG_YELLOW}$koios_blockNo${NC}\n"
       printf "ローカルノード最新ブロック :${FG_YELLOW}$currentblock${NC}\n"
+      okCnt=$((${okCnt}+1))
     fi
 
     #メトリクスTx数
@@ -619,19 +624,18 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       metrics_tx="0"
     fi
     
-    tx_chk(){
-      if [ $2 = "true" ] && [ $1 -gt 0 ]; then
-        printf "${FG_GREEN}OK${NC}"
-      elif [ $2 = "false" ] && [ $1 -eq 0 ]; then
-        printf "${FG_GREEN}条件付きOK${NC}"
-      else
-        printf "${FG_RED}NG${NC}"
-      fi
-    }
-    tx_count=`tx_chk $metrics_tx $mempool_CHK`
-    
-    printf "\n${FG_MAGENTA}■Tx流入数${NC}:${FG_YELLOW}$metrics_tx${NC} $tx_count TraceMempool:${FG_YELLOW}$mempool_CHK${NC}\n"
+    # Tx流入判定
+    if [ $mempool_CHK = "true" ] && [ $metrics_tx -gt 0 ]; then
+      tx_count="${FG_GREEN}OK${NC}"
+      okCnt=$((${okCnt}+1))
+    elif [ $mempool_CHK = "false" ] && [ $metrics_tx -eq 0 ]; then
+      tx_count="${FG_GREEN}条件付きOK${NC}"
+      okCnt=$((${okCnt}+1))
+    else
+      printf "${FG_RED}NG${NC}"
+    fi
 
+    printf "\n${FG_MAGENTA}■Tx流入数${NC}:${FG_YELLOW}$metrics_tx${NC} $tx_count TraceMempool:${FG_YELLOW}$mempool_CHK${NC}\n"
     if [[ $tx_count = *NG* ]]; then
       printf "\nTxが入ってきていません。1分後に再実行してください\n"
       printf "\n再実行してもNGの場合は、以下の点を再確認してください\n"
@@ -644,16 +648,18 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     printf "${FG_MAGENTA}■Peer接続状況${NC}\n"
     peers_in=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | awk -v port=":${CNODE_PORT}" '$3 ~ port {print}' | wc -l)
     peers_out=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | awk -v port=":(${CNODE_PORT}|${EKG_PORT}|${PROM_PORT})" '$3 !~ port {print}' | wc -l)
-
+    
     if [[ $peers_in -eq 0 ]]; then
       peer_in_judge=" ${FG_RED}NG${NC} リレーから接続されていません"
     else
       peer_in_judge=" ${FG_GREEN}OK${NC}"
+      okCnt=$((${okCnt}+1))
     fi
     if [[ $peers_out -eq 0 ]]; then
       peer_out_judge=" ${FG_RED}NG${NC} リレーに接続出来ていません"
     else
       peer_out_judge=" ${FG_GREEN}OK${NC}"
+      okCnt=$((${okCnt}+1))
     fi
     printf "　incoming :${FG_YELLOW}$peers_in $peer_in_judge${NC}\n"
     printf "　outgoing :${FG_YELLOW}$peers_out $peer_out_judge${NC}\n"
@@ -669,6 +675,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     
     if [ $chain_Vrf_hash == $local_vrf_hash ]; then
       hash_check=" ${FG_GREEN}OK${NC}\n"
+      okCnt=$((${okCnt}+1))
     else
       hash_check=" ${FG_RED}NG${NC}\n"
     fi
@@ -687,26 +694,24 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     kes_cborHex=`cat $NODE_HOME/$POOL_HOTKEY_VK_FILENAME | jq '.cborHex' | tr -d '"'`
     cert_cborHex=`cardano-cli text-view decode-cbor --in-file $NODE_HOME/$POOL_OPCERT_FILENAME | awk 'NR==4,NR==6 {print}' | sed 's/ //g' | sed 's/#.*//' | tr -d '\n'`
 
-    cert_counter(){
-      if [ $kes_cborHex == $cert_cborHex ]; then
-        if [ $1 != "null" ] && [ $2 -ge $(($1+2)) ] && [ $kes_remaining -ge 1 ]; then
-          printf "${FG_RED}NG カウンター番号がチェーンより2以上大きいです${NC}\n"
-        elif [ $1 != "null" ] && [ $2 -ge $1 ] && [ $kes_remaining -ge 1 ] ; then
-          printf "${FG_GREEN}OK${NC}\n"
-        elif [ $1 != "null" ] && [ $2 -lt $1 ] && [ $kes_remaining -ge 1 ]; then
-          printf "${FG_RED}NG カウンター番号がチェーンより小さいです${NC}\n"
-        elif [ $1 == "null" ] && [ $kes_remaining -ge 1 ]; then
-          printf "${FG_GREEN}OK (ブロック未生成)${NC}\n"
-        else
-          printf "${FG_RED}NG KESの有効期限が切れています${NC}\n"
-        fi
+    #証明書判定
+    if [ $kes_cborHex == $cert_cborHex ]; then
+      if [ $chain_cert_counter != "null" ] && [ $local_cert_counter -ge $(($chain_cert_counter+2)) ] && [ $kes_remaining -ge 1 ]; then
+        cc="${FG_RED}NG カウンター番号がチェーンより2以上大きいです${NC}\n"
+      elif [ $chain_cert_counter != "null" ] && [ $local_cert_counter -ge $chain_cert_counter ] && [ $kes_remaining -ge 1 ] ; then
+        cc="${FG_GREEN}OK${NC}\n"
+        okCnt=$((${okCnt}+1))
+      elif [ $chain_cert_counter != "null" ] && [ $local_cert_counter -lt $chain_cert_counter ] && [ $kes_remaining -ge 1 ]; then
+        cc="${FG_RED}NG カウンター番号がチェーンより小さいです${NC}\n"
+      elif [ $chain_cert_counter == "null" ] && [ $kes_remaining -ge 1 ]; then
+        cc="${FG_GREEN}OK (ブロック未生成)${NC}\n"
+        okCnt=$((${okCnt}+1))
       else
-        printf "${FG_RED}NG CERTファイルに署名された$POOL_HOTKEY_VK_FILENAMEファイルが異なります。${NC}\n"
+        cc="${FG_RED}NG KESの有効期限が切れています${NC}\n"
       fi
-    }
-    cc=`cert_counter $chain_cert_counter $local_cert_counter`
-
-
+    else
+      cc="${FG_RED}NG CERTファイルに署名された$POOL_HOTKEY_VK_FILENAMEファイルが異なります。${NC}\n"
+    fi
 
     echo
     printf "${FG_MAGENTA}■プール運用証明書チェック${NC}($POOL_OPCERT_FILENAME) $cc\n"
@@ -718,30 +723,38 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     echo
     kes_int=$(($current_KES-$Start_KES+$metrics_KES))
-    kes_int_chk(){
-      if [ $1 == 62 ]; then
-        printf "${FG_GREEN}OK${NC}\n"
-      else
-        "${FG_RED}NG KES整合性は62である必要があります。KESファイルを作り直してください${NC}\n"
-      fi
-    }
-    kic=`kes_int_chk $kes_int`
 
-    printf "${FG_MAGENTA}■KES整合性${NC}:${FG_YELLOW}$kes_int${NC} $kic\n"
-    echo
-    echo
-    echo "ブロック生成可能状態チェックが完了しました"
+    #KES整合性判定
+    if [ $kes_int == 62 ]; then
+      kic="${FG_GREEN}OK${NC}\n"
+      okCnt=$((${okCnt}+1))
+    else
+      "${FG_RED}NG KES整合性は62である必要があります。KESファイルを作り直してください${NC}\n"
+    fi
+
+    printf "${FG_MAGENTA}■KES整合性${NC}:${FG_YELLOW}$kes_int${NC} $kic\n\n"
 
     if [ $mempool_CHK == "false" ]; then
-      printf "\n${FG_RED}$CONFIGのTraceMempoolが${NC}${FG_YELLOW}false${NC}${FG_RED}になっています${NC}\n"
-      printf "${FG_RED}正確にチェックする場合は${NC}${FG_GREEN}true${NC}${FG_RED}へ変更し、ノード再起動後再度チェックしてください${NC}"
+      echo -e "----${FG_YELLOW}確認${NC}--------------------------------------------------------------"
+      printf "$CONFIGのTraceMempoolが${FG_YELLOW}false${NC}になっています\n"
+      printf "正確にチェックする場合は${FG_GREEN}true${NC}へ変更し、ノード再起動後再度チェックしてください\n"
+      echo "--------------------------------------------------------------------"
       echo
     fi
-    echo
-    echo "--注意--------------------------------------------------------"
-    printf " > 1つでも ${FG_RED}NG${NC} があった場合はプール構成を見直してください\n"
-    echo "--------------------------------------------------------------"
-    echo
+
+    if [ $okCnt -eq 12 ]; then
+      echo
+      echo -e "----${FG_GREEN}OK${NC}--------------------------------------------------------"
+      printf " > 全ての項目が ${FG_GREEN}OK${NC} になりブロック生成の準備が整いました！\n"
+      echo "--------------------------------------------------------------"
+    else
+      echo
+      echo -e "----${FG_RED}NG${NC}--------------------------------------------------------"
+      printf " > 1つ以上 ${FG_RED}NG${NC} がありました。プール構成を見直してください\n"
+      echo "--------------------------------------------------------------"
+      echo
+    fi
+
     select_rtn
     ;;
   
