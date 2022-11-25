@@ -124,6 +124,10 @@ ghcup install ghc 8.10.7
 ghcup set ghc 8.10.7
 ```
 
+!!! denger "Cabal/GHCバージョンについて"
+    現時点で、上記バージョンより最新版がリリースされていますが、ビルドに失敗するため導入しないで下さい。
+
+
 環境変数を設定しパスを通します。  
 ノード設定ファイルは **$NODE\_HOME**(例：/home/user/cnode) に設定されます。
 
@@ -135,7 +139,7 @@ echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
 ```
 接続するネットワークを指定する
 !!! info "確認"
-    通常はメインネットを選択してください。2種類のテストネットは一部パラメーターが異なります。
+    通常はメインネットを選択してください。2種類のテストネットは一部パラメーターが異なり開発者向けとなります。
 
 === "メインネット"
     ```
@@ -174,8 +178,7 @@ ghc --version
 ## **2-2. ソースコードからビルド**
 
 !!! info "確認"
-    バイナリーファイルは必ずソースコードからビルドするようにし、整合性をチェックしてください。  
-    IOGは現在ARMアーキテクチャ用のバイナリファイルを提供していません。Raspberry Piを使用してプールを構築する場合は、ARM用コンパイラでコンパイルする必要があります。
+    バイナリーファイルは必ずソースコードからビルドするようにし、整合性をチェックしてください。IOGは現在ARMアーキテクチャ用のバイナリファイルを提供していません。Raspberry Piを使用してプールを構築する場合は、ARM用コンパイラでコンパイルする必要があります。
 
 
 Gitからソースコードをダウンロードし、最新のタグに切り替えます。
@@ -185,7 +188,7 @@ cd $HOME/git
 git clone https://github.com/input-output-hk/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/1.35.3
+git checkout tags/1.35.4
 ```
 
 Cabalのビルドオプションを構成します。
@@ -298,14 +301,12 @@ source $HOME/.bashrc
 === "ブロックプロデューサーノード"
 
     !!! error "注意"
-        * BPノードで使用するポートはセキュリティを高めるために、49513～65535までの任意番号を設定してください。
-        * ここで設定するBPノード用ポート番号は、[「1-9.ファイアウォールを構成する」](./1-ubuntu-setup.md#1-9)で設定した同じ番号を指定してください。
+        * BPノードポートはセキュリティを高めるために、49513～65535までの任意番号を設定してください。ここで設定する番号は1-3で設定した<font color=red>SSHポート番号とは別の番号</font>を設定してください.
 
     BPノードポート番号を指定してターミナルで実行する
     ```bash
     PORT=xxxxx
     ```
-    > xxxxxを49513～65535までの任意番号で指定してください
 
     起動スクリプトファイルを作成する
     ```bash
@@ -504,6 +505,22 @@ chmod 755 gLiveView.sh
 
 **env** ファイル内の定義を修正します
 
+=== "リレーノード"
+    ```bash
+    PORT=`grep "PORT=" $NODE_HOME/startRelayNode1.sh`
+    b_PORT=${PORT#"PORT="}
+    echo "リレーポートは${b_PORT}です"
+
+    ```
+
+=== "ブロックプロデューサーノード"
+    ```bash
+    PORT=`grep "PORT=" $NODE_HOME/startBlockProducingNode.sh`
+    b_PORT=${PORT#"PORT="}
+    echo "リレーポートは${b_PORT}です"
+    ```
+
+
 ```bash
 sed -i $NODE_HOME/scripts/env \
     -e '1,73s!#CNODE_HOME="/opt/cardano/cnode"!CNODE_HOME=${NODE_HOME}!' \
@@ -512,7 +529,7 @@ sed -i $NODE_HOME/scripts/env \
     -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/'${NODE_CONFIG}'-config.json"!' \
     -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node0.socket"!SOCKET="${CNODE_HOME}/db/socket"!'
 ```
-    
+
 Guild Liveviewを起動します。
 
 ```text
@@ -520,6 +537,18 @@ Guild Liveviewを起動します。
 ```
 
 ![Guild Live View](../images/glive.PNG)
+
+
+!!! hint "GliveView起動ショートカットコード登録"
+    スクリプトへのパスを通し、任意の単語で起動出来るようにする。
+    ```bash
+    echo alias glive="'cd $NODE_HOME/scripts; ./gLiveView.sh'" >> $HOME/.bashrc
+    source $HOME/.bashrc
+    ```
+
+    コマンドラインに`glive`と入力するだけで、どこからでも起動できます。   
+    
+
 
 ??? info "gLiveViewについて▼"
     * **このツールを立ち上げてもノードは起動しません。ノードは別途起動しておく必要があります**  
@@ -537,15 +566,6 @@ Guild Liveviewを起動します。
     0エポックからブロックチェーンデータをダウンロードし同期します。最新エポックまで追いつくまでに1日半～2日かかり、完全に同期するまで次の項目には進めません。
     BPサーバーや2つ目のリレーサーバーでも同じ作業を実施してください。
 
-!!! hint "ヒント"
-    スクリプトへのパスを通し、任意の単語で起動出来るようにする。
-    ```bash
-    echo alias glive="'cd $NODE_HOME/scripts; ./gLiveView.sh'" >> $HOME/.bashrc
-    source $HOME/.bashrc
-    ```
-
-    単語を入力するだけで、どこからでも起動できます。   
-    glive・・・gLiveView.sh  
 
 ## **2-8. エアギャップオフラインマシンの作成**
 !!! info "エアギャップマシンとは？"

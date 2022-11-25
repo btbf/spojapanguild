@@ -5,7 +5,23 @@
 ### **1.インストール**
 
 !!! abstract "概要"
-    「prometheus」および「prometheus node exporter」をインストールします。 この手順では、リレーノード1でprometheusとGrafana本体を稼働させ、リレーノード1およびブロックプロデューサーノードの情報を取得する手順です。
+    「prometheus」および「prometheus node exporter」をインストールします。 この手順では、リレーノード1でprometheusとGrafana本体を稼働させ、各サーバーの情報を取得する方法です。
+
+**構成図**
+``` mermaid
+    flowchart TB
+        bp[ローカルPC] -- 3000ポート開放 --> a1[Grafana] 
+        a2[prometheus] -- リレー1IP指定で<br>9100/12798ポート開放 --> ide2[BP] & ide3[リレー2]
+        subgraph ide1[リレー1]
+            a1[Grafana] <--> a2[prometheus]
+        end
+        subgraph ide2[BP]
+            a3[node-exporter]
+        end
+        subgraph ide3[リレー2]
+            a4[node-exporter]
+        end
+```
 
 prometheusインストール
 
@@ -14,7 +30,7 @@ prometheusインストール
     sudo apt install -y prometheus prometheus-node-exporter
     ```
 
-=== "ブロックプロデューサーノード"
+=== "BPまたはリレー2以降"
 
     ```bash
     sudo apt install -y prometheus-node-exporter
@@ -34,7 +50,7 @@ grafanaインストール
     sudo apt update && sudo apt install -y grafana
     ```
 
-サービスを有効にして、自動的に開始されるように設定します。
+サービス有効化とファイアウォールを設定する。
 
 === "リレーノード1"
 
@@ -44,18 +60,32 @@ grafanaインストール
     sudo systemctl enable prometheus-node-exporter.service
     ```
 
-=== "ブロックプロデューサーノード"
+    FW設定でGrafanaポートを開放する
+    ```bash
+    sudo ufw allow 3000/tcp
+    sudo ufw reload
+    ```
 
+=== "BPまたはリレー2以降"
+    
     ```bash
     sudo systemctl enable prometheus-node-exporter.service
     ```
+    
+    FW設定でPrometheusメトリクスポートをリレー1のIP限定で開放する
+    ```bash
+    sudo ufw allow from <リレーノード1のIP> to any port 12798
+    sudo ufw allow from <リレーノード1のIP> to any port 9100
+    sudo ufw reload
+    ```
 
-## **2.定義ファイルの作成**
+## **2.設定ファイルの作成**
 
-!!! warning "注意"
-    targets:の「xxx.xxx.xxx」は、BPのパブリックIP(静的)アドレスに置き換えて下さい
+リレーノード1にインストールしたPrometheusの設定ファイルを作成します。ここに記載されたサーバーのデータを取得します。
 
-=== "リレーノード1"
+=== "リレーノード1(リレー1台の場合)"
+    !!! warning "注意"
+        targets:の「xxx.xxx.xxx」は、BPのパブリックIP(静的)アドレスに置き換えて下さい
 
     ```bash
     cat > prometheus.yml << EOF
@@ -93,6 +123,55 @@ grafanaインストール
     EOF
     ```
 
+=== "リレーノード1(リレー2台の場合)"
+    !!! warning "注意"
+        targets:の「xxx.xxx.xxx」は、BPのパブリックIP(静的)アドレスに置き換えて下さい。  
+        targets:の「bb.xxx.xxx」は、リレー2のパブリックIP(静的)アドレスに置き換えて下さい。
+
+    ```bash
+    cat > prometheus.yml << EOF
+    global:
+      scrape_interval:     15s # By default, scrape targets every 15 seconds.
+
+      # Attach these labels to any time series or alerts when communicating with
+      # external systems (federation, remote storage, Alertmanager).
+      external_labels:
+        monitor: 'codelab-monitor'
+    
+    # A scrape configuration containing exactly one endpoint to scrape:
+    # Here it's Prometheus itself.
+    scrape_configs:
+      # The job name is added as a label job=<job_name> to any timeseries scraped from this config.
+      - job_name: 'prometheus'
+
+        static_configs:
+          - targets: ['localhost:9100']
+            labels:
+              alias: 'relaynode1'
+              type:  'system'
+          - targets: ['bb.xxx.xxx.xxx:9100']
+            labels:
+              alias: 'relaynode2'
+              type:  'system'
+          - targets: ['xx.xxx.xxx.xxx:9100']
+            labels:
+              alias: 'block-producing-node'
+              type:  'system'
+          - targets: ['xxx.xxx.xxx.xxx:12798']
+            labels:
+              alias: 'block-producer-node'
+              type:  'cardano-node'
+          - targets: ['localhost:12798']
+            labels:
+              alias: 'relaynode1'
+              type:  'cardano-node'
+          - targets: ['bb.xxx.xxx.xxx:12798']
+            labels:
+              alias: 'relaynode2'
+              type:  'cardano-node'
+    EOF
+    ```
+
 prometheus.ymlを移動します
 === "リレーノード1"
     ```bash
@@ -119,7 +198,7 @@ prometheus.ymlを移動します
 
 
 ## **3.ノード設定ファイルの更新**
-=== "リレーノード1/BP"
+=== "リレーノード/BP"
 
     ```bash
     cd $NODE_HOME
@@ -127,16 +206,9 @@ prometheus.ymlを移動します
     ```
 
 
-
-!!! info "ファイアウォールの設定を確認してください"
-    ファイアウォールを設定している場合は、ブロックプロデューサーノードにて9100番と12798番ポートをリレーノード1のパブリックIP(静的)指定で開放して下さい。  
-    リレーノード1では、Grafana用に3000番ポートを開放してください。
-
-
 ノードを再起動し設定ファイルを有効化します。
 
-
-=== "リレーノード1/BP"
+=== "リレーノード/BP"
 
     ```bash
     sudo systemctl reload-or-restart cardano-node
@@ -145,8 +217,8 @@ prometheus.ymlを移動します
 
 ## **4.Grafanaダッシュボードの設定**
 
-1. ローカルブラウザから http://&lt;リレーノードIPアドレス&gt;:3000 を開きます。 事前に3000番ポートを開いておく必要があります。
-2. ログイン名・PWは次のとおりです。 **admin** / **admin**
+1. ローカルブラウザから http://&lt;リレーノード1IPアドレス&gt;:3000 を開きます。
+2. ログイン名・PWは **admin** / **admin**
 3. パスワードを変更します。
 4. 左メニューの歯車アイコンから データソースを追加します。
 5. 「Add data source」をクリックし、「Prometheus」を選択します。
