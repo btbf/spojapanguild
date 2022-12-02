@@ -128,7 +128,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 ## **2.プール登録証明書の作成**
 
 !!! important "ファイル転送"
-    BPにある`vrf.vkey`と`poolMetaDataHash.txt` をエアギャップオフラインマシンのcnodeディレクトリにコピーします。
+    BPにある`vrf.vkey`と`poolMetaDataHash.txt` をエアギャップマシンのcnodeディレクトリにコピーします。
     ``` mermaid
     graph LR
         A[BP] -->| vrf.vkey / poolMetaDataHash.txt | B[エアギャップ];
@@ -145,7 +145,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 !!! hint ""
     BPとエアギャップで表示された戻り値を比較して、ハッシュ値が一致していればOK  
 
-=== "エアギャップオフラインマシン"
+=== "エアギャップマシン"
     ```bash
     cd $NODE_HOME
     sha256sum vrf.vkey
@@ -163,19 +163,18 @@ cat $NODE_HOME/poolMetaData.json | jq .
     minPoolCost(固定費)は 340000000 lovelace \(340 ADA\)です。
 
 
-#### **pool.certを作成する** ####
+ **エアギャップマシンでpool.certを作成する**
 
-
-
-??? note annotate "pool.cert作成時の注意点▼"
+!!! note annotate "pool.cert作成時の注意点▼"
     
     pool.certはプール登録証明書の役割を果たし、プール情報を記載します。  
-    上記のスクリプトは例です。ご自身のプール運用設定値に変更してください。  
-    ** 誓約 100ADA ** 　(--pool-pledge)  
 
-    ** 固定手数料 340ADA ** (--pool-cost)  
-    ** 変動手数料5% ** (--pool-margin)  
-
+    * ** 誓約 100ADA ** 　(--pool-pledge) 　注釈→(1)  
+    * ** 固定手数料 340ADA ** (--pool-cost) 　注釈→(2)  
+    * ** 変動手数料5% ** (--pool-margin) 　注釈→(3)  
+1.  :man_raising_hand: __誓約(Pledge)とは？__<br>Pledge(誓約)はシビル攻撃を防ぐ目的で導入されているパラメータで、SPOが自身のプールにADAをより預けることで委任者様の報酬が若干多く分配される設計になっており、複数プールを開設するよりも単一プールでの運営メリット促すために設けられた制度です。2022/02/16時点でのPledge(誓約)の設計は、SPOが差し出すADA(Pledge)が10M ADA以上からじゃないと報酬が増える割合が変わらないため、あまり機能していないのが実情です。(現在改良が検討されています)
+2.  :man_raising_hand: __固定手数料(cost)とは？__<br>プール運営におけるオペレーター報酬の1つで、最低340ADAから設定可能
+3.  :man_raising_hand: __変動手数料(margin)とは？__<br>プール運営におけるオペレーター報酬の1つで (総報酬-固定手数料費)におけるオペレーター報酬率
 
 ??? note "誓約(Pledge)について▼"
     自分のプールに保証金を預けることを**Pledge\(誓約\)**と呼びます
@@ -186,7 +185,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
     * 誓約金はロックされません。いつでも自由に取り出せますがプール登録証明書を再提出する必要があります。
 
 
-??? note "リレーの記述について▼"
+??? note "リレー(--pool-relay-ipv4)の記述について▼"
     上記のpool.cert作成時、自身のリレー情報を以下の3パターンの記述方法があります。
 
     **複数のリレーノードを構成する記述方法**
@@ -217,7 +216,9 @@ cat $NODE_HOME/poolMetaData.json | jq .
     ```
 
 
-=== "エアギャップオフラインマシン"
+=== "エアギャップマシン(リレー1台の場合)"
+    `***.***.***.***`はリレー1のIPに置き換えてください  
+    下記のスクリプトは例です。ご自身のプール運用設定値に変更してから実行してください。  
     ```bash
     cd $NODE_HOME
     cardano-cli stake-pool registration-certificate \
@@ -236,10 +237,34 @@ cat $NODE_HOME/poolMetaData.json | jq .
         --out-file pool.cert
     ```
 
+=== "エアギャップマシン(リレー2台の場合)"
+    `111.***.***.***`はリレー1のIPに置き換えてください  
+    `222.***.***.***`はリレー2のIPに置き換えてください  
+    下記のスクリプトは例です。ご自身のプール運用設定値に変更してから実行してください。  
+    ```bash
+    cd $NODE_HOME
+    cardano-cli stake-pool registration-certificate \
+        --cold-verification-key-file $HOME/cold-keys/node.vkey \
+        --vrf-verification-key-file vrf.vkey \
+        --pool-pledge 100000000 \
+        --pool-cost 340000000 \
+        --pool-margin 0.05 \
+        --pool-reward-account-verification-key-file stake.vkey \
+        --pool-owner-stake-verification-key-file stake.vkey \
+        $NODE_NETWORK \
+        --pool-relay-ipv4 111.***.***.*** \
+        --pool-relay-port 6000 \
+        --pool-relay-ipv4 222.***.***.*** \
+        --pool-relay-port 6000 \
+        --metadata-url https://bit.ly/**** \
+        --metadata-hash $(cat poolMetaDataHash.txt) \
+        --out-file pool.cert
+    ```
+
 
 **自身のステークプールに委任する証明書(deleg.cert)を作成します**
 
-=== "エアギャップオフラインマシン"
+=== "エアギャップマシン"
 
     ```bash
     cardano-cli stake-address delegation-certificate \
@@ -363,7 +388,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
         --out-file tx.raw
     ```
 !!! important "ファイル転送"
-    BPの`tx.raw`をエアギャップオフラインマシンのcnodeディレクトリにコピーします。
+    BPの`tx.raw`をエアギャップマシンのcnodeディレクトリにコピーします。
     
     ``` mermaid
     graph LR
@@ -372,7 +397,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 
 **トランザクションに署名します**
 
-=== "エアギャップオフラインマシン"
+=== "エアギャップマシン"
     ```bash
     cd $NODE_HOME
     cardano-cli transaction sign \
@@ -404,7 +429,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 
 **ステークプールIDは以下のように出力できます**
 
-=== "エアギャップオフラインマシン"
+=== "エアギャップマシン"
     ```bash
     chmod u+rwx $HOME/cold-keys
     cardano-cli stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format bech32 > stakepoolid_bech32.txt
@@ -439,6 +464,6 @@ cat $NODE_HOME/poolMetaData.json | jq .
 表示されたPoolIDであなたのステークプールがブロックチェーンに登録されているか、次のサイトで確認することが出来ます。  
 [Cardanoscan](https://cardanoscan.io/pools){ .md-button blank}
 
-!!! success "🎊SPOデビューおめでとうございます🎊"
-    上記サイトであなたのプールティッカーが表示されたらブロックチェーンに登録されました！しかしまだブロック生成できる状態ではありません。この後も重要な作業が続きますがあと一息頑張ってください！
+!!! success "あと一息です！"
+    上記サイトであなたのプールティッカーが表示されたらブロックチェーンに登録されました！しかしまだブロック生成できる状態ではありません。この後も重要な作業が続きますがもう少し頑張ってください！
 

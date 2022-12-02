@@ -94,12 +94,12 @@ extra_css:
 nav:
     - 'HOME':
       - 'スタートガイド': './index.md'
-      - 'プール構築マニュアル': './setup/0-start-guide.md'
+      - 'エアギャップマシン作成': './setup/air-gap-guid.md'
+      - 'プール構築マニュアル': './setup/1-ubuntu-setup.md'
       - 'プール運用マニュアル': './operation/start-guide.md'
       - 'よくある質問': './faq/node.md'
       - '更新履歴': './changelogs.md'
     - 'プール構築マニュアル':
-      - '0-はじめに': './setup/0-start-guide.md'
       - '1-Ubuntu初期設定': './setup/1-ubuntu-setup.md'
       - '2-ノードインストール': './setup/2-node-setup.md'
       - '3-リレー/BPの接続': './setup/3-relay-bp-setup.md'
@@ -114,13 +114,16 @@ nav:
       - '＊寄付とクレジット': './setup/99-donation-credit.md'
     - 'プール運用マニュアル':
       - '運用ガイド': './operation/start-guide.md'
-      - 'KESの更新': './operation/kes-update.md'
-      - 'プール情報の更新': './operation/cert-update.md'
+      - 'オペレーション':
+        - 'KESの更新': './operation/kes-update.md'
+        - 'プール情報更新': './operation/cert-update.md'
+        - '資金引き出し': './operation/withdrawal.md'
+        - 'プール廃止処理': './operation/pool-retire.md'
       - 'ノードアップデート': './operation/node-update.md'
-      - '資金引き出し': './operation/withdrawal.md'
-      - 'プール廃止': './operation/pool-retire.md'
-      - 'SJG TOOL': './operation/tool.md'
-      - 'rsync+ssh設定': './operation/rsync-ssh.md'
+      - 'SJGツール導入設定': './operation/tool.md'
+      - 'サーバー間転送設定':
+        - '事前設定': './operation/rsync-ssh.md'
+        - 'ファイル転送手順': './operation/transfer.md'
       - 'SFTPソフト設定': './operation/sftp.md'
       - 'BPポート変更': './operation/bpport.md'
       #- 'SJG修正プログラム': './operation/sjg-fixed.md'

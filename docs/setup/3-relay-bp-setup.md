@@ -1,7 +1,14 @@
 # **3. リレーとBPを接続する**
 
 !!! caution "前提条件"
-    リレーサーバー及びBPサーバーでノードが最新ブロックに同期してから以下を実施してください
+    以下の項目を実施する前にリレー/BPノードが起動しているか確認してください。
+    ```
+    cardano-cli query tip --mainnet | grep syncProgress
+    ```
+
+    戻り値確認
+    `"syncProgress": "100.00"`  
+    > 戻り値が99以下の場合は100(最新ブロックまで同期)になるまで待ちましょう。
 
 !!! abstract "BPとリレーの役割"
 
@@ -15,7 +22,24 @@
 
 
 
-## **3-1. Topologyファイルの修正**
+## 3-1. リレーサーバーの設定変更
+
+### 3-1-1. ファイアウォール設定を変更
+
+!!! attention "設定前の注意事項"
+    ご利用のVPSによっては管理画面からFWを設定する場合があります（例AWS系など）  
+    その場合は以下の設定を行わず、VPSマイページ管理画面などから個別に設定してください。
+
+リレーノードで使用する `6000` 番ポートのインバウンド通信を許可する。任意の番号で設定している場合はその番号を許可する。
+
+=== "リレーノード"
+  ```bash
+  sudo ufw allow 6000/tcp
+  sudo ufw reload
+  ```
+
+### 3-1-2. Topologyファイル変更
+
 
 !!! hint "**topology.json** とは？"
 
@@ -31,7 +55,8 @@
 
 
 === "リレーノード"
-**「xxx.xxx.xxx.xxx」はBPのパブリックIP(静的)アドレスとポート番号**に置き換えて下さい
+自身のリレーノードから接続するノードを指定します。  
+「xxx.xxx.xxx.xxx」はBPのパブリックIP(静的)アドレスと[2-4で設定した](../setup/2-node-setup.md#2-4)BPポート番号に置き換えて下さい。
 
 ```bash
 cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF 
@@ -58,23 +83,79 @@ EOF
 sudo systemctl reload-or-restart cardano-node
 ```
 
-自身のブロックプロデューサーノード上で以下のコマンドを実行します。 
+## 3-2. BPサーバーの設定変更
 
-=== "ブロックプロデューサーノード"
-**「xxx.xxx.xxx.xxx」はリレーのパブリックIP(静的)アドレス**に置き換えて下さい
+### 3-2-1. ファイアウォール設定を変更
+
+!!! tip "BPのセキュリティ"
+    BPサーバーにはプール運営の秘密鍵を保管するため、ファイアウォールでリレーサーバーからの通信のみに限定する必要があります。
+
+BPノードに設定したポート番号を確認する
 ```bash
-cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF 
- {
-    "Producers": [
-      {
-        "addr": "xxx.xxx.xxx.xxx",
-        "port": 6000,
-        "valency": 1
-      }
-    ]
-  }
-EOF
+PORT=`grep "PORT=" $NODE_HOME/startBlockProducingNode.sh`
+b_PORT=${PORT#"PORT="}
+echo "BPポートは${b_PORT}です"
 ```
+
+BPノードで使用する `xxxx` 番ポート(上記で表示された番号)の通信を許可する。  
+  
+`<リレーノード1のIP>` の `<>`を除いてIPのみ入力してください。`xxxx`は上記で表示されたBPポート番号に置き換えてコマンドを実行してください。
+
+=== "BP(リレー1台の場合)"
+    ```bash
+    sudo ufw allow from <リレーノード1のIP> to any port xxxxx
+    sudo ufw reload
+    ```
+
+=== "BP(リレー2台の場合)"
+    ```bash
+    sudo ufw allow from <リレーノード1のIP> to any port xxxxx
+    sudo ufw allow from <リレーノード2のIP> to any port xxxxx
+    sudo ufw reload
+    ```
+    > 上記は`xxxxで指定したBPポートに対しリレーIPからの通信のみ許可する`という設定になります
+
+### 3-2-2. Topologyファイル変更
+
+!!! hint "ヒント"
+    自身のBPノードから接続するリレーノードのIPとポート番号を指定します。
+    あらかじめ、**「xxx.xxx.xxx.xxx」はご自身のリレーサーバーパブリックIP(静的)アドレスとポート番号**　に置き換えてからコマンドを実行して下さい。リレー台数分記載します。
+
+=== "BP(リレー1台の場合)"
+
+    ```bash
+    cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF 
+    {
+        "Producers": [
+          {
+            "addr": "xxx.xxx.xxx.xxx",
+            "port": 6000,
+            "valency": 1
+          }
+        ]
+      }
+    EOF
+    ```
+
+=== "BP(リレー2台の場合)"
+    ```bash
+    cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF 
+    {
+        "Producers": [
+          {
+            "addr": "aa.xxx.xxx.xxx",
+            "port": 6000,
+            "valency": 1
+          },
+          {
+            "addr": "bb.xxx.xxx.xxx",
+            "port": 6000,
+            "valency": 1
+          }
+        ]
+      }
+    EOF
+    ```
 
 BPノードを再起動する
 ```

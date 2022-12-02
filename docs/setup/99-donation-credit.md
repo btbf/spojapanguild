@@ -1,10 +1,5 @@
 # **＊寄付とクレジット**
 
-!!! info ""
-    このマニュアル制作に携わった全ての方に、感謝申し上げます。 快く翻訳を承諾して頂いた、[CoinCashew](https://www.coincashew.com/)には敬意を表します。
-    この活動をサポートして頂ける方は、是非寄付をよろしくお願い致します。
-
-
 ### SPO JAPAN GUILDへの寄付
 SPO JAPAN GUILDでは、ステークプール構築マニュアルの整備、コミュニティの運営、ホームページでの認知活動など皆様のプール運営をサポートしております。
 今後もカルダノ分散化を促進するためにも、継続性のある活動を行ってまいります。
@@ -23,18 +18,17 @@ SPO JAPAN GUILDでは、ステークプール構築マニュアルの整備、�
     ![](../images/handle.png)
 
 
-### X StakePoolへの委任 
- 
-カルダノ分散化、日本コミュニティ発展の為に日本語化させて頂きました。私達をサポート頂ける方は当プールへ委任頂けますと幸いです。  
-* Ticker：XSP / XSP2
-Pool ID↓  
-!!! quote "XSP"
+### SPO JAPAN GUILDプールへの委任 
+
+私達をサポート頂ける方は当プールへ委任頂けますと幸いです。  
+
+!!! attention "注意"
+    当プールは日本の税制による影響でステーキングを行っていない方が、カルダノネットワークに貢献できるために作られた手数料100%プールです。
+    そのため<font color=red>委任報酬は発生しません</font>ので予めご了承下さい。
+
+!!! quote "Ticker：SJG"
     ```bash
-    pool10zyf32q3w3n9x940j6yqgkwuegzn77p94wcmpku6gvmrqw8a97d
-    ```
-!!! quote "XSP2"
-    ```
-    pool14fjmlppz76667ws3jl5luejf2wgztuhpsftulvh3ucc65anqgve
+    pool1sqpksswmxpgk6yxllyq9ad4qhtnt5qyz2pv5xmz6kkt5ujrgqwf
     ```
 
 <!--

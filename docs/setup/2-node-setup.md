@@ -109,6 +109,9 @@ Installation may take a while.
 
 ⇒Enter
 
+!!! attention "Cabal/GHCバージョンについて"
+    最新バージョンはcardano-node/cliのビルドに失敗するため必ず以下で指定されたバージョンをインストールしてください。
+
 ghcupセットアップ確認
 ```bash
 source ~/.bashrc
@@ -135,7 +138,7 @@ echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
 ```
 接続するネットワークを指定する
 !!! info "確認"
-    通常はメインネットを選択してください。2種類のテストネットは一部パラメーターが異なります。
+    通常はメインネットを選択してください。2種類のテストネットは一部パラメーターが異なり開発者向けとなります。
 
 === "メインネット"
     ```
@@ -174,8 +177,7 @@ ghc --version
 ## **2-2. ソースコードからビルド**
 
 !!! info "確認"
-    バイナリーファイルは必ずソースコードからビルドするようにし、整合性をチェックしてください。  
-    IOGは現在ARMアーキテクチャ用のバイナリファイルを提供していません。Raspberry Piを使用してプールを構築する場合は、ARM用コンパイラでコンパイルする必要があります。
+    バイナリーファイルは必ずソースコードからビルドするようにし、整合性をチェックしてください。IOGは現在ARMアーキテクチャ用のバイナリファイルを提供していません。Raspberry Piを使用してプールを構築する場合は、ARM用コンパイラでコンパイルする必要があります。
 
 
 Gitからソースコードをダウンロードし、最新のタグに切り替えます。
@@ -185,12 +187,14 @@ cd $HOME/git
 git clone https://github.com/input-output-hk/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/1.35.3
+git checkout tags/1.35.4
 ```
 
 Cabalのビルドオプションを構成します。
 
 ```bash
+cabal clean
+cabal update
 cabal configure -O0 -w ghc-8.10.7
 ```
 
@@ -228,10 +232,13 @@ cardano-node version
 cardano-cli version
 ```
 
-最新バージョン確認コマンド
-```
-curl -s https://api.github.com/repos/input-output-hk/cardano-node/releases/latest | jq -r .tag_name
-```
+以下の戻り値を確認する  
+>cardano-cli 1.35.4 - linux-x86_64 - ghc-8.10
+git rev ebc7be471b30e5931b35f9bbc236d21c375b91bb
+
+>cardano-node 1.35.4 - linux-x86_64 - ghc-8.10
+git rev ebc7be471b30e5931b35f9bbc236d21c375b91bb  
+
 
 ## **2-3. ノード設定ファイルの修正**
 
@@ -274,7 +281,7 @@ source $HOME/.bashrc
 全行をコピーしコマンドラインに送信します。
 
 === "リレーノード"
-    リレーノードポート番号を指定してターミナルで実行する
+    リレーノードで使用するポート番号を指定してターミナルで実行する
     ```bash
     PORT=6000
     ```
@@ -298,14 +305,12 @@ source $HOME/.bashrc
 === "ブロックプロデューサーノード"
 
     !!! error "注意"
-        * BPノードで使用するポートはセキュリティを高めるために、49513～65535までの任意番号を設定してください。
-        * ここで設定するBPノード用ポート番号は、[「1-9.ファイアウォールを構成する」](./1-ubuntu-setup.md#1-9)で設定した同じ番号を指定してください。
+        * BPノードポートはセキュリティを高めるために、49513～65535までの任意番号を設定してください。ここで設定する番号は1-3で設定した<font color=red>SSHポート番号とは別の番号</font>を設定してください.
 
-    BPノードポート番号を指定してターミナルで実行する
+    BPノードで使用するポート番号を指定してターミナルで実行する
     ```bash
     PORT=xxxxx
     ```
-    > xxxxxを49513～65535までの任意番号で指定してください
 
     起動スクリプトファイルを作成する
     ```bash
@@ -504,15 +509,31 @@ chmod 755 gLiveView.sh
 
 **env** ファイル内の定義を修正します
 
+=== "リレーノード"
+    ```bash
+    PORT=`grep "PORT=" $NODE_HOME/startRelayNode1.sh`
+    b_PORT=${PORT#"PORT="}
+    echo "リレーポートは${b_PORT}です"
+
+    ```
+
+=== "ブロックプロデューサーノード"
+    ```bash
+    PORT=`grep "PORT=" $NODE_HOME/startBlockProducingNode.sh`
+    b_PORT=${PORT#"PORT="}
+    echo "リレーポートは${b_PORT}です"
+    ```
+
+
 ```bash
 sed -i $NODE_HOME/scripts/env \
     -e '1,73s!#CNODE_HOME="/opt/cardano/cnode"!CNODE_HOME=${NODE_HOME}!' \
-    -e '1,73s!#CNODE_PORT=6000!CNODE_PORT='${PORT}'!' \
+    -e '1,73s!#CNODE_PORT=6000!CNODE_PORT='${b_PORT}'!' \
     -e '1,73s!#UPDATE_CHECK="Y"!UPDATE_CHECK="N"!' \
     -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/'${NODE_CONFIG}'-config.json"!' \
     -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node0.socket"!SOCKET="${CNODE_HOME}/db/socket"!'
 ```
-    
+
 Guild Liveviewを起動します。
 
 ```text
@@ -520,6 +541,18 @@ Guild Liveviewを起動します。
 ```
 
 ![Guild Live View](../images/glive.PNG)
+
+
+!!! hint "GliveView起動ショートカットコード登録"
+    スクリプトへのパスを通し、任意の単語で起動出来るようにする。
+    ```bash
+    echo alias glive="'cd $NODE_HOME/scripts; ./gLiveView.sh'" >> $HOME/.bashrc
+    source $HOME/.bashrc
+    ```
+
+    コマンドラインに`glive`と入力するだけで、どこからでも起動できます。   
+    
+
 
 ??? info "gLiveViewについて▼"
     * **このツールを立ち上げてもノードは起動しません。ノードは別途起動しておく必要があります**  
@@ -537,17 +570,8 @@ Guild Liveviewを起動します。
     0エポックからブロックチェーンデータをダウンロードし同期します。最新エポックまで追いつくまでに1日半～2日かかり、完全に同期するまで次の項目には進めません。
     BPサーバーや2つ目のリレーサーバーでも同じ作業を実施してください。
 
-!!! hint "ヒント"
-    スクリプトへのパスを通し、任意の単語で起動出来るようにする。
-    ```bash
-    echo alias glive="'cd $NODE_HOME/scripts; ./gLiveView.sh'" >> $HOME/.bashrc
-    source $HOME/.bashrc
-    ```
 
-    単語を入力するだけで、どこからでも起動できます。   
-    glive・・・gLiveView.sh  
-
-## **2-8. エアギャップオフラインマシンの作成**
+## **2-8. エアギャップマシンセットアップ**
 !!! info "エアギャップマシンとは？"
 
     エアギャップオフラインマシンは「コールド環境」と呼ばれコンピュータネットワークにおいてセキュリティを高める方法の一つ。 安全にしたいコンピュータやネットワークを、インターネットや安全でないLANといったネットワークから物理的に隔離することを指す。
@@ -558,7 +582,8 @@ Guild Liveviewを起動します。
     * ネットワーク上にあるVMマシンではありません。
     * エアギャップについて更に詳しく知りたい場合は、[こちら](https://ja.wikipedia.org/wiki/%E3%82%A8%E3%82%A2%E3%82%AE%E3%83%A3%E3%83%83%E3%83%97)を参照下さい。
 
-１．「2-1. 依存関係インストール」と「2-2. ソースコードからビルド」をエアギャップオフラインマシンで実行する  
+１．[2-1. 依存関係インストール](./2-node-setup.md#2-1)と[2-2. ソースコードからビルド](./2-node-setup.md#2-2)をエアギャップマシンで実行する  
+  
 ２．以下のパスを環境変数にセットし、フォルダを作成します。
 
 ```
@@ -568,30 +593,3 @@ echo export NODE_NETWORK="--mainnet" >> $HOME/.bashrc
 source $HOME/.bashrc
 mkdir -p $NODE_HOME
 ```
-
-
-## **systemd活用コマンド**
-!!! example "systemd活用コマンド" 
-    以下は、systemdを有効活用するためのコマンドです。
-    必要に応じで実行するようにし、一連の流れで実行しないでください
-
-
-#### 🗄 ログのフィルタリング
-
-昨日のログ
-```bash
-journalctl --unit=cardano-node --since=yesterday
-```
-> コマンド入力に戻る場合は「Ctrl＋C」（ノードは終了しません）
-
-今日のログ
-```bash
-journalctl --unit=cardano-node --since=today
-```
-> コマンド入力に戻る場合は「Ctrl＋C」（ノードは終了しません）
-
-期間指定
-```bash
-journalctl --unit=cardano-node --since='2020-07-29 00:00:00' --until='2020-07-29 12:00:00'
-```
-> コマンド入力に戻る場合は「Ctrl＋C」（ノードは終了しません）
