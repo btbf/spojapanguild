@@ -6,7 +6,7 @@
 
 
 !!! info "制作クレジット"
-    このツールは海外ギルドオペレーター制作の[CNCLI By AndrewWestberg](https://github.com/AndrewWestberg/cncli)、[logmonitor by Guild Operators](https://cardano-community.github.io/guild-operators/#/Scripts/logmonitor)、[Guild LiveView](https://cardano-community.github.io/guild-operators/#/Scripts/gliveview)、[BLOCK LOG for CNTools](https://cardano-community.github.io/guild-operators/#/Scripts/cntools)を組み合わせたツールとなっております。カスタマイズするにあたり、開発者の[AHLNET(AHL)](https://twitter.com/olaahlman)にご協力頂きました。ありがとうございます。
+    このツールは海外ギルドオペレーター制作の[CNCLI By AndrewWestberg](https://github.com/cardano-community/cncli)、[logmonitor by Guild Operators](https://cardano-community.github.io/guild-operators/#/Scripts/logmonitor)、[Guild LiveView](https://cardano-community.github.io/guild-operators/#/Scripts/gliveview)、[BLOCK LOG for CNTools](https://cardano-community.github.io/guild-operators/#/Scripts/cntools)を組み合わせたツールとなっております。カスタマイズするにあたり、開発者の[AHLNET(AHL)](https://twitter.com/olaahlman)にご協力頂きました。ありがとうございます。
 
 
 
@@ -55,7 +55,7 @@
 ## **10-1. CNCLIインストール**
 
 !!! info "CNCLIについて"
-    [AndrewWestberg](https://twitter.com/amw7)さんによって開発された[CNCLI](https://github.com/AndrewWestberg/cncli)はプールのブロック生成スケジュールを算出し、Shelley期におけるSPOに革命をもたらしました。
+    [AndrewWestberg](https://twitter.com/amw7)さんによって開発された[CNCLI](https://github.com/cardano-community/cncli)はプールのブロック生成スケジュールを算出し、Shelley期におけるSPOに革命をもたらしました。
 
   
 RUST環境を準備します
@@ -131,8 +131,6 @@ chmod 755 cncli.sh
 chmod 755 logMonitor.sh
 chmod 755 gLiveView.sh
 chmod 755 blocks.sh
-cd ../
-chmod 400 vrf.vkey
 ```
 
 **設定ファイルを修正する**
@@ -365,6 +363,7 @@ tmux ls
 
 !!! info "確認"
     ノードを再起動してから、約20秒後に4プログラムがバックグラウンドで起動中であればOKです
+    
     * cncli  
     * leaderlog  
     * validate  

@@ -79,6 +79,44 @@ grafanaインストール
     sudo ufw reload
     ```
 
+prometheus-node-exporterアップデート
+
+=== "全サーバー"
+    prometheus-node-exporterのパスを取得する
+    ```bash
+    cd $HOME/git
+    nodeexPath=`which prometheus-node-exporter`
+    ```
+
+    1.5.0をダウンロードする
+    ```bash
+    wget https://github.com/prometheus/node_exporter/releases/download/v1.5.0/node_exporter-1.5.0.linux-amd64.tar.gz
+    ```
+
+    ダウンロードファイルを解凍する
+    ```bash
+    tar xvf node_exporter-1.5.0.linux-amd64.tar.gz
+    ```
+
+    サービスを停止する
+    ```bash
+    sudo systemctl stop prometheus-node-exporter.service
+    ```
+    
+    バイナリファイルをシステムフォルダへコピーする
+    ```bash
+    cd node_exporter-1.5.0.linux-amd64
+    sudo cp node_exporter $nodeexPath
+    ```
+
+    バージョン確認
+    
+    ```bash
+    prometheus-node-exporter --version
+    ```
+    > 戻り値1行目が`node_exporter, version 1.5.0`ならOK
+
+
 ## **2.設定ファイルの作成**
 
 リレーノード1にインストールしたPrometheusの設定ファイルを作成します。ここに記載されたサーバーのデータを取得します。
@@ -178,6 +216,11 @@ prometheus.ymlを移動します
     sudo mv prometheus.yml /etc/prometheus/prometheus.yml
     ```
 
+    Grafanaプラグインをインストールする
+    ```
+    sudo grafana-cli plugins install yesoreyeram-infinity-datasource
+    ```
+
 サービスを起動します。
 
 === "リレーノード1"
@@ -195,6 +238,11 @@ prometheus.ymlを移動します
     ```bash
     sudo systemctl --no-pager status grafana-server.service prometheus.service prometheus-node-exporter.service
     ```
+    !!! hint "戻り値確認"
+        * grafana-server.service
+        * prometheus.service
+        * prometheus-node-exporter.service  
+        上記3つのプログラムが 緑色 `active (running)` になっていることを確認する。
 
 
 ## **3.ノード設定ファイルの更新**
@@ -222,19 +270,30 @@ prometheus.ymlを移動します
 3. パスワードを変更します。
 4. 左メニューの歯車アイコンから データソースを追加します。
 5. 「Add data source」をクリックし、「Prometheus」を選択します。
-6. 名前は **Prometheus**としてください。
+6. 名前は `Prometheus`としてください。
 7. **URL** を [http://localhost:9090](http://localhost:9090)に設定します。
-8. **Save & Test**をクリックします。
-9. こちらの[JSONファイル](https://raw.githubusercontent.com/akyo3/Extends-SJG-Knowledge/main/SJG_Grafana_Dashboard.json)を開き、内容を全選択してコピーします。
-10. 左メニューから**Create +** iconを選択 &gt; **Import**をクリックします。
-11. 9でコピーした内容を「Import via panel json」に貼り付けます
-12. **Load**ボタンをクリックし、次の画面で***Import**ボタンをクリックします。
+8. **Save & Test**をクリックし`Data source is working`と表示されたら`back`をクリックします。
+9. 再度「Add data source」をクリックし、下部にある「Infinity」をクリックします。
+10. 設定内容を変更することなく、**Save & Test**をクリックし`OK. Settings saved`と表示されたら`back`をクリックします。
+11. BPサーバーでパネル用JSONファイルをダウンロードします。
+=== "ブロックプロデューサーノード"
+```
+curl -s -o $NODE_HOME/SJG_Grafana_Dashboard.json https://raw.githubusercontent.com/akyo3/Extends-SJG-Knowledge/main/SJG_Grafana_Dashboard.json
+```
+一部ファイル内容を書き換える
+```
+sed -i $NODE_HOME/SJG_Grafana_Dashboard.json \
+    -e "s/bech32_id_of_your_pool/$(cat $NODE_HOME/stakepoolid_bech32.txt)/g"
+```
+12. BPの`cnode`フォルダにある`SJG_Grafana_Dashboard.json`をローカルPCにダウンロードします  
+13. 左メニューの□アイコン(Dashboards)→`+import`をクリックします。  
+14. 「Upload JSON file」をクリックし、10でダウンロードした`SJG_Grafana_Dashboard.json`を指定します。  
+15. 「Prometheus」と「Infinity」のプルダウンを選択し`Import`ボタンをクリックします。  
 
 
-![Grafana system health dashboard](https://gblobscdn.gitbook.com/assets%2F-M5KYnWuA6dS_nKYsmfV%2F-MJFWbLTL5oVQ3taFexL%2F-MJFX9deFAhN4ks6OQCL%2Fdashboard-kaze.jpg?alt=media&token=f28e434a-fcbf-40d7-8844-4ff8a36a0005)
+![Grafana system health dashboard](../images/grafana-dashboard-sample.png)
 
 
 
 !!! success "🎊おめでとうございます🎊"
-これで基本的な監視設定は完了です。必要に応じてノード異常時の通知設定を行ってください
-{% endhint %}
+    これで基本的な監視設定は完了です。必要に応じてノード異常時の通知設定を行ってください

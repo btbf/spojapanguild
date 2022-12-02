@@ -1,7 +1,7 @@
 # **ノードアップデートマニュアル**
 
 !!! note "対応バージョン" 
-    2022年11月25日時点でこのガイドは v.1.35.4に対応しています
+    このガイドは ノードバージョン.1.35.4に対応しています。最終更新日：2022年12月1日
 
 
 !!! info "概要"
@@ -11,7 +11,7 @@
 
 
 !!! info "v.1.35.4主な変更点と新機能"
-    
+    * プロトコル バージョン8 SECP256K1の使用をサポート
 
 
 !!! error "よくお読みになって進めてください"
@@ -33,16 +33,6 @@ sudo apt update -y
 ```bash
 sudo apt upgrade -y
 ```
-ノードをストップする
-```bash
-sudo systemctl stop cardano-node
-```
-サーバーを再起動する
-```bash
-sudo reboot
-```
-
-SSHで再接続する
 
 ### **1-2. cabal/GHCバージョン確認**
 
@@ -84,8 +74,6 @@ compiled using version 3.6.2.0 of the Cabal library
     ghcup set cabal 3.6.2.0
     ```
 
-
-
 GHCバージョン確認
 ```bash
 ghc --version
@@ -104,8 +92,55 @@ ghc --version
     ```
     > GHCのバージョンは「8.10.7」であればOK
 
+### **1-3.node-exporterバージョン確認**
 
-### **1-3.CNCLIバージョン確認(BPのみ)**
+```
+prometheus-node-exporter --version
+```
+> 戻り値1行目が`node_exporter, version 1.5.0`ならOK
+
+??? danger "node_exporter, version 1.4.1以下だった場合(クリックして開く)"
+    prometheus-node-exporterのパスを取得する
+    ```bash
+    cd $HOME/git
+    nodeexPath=`which prometheus-node-exporter`
+    ```
+
+    1.5.0をダウンロードする
+    ```bash
+    wget https://github.com/prometheus/node_exporter/releases/download/v1.5.0/node_exporter-1.5.0.linux-amd64.tar.gz
+    ```
+
+    ダウンロードファイルを解凍する
+    ```bash
+    tar xvf node_exporter-1.5.0.linux-amd64.tar.gz
+    ```
+
+    サービスを停止する
+    ```bash
+    sudo systemctl stop prometheus-node-exporter.service
+    ```
+    
+    バイナリファイルをシステムフォルダへコピーする
+    ```bash
+    cd node_exporter-1.5.0.linux-amd64
+    sudo cp node_exporter $nodeexPath
+    ```
+
+    バージョン確認
+    
+    ```bash
+    prometheus-node-exporter --version
+    ```
+    > 戻り値1行目が`node_exporter, version 1.5.0`ならOK
+
+    サービスをスタートする
+    ```bash
+    sudo systemctl start prometheus-node-exporter.service
+    ```
+
+
+### **1-4.CNCLIバージョン確認(BPのみ)**
 
 CNCLIバージョン確認
 ```
@@ -195,6 +230,10 @@ git rev ebc7be471b30e5931b35f9bbc236d21c375b91bb
 >cardano-node 1.35.4 - linux-x86_64 - ghc-8.10
 git rev ebc7be471b30e5931b35f9bbc236d21c375b91bb  
 
+**ビルド用TMUXセッションを終了する** 
+```
+exit
+```
 
 **ノードをストップする** 
 ```
@@ -225,16 +264,18 @@ git rev ebc7be471b30e5931b35f9bbc236d21c375b91bb
 >cardano-node 1.35.4 - linux-x86_64 - ghc-8.10
 git rev ebc7be471b30e5931b35f9bbc236d21c375b91bb 
 
-ビルド用TMUXセッションを終了する
-```
-exit
-```
+### **2-4.サーバー再起動**
 
-### **2-4.ノード起動**
-
+サーバーを再起動する
 ```bash
-sudo systemctl start cardano-node
+sudo reboot
 ```
+
+SSHで再接続し、ノード同期状況を確認する
+
+!!! info "ヒント"  
+    * GliveViewでノード状況を確認する
+    * Syncing 100%がTip(diff): ** :)となるまで待つ
 
 
 ### **2-5.作業フォルダリネーム**
@@ -253,7 +294,7 @@ mv cardano-node2/ cardano-node/
     **複数台のサーバーがある場合に、以下の処理を行うことでビルド時間の短縮やノードのダウンタイムを抑えることが出来ます。**
 
 !!! error "デメリット"
-    * RSYNC+SSHを利用したアップデート方法は、転送元・転送先サーバーのディスク空き容量が150GB以上必要となります。
+    * RSYNC+SSHを利用したアップデート方法は、DBフォルダ転送を行う場合に転送元・転送先サーバーのディスク空き容量が150GB以上必要となります。
 
 !!! hint "はじめに"
 
@@ -271,7 +312,7 @@ df -h /usr
 
 ### 3-1.転送元サーバー作業
 !!! hint "確認"
-    この作業(3-2)は1回で大丈夫です。
+    この作業は1回で大丈夫です。
 
 === "転送元サーバー"
     **バイナリーファイルを転送フォルダ用にコピーする**
@@ -393,10 +434,14 @@ tmux new -s tar
     -->
 
 
-    ノードを起動する
+    ### **2-4.サーバー再起動**
+
+    サーバーを再起動する
+    ```bash
+    sudo reboot
     ```
-    sudo systemctl start cardano-node
-    ```
+
+    SSH接続してノード起動を確認する
 
     !!! info "ヒント"  
         * GliveViewでノード状況を確認する

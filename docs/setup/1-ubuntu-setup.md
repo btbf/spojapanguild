@@ -11,7 +11,7 @@
 
 ## **1-1.オススメのターミナルソフト**
 
-1.R-Login(Windows) 
+1.R-Login(Windows)   
 [https://kmiya-culti.github.io/RLogin/](https://kmiya-culti.github.io/RLogin/) 
 
 2.Terminal(Mac)  
@@ -173,8 +173,9 @@ sudo service sshd reload
 
 標準のUFWファイアウォールを使用して、インバウンドアクセスポートを限定します。
 
-??? info "AWSをご利用の場合"
-    AWS系の場合は以下の設定は行わず、「セキュリティグループの設定(インバウンド)」画面にて個別に行ってください。
+??? info "設定前の注意事項"
+    ご利用のVPSによっては管理画面からFWを設定する場合があります（例AWS系など）  
+    その場合は以下の設定を行わず、VPSマイページ管理画面などから個別に設定してください。
 
 ??? info "さくらVPSをご利用の場合"
     管理画面からパケットフィルターを、”利用しない”に設定してください。    
@@ -192,6 +193,12 @@ sudo ufw enable
 以下のメッセージが表示されたら `y` を入力して `Enter`
 > Command may disrupt existing ssh connections. Proceed with operation (y|n)? y
 
+ステータス確認
+```
+sudo ufw status
+```
+以下の戻り値があればOK
+> Status: active
 
 ## **1-5.システムを更新する**
 

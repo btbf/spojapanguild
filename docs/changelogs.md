@@ -1,5 +1,20 @@
 # 変更履歴
 
+## 2022/12/02　ver. 12.4.0
+
+!!! note ""
+    * Cardano-node1.35.4対応
+    * prometheus-node-exporter1.5.0アップデート手順追加  
+        ([9.監視ツールセットアップ](./setup/9-monitoring-tools-setup.md)、[ノードアップデート](./operation/node-update.md#1-3node-exporter))
+    * [エアギャップマシン作成](./setup/air-gap-guid.md) ページ新設。Version7対応
+    * [1.Ubuntu初期設定](./setup/1-ubuntu-setup.md)ファイアウォール設定の一部を変更  
+        (設定が必要な各ページ([3-リレー/BPの接続](./setup/3-relay-bp-setup.md)、[9.監視ツールセットアップ](./setup/9-monitoring-tools-setup.md))へ移動)
+    * リレー2台目以降の設定手順を各ページに追加
+    * [Grafanaダッシュボードテンプレート](./setup/9-monitoring-tools-setup.md#4grafana)を更新。  
+        (KoiosAPIを利用しティッカー名、プール委任量、委任者数情報表示)
+    * [プール運用ガイド](./operation/start-guide.md)カテゴリを整理
+    * 軽微な修正
+
 ## 2022/10/17　ver. 12.3.6
 
 !!! note ""

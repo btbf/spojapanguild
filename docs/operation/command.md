@@ -142,3 +142,25 @@ sudo reboot
 ```
 ssh -i /Users/ローカルユーザ名/ローカル格納先/id_rsa 接続先ユーザ名@接続先IP -p ポート番号
 ```
+
+## **systemd活用コマンド**
+
+#### 🗄 ログのフィルタリング
+
+昨日のログ
+```bash
+journalctl --unit=cardano-node --since=yesterday
+```
+> コマンド入力に戻る場合は「Ctrl＋C」（ノードは終了しません）
+
+今日のログ
+```bash
+journalctl --unit=cardano-node --since=today
+```
+> コマンド入力に戻る場合は「Ctrl＋C」（ノードは終了しません）
+
+期間指定
+```bash
+journalctl --unit=cardano-node --since='2020-07-29 00:00:00' --until='2020-07-29 12:00:00'
+```
+> コマンド入力に戻る場合は「Ctrl＋C」（ノードは終了しません）
