@@ -433,9 +433,6 @@ tmux new -s tar
     ```
     -->
 
-
-    ### **2-4.サーバー再起動**
-
     サーバーを再起動する
     ```bash
     sudo reboot
