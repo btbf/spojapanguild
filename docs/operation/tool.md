@@ -1,6 +1,6 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2022/10/04 v3.4.2
+最終更新日：2022/10/04 v3.4.4
 
 !!! info "主な機能"
 
@@ -67,6 +67,15 @@ gtool
     また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
 
 ## 更新履歴
+
+### 3.4.4
+
+    * Preview / PreProd テストネット対応（envファイル更新必須）
+    * ブロック生成チェック総合判定導入
+
+### 3.4.3
+
+    * 軽微な修正
 
 ### 3.4.2
 

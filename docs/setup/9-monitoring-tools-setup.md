@@ -109,6 +109,11 @@ prometheus-node-exporterアップデート
     sudo cp node_exporter $nodeexPath
     ```
 
+    サービスをスタートする
+    ```bash
+    sudo systemctl start prometheus-node-exporter.service
+    ```
+    
     バージョン確認
     
     ```bash
