@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=3.4.4
+TOOL_VERSION=3.4.5
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -519,10 +519,44 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     printf "　　　プールID :${FG_CYAN}`cat $NODE_HOME/pooldata.txt | jq -r ".[].pool_id_bech32"`${NC}\n"
     printf "ライブステーク :${FG_GREEN}$live_Stake${NC} ADA\n"
     printf "　有効ステーク :$active_Stake\n"
-
+    echo
     okCnt=1
 
+    #MetaHashチェック
+    
+    metaChainHash=`cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_hash"`
+    metaFileUrl=`cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_url"`
+    mkdir $NODE_HOME/metaCheck
+    wget -q $metaFileUrl -O $NODE_HOME/metaCheck/poolMetaData.json
+    cat $NODE_HOME/metaCheck/poolMetaData.json | jq . > $NODE_HOME/metaCheck/metaCheck.json 2>&1
+    metaCheck=`cat $NODE_HOME/metaCheck/metaCheck.json | grep name`
+    printf "${FG_MAGENTA}■メタデータチェック${NC}： "
+    if [ -z "$metaCheck" ]; then
+      printf "${FG_RED}NG${NC}　"
+      printf "メタデータ構文エラーです\n"
+      echo "サーバー(またはGithub)にアップロードされているpoolMetaData.jsonの構文エラーを修正し"
+      echo "プール運用マニュアルの「プール情報更新」で再登録してください"
+      echo
+    else
+      metaFileHash=`cardano-cli stake-pool metadata-hash --pool-metadata-file $NODE_HOME/metaCheck/poolMetaData.json`
+      if [ $metaChainHash == $metaFileHash ]; then
+        printf "${FG_GREEN}OK${NC}\n"
+        printf "チェーン登録ハッシュ：${FG_YELLOW}$metaChainHash${NC}\n"
+        printf "　　ファイルハッシュ：${FG_YELLOW}$metaFileHash${NC}\n"
+        okCnt=$((${okCnt}+1))
+      else
+        printf "${FG_RED}NG${NC}　"
+        printf "チェーン登録ハッシュとファイルハッシュが異なります。\n"
+        printf "チェーン登録ハッシュ：${FG_YELLOW}$metaChainHash${NC}\n"
+        printf "　　ファイルハッシュ：${FG_YELLOW}$metaFileHash${NC}\n"
+        echo プール運用マニュアルの「プール情報更新」で再登録してください。
+      fi
+    fi
+    
+    rm -rf $NODE_HOME/metaCheck
+    
 
+    #誓約チェック
     if [[ $total_balance -ge $pledge ]]; then
       echo
       printf "${FG_MAGENTA}■誓約チェック${NC}： ${FG_GREEN}OK${NC}\n"
@@ -646,7 +680,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     echo
     printf "${FG_MAGENTA}■Peer接続状況${NC}\n"
-    peers_in=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | awk -v port=":${CNODE_PORT}" '$3 ~ port {print}' | wc -l)
+    peers_in=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | grep -v "127*" | awk -v port=":${CNODE_PORT}" '$3 ~ port {print}' | wc -l)
     peers_out=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | awk -v port=":(${CNODE_PORT}|${EKG_PORT}|${PROM_PORT})" '$3 !~ port {print}' | wc -l)
     
     if [[ $peers_in -eq 0 ]]; then
@@ -742,7 +776,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       echo
     fi
 
-    if [ $okCnt -eq 12 ]; then
+    if [ $okCnt -eq 13 ]; then
       echo
       echo -e "----${FG_GREEN}OK${NC}--------------------------------------------------------"
       printf " > 全ての項目が ${FG_GREEN}OK${NC} になりブロック生成の準備が整いました！\n"
@@ -1279,7 +1313,7 @@ tx_submit(){
               elif [ ${NETWORK_NAME} == 'PreProd' ]; then
                 echo "https://preprod.cardanoscan.io/transaction/$tx_id"
               elif [ ${NETWORK_NAME} == 'Preview' ]; then
-                echo "https://preview.cexplorer.io/tx/$tx_id"
+                echo "https://preview.cardanoscan.io/transaction/$tx_id"
               else
                 echo "TxID:$tx_id"
               fi
