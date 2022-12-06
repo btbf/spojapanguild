@@ -1,4 +1,4 @@
-#2022/12/05 v1.7 @btbf
+#2022/12/07 v1.7 @btbf
 
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
@@ -30,6 +30,13 @@ teleg_token = os.environ["teleg_token"]
 teleg_id = os.environ["teleg_id"]
 s_No = 1
 prev_block = 0
+sendStream = 'if [ ! -e "send.txt" ]; then send=0; echo $send | tee send.txt; else cat send.txt; fi'
+send = (subprocess.Popen(sendStream, stdout=subprocess.PIPE,
+                                shell=True).communicate()[0]).decode('utf-8')
+send = int(send.strip())
+
+#print(send)
+
 
 #通知基準 全て=0 confirm以外全て=1 Missedとivaildのみ=2
 if bNotify_st == "0":
@@ -101,26 +108,15 @@ def getAllRows(timing):
                         + '\r\n'\
                         + '■ブロックNo:'+str(row[4])+'\r\n'\
                         + str(btime)+'\r\n'\
-                        + str(scheduleNo)+'/ '+str(total_schedule)+' > '+ str(row[8])+'\r\n'\
+                        + str(scheduleNo)+' / '+str(total_schedule)+' > '+ str(row[8])+'\r\n'\
                         + blockUrl\
                         + '\r\n'\
                         + '次のスケジュール>>\r\n'\
                         + p_next_btime+'\r\n'\
 
-
+                    sendMessage(b_message)
                     #通知先 LINE=0 Discord=1 Slack=2 Telegram=3 ※複数通知は不可
-                    if bNotify == "0":
-                        d_line_notify(b_message)
-                    elif bNotify == "1":
-                        discord = Discord(url=dc_notify_url)
-                        discord.post(content=b_message)
-                    elif bNotify == "2":
-                        slack = slackweb.Slack(url=slack_notify_url)
-                        slack.notify(text=b_message)
-                    else:
-                        send_text = 'https://api.telegram.org/bot' + teleg_token + '/sendMessage?chat_id=' + teleg_id + '&parse_mode=Markdown&text=' + b_message
-                        response = requests.get(send_text)
-                        response.json()
+
                 else:
                     break
             else:
@@ -141,6 +137,21 @@ def getAllRows(timing):
             print("The Sqlite connection is closed\n")
             if timing == 'start':
                 print("Guild-db monitoring started\n")
+
+def sendMessage(b_message):
+    #通知先 LINE=0 Discord=1 Slack=2 Telegram=3 ※複数通知は不可
+    if bNotify == "0":
+        d_line_notify(b_message)
+    elif bNotify == "1":
+        discord = Discord(url=dc_notify_url)
+        discord.post(content=b_message)
+    elif bNotify == "2":
+        slack = slackweb.Slack(url=slack_notify_url)
+        slack.notify(text=b_message)
+    else:
+        send_text = 'https://api.telegram.org/bot' + teleg_token + '/sendMessage?chat_id=' + teleg_id + '&parse_mode=Markdown&text=' + b_message
+        response = requests.get(send_text)
+        response.json()
 
 
 def getNo(slotEpoch,ssNo):
@@ -196,8 +207,31 @@ def getEpoch():
     return bepochNo
 
     
+def getScheduleSlot():
+    slotComm = os.popen('curl -s localhost:12798/metrics | grep slotIn | grep -o [0-9]*')
+    slotn = slotComm.read()
+    slotn = int(slotn.strip())
+    global send
+    #print(send)
+    #slotn = 303000
+    if (slotn >= 302400):
+        if send == 0:
+            currentEpoch = getEpoch()
+            nextEpoch = int(currentEpoch) + 1
+            b_message = 'お知らせ📣\r\n'\
+                + '\r\n'\
+                + str(currentEpoch.strip())+'エポック'+ str(slotn)+'スロットを過ぎました\r\n'\
+                + str(nextEpoch)+'エポックのスケジュールを取得できます！'\
 
-
+            sendMessage(b_message)
+            #print ("スケジュールが取得できます")
+            send = 1
+            stream = os.popen('send=1; echo $send > send.txt')
+    else:
+        if send == 1:
+            send = 0
+            stream = os.popen('send=0; echo $send > send.txt')
+    
 
 class MyFileWatchHandler(RegexMatchingEventHandler):
 
@@ -241,6 +275,7 @@ if __name__ == "__main__":
     try:
         while True:
             time.sleep(1)
+            getScheduleSlot()
     except KeyboardInterrupt:
         observer.stop()
     observer.join()
