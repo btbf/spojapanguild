@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=3.4.5
+TOOL_VERSION=3.4.6
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -680,7 +680,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     echo
     printf "${FG_MAGENTA}■Peer接続状況${NC}\n"
-    peers_in=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | grep -v "127*" | awk -v port=":${CNODE_PORT}" '$3 ~ port {print}' | wc -l)
+    peers_in=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | grep -v "127.0.0.1" | awk -v port=":${CNODE_PORT}" '$3 ~ port {print}' | wc -l)
     peers_out=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | awk -v port=":(${CNODE_PORT}|${EKG_PORT}|${PROM_PORT})" '$3 !~ port {print}' | wc -l)
     
     if [[ $peers_in -eq 0 ]]; then
