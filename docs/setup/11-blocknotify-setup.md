@@ -13,10 +13,12 @@
     * 設定は任意です。(設定しなくてもブロック生成に影響はありません)
 
 !!! info ""
-    最終更新日：2022/02/15  v1.6
+    最終更新日：2022/12/07  v1.7
 
 
 ??? info "更新履歴▼"
+    * 1.7 スケジュール取得タイミング通知  
+        生成ブロックのPooltoolリンク追加
     * 1.6 ブロック未生成プールで使用する場合の起動時エラーを修正
     * 1.5 10分以内に複数のスケジュールがある場合の通知バグ修正
     * 1.4 次のスケジュールを表示
@@ -58,8 +60,8 @@ pip install discordwebhook python-dotenv slackweb
 
 ```bash
 cd $NODE_HOME/guild-db/blocklog
-wget -N https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/block_notify/block_check.py
-wget -N https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/block_notify/.env
+wget -N https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/block_notify/block_check.py
+wget -N https://github.com/btbf/spojapanguild/blob/master/scripts/block_notify/.env
 chmod 755 block_check.py
 ```
 
@@ -232,39 +234,11 @@ tmux a -t blockcheck
 
 ## **11-4. バージョンアップ手順**
 
-=== "1.2以降から最新へのアップデート"
-    ```
-    cd $NODE_HOME/guild-db/blocklog
-    wget https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/block_notify/block_check.py -O block_check.py
-    ```
+```
+cd $NODE_HOME/guild-db/blocklog
+wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/block_notify/block_check.py -O block_check.py
+```
 
-=== "1.1から最新へのアップデート"
-
-    Slack用モジュールをインストールする
-    ```bash
-    pip install slackweb
-    ```
-
-    既に設定済みの通知用トークンやURLを控える
-    ```
-    cd $NODE_HOME/guild-db/blocklog
-    nano .env
-    ```
-
-    設定ファイル、プログラムを更新する
-    ```
-    cd $NODE_HOME/guild-db/blocklog
-    wget https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/block_notify/.env -O .env
-    wget https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/block_notify/block_check.py -O block_check.py
-    ```
-
-    各通知先の設定は[11-2.通知アプリの設定](./11-blocknotify-setup#11-2)を参照してください
-
-    設定ファイルを変更する
-    ```
-    nano .env
-    ```
-    > Ticker、通知先、通知基準などを変更する
 
 サービスを再起動する
 ```
@@ -282,7 +256,7 @@ tmux a -t blockcheck
 cd $NODE_HOME/guild-db/blocklog
 cat block_check.py | grep -HnI -m1 -r btbf
 ```
-> block_check.py:1:#2022/02/15 v1.6 @btbf
+> block_check.py:1:#2022/12/07 v1.7 @btbf
 
 ## **11-5.通知を停止(アンインストール)する手順**
 
