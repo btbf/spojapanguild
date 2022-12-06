@@ -1,6 +1,6 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2022/10/04 v3.4.4
+最終更新日：2022/12/07 v3.4.6
 
 !!! info "主な機能"
 
@@ -67,6 +67,13 @@ gtool
     また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
 
 ## 更新履歴
+
+### 3.4.6
+
+    * ブロック生成状態チェック
+        * メタデータハッシュチェック追加
+        * PeerInカウントから127.0.0.1を除外
+    * PreviewネットワークTx確認リンクをCardanoScanへ変更
 
 ### 3.4.4
 
