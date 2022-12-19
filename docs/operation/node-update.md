@@ -1,7 +1,7 @@
 # **ノードアップデートマニュアル**
 
 !!! note "対応バージョン" 
-    このガイドは ノードバージョン.1.35.4に対応しています。最終更新日：2022年12月1日
+    このガイドは ノードバージョン.1.35.4に対応しています。最終更新日：2022年12月20日
 
 
 !!! info "概要"
@@ -210,6 +210,7 @@ cabal configure -O0 -w ghc-8.10.7
 
 ```bash
 echo -e "package cardano-crypto-praos\n flags: -external-libsodium-vrf" > cabal.project.local
+sed -i $HOME/git/cardano-node2/cabal.project -e 's!HSOpenSSL >= 0.11.7.2!HsOpenSSL == 0.11.7.2!'
 ```
 ```bash
 cabal build cardano-node cardano-cli
