@@ -181,10 +181,16 @@ sudo service sshd reload
     管理画面からパケットフィルターを、”利用しない”に設定してください。    
 
 SSHポートを許可する  
-`xxxxx`を1-3で設定したSSHポートを指定してください
+
+```
+PORT=`grep "Port" /etc/ssh/sshd_config`
+s_PORT=${PORT#"Port"}
+ssh_PORT=`echo ${s_PORT} | sed -e 's/[^0-9]//g'`
+echo ${ssh_PORT}
+```
 
 ```bash
-sudo ufw allow xxxxx/tcp
+sudo ufw allow ${ssh_PORT}/tcp
 ```
 FWを有効化
 ```bash

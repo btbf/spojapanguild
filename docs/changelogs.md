@@ -1,5 +1,12 @@
 # 変更履歴
 
+## 2023/01/05　ver. 12.4.3
+
+!!! note ""
+    * [リレーサーバー増設マニュアル](./operation/add-relay.md)を追加
+    * 軽微な修正
+
+
 ## 2022/12/20　ver. 12.4.2
 
 !!! note ""
@@ -66,7 +73,7 @@
 ## 2022/08/25　ver. 12.3.0
 !!! note ""
     * cardano-node v1.35.3 に対応
-    * [エアギャップ作成手順](./setup/0-start-guide.md#0-4)更新
+    * エアギャップ作成手順更新
     * [ノードアップデート手順](./operation/node-update.md)更新
     * [SFTPソフト設定手順](./operation/sftp.md)追加    
 

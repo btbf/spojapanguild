@@ -97,23 +97,23 @@ b_PORT=${PORT#"PORT="}
 echo "BPポートは${b_PORT}です"
 ```
 
-BPノードで使用する `xxxx` 番ポート(上記で表示された番号)の通信を許可する。  
+BPノードで使用するポート(上記で表示された番号)の通信を許可する。  
   
-`<リレーノード1のIP>` の `<>`を除いてIPのみ入力してください。`xxxx`は上記で表示されたBPポート番号に置き換えてコマンドを実行してください。
+`<リレーノード1のIP>` の `<>`を除いてIPのみ入力してください。
 
 === "BP(リレー1台の場合)"
     ```bash
-    sudo ufw allow from <リレーノード1のIP> to any port xxxxx
+    sudo ufw allow from <リレーノード1のIP> to any port ${b_PORT}
     sudo ufw reload
     ```
 
 === "BP(リレー2台の場合)"
     ```bash
-    sudo ufw allow from <リレーノード1のIP> to any port xxxxx
-    sudo ufw allow from <リレーノード2のIP> to any port xxxxx
+    sudo ufw allow from <リレーノード1のIP> to any port ${b_PORT}
+    sudo ufw allow from <リレーノード2のIP> to any port ${b_PORT}
     sudo ufw reload
     ```
-    > 上記は`xxxxで指定したBPポートに対しリレーIPからの通信のみ許可する`という設定になります
+    > 上記はBPノードポートに対し`リレーIPからの通信のみ許可する`という設定になります
 
 ### 3-2-2. Topologyファイル変更
 
