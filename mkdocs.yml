@@ -27,9 +27,11 @@ theme:
     - navigation.top
     - navigation.instant
     - navigation.tracking
+    - navigation.footer
     - search.suggest
     - search.highlight
     - search.share
+    - content.code.copy
   icon:
     repo: fontawesome/brands/github
 
