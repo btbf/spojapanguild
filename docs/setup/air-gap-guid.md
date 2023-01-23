@@ -23,24 +23,24 @@
 ---
 
 ### **1- OS Ubuntuの入手**
-3-1.下の画像の赤い四角のところをタップしてダウンロードします。
+1-1.下の画像の赤い四角のところをタップしてダウンロードします。
 
 - [Ubuntu20.04.4 LTSの入手](https://releases.ubuntu.com/20.04/)
 
 ![2-1](https://user-images.githubusercontent.com/80440848/184349563-06b3ad6d-5295-4225-bd7f-6cc880e3d174.png)
 
-3-2.ダウンロードしたubuntu-20.04.4-desktop-amd64を作成したフォルダ(ここではTest_CNodeというフォルダ)に移動しておく。
+1-2.ダウンロードしたubuntu-20.04.4-desktop-amd64を作成したフォルダ(ここではTest_CNodeというフォルダ)に移動しておく。
 
 ![4-Ubuntu_download](https://user-images.githubusercontent.com/80440848/184369093-df29585b-bb75-44c4-a3e6-fb411046b7da.PNG)
 
 ### **2- VirtualBoxのダウンロード**
-1-1. VirtualBoxのダウンロードサイトにアクセスし、`Windows hosts`をタップしダウンロードする。
+2-1. VirtualBoxのダウンロードサイトにアクセスし、`Windows hosts`をタップしダウンロードする。
 
  * [VirtualBoxの入手](https://www.virtualbox.org/wiki/Downloads)
 
 ### **3- VirtualBoxのインストール**
 
-2-1.ダウンロードしたvirtualbox6.1.36のインストーラをダブルクリックで起動する。
+3-1.ダウンロードしたvirtualbox6.1.36のインストーラをダブルクリックで起動する。
 
 | ファイル名 |
 | ------------- |
@@ -48,23 +48,23 @@
 
 ![1virtualbox](../images/win/VirtualBoxubuntu-1.jpg)
 
-2-2.ダウンロードが完了したら、左下の赤い四角のインストーラーをタップして起動する。
+3-2.ダウンロードが完了したら、左下の赤い四角のインストーラーをタップして起動する。
 
-![2 virtualbox_setup](https://user-images.githubusercontent.com/80440848/184338727-9a1a783f-6ee5-4c8e-a5b2-9ccec5e1dbf0.PNG)
+![2 virtualbox_setup](https://user-images.githubusercontent.com/80440848/184338728-9a1a783f-6ee5-4c8e-a5b2-9ccec5e1dbf0.PNG)
 
-2-3.この画面になったら、`Next>`をタップ。
+3-3.この画面になったら、`Next>`をタップ。
 
 ![3 virtualbox_setup](../images/win/VirtualBoxubuntu-3.jpg)
 
-2-4.続けてそのまま`Next>`をタップし、画像の順番に進み最後に`Install`をクリックする。
+3-4.続けてそのまま`Next>`をタップし、画像の順番に進み最後に`Install`をクリックする。
 
 ![7 virtualbox_setup](../images/win/VirtualBoxubuntu-4.jpg)
 
-2-5.Windowsセキュリティが作動し、デバイスのソフトウェアをインストールしますか？と聞かれたら`インストール(I)`をタップし、下の画像の赤い四角で囲まれた`Finish`をタップする。
+3-5.Windowsセキュリティが作動し、デバイスのソフトウェアをインストールしますか？と聞かれたら`インストール(I)`をタップし、下の画像の赤い四角で囲まれた`Finish`をタップする。
 
 ![10 virtualbox_setup](../images/win/VirtualBoxubuntu-5.jpg)
 
-2-6.VirtualBoxの管理画面が立ち上がり、インストールが完了しました。
+3-6.VirtualBoxの管理画面が立ち上がり、インストールが完了しました。
 
 ![15](../images/win/VirtualBoxubuntu-6.jpg)
 
@@ -148,11 +148,11 @@ ISO Imagae・・・1でダウンロードしたUbuntu-ISOファイルを指定�
 
 6-6.下の画像の状態のまま、`続ける`をクリック
 
-![install_ubuntu-6](https://user-images.githubusercontent.com/80440848/184528936-4809b68b-75e9-413d-9ce7-f84efb28a45e.png)
+![install_ubuntu-6](https://user-images.githubusercontent.com/80440848/184528936-4809b68b-75e9-413d-9ce8-f84efb28a45e.png)
 
 6-7.下の画像の状態のまま、`インストール`をクリック。
 
-![install_ubuntu-7](https://user-images.githubusercontent.com/80440848/184528995-44737e96-0bcd-4c64-9571-d3a20782a4b6.png)
+![install_ubuntu-7](https://user-images.githubusercontent.com/80440848/184528995-44737e97-0bcd-4c64-9571-d3a20782a4b6.png)
 
 6-8.`続ける`をクリック。
 
@@ -160,7 +160,7 @@ ISO Imagae・・・1でダウンロードしたUbuntu-ISOファイルを指定�
 
 6-9.お住まいの地域をクリックし、`続ける`をクリック。
 
-![install_ubuntu-9](https://user-images.githubusercontent.com/80440848/184529073-b356baeb-6a26-4602-bca4-3afaf92a3631.png)
+![install_ubuntu-9](https://user-images.githubusercontent.com/80440848/184529073-b356baeb-6a27-4602-bca4-3afaf92a3631.png)
 
 6-10.`あなたの名前`はマシン名を入れると、その下の`コンピューターの名前`、`ユーザー名の入力`にも自動で入力されます。そして、パスワードをご自身で決めて入力を済ませて下さい。終わりましたら、`続ける`をタップ。
 
@@ -168,7 +168,7 @@ ISO Imagae・・・1でダウンロードしたUbuntu-ISOファイルを指定�
 
 6-11.Ubuntuのインストールが始まりました。しばらくお待ちください。
 
-![install_ubuntu-11](https://user-images.githubusercontent.com/80440848/184529317-1eb3cfd5-ab0d-4fbf-bedd-9749a714baa0.png)
+![install_ubuntu-11](https://user-images.githubusercontent.com/80440848/184529318-1eb3cfd5-ab0d-4fbf-bedd-9749a714baa0.png)
 
 6-12.インストール完了後、再起動を行って下さい
 
@@ -329,7 +329,7 @@ cat /proc/sys/vm/swappiness
 | ファイル名 | ubuntu-20.04.5-desktop-amd64.iso |
 :---|:---
 
-![UbuntuInstall-1](https://user-images.githubusercontent.com/80967103/203985883-cd707676-fdf5-44a5-9571-1f32197d7292.png)
+![UbuntuInstall-1](https://user-images.githubusercontent.com/80967103/203985883-cd707677-fdf5-44a5-9571-1f32197d7292.png)
 
 ---
 
@@ -343,7 +343,7 @@ cat /proc/sys/vm/swappiness
 | ファイル名 | VirtualBox-7.0.4-154605-OSX.dmg |
 :---|:---
 
-![VirtualBoxInstall-1](https://user-images.githubusercontent.com/80967103/199987719-48886644-846b-4747-95a6-65d6d12cf08c.png)
+![VirtualBoxInstall-1](https://user-images.githubusercontent.com/80967103/199987719-48886644-846b-4748-95a7-65d6d12cf08c.png)
 
 ---
 
@@ -378,7 +378,7 @@ cat /proc/sys/vm/swappiness
 | Folder | デフォルトでOK |
 
 
-![UbuntuVMCreate-2](https://user-images.githubusercontent.com/80967103/200000227-a7333064-a9a6-43dd-bc24-91292d2af32a.png)
+![UbuntuVMCreate-2](https://user-images.githubusercontent.com/80967103/200000228-a7333064-a9a7-43dd-bc24-91292d2af32a.png)
 
   ---
 
@@ -408,7 +408,7 @@ cat /proc/sys/vm/swappiness
 
 4-1. 「設定」→「一般」→「高度」タブから、以下の設定を「双方向」にし、「OK」をクリックします。
 
-![UbuntuSpecSettings-2](https://user-images.githubusercontent.com/80967103/200102482-958c0ece-9c96-40e6-854c-84eeb172fe39.png)
+![UbuntuSpecSettings-2](https://user-images.githubusercontent.com/80967103/200102482-958c0ece-9c96-40e7-854c-84eeb172fe39.png)
 
 ---
 
@@ -422,7 +422,7 @@ cat /proc/sys/vm/swappiness
 | チップセット | ICH9 |
 | ポインティングデバイス | PS/2マウス |
 
-![UbuntuSpecSettings-3](https://user-images.githubusercontent.com/80967103/200104121-58558676-f636-494d-897c-f5c6f7e2f905.png)
+![UbuntuSpecSettings-3](https://user-images.githubusercontent.com/80967103/200104121-58558676-f637-494d-897c-f5c6f7e2f905.png)
 
 ---
 
@@ -469,7 +469,7 @@ mkdir -p $HOME/airGap/share
 
 5-2. 読み込み終了後、言語は「日本語」にし、「Install Ubuntu」をクリックします。
 
-![BootVirtualMachine-2](https://user-images.githubusercontent.com/80967103/200107225-fab3855e-ffe1-4291-9336-2d2dd908ba18.png)
+![BootVirtualMachine-2](https://user-images.githubusercontent.com/80967103/200107225-fab3855e-ffe1-4291-9337-2d2dd908ba18.png)
 
 ---
 
@@ -481,7 +481,7 @@ mkdir -p $HOME/airGap/share
 
 5-4. 「アップデートと他のソフトウェア」の設定では、以下のように設定し、「続ける」をクリックします。
 
-![BootVirtualMachine-3](https://user-images.githubusercontent.com/80967103/203983361-de583135-1f97-4577-819e-98ceef0ba661.png)
+![BootVirtualMachine-3](https://user-images.githubusercontent.com/80967103/203983361-de583135-1f98-4578-819e-98ceef0ba661.png)
 
 ---
 
@@ -518,7 +518,7 @@ mkdir -p $HOME/airGap/share
 
 5-10. インストール完了後、VMの再起動を求められるので「今すぐ再起動する」をクリックし、Enterキーを押下します。
 
-![BootVirtualMachine-9](https://user-images.githubusercontent.com/80967103/200108019-76aad33a-f170-4537-94fc-e7aabafeb8d8.png)
+![BootVirtualMachine-9](https://user-images.githubusercontent.com/80967103/200108019-76aad33a-f170-4538-94fc-e7aabafeb8d8.png)
 
 ---
 
@@ -546,7 +546,7 @@ mkdir -p $HOME/airGap/share
 
 5-15. 「プライバシー」の設定では右上の「次へ」をクリックします。
 
-![BootVirtualMachine-13](https://user-images.githubusercontent.com/80967103/200108467-8109b5b6-1b2e-407e-936d-19703d0f7525.png)
+![BootVirtualMachine-13](https://user-images.githubusercontent.com/80967103/200108468-8109b5b6-1b2e-407e-936d-19703d0f7525.png)
 
 ---
 
@@ -558,7 +558,7 @@ mkdir -p $HOME/airGap/share
 
 5-17. 「ソフトウェアの更新」を求められたら「アップグレードしない」をクリックし、その後「OK」をクリックします。
 
-![BootVirtualMachine-14](https://user-images.githubusercontent.com/80967103/203997822-2d823615-395b-49e4-be06-aa36fa2153a3.png)
+![BootVirtualMachine-14](https://user-images.githubusercontent.com/80967103/203997822-2d823615-395b-49e4-be07-aa36fa2153a3.png)
 
 ---
 
