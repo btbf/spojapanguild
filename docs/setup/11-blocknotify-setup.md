@@ -61,7 +61,7 @@ pip install discordwebhook python-dotenv slackweb
 ```bash
 cd $NODE_HOME/guild-db/blocklog
 wget -N https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/block_notify/block_check.py
-wget -N https://github.com/btbf/spojapanguild/blob/master/scripts/block_notify/.env
+wget -N https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/block_notify/.env
 chmod 755 block_check.py
 ```
 
