@@ -81,7 +81,7 @@ grafanaインストール
 
 prometheus-node-exporterアップデート
 
-=== "全サーバー"
+=== "リレーノード/BP"
     prometheus-node-exporterのパスを取得する
     ```bash
     cd $HOME/git

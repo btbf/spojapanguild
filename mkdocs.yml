@@ -99,6 +99,7 @@ nav:
       - 'エアギャップマシン作成': './setup/air-gap-guid.md'
       - 'プール構築マニュアル': './setup/1-ubuntu-setup.md'
       - 'プール運用マニュアル': './operation/start-guide.md'
+      - 'SJGラーニング': ./learning.md
       - 'よくある質問': './faq/node.md'
       - '更新履歴': './changelogs.md'
     - 'プール構築マニュアル':
@@ -132,6 +133,7 @@ nav:
       - 'BPポート変更': './operation/bpport.md'
       #- 'SJG修正プログラム': './operation/sjg-fixed.md'
       - 'Linuxコマンド集': './operation/command.md'
+    - 'SJGラーニング': ./learning.md
     - 'よくある質問':
       - '運用編':
         - 'ノード関連': './faq/node.md'
