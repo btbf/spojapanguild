@@ -11,7 +11,7 @@
 }
 
 .md-grid {
-    max-width: 1440px; 
+    max-width: 1500px; 
 }
 
 .md-sidebar--secondary {
@@ -83,4 +83,23 @@
     --md-scheme-node-fg-color--transparent: rgba(25, 151, 255, 0.1);
     --md-scheme-node-bg-color: #fff;
     --md-scheme-node-bg-color--light: hsla(0,0%,100%,.7);
+}
+
+.pricing .md-typeset__table{
+    display:block;
+}
+
+.pricing table:not([class]){
+    display:revert;
+}
+
+.pricing table:not([class]) tr:nth-child(-n + 2) th:not([align]){
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: 700;
+}
+
+.pricing table:not([class]) td:not([align]){
+    text-align: center;
+    font-size: 1.2em;
 }
