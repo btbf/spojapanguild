@@ -28,6 +28,7 @@ theme:
     - navigation.instant
     - navigation.tracking
     - navigation.footer
+    - navigation.path
     - search.suggest
     - search.highlight
     - search.share
@@ -68,6 +69,7 @@ markdown_extensions:
   - pymdownx.tilde
   - meta
   - codehilite
+  - footnotes
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
@@ -102,6 +104,7 @@ nav:
       - 'SJGラーニング': ./learning.md
       - 'よくある質問': './faq/node.md'
       - '更新履歴': './changelogs.md'
+      - '貢献者': './contributors.md'
     - 'プール構築マニュアル':
       - '1.Ubuntu初期設定': './setup/1-ubuntu-setup.md'
       - '2.ノードインストール': './setup/2-node-setup.md'

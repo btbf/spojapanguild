@@ -144,9 +144,11 @@ echo "BPポートは${b_PORT}です"
 ```
 ```bash
 sed -i $NODE_HOME/scripts/env \
-  -e '1,73s!#CCLI="${HOME}/.cabal/bin/cardano-cli"!CCLI="/usr/local/bin/cardano-cli"!' \
+  -e '1,73s!#CCLI="${HOME}/.local/bin/cardano-cli"!CCLI="/usr/local/bin/cardano-cli"!' \
+  -e '1,73s!#CNCLI="${HOME}/.local/bin/cncli"!CNCLI="${HOME}/.cargo/bin/cncli"!' \
   -e '1,73s!#CNODE_HOME="/opt/cardano/cnode"!CNODE_HOME='${NODE_HOME}'!' \
   -e '1,73s!#CNODE_PORT=6000!CNODE_PORT='${b_PORT}'!' \
+  -e '1,73s!#UPDATE_CHECK="Y"!UPDATE_CHECK="N"!' \
   -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/mainnet-config.json"!' \
   -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node0.socket"!SOCKET="${CNODE_HOME}/db/socket"!' \
   -e '1,73s!#BLOCKLOG_TZ="UTC"!BLOCKLOG_TZ="Asia/Tokyo"!'
@@ -154,16 +156,25 @@ sed -i $NODE_HOME/scripts/env \
 
 **cncli.shファイルを修正します**
 
-プールID取得
-```bash
-pool_ID=`cat $NODE_HOME/stakepoolid_hex.txt`
-echo "プールIDは${pool_ID}です"
+プールIDを確認する。以下のコマンドをすべてコピーして実行してください
 ```
-```bash
+pool_hex=`cat $NODE_HOME/stakepoolid_hex.txt`
+pool_bech32=`cat $NODE_HOME/stakepoolid_bech32.txt`
+printf "\nプールID(hex)は \e[32m${pool_hex}\e[m です\n\n"
+printf "\nプールID(bech32)は \e[32m${pool_bech32}\e[m です\n\n"
+```
+
+<strong><font color=red>ご自身のプールID `2種類`が表示されていることを確認してください</font></strong>  
+プールIDが表示されていない場合は、[こちらの手順](../setup/7-register-stakepool.md#4)を実行してください  
+
+<br>
+cncli.shファイルを修正します。以下のコマンドをすべてコピーして実行してください
+```
 sed -i $NODE_HOME/scripts/cncli.sh \
-  -e '1,73s!#POOL_ID=""!POOL_ID='${pool_ID}'!' \
-  -e '1,73s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
-  -e '1,73s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
+-e '1,73s!#POOL_ID=""!POOL_ID="'${pool_hex}'"!' \
+-e '1,73s!#POOL_ID_BECH32=""!POOL_ID_BECH32="'${pool_bech32}'"!' \
+-e '1,73s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
+-e '1,73s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
 ```
 
 ## **10-4. サービスファイル作成・登録**
@@ -506,44 +517,26 @@ echo $LANG
 ```
 
 
-## **10-9. スケジュールを算出する**
+## **10-9. スケジュールを取得する**
 
-次エポックの1.5日前からブロック生成スケジュールを算出することができます。
+!!! hit "ブロック生成スケジュール取得のタイミングについて"
+    取得タイミングは、エポックスロットが約302400を過ぎてから次エポックのスケジュールを取得できるようになります。(次エポックの1.5日前)  
 
-blocks.shを起動し、直近にブロック生成スケジュールが無いことを確認する
+スケジュール取得コマンドを実行する
 ```bash
-blocks
+tmux send-keys -t leaderlog './cncli.sh leaderlog' C-m
 ```
-
-ノードを再起動する
-```bash
-sudo systemctl reload-or-restart cardano-node
-```
-> ノードを再起動してから、約20秒後に4プログラムがバックグラウンドで起動中であればOKです
-> cnode-cncli-sync.service  
-> cnode-cncli-validate.service  
-> cnode-cncli-leaderlog.service  
-> cnode-logmonitor.service
-
-5分～10分後にblocks.shを起動する
-
-```bash
-blocks
-```
-
-```
-[e] エポック詳細 を選択し
-「次エポック[＊＊＊]のスロットリーダースケジュールが表示可能になっています」が表示されていればOKです
-```
-> スケジュールが無い場合、上記の文言は表示されません。以下のコマンドを使って算出内容を確認してください
+スケジュール取得状況を確認する
 ```
 tmux a -t leaderlog
 ```
 
+!!! Tip
 
-!!! hit "ブロック生成スケジュール算出のタイミングについて"
-    算出タイミングは、エポックスロットが約302400を過ぎてから次エポックのスケジュールを取得できるようになります。(次エポックの1.5日前)  
-    取得するには、手動でノードを再起動します。(いろんな要素があって手動運用にしています)  
+    * スケジュールの中に`Error: database is locked`がある場合は、よくある質問の[Q4.スケジュール取得時「Error: database is locked」が表示される](http://49.12.225.142:8000/faq/blocklog/)をご確認ください
+    * `Leaderslots: 0 - Ideal slots for epoch based on active stake: 0.01 - Luck factor 0%`が表示された場合は、残念がらブロック生成スケジュールはありません。
+    * スケジュール取得が確認できたら `Ctrl+c d` でデタッチしてください。
+
 
 1エポックで1ブロック割り当てられるために必要な委任量の目安は以下の通りです。%は確率  
 1M 60%  
