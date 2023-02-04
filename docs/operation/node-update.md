@@ -280,7 +280,7 @@ cncli --version
 > 以下の戻り値ならOK  
 cncli 5.3.0
 
-??? danger "cncli v5.1.2以下だった場合(クリックして開く)"
+??? danger "cncli v5.2.0以下だった場合(クリックして開く)"
 
     **CNCLIをアップデートする**
 
