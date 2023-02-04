@@ -278,7 +278,7 @@ CNCLIバージョン確認
 cncli --version
 ```
 > 以下の戻り値ならOK  
-cncli 5.2.0
+cncli 5.3.0
 
 ??? danger "cncli v5.1.2以下だった場合(クリックして開く)"
 
@@ -296,7 +296,7 @@ cncli 5.2.0
     ```
     cncli --version
     ```
-    > cncli 5.2.0になったことを確認する  
+    > cncli 5.3.0になったことを確認する  
 
 
 ## 2.通常アップデート

@@ -98,7 +98,7 @@ CNCLIのバージョンを確認します。
 ```bash
 cncli --version
 ```
-> 5.2.0 が最新バージョンです
+> 5.3.0 が最新バージョンです
 
 ## **10-2. sqlite3インストール**
 
@@ -533,9 +533,9 @@ tmux a -t leaderlog
 
 !!! Tip
 
-    * スケジュールの中に`Error: database is locked`がある場合は、よくある質問の[Q4.スケジュール取得時「Error: database is locked」が表示される](http://49.12.225.142:8000/faq/blocklog/)をご確認ください
+    * スケジュールの中に`Error: database is locked`がある場合は、よくある質問の[Q4.スケジュール取得時「Error: database is locked」が表示される](../faq/blocklog.md#q4error-database-is-locked)をご確認ください
     * `Leaderslots: 0 - Ideal slots for epoch based on active stake: 0.01 - Luck factor 0%`が表示された場合は、残念がらブロック生成スケジュールはありません。
-    * スケジュール取得が確認できたら `Ctrl+c d` でデタッチしてください。
+    * スケジュール取得が確認できたら `Ctrl+b d` でデタッチしてください。
 
 
 1エポックで1ブロック割り当てられるために必要な委任量の目安は以下の通りです。%は確率  
@@ -576,6 +576,7 @@ cargo install --path . --force
 ```
 cncli --version
 ```
+> 5.3.0 が最新バージョンです
 
 ノードを再起動する
 ```bash
