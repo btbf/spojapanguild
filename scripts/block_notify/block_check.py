@@ -38,7 +38,6 @@ send = int(send.strip())
 
 #print(send)
 
-
 #通知基準 全て=0 confirm以外全て=1 Missedとivaildのみ=2
 if bNotify_st == "0":
     notStatus = ['adopted','leader']
@@ -221,7 +220,7 @@ def getScheduleSlot():
         if send == 0:
             currentEpoch = getEpoch()
             nextEpoch = int(currentEpoch) + 1
-            if auto_leader:
+            if auto_leader == "1":
                 subprocess.Popen("tmux send-keys -t leaderlog './cncli.sh leaderlog' C-m" , shell=True)
                 b_message = '[' + ticker + '] お知らせ📣\r\n'\
                     + str(nextEpoch)+'エポックスケジュールの自動取得を開始します！\r\n'\
