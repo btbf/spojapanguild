@@ -1,4 +1,4 @@
-#2022/12/07 v1.7 @btbf
+#2023/02/05 v1.8 @btbf
 
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
@@ -28,6 +28,7 @@ bNotify_st = os.environ["bNotify_st"]
 slack_notify_url = os.environ["slack_notify_url"]
 teleg_token = os.environ["teleg_token"]
 teleg_id = os.environ["teleg_id"]
+auto_leader = os.environ["auto_leader"]
 s_No = 1
 prev_block = 0
 sendStream = 'if [ ! -e "send.txt" ]; then send=0; echo $send | tee send.txt; else cat send.txt; fi'
@@ -160,7 +161,7 @@ def getNo(slotEpoch,ssNo):
         cursor = connection.cursor()
         print("Connected to SQLite")
         epochNo = getEpoch()
-        sqlite_select_query = f"SELECT * FROM blocklog WHERE epoch=={epochNo};"
+        sqlite_select_query = f"SELECT * FROM blocklog WHERE epoch={epochNo};"
         cursor.execute(sqlite_select_query)
         epoch_records = cursor.fetchall()
         print("総スケジュール:  ", len(epoch_records))
@@ -208,6 +209,8 @@ def getEpoch():
 
     
 def getScheduleSlot():
+    leaderNo = 0
+    leader_str = ""
     slotComm = os.popen('curl -s localhost:12798/metrics | grep slotIn | grep -o [0-9]*')
     slotn = slotComm.read()
     slotn = int(slotn.strip())
@@ -218,17 +221,84 @@ def getScheduleSlot():
         if send == 0:
             currentEpoch = getEpoch()
             nextEpoch = int(currentEpoch) + 1
-            b_message = 'お知らせ📣\r\n'\
-                + '\r\n'\
-                + str(currentEpoch.strip())+'エポック'+ str(slotn)+'スロットを過ぎました\r\n'\
-                + str(nextEpoch)+'エポックのスケジュールを取得できます！'\
+            if auto_leader:
+                subprocess.Popen("tmux send-keys -t leaderlog './cncli.sh leaderlog' C-m" , shell=True)
+                b_message = '[' + ticker + '] お知らせ📣\r\n'\
+                    + str(nextEpoch)+'エポックスケジュールの自動取得を開始します！\r\n'\
+                    + '数分後に取得結果を通知します'\
+                        
+            else:
+                b_message = '[' + ticker + '] お知らせ📣\r\n'\
+                    + str(currentEpoch.strip())+'エポック'+ str(slotn)+'スロットを過ぎました\r\n'\
+                    + str(nextEpoch)+'エポックのスケジュールを取得できます！'\
 
             sendMessage(b_message)
             #print ("スケジュールが取得できます")
             send = 1
             stream = os.popen('send=1; echo $send > send.txt')
+        elif send == 1: #スケジュール結果送信
+            currentEpoch = getEpoch()
+            nextEpoch = int(currentEpoch) + 1
+            try:
+                connection = sqlite3.connect(home + '/guild-db/blocklog/blocklog.db')
+                cursor = connection.cursor()
+                print("Connected to SQLite")
+
+                sqlite_epochdata_query = f"select * from epochdata where epoch = {nextEpoch} LIMIT 1;"
+                cursor.execute(sqlite_epochdata_query)
+                fetch_epoch_records = cursor.fetchall()
+                next_epoch_records = len(fetch_epoch_records)
+                for fetch_epoch_row in fetch_epoch_records:
+                    luck = fetch_epoch_row[7]
+                
+                if (next_epoch_records == 1):
+                    #print("エポックレコードあり")
+                    next_epoch_leader = f"select * from blocklog where epoch = {nextEpoch} order by slot asc;"
+                    cursor.execute(next_epoch_leader)
+                    fetch_leader_records = cursor.fetchall()
+                    if (len(fetch_leader_records) != 0):
+                        for next_epoch_leader_row in fetch_leader_records:
+                            leaderNo += 1
+                            #print("エポックスロット: ", next_epoch_leader_row[5])
+                            at_leader_string = next_epoch_leader_row[2]
+                            leader_btime = parser.parse(at_leader_string).astimezone(timezone(b_timezone))
+                            #print(f"eSlot:{next_epoch_leader_row[5]} /", leader_btime)
+                            leader_str += f"eSlot:{next_epoch_leader_row[5]} / {leader_btime}\n"
+                            p_leader_btime = str(leader_btime)
+                        
+                        b_message = '[' + ticker + '] ' + str(nextEpoch) + 'エポックスケジュール詳細\r\n'\
+                            + 'Luck指数: '+ str(luck) + '%\r\n'\
+                            + '総スケジュール: ' + str(len(fetch_leader_records))+'\r\n'\
+                            + '\r\n'\
+                            + leader_str + '\r\n'\
+                                
+                    else:
+                        b_message = '[' + ticker + '] ' + str(nextEpoch) + 'エポックスケジュール詳細\r\n'\
+                            + 'スケジュールはありませんでした\r\n'\
+                                
+                    sendMessage(b_message)
+                    send = 2
+                    stream = os.popen('send=2; echo $send > send.txt')
+                else:
+                    pass
+                    #print("エポックレコードなし")
+                
+                cursor.close()
+
+            except sqlite3.Error as error:
+                print("Failed to read data from table", error)
+            finally:
+                if connection:
+                    connection.close()
+                    print("The Sqlite connection is closed\n")
+                    
+        else:
+            pass
+            #print(send)
+            
+                    
     else:
-        if send == 1:
+        if send >= 1:
             send = 0
             stream = os.popen('send=0; echo $send > send.txt')
     
