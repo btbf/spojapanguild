@@ -13,12 +13,14 @@
     * 設定は任意です。(設定しなくてもブロック生成に影響はありません)
 
 !!! info ""
-    最終更新日：2022/12/07  v1.7
+    最終更新日：2023/02/07  v1.8
 
 
 ??? info "更新履歴▼"
+    * 1.8 スケジュール取得自動化導入(選択式)  
+    　　　・取得スケジュール一覧通知
     * 1.7 スケジュール取得タイミング通知  
-        生成ブロックのPooltoolリンク追加
+        　・生成ブロックのPooltoolリンク追加
     * 1.6 ブロック未生成プールで使用する場合の起動時エラーを修正
     * 1.5 10分以内に複数のスケジュールがある場合の通知バグ修正
     * 1.4 次のスケジュールを表示
@@ -171,6 +173,7 @@ nano .env
     | `b_timezone`    | お住いのタイムゾーンを指定する |
     | `bNotify`    | 通知先を指定する |
     | `bNotify_st`    | 通知基準を設定する |
+    | `auto_leader`    | スケジュール取得方法を設定する |
 
 
 ### **サービスファイルを設定する**
@@ -234,6 +237,27 @@ tmux a -t blockcheck
 
 ## **11-4. バージョンアップ手順**
 
+**バージョン確認**
+```
+cd $NODE_HOME/guild-db/blocklog
+cat block_check.py | grep -HnI -m1 -r btbf
+```
+
+??? danger "バージョン1.7以下の場合はこちらを先に実行する(クリックして開く)"
+    **スケジュール取得方法を設定する**  
+    === "自動取得にする場合"
+        ```
+        sed -i $NODE_HOME/guild-db/blocklog/.env \
+        -e '1,73s!###############################!\n#リーダースケジュール自動取得 自動:1 手動:0\nauto_leader = "1"!'
+        ```
+    === "手動取得にする場合"
+        ```
+        sed -i $NODE_HOME/guild-db/blocklog/.env \
+        -e '1,73s!###############################!\n#リーダースケジュール自動取得 自動:1 手動:0\nauto_leader = "0"!'
+        ```
+
+
+スクリプトをダウンロードする
 ```
 cd $NODE_HOME/guild-db/blocklog
 wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/block_notify/block_check.py -O block_check.py
@@ -256,7 +280,7 @@ tmux a -t blockcheck
 cd $NODE_HOME/guild-db/blocklog
 cat block_check.py | grep -HnI -m1 -r btbf
 ```
-> block_check.py:1:#2022/12/07 v1.7 @btbf
+> block_check.py:1:#2023/02/05 v1.8 @btbf
 
 ## **11-5.通知を停止(アンインストール)する手順**
 
