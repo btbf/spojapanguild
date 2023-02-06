@@ -1,4 +1,4 @@
-#2023/02/05 v1.8 @btbf
+#2023/02/05 v1.8.1 @btbf
 
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
@@ -29,7 +29,7 @@ slack_notify_url = os.environ["slack_notify_url"]
 teleg_token = os.environ["teleg_token"]
 teleg_id = os.environ["teleg_id"]
 auto_leader = os.environ["auto_leader"]
-s_No = 1
+#s_No = 1
 prev_block = 0
 sendStream = 'if [ ! -e "send.txt" ]; then send=0; echo $send | tee send.txt; else cat send.txt; fi'
 send = (subprocess.Popen(sendStream, stdout=subprocess.PIPE,
@@ -80,7 +80,7 @@ def getAllRows(timing):
             print("prevblock", prev_block)
             print("\n")           
             #スケジュール番号計算
-            scheduleNo, total_schedule = getNo(row[5], s_No)
+            scheduleNo, total_schedule = getNo(row[5])
 
             sqlite_next_leader = f"SELECT * FROM blocklog WHERE slot >= {row[1]} order by slot asc limit 1 offset 1;"
             cursor.execute(sqlite_next_leader)
@@ -154,7 +154,7 @@ def sendMessage(b_message):
         response.json()
 
 
-def getNo(slotEpoch,ssNo):
+def getNo(slotEpoch):
     try:
         connection = sqlite3.connect(home + '/guild-db/blocklog/blocklog.db')
         cursor = connection.cursor()
@@ -164,11 +164,12 @@ def getNo(slotEpoch,ssNo):
         cursor.execute(sqlite_select_query)
         epoch_records = cursor.fetchall()
         print("総スケジュール:  ", len(epoch_records))
-        for row in epoch_records:
+        for i, row in enumerate(epoch_records, 1):
             if slotEpoch == row[5]:
+                ssNo = i
                 break
-            else:
-                ssNo += 1
+            #else:
+                #ssNo += 1
 
         cursor.close()
 
@@ -208,7 +209,6 @@ def getEpoch():
 
     
 def getScheduleSlot():
-    leaderNo = 0
     leader_str = ""
     slotComm = os.popen('curl -s localhost:12798/metrics | grep slotIn | grep -o [0-9]*')
     slotn = slotComm.read()
@@ -242,7 +242,7 @@ def getScheduleSlot():
                 connection = sqlite3.connect(home + '/guild-db/blocklog/blocklog.db')
                 cursor = connection.cursor()
                 print("Connected to SQLite")
-
+                
                 sqlite_epochdata_query = f"select * from epochdata where epoch = {nextEpoch} LIMIT 1;"
                 cursor.execute(sqlite_epochdata_query)
                 fetch_epoch_records = cursor.fetchall()
@@ -256,13 +256,12 @@ def getScheduleSlot():
                     cursor.execute(next_epoch_leader)
                     fetch_leader_records = cursor.fetchall()
                     if (len(fetch_leader_records) != 0):
-                        for next_epoch_leader_row in fetch_leader_records:
-                            leaderNo += 1
+                        for x, next_epoch_leader_row in enumerate(fetch_leader_records, 1):
                             #print("エポックスロット: ", next_epoch_leader_row[5])
                             at_leader_string = next_epoch_leader_row[2]
                             leader_btime = parser.parse(at_leader_string).astimezone(timezone(b_timezone))
                             #print(f"eSlot:{next_epoch_leader_row[5]} /", leader_btime)
-                            leader_str += f"eSlot:{next_epoch_leader_row[5]} / {leader_btime}\n"
+                            leader_str += f"{x}) eSlot:{next_epoch_leader_row[5]} / {leader_btime}\n"
                             p_leader_btime = str(leader_btime)
                         
                         b_message = '[' + ticker + '] ' + str(nextEpoch) + 'エポックスケジュール詳細\r\n'\
