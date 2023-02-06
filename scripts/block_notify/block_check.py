@@ -160,7 +160,7 @@ def getNo(slotEpoch,ssNo):
         cursor = connection.cursor()
         print("Connected to SQLite")
         epochNo = getEpoch()
-        sqlite_select_query = f"SELECT * FROM blocklog WHERE epoch={epochNo};"
+        sqlite_select_query = f"SELECT * FROM blocklog WHERE epoch=={epochNo};"
         cursor.execute(sqlite_select_query)
         epoch_records = cursor.fetchall()
         print("総スケジュール:  ", len(epoch_records))
