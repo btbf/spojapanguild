@@ -1,4 +1,4 @@
-#2023/02/05 v1.8.1 @btbf
+#2023/02/07 v1.8.2 @btbf
 
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
@@ -160,7 +160,7 @@ def getNo(slotEpoch):
         cursor = connection.cursor()
         print("Connected to SQLite")
         epochNo = getEpoch()
-        sqlite_select_query = f"SELECT * FROM blocklog WHERE epoch=={epochNo};"
+        sqlite_select_query = f"SELECT * FROM blocklog WHERE epoch=={epochNo} order by slot asc;"
         cursor.execute(sqlite_select_query)
         epoch_records = cursor.fetchall()
         print("総スケジュール:  ", len(epoch_records))
