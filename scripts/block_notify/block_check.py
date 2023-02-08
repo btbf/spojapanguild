@@ -1,4 +1,4 @@
-#2023/02/08 v1.8.3 @btbf
+#2023/02/08 v1.8.4 @btbf
 
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
@@ -222,7 +222,7 @@ def getScheduleSlot():
             currentEpoch = getEpoch()
             nextEpoch = int(currentEpoch) + 1
             if auto_leader == "1":
-                subprocess.Popen("tmux send-keys -t leaderlog './cncli.sh leaderlog' C-m" , shell=True)
+                subprocess.Popen("tmux send-keys -t leaderlog '$NODE_HOME/scripts/cncli.sh leaderlog' C-m" , shell=True)
                 b_message = '[' + ticker + '] お知らせ📣\r\n'\
                     + str(nextEpoch)+'エポックスケジュールの自動取得を開始します！\r\n'\
                     + '数分後に取得結果を通知します'\
@@ -235,8 +235,8 @@ def getScheduleSlot():
             sendMessage(b_message)
             #print ("スケジュールが取得できます")
             send = 1
-            stream = os.popen('send=1; echo $send > send.txt')
-        elif send == 1: #スケジュール結果送信
+            stream = os.popen(f'send={send}; echo $send > send.txt')
+        elif send >= 1 and send <= 16: #スケジュール結果送信
             currentEpoch = getEpoch()
             nextEpoch = int(currentEpoch) + 1
             try:
@@ -248,10 +248,11 @@ def getScheduleSlot():
                 cursor.execute(sqlite_epochdata_query)
                 fetch_epoch_records = cursor.fetchall()
                 next_epoch_records = len(fetch_epoch_records)
-                for fetch_epoch_row in fetch_epoch_records:
-                    luck = fetch_epoch_row[7]
                 
-                if (next_epoch_records == 1):
+                if (next_epoch_records == 1 and send == 16):
+                    for fetch_epoch_row in fetch_epoch_records:
+                        luck = fetch_epoch_row[7]
+                        
                     #print("エポックレコードあり")
                     next_epoch_leader = f"select * from blocklog where epoch = {nextEpoch} order by slot asc;"
                     cursor.execute(next_epoch_leader)
@@ -276,11 +277,13 @@ def getScheduleSlot():
                             + 'スケジュールはありませんでした\r\n'\
                                 
                     sendMessage(b_message)
-                    send = 2
-                    stream = os.popen('send=2; echo $send > send.txt')
+                    send += 1
+                    stream = os.popen(f'send={send}; echo $send > send.txt')
+                elif (next_epoch_records == 1 and send < 16):
+                    send += 1
+                    stream = os.popen(f'send={send}; echo $send > send.txt')
                 else:
                     pass
-                    #print("エポックレコードなし")
                 
                 cursor.close()
 
@@ -299,7 +302,7 @@ def getScheduleSlot():
     else:
         if send >= 1:
             send = 0
-            stream = os.popen('send=0; echo $send > send.txt')
+            stream = os.popen(f'send={send}; echo $send > send.txt')
     
 
 class MyFileWatchHandler(RegexMatchingEventHandler):
