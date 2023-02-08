@@ -1,4 +1,4 @@
-#2023/02/07 v1.8.2 @btbf
+#2023/02/08 v1.8.3 @btbf
 
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
@@ -155,6 +155,7 @@ def sendMessage(b_message):
 
 
 def getNo(slotEpoch):
+    ssNo = 0
     try:
         connection = sqlite3.connect(home + '/guild-db/blocklog/blocklog.db')
         cursor = connection.cursor()
@@ -169,7 +170,7 @@ def getNo(slotEpoch):
                 ssNo = i
                 break
             #else:
-                #ssNo += 1
+                #ssNo = 0
 
         cursor.close()
 
