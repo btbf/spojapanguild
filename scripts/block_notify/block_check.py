@@ -1,4 +1,4 @@
-#2023/02/08 v1.8.5 @btbf
+#2023/02/08 v1.8.6 @btbf
 
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
@@ -264,10 +264,10 @@ def getScheduleSlot():
                         line_count = 1
                         line_leader_str = ""
                         for x, next_epoch_leader_row in enumerate(fetch_leader_records, 1):
-                            #print("エポックスロット: ", next_epoch_leader_row[5])
+                            
                             at_leader_string = next_epoch_leader_row[2]
                             leader_btime = parser.parse(at_leader_string).astimezone(timezone(b_timezone))
-                            #print(f"eSlot:{next_epoch_leader_row[5]} /", leader_btime)
+                            #LINE対策 20スケジュールごとに分割
                             if bNotify == "0" and x >= 21:
                                 if line_count <= 20:
                                     
@@ -275,6 +275,7 @@ def getScheduleSlot():
                                     line_count += 1
                                     if line_count == 21 or x == len(fetch_leader_records):
                                         line_leader_str_list.append(line_leader_str)
+                                        line_leader_str = ""
                                         line_count = 1
                                     
                             else:        
