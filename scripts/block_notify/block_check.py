@@ -1,7 +1,8 @@
-#2023/02/08 v1.8.4 @btbf
+#2023/02/08 v1.8.5 @btbf
 
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
+from concurrent.futures import ThreadPoolExecutor
 import os
 import time
 import datetime
@@ -35,6 +36,7 @@ sendStream = 'if [ ! -e "send.txt" ]; then send=0; echo $send | tee send.txt; el
 send = (subprocess.Popen(sendStream, stdout=subprocess.PIPE,
                                 shell=True).communicate()[0]).decode('utf-8')
 send = int(send.strip())
+line_leader_str_list = []
 
 #print(send)
 
@@ -210,6 +212,7 @@ def getEpoch():
 
     
 def getScheduleSlot():
+    
     leader_str = ""
     slotComm = os.popen('curl -s localhost:12798/metrics | grep slotIn | grep -o [0-9]*')
     slotn = slotComm.read()
@@ -236,7 +239,7 @@ def getScheduleSlot():
             #print ("スケジュールが取得できます")
             send = 1
             stream = os.popen(f'send={send}; echo $send > send.txt')
-        elif send >= 1 and send <= 16: #スケジュール結果送信
+        elif send >= 1 and send <= 5: #スケジュール結果送信
             currentEpoch = getEpoch()
             nextEpoch = int(currentEpoch) + 1
             try:
@@ -249,7 +252,7 @@ def getScheduleSlot():
                 fetch_epoch_records = cursor.fetchall()
                 next_epoch_records = len(fetch_epoch_records)
                 
-                if (next_epoch_records == 1 and send == 16):
+                if (next_epoch_records == 1 and send == 5):
                     for fetch_epoch_row in fetch_epoch_records:
                         luck = fetch_epoch_row[7]
                         
@@ -258,15 +261,28 @@ def getScheduleSlot():
                     cursor.execute(next_epoch_leader)
                     fetch_leader_records = cursor.fetchall()
                     if (len(fetch_leader_records) != 0):
+                        line_count = 1
+                        line_leader_str = ""
                         for x, next_epoch_leader_row in enumerate(fetch_leader_records, 1):
                             #print("エポックスロット: ", next_epoch_leader_row[5])
                             at_leader_string = next_epoch_leader_row[2]
                             leader_btime = parser.parse(at_leader_string).astimezone(timezone(b_timezone))
                             #print(f"eSlot:{next_epoch_leader_row[5]} /", leader_btime)
-                            leader_str += f"{x}) eSlot:{next_epoch_leader_row[5]} / {leader_btime}\n"
+                            if bNotify == "0" and x >= 21:
+                                if line_count <= 20:
+                                    
+                                    line_leader_str += f"{x}) eSlot:{next_epoch_leader_row[5]} / {leader_btime}\n"
+                                    line_count += 1
+                                    if line_count == 21 or x == len(fetch_leader_records):
+                                        line_leader_str_list.append(line_leader_str)
+                                        line_count = 1
+                                    
+                            else:        
+                                leader_str += f"{x}) eSlot:{next_epoch_leader_row[5]} / {leader_btime}\n"
+                           
                             p_leader_btime = str(leader_btime)
-                        
-                        b_message = '[' + ticker + '] ' + str(nextEpoch) + 'エポックスケジュール詳細\r\n'\
+                            
+                        b_message = '\r\n[' + ticker + '] ' + str(nextEpoch) + 'エポックスケジュール詳細\r\n'\
                             + 'Luck指数: '+ str(luck) + '%\r\n'\
                             + '総スケジュール: ' + str(len(fetch_leader_records))+'\r\n'\
                             + '\r\n'\
@@ -277,9 +293,21 @@ def getScheduleSlot():
                             + 'スケジュールはありませんでした\r\n'\
                                 
                     sendMessage(b_message)
+
+                    #LINE対応
+                    line_index = 0
+                    len_line_list = len(line_leader_str_list)
+                    
+                    if bNotify == "0":
+                        while line_index < len_line_list:
+                            b_message = '\r\n' + line_leader_str_list[line_index] + '\r\n'\
+                                
+                            sendMessage(b_message)
+                            line_index += 1
+                        
                     send += 1
                     stream = os.popen(f'send={send}; echo $send > send.txt')
-                elif (next_epoch_records == 1 and send < 16):
+                elif (next_epoch_records == 1 and send < 5):
                     send += 1
                     stream = os.popen(f'send={send}; echo $send > send.txt')
                 else:
@@ -337,17 +365,27 @@ if __name__ == "__main__":
         filename = os.path.basename(filepath)
         print('%s changed' % filename)
 
-    event_handler = MyFileWatchHandler(PATTERNS)
+    def blockminted_alert():
+        event_handler = MyFileWatchHandler(PATTERNS)
 
-    observer = Observer()
-    observer.schedule(event_handler, DIR_WATCH, recursive=True)
-    observer.start()
-    timing = 'start'
-    getAllRows(timing)
-    try:
+        observer = Observer()
+        observer.schedule(event_handler, DIR_WATCH, recursive=True)
+        observer.start()
+        timing = 'start'
+        getAllRows(timing)
+        try:
+            while True:
+                time.sleep(1)
+                #getScheduleSlot()
+        except KeyboardInterrupt:
+            observer.stop()
+        observer.join()
+        
+    def Schedule_alert():
         while True:
-            time.sleep(1)
+            time.sleep(5)
             getScheduleSlot()
-    except KeyboardInterrupt:
-        observer.stop()
-    observer.join()
+            
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        executor.submit(blockminted_alert)
+        executor.submit(Schedule_alert)
