@@ -10,7 +10,7 @@ SPO JAPAN GUILDでは、カルダノネットワーク分散化促進活動の�
 
 !!! info "情報"
     このマニュアルは、カルダノノードv1.35.5に対応しています。  
-    最終更新日：2023年2月9日 guide version 12.4.8
+    最終更新日：2023年2月10日 guide version 12.4.8
 
 !!! tip "サポート"
     サポートが必要な場合は、ディスコード[SPO JAPAN GUILDコミュニティ](https://discord.gg/U3gU54c)で現役のSPOに質問できます
