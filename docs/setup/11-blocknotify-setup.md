@@ -1,10 +1,15 @@
 # ** ブロック生成ステータス通知 **
 
 !!! info "概要"
-    * ブロックログで表示されるブロック生成結果をお好みのソーシャルアプリへ通知します。 
+    最終更新日：2023/02/08  v1.8.6
+
+    * ブロックログで表示されるブロック生成結果を任意のソーシャルアプリへ通知します。 
     ![*](../images/block_notify/image.png)
 
-    * 対応アプリ LINE/Slack/discord/telegram
+    * ブロック生成スケジュールを自動取得し、取得スケジュール一覧を通知します。
+    ![*](../images/block_notify/auto_leader.png)
+
+    * 通知先対応アプリ LINE/Slack/discord/telegram
  
     * ブロックログと連動しておりますので、まだ設定されてない場合は[ブロックログ導入手順](./10-blocklog-setup.md)を先に導入してください。
 
@@ -12,13 +17,12 @@
 
     * 設定は任意です。(設定しなくてもブロック生成に影響はありません)
 
-!!! info ""
-    最終更新日：2022/12/07  v1.7
-
 
 ??? info "更新履歴▼"
+    * 1.8.6 スケジュール取得自動化導入(選択式)  
+    　　　・取得スケジュール一覧通知
     * 1.7 スケジュール取得タイミング通知  
-        生成ブロックのPooltoolリンク追加
+        　・生成ブロックのPooltoolリンク追加
     * 1.6 ブロック未生成プールで使用する場合の起動時エラーを修正
     * 1.5 10分以内に複数のスケジュールがある場合の通知バグ修正
     * 1.4 次のスケジュールを表示
@@ -64,6 +68,21 @@ wget -N https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/bloc
 wget -N https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/block_notify/.env
 chmod 755 block_check.py
 ```
+### cncli.sh適用状態確認
+** cncli.sh適用状態を確認する**  
+スケジュール取得自動化にはKOIOS-API対応のcncli.shが必要となります。以下のコマンドを実行し確認してください。
+```
+cat $NODE_HOME/scripts/cncli.sh | grep -o '#USE_KOIOS_API=Y'
+```
+!!! hint "戻り値確認"
+    === "戻り値あり"
+        `#USE_KOIOS_API=Y` の戻り値があれば、対応するcncli.shが適用されています。  
+        次へ進んでください。
+
+    === "戻り値なし"
+        * cardano-node1.35.5へ[アップデート](../operation/node-update.md)を実施してください。
+        * ノード1.35.5適用済の方は[Guildスクリプト](../operation/node-update.md#__tabbed_1_2)のバージョンアップを実施してください。
+
 
 ## **11-2. 通知アプリの設定**
 
@@ -171,6 +190,11 @@ nano .env
     | `b_timezone`    | お住いのタイムゾーンを指定する |
     | `bNotify`    | 通知先を指定する |
     | `bNotify_st`    | 通知基準を設定する |
+    | `auto_leader`    | スケジュール取得方法を設定する |
+
+    * 各自の運用方針に合せて、次エポックのスケジュール **「自動取得」**または **「手動取得」** を選択してください。 
+    * **「自動取得」** は、エポックスロットが約302400を過ぎてから自動的に発動します。
+    * **「手動取得」** は、[手動でのコマンド実行](./10-blocklog-setup.md#10-9)によるスケジュール取得となります。
 
 
 ### **サービスファイルを設定する**
@@ -234,15 +258,73 @@ tmux a -t blockcheck
 
 ## **11-4. バージョンアップ手順**
 
+サービスを停止する
+```
+sudo systemctl stop cnode-blockcheck.service
+```
+
+**バージョン確認**
+```
+cd $NODE_HOME/guild-db/blocklog
+cat block_check.py | grep -HnI -m1 -r btbf
+```
+
+??? danger "バージョン1.7以下の場合はこちらを先に実行する(クリックして開く)"
+    **1) cncli.sh適用状態を確認する**  
+    スケジュール取得自動化にはKOIOS-API対応のcncli.shが必要となります。以下のコマンドを実行し確認してください。
+    ```
+    cat $NODE_HOME/scripts/cncli.sh | grep -o '#USE_KOIOS_API=Y'
+    ```
+    !!! hint "戻り値確認"
+        === "戻り値あり"
+            `#USE_KOIOS_API=Y` の戻り値があれば、対応するcncli.shが適用されています。  
+            2)へ進んでください。
+
+        === "戻り値なし"
+            * cardano-node1.35.5へ[アップデート](../operation/node-update.md)を実施してください。
+            * ノード1.35.5適用済の方は[Guildスクリプト](../operation/node-update.md#__tabbed_1_2)のバージョンアップを実施してください。
+
+    <br>
+    **2) ステータス通知用`.env`ファイルを修正する**  
+
+    * 各自の運用方針に合せて、次エポックのスケジュール **「自動取得」**または **「手動取得」** を選択してください。 
+    * **「自動取得」** は、エポックスロットが約302400を過ぎてから自動的に発動します。
+    * **「手動取得」** は、[手動でのコマンド実行](./10-blocklog-setup.md#10-9)によるスケジュール取得となります。
+
+    === "自動取得にする場合"
+        ```
+        sed -i $NODE_HOME/guild-db/blocklog/.env \
+        -e '1,73s!###############################!\n#リーダースケジュール自動取得 自動:1 手動:0\nauto_leader = "1"!'
+        ```
+    === "手動取得にする場合"
+        ```
+        sed -i $NODE_HOME/guild-db/blocklog/.env \
+        -e '1,73s!###############################!\n#リーダースケジュール自動取得 自動:1 手動:0\nauto_leader = "0"!'
+        ```
+
+    !!! hint "参考"
+        上記で実行するコマンドは、スケジュール自動/手動化に対応するフラグを`.env`に追加しています。 
+        ```
+        #リーダースケジュール自動取得 自動:1 手動:0
+        auto_leader = "1"
+        ```
+
+
+スクリプトをダウンロードする
 ```
 cd $NODE_HOME/guild-db/blocklog
 wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/block_notify/block_check.py -O block_check.py
 ```
-
+**バージョン確認**
+```
+cd $NODE_HOME/guild-db/blocklog
+cat block_check.py | grep -HnI -m1 -r btbf
+```
+> block_check.py:1:#2023/02/08 v1.8.6 @btbf
 
 サービスを再起動する
 ```
-sudo systemctl reload-or-restart cnode-blockcheck.service
+sudo systemctl start cnode-blockcheck.service
 ```
 
 サービス起動確認
@@ -251,12 +333,7 @@ tmux a -t blockcheck
 ```
 > 「db-monitoring started」 が表示されていればOKです。(デタッチして戻る)  
 
-**バージョン確認**
-```
-cd $NODE_HOME/guild-db/blocklog
-cat block_check.py | grep -HnI -m1 -r btbf
-```
-> block_check.py:1:#2022/12/07 v1.7 @btbf
+
 
 ## **11-5.通知を停止(アンインストール)する手順**
 
