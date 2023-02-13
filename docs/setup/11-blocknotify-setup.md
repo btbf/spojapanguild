@@ -1,7 +1,7 @@
 # ** ブロック生成ステータス通知 **
 
 !!! info "概要"
-    最終更新日：2023/02/08  v1.8.6
+    最終更新日：2023/02/13  v1.8.7
 
     * ブロックログで表示されるブロック生成結果を任意のソーシャルアプリへ通知します。 
     ![*](../images/block_notify/image.png)
@@ -19,6 +19,7 @@
 
 
 ??? info "更新履歴▼"
+    * 1.8.7 ノード再起動後、通知されない不具合を修正
     * 1.8.6 スケジュール取得自動化導入(選択式)  
     　　　・取得スケジュール一覧通知
     * 1.7 スケジュール取得タイミング通知  
@@ -320,7 +321,8 @@ wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/block_n
 cd $NODE_HOME/guild-db/blocklog
 cat block_check.py | grep -HnI -m1 -r btbf
 ```
-> block_check.py:1:#2023/02/08 v1.8.6 @btbf
+現在の最新バージョン
+> #2023/02/13 v1.8.7 @btbf
 
 サービスを再起動する
 ```
