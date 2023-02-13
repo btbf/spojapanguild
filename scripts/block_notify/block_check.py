@@ -1,4 +1,4 @@
-#2023/02/08 v1.8.6 @btbf
+#2023/02/13 v1.8.7 @btbf
 
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
@@ -326,8 +326,7 @@ def getScheduleSlot():
         else:
             pass
             #print(send)
-            
-                    
+             
     else:
         if send >= 1:
             send = 0
@@ -366,27 +365,22 @@ if __name__ == "__main__":
         filename = os.path.basename(filepath)
         print('%s changed' % filename)
 
-    def blockminted_alert():
-        event_handler = MyFileWatchHandler(PATTERNS)
+    event_handler = MyFileWatchHandler(PATTERNS)
 
-        observer = Observer()
-        observer.schedule(event_handler, DIR_WATCH, recursive=True)
-        observer.start()
-        timing = 'start'
-        getAllRows(timing)
-        try:
-            while True:
-                time.sleep(1)
-                #getScheduleSlot()
-        except KeyboardInterrupt:
-            observer.stop()
-        observer.join()
-        
-    def Schedule_alert():
+    observer = Observer()
+    observer.schedule(event_handler, DIR_WATCH, recursive=True)
+    observer.start()
+    timing = 'start'
+    getAllRows(timing)
+    timeslot = 1
+    try:
         while True:
-            time.sleep(5)
-            getScheduleSlot()
-            
-    with ThreadPoolExecutor(max_workers=2) as executor:
-        executor.submit(blockminted_alert)
-        executor.submit(Schedule_alert)
+            time.sleep(1)
+            if timeslot == 5:
+                getScheduleSlot()
+                timeslot = 0
+            timeslot += 1
+
+    except KeyboardInterrupt:
+        observer.stop()
+    observer.join()
