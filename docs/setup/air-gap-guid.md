@@ -8,7 +8,7 @@
 ## Windowsの場合
 
 !!! hint "貢献者"
-    [[SA8] SMAN8](https://adapools.org/pool/ec736597797c68044b8fccd4e895929c0a842f2e9e0a9e221b0a3026) さんに導入手順を作成頂きました。ありがとうございます！
+    [[SA8] SMAN8](https://jp.cexplorer.io/pool/pool1a3ekt9me035qgju0en2w39vjns9ggtewnc9fugsmpgczvgtl6u9) さんに導入手順を作成頂きました。ありがとうございます！
 
 ### インストール要件
 **環境**
@@ -306,7 +306,7 @@ cat /proc/sys/vm/swappiness
 ## Macの場合
 
 !!! hint "貢献者"
-    [[WYAM] WYAM-StakePool](https://adapools.org/pool/940d6893606290dc6b7705a8aa56a857793a8ae0a3906d4e2afd2119) Akyoさんに導入手順を作成頂きました。ありがとうございます！
+    [[AKYO] AKYO🥁](https://jp.cexplorer.io/pool/pool1jsxk3ymqv2gdc6mhqk52544g2aun4zhq5wgx6n32l5s3jlne70n) さんに導入手順を作成頂きました。ありがとうございます！
 
 ### インストール要件
 **環境**

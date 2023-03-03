@@ -4,7 +4,7 @@
 
 
 !!! hint "貢献者"
-    [[WYAM] WYAM-StakePool](https://adapools.org/pool/940d6893606290dc6b7705a8aa56a857793a8ae0a3906d4e2afd2119) Akyoさんに導入手順を作成頂きました。ありがとうございます！
+    [[AKYO] AKYO🥁](https://jp.cexplorer.io/pool/pool1jsxk3ymqv2gdc6mhqk52544g2aun4zhq5wgx6n32l5s3jlne70n) さんに導入手順を作成頂きました。ありがとうございます！
 
 ## 1- FileZillaのダウンロード
 

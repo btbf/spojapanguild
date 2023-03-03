@@ -1,7 +1,7 @@
 
 
 !!! hint ""
-    [[WYAM] WYAM-StakePool](https://adapools.org/pool/940d6893606290dc6b7705a8aa56a857793a8ae0a3906d4e2afd2119) Akyoさんからご提供いただきました。ありがとうございます！
+    [[AKYO] AKYO🥁](https://jp.cexplorer.io/pool/pool1jsxk3ymqv2gdc6mhqk52544g2aun4zhq5wgx6n32l5s3jlne70n) さんからご提供いただきました。ありがとうございます！
 
 ## **ノード停止**
 ```
@@ -35,14 +35,14 @@ cnrestart
 
 ## **サーバ再起動**
 **補足**
-- ノード停止してから実施しましょう。
+> ノードを停止してからサーバを再起動しましょう。
 ```
 sudo reboot
 ```
 
 ## **プロセス確認**
 **補足**
-- カルダノノードサービス
+> カルダノノードサービス
 ```
 ps aux | grep cardano-node
 ```
@@ -59,7 +59,7 @@ nc -vz <IP> <Port>
 
 ## **ブロックログ各サービス再起動**
 **補足**
-- (cncli / leaderlog / validate / logmonitor)
+> (cncli / leaderlog / validate / logmonitor)
 ```
 sudo systemctl reload-or-restart cnode-cncli-sync.service
 ```
@@ -71,7 +71,7 @@ sudo systemctl reload-or-restart cnode-blockcheck.service
 
 ## **パラメータファイル更新**
 **補足**
-- バックアップ及び更新、確認
+> バックアップ及び更新、確認
 ```
 cd $NODE_HOME
 date=`date +\%Y\%m\%d`
@@ -90,7 +90,7 @@ cd $NODE_HOME
 sed -i ${NODE_CONFIG}-config.json \
     -e "s/TraceMempool\": true/TraceMempool\": false/g"
 ```
-- ノード再起動し設定を反映する
+ノードを再起動して設定を反映させる
 ```
 sudo systemctl reload-or-restart cardano-node
 ```
@@ -102,7 +102,7 @@ cd $NODE_HOME
 sed -i ${NODE_CONFIG}-config.json \
     -e "s/TraceMempool\": false/TraceMempool\": true/g"
 ```
-- ノード再起動し設定を反映する
+ノードを再起動して設定を反映させる
 ```
 sudo systemctl reload-or-restart cardano-node
 ```
@@ -116,7 +116,7 @@ sudo rm /swapfile
 
 ## **スワップファイル作成**
 **補足**
-- 8GBのスワップを設定するコマンド
+> 8GBのスワップを設定するコマンド
 ```
 sudo systemctl stop cardano-node
 ```

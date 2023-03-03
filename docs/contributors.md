@@ -8,7 +8,7 @@
 `ディスコード内サポート` `ドキュメント寄稿・修正` `技術検証作業`などにご協力頂いた皆様です。
 
 ・[SAKAKIBARA :fontawesome-brands-twitter:{ .twitter }](https://twitter.com/sakakibara1JPN) | Pool: [[1JPN] 日本壱プール](https://jp.cexplorer.io/pool/pool12jnulzs7j8lsku4r2a7q6tee6tt66872vwhqh8jxvgzn6837jtl)  
-・[Akyo :fontawesome-brands-twitter:{ .twitter }](https://twitter.com/WYAM_StakePool) | Pool:[[WYAM] WYAM-StakePool](https://jp.cexplorer.io/pool/pool1jsxk3ymqv2gdc6mhqk52544g2aun4zhq5wgx6n32l5s3jlne70n)  
+・[Akyo :fontawesome-brands-twitter:{ .twitter }](https://twitter.com/AKYO_POOL) | Pool:[[AKYO] AKYO🥁](https://jp.cexplorer.io/pool/pool1jsxk3ymqv2gdc6mhqk52544g2aun4zhq5wgx6n32l5s3jlne70n)  
 ・[SMAN :fontawesome-brands-twitter:{ .twitter }](https://twitter.com/SMAN8_TickerSA8) | Pool:[[SA8] SMAN8](https://jp.cexplorer.io/pool/pool1a3ekt9me035qgju0en2w39vjns9ggtewnc9fugsmpgczvgtl6u9)  
 ・[AICHI :fontawesome-brands-twitter:{ .twitter }](https://twitter.com/AichiStakePool) | Pool:[[AICHI] Aichi Stake Pool](https://jp.cexplorer.io/pool/pool1ju8f57hyvaa32tp85r468kuedvmjmcy56f8u9968drea57p50l5) / [[TOKAI] Tokai Stake Pool](https://jp.cexplorer.io/pool/pool1cf7mqj0xd8z4jqhr7nf565mxuvepk8euv5t6ehmuwe49kfz9llr)  
 ・[Nori :fontawesome-brands-twitter:{ .twitter }](https://twitter.com/nori_crypto) | Pool:[[1STEP] 1STEP](https://jp.cexplorer.io/pool/pool1ar6nsa2uzng70uf8fdrttu5jhgxzgu2f4za8h845zr435nfcruw)  
