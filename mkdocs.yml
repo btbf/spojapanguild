@@ -120,22 +120,24 @@ nav:
       - '＊寄付とクレジット': './setup/99-donation-credit.md'
     - 'プール運用マニュアル':
       - '運用ガイド': './operation/start-guide.md'
-      - 'オペレーション':
+      - '1.オペレーション':
         - 'KESの更新': './operation/kes-update.md'
         - 'プール情報更新': './operation/cert-update.md'
         - '資金引き出し': './operation/withdrawal.md'
         - 'プール廃止処理': './operation/pool-retire.md'
-      - 'ノードアップデート': './operation/node-update.md'
-      - 'SJGツール導入設定': './operation/tool.md'
-      - 'サーバー間転送設定':
-        - '事前設定': './operation/rsync-ssh.md'
-        - 'ファイル転送手順': './operation/transfer.md'
-      - 'サーバー強化':
+      - '2.ノード/サーバ管理':
+        - 'ノードアップデート': './operation/node-update.md'
+        - 'サーバー間転送設定':
+          - '事前設定': './operation/rsync-ssh.md'
+          - 'ファイル転送手順': './operation/transfer.md'
         - 'リレーノード増設': './operation/add-relay.md'
-      - 'SFTPソフト設定': './operation/sftp.md'
-      - 'BPポート変更': './operation/bpport.md'
-      #- 'SJG修正プログラム': './operation/sjg-fixed.md'
-      - 'Linuxコマンド集': './operation/command.md'
+        - 'BPポート変更': './operation/bpport.md'
+        - 'Grafanaセキュリティ強化': './operation/grafana-security.md'
+        - 'Grafanaアラート設定': './operation/grafana-alert.md'
+      - '3.ツール設定':
+        - 'SJGツール導入設定': './operation/tool.md'
+        - 'SFTPソフト設定': './operation/sftp.md'
+      - '4.Linuxコマンド集': './operation/command.md'
     - 'SJGラーニング': ./learning.md
     - 'よくある質問':
       - '運用編':
