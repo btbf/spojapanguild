@@ -388,7 +388,7 @@ sudo ufw allow 123/udp
 設定を有効にするには、Chronyを再起動します。
 
 ```text
-sudo systemctl restart chronyd.service
+sudo systemctl reload-or-restart chronyd.service
 ```
 
 ヘルプコマンド

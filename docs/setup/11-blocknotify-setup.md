@@ -1,7 +1,7 @@
 # ** ブロック生成ステータス通知 **
 
 !!! info "概要"
-    最終更新日：2023/02/13  v1.8.7
+    最終更新日：2023/03/07  v1.8.9
 
     * ブロックログで表示されるブロック生成結果を任意のソーシャルアプリへ通知します。 
     ![*](../images/block_notify/image.png)
@@ -19,6 +19,9 @@
 
 
 ??? info "更新履歴▼"
+    * 1.8.9 ・エポック境界の通知内容不具合修正
+    * 1.8.8 ・ステータス通知サービス起動時に通知
+            ・通知先トークン未入力の場合にサービス画面でエラー排出
     * 1.8.7 ノード再起動後、通知されない不具合を修正
     * 1.8.6 スケジュール取得自動化導入(選択式)  
     　　　・取得スケジュール一覧通知
@@ -90,18 +93,27 @@ cat $NODE_HOME/scripts/cncli.sh | grep -o '#USE_KOIOS_API=Y'
 通知させたいアプリのタブをクリックし設定を確認してください。
 
 === "LINE"
+    * **1.LINEグループを作成する**  
+    ![*](../images/block_notify/2-1-1-1.png)
 
-    * 1.[LINE Notifyマイページ](https://notify-bot.line.me/my/)にアクセスする  
+    * **2.「Line Notify」を追加する**
+    ![*](../images/block_notify/2-1-1-2.png)
+
+    * **3.任意のグループ名を設定し「作成」をクリックする**
+    ![*](../images/block_notify/2-1-1-3.png)
+
+    * **4.[LINE Notifyマイページ](https://notify-bot.line.me/my/)にアクセスする**  
     
-    * 2.トークンを発行するをクリックします  
+    * **5.トークンを発行するをクリックします**  
     ![*](../images/block_notify/2-1-1.jpg)
     
-    * 3.トークン名「ブロック生成通知」(任意)を入力し、「1：1でLINE Notifyから通知を受け取る」を選択する  
-    ![*](../images/block_notify/2-1-2.JPG)
+    * **6.トークン名「ブロック生成通知」(任意)を入力し、3で作成したグループ名を選択する**  
+    ![*](../images/block_notify/2-1-2.png)
     
-    * 4.「発行する」をクリックする
+    * **7.「発行する」をクリックする**
     
-    * 5.表示されたトークンをコピーし、一旦メモ帳などに貼り付ける（発行されたトークンを閉じると2度と確認できませんのでご注意ください）  
+    * **8.表示されたトークンをコピーし、一旦メモ帳などに貼り付ける**    
+    （発行されたトークンを閉じると2度と確認できませんのでご注意ください）  
     ![*](../images/block_notify/2-1-3.jpg)
 
 === "Discord"
@@ -251,7 +263,8 @@ nano .env
 ```
 tmux a -t blockcheck
 ```
-> 「db-monitoring started」 が表示されていればOKです  
+> 「Guild-db monitoring started」 が表示されていればOKです  
+> 任意の通知先に通知が届いているか確認してください  
 > cnode-cncli-sync.serviceと同じく、node再起動・停止と連動します
 
 ### **通知確認**
@@ -322,7 +335,7 @@ cd $NODE_HOME/guild-db/blocklog
 cat block_check.py | grep -HnI -m1 -r btbf
 ```
 現在の最新バージョン
-> #2023/02/13 v1.8.7 @btbf
+> #2023/03/07 v1.8.9 @btbf
 
 サービスを再起動する
 ```
@@ -333,7 +346,8 @@ sudo systemctl start cnode-blockcheck.service
 ```
 tmux a -t blockcheck
 ```
-> 「db-monitoring started」 が表示されていればOKです。(デタッチして戻る)  
+> 「Guild-db monitoring started」 が表示されていればOKです。(デタッチして戻る)   
+> 任意の通知先に通知が届いているか確認してください 
 
 
 
