@@ -1,4 +1,4 @@
-#2023/02/13 v1.8.7 @btbf
+#2023/03/07 v1.8.9 @btbf
 
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
@@ -50,8 +50,6 @@ elif bNotify_st == "2":
 else:
     print("通知基準を正しく設定してください")
 
-if bNotify >= "4":
-    print("通知先を正しく設定してください")
 
 def getAllRows(timing):
     try:
@@ -71,7 +69,7 @@ def getAllRows(timing):
             print("slot: ", row[1])
         # print("at: ", row[2])
             at_string = row[2]
-            btime = parser.parse(at_string).astimezone(timezone(b_timezone))
+            btime = parser.parse(at_string).astimezone(timezone(b_timezone)).strftime('%Y-%m-%d %H:%M:%S')
             print("at: ", btime)
             print("epoch: ", row[3])
             print("block: ", row[4])
@@ -82,11 +80,12 @@ def getAllRows(timing):
             print("prevblock", prev_block)
             print("\n")           
             #スケジュール番号計算
-            scheduleNo, total_schedule = getNo(row[5])
+            scheduleNo, total_schedule = getNo(row[5],row[3])
 
             sqlite_next_leader = f"SELECT * FROM blocklog WHERE slot >= {row[1]} order by slot asc limit 1 offset 1;"
             cursor.execute(sqlite_next_leader)
             next_leader_records = cursor.fetchall()
+            print(f"タイムゾーン：{b_timezone}")
             print("SQL:", next_leader_records)
             if next_leader_records:
                 for next_leader_row in next_leader_records:
@@ -106,14 +105,16 @@ def getAllRows(timing):
             if timing == 'modified':
                 if prev_block != row[4] and row[8] not in notStatus:
                     #LINE通知内容
-                    b_message = ticker + 'ブロック生成結果('+str(row[3])+')\r\n'\
+                    b_message = '\r\n' + ticker + 'ブロック生成結果('+str(row[3])+')\r\n'\
                         + '\r\n'\
-                        + '■ブロックNo:'+str(row[4])+'\r\n'\
-                        + str(btime)+'\r\n'\
-                        + str(scheduleNo)+' / '+str(total_schedule)+' > '+ str(row[8])+'\r\n'\
+                        + '📍'+str(scheduleNo)+' / '+str(total_schedule)+' > '+ str(row[8])+'\r\n'\
+                        + '⏰'+str(btime)+'\r\n'\
+                        + '\r\n'\
+                        + '📦ブロックNo：'+str(row[4])+'\r\n'\
+                        + '⏱スロットNo：'+str(row[1])+' (e:'+str(row[5])+')\r\n'\
                         + blockUrl\
                         + '\r\n'\
-                        + '次のスケジュール>>\r\n'\
+                        + '次のスケジュール >>\r\n'\
                         + p_next_btime+'\r\n'\
 
                     sendMessage(b_message)
@@ -139,6 +140,8 @@ def getAllRows(timing):
             print("The Sqlite connection is closed\n")
             if timing == 'start':
                 print("Guild-db monitoring started\n")
+                start_message = '\r\n[' + ticker + '] ブロック生成ステータス通知を起動しました🟢\r\n'
+                sendMessage(start_message)
 
 def sendMessage(b_message):
     #通知先 LINE=0 Discord=1 Slack=2 Telegram=3 ※複数通知は不可
@@ -156,13 +159,13 @@ def sendMessage(b_message):
         response.json()
 
 
-def getNo(slotEpoch):
+def getNo(slotEpoch,epochNo):
     ssNo = 0
     try:
         connection = sqlite3.connect(home + '/guild-db/blocklog/blocklog.db')
         cursor = connection.cursor()
         print("Connected to SQLite")
-        epochNo = getEpoch()
+        #epochNo = getEpoch()
         sqlite_select_query = f"SELECT * FROM blocklog WHERE epoch=={epochNo} order by slot asc;"
         cursor.execute(sqlite_select_query)
         epoch_records = cursor.fetchall()
@@ -226,12 +229,12 @@ def getScheduleSlot():
             nextEpoch = int(currentEpoch) + 1
             if auto_leader == "1":
                 subprocess.Popen("tmux send-keys -t leaderlog '$NODE_HOME/scripts/cncli.sh leaderlog' C-m" , shell=True)
-                b_message = '[' + ticker + '] お知らせ📣\r\n'\
+                b_message = '\r\n[' + ticker + '] お知らせ📣\r\n'\
                     + str(nextEpoch)+'エポックスケジュールの自動取得を開始します！\r\n'\
                     + '数分後に取得結果を通知します'\
                         
             else:
-                b_message = '[' + ticker + '] お知らせ📣\r\n'\
+                b_message = '\r\n[' + ticker + '] お知らせ📣\r\n'\
                     + str(currentEpoch.strip())+'エポック'+ str(slotn)+'スロットを過ぎました\r\n'\
                     + str(nextEpoch)+'エポックのスケジュールを取得できます！'\
 
@@ -255,6 +258,7 @@ def getScheduleSlot():
                 if (next_epoch_records == 1 and send == 5):
                     for fetch_epoch_row in fetch_epoch_records:
                         luck = fetch_epoch_row[7]
+                        ideal = fetch_epoch_row[6]
                         
                     #print("エポックレコードあり")
                     next_epoch_leader = f"select * from blocklog where epoch = {nextEpoch} order by slot asc;"
@@ -266,12 +270,12 @@ def getScheduleSlot():
                         for x, next_epoch_leader_row in enumerate(fetch_leader_records, 1):
                             
                             at_leader_string = next_epoch_leader_row[2]
-                            leader_btime = parser.parse(at_leader_string).astimezone(timezone(b_timezone))
+                            leader_btime = parser.parse(at_leader_string).astimezone(timezone(b_timezone)).strftime('%Y-%m-%d %H:%M:%S')
                             #LINE対策 20スケジュールごとに分割
                             if bNotify == "0" and x >= 21:
                                 if line_count <= 20:
                                     
-                                    line_leader_str += f"{x}) eSlot:{next_epoch_leader_row[5]} / {leader_btime}\n"
+                                    line_leader_str += f"{x}) {next_epoch_leader_row[5]} / {leader_btime}\n"
                                     line_count += 1
                                     if line_count == 21 or x == len(fetch_leader_records):
                                         line_leader_str_list.append(line_leader_str)
@@ -279,18 +283,19 @@ def getScheduleSlot():
                                         line_count = 1
                                     
                             else:        
-                                leader_str += f"{x}) eSlot:{next_epoch_leader_row[5]} / {leader_btime}\n"
+                                leader_str += f"{x}) {next_epoch_leader_row[5]} / {leader_btime}\n"
                            
                             p_leader_btime = str(leader_btime)
                             
-                        b_message = '\r\n[' + ticker + '] ' + str(nextEpoch) + 'エポックスケジュール詳細\r\n'\
-                            + 'Luck指数: '+ str(luck) + '%\r\n'\
-                            + '総スケジュール: ' + str(len(fetch_leader_records))+'\r\n'\
+                        b_message = '\r\n\r\n[' + ticker + '] ' + str(nextEpoch) + 'エポックスケジュール詳細\r\n'\
+                            + '📈期待値(Ideal)    : '+ str(ideal) + '\r\n'\
+                            + '💎割当て確率(Luck) : '+ str(luck) + '%\r\n'\
+                            + '📋割当てブロック数  : '+ str(len(fetch_leader_records))+'\r\n'\
                             + '\r\n'\
                             + leader_str + '\r\n'\
                                 
                     else:
-                        b_message = '[' + ticker + '] ' + str(nextEpoch) + 'エポックスケジュール詳細\r\n'\
+                        b_message = '\r\n[' + ticker + '] ' + str(nextEpoch) + 'エポックスケジュール詳細\r\n'\
                             + 'スケジュールはありませんでした\r\n'\
                                 
                     sendMessage(b_message)
@@ -365,22 +370,34 @@ if __name__ == "__main__":
         filename = os.path.basename(filepath)
         print('%s changed' % filename)
 
-    event_handler = MyFileWatchHandler(PATTERNS)
+    if bNotify >= "4" or bNotify == "":
+        print("通知先フラグを正しく設定してください")
+    else:
+        if bNotify == "0" and line_notify_token == "":
+            print("LINE通知用アクセストークンを正しく設定してください")
+        elif bNotify == "1" and dc_notify_url == "":
+            print("WebhookURLを正しく設定してください")
+        elif bNotify == "2" and slack_notify_url == "":
+            print("WebhookURLを正しく設定してください")
+        elif bNotify == "3" and teleg_token == "":
+            print("テレグラム通知用トークンを正しく設定してください")
+        else:
+            event_handler = MyFileWatchHandler(PATTERNS)
 
-    observer = Observer()
-    observer.schedule(event_handler, DIR_WATCH, recursive=True)
-    observer.start()
-    timing = 'start'
-    getAllRows(timing)
-    timeslot = 1
-    try:
-        while True:
-            time.sleep(1)
-            if timeslot == 5:
-                getScheduleSlot()
-                timeslot = 0
-            timeslot += 1
+            observer = Observer()
+            observer.schedule(event_handler, DIR_WATCH, recursive=True)
+            observer.start()
+            timing = 'start'
+            getAllRows(timing)
+            timeslot = 1
+            try:
+                while True:
+                    time.sleep(1)
+                    if timeslot == 5:
+                        getScheduleSlot()
+                        timeslot = 0
+                    timeslot += 1
 
-    except KeyboardInterrupt:
-        observer.stop()
-    observer.join()
+            except KeyboardInterrupt:
+                observer.stop()
+            observer.join()
