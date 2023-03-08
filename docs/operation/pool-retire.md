@@ -61,6 +61,7 @@
 
 === "エアギャップオフラインマシン"
     ```bash
+    cd $NODE_HOME
     chmod u+rwx $HOME/cold-keys
     cardano-cli stake-pool deregistration-certificate \
     --cold-verification-key-file $HOME/cold-keys/node.vkey \

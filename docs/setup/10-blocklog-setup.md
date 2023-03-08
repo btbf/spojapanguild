@@ -91,14 +91,14 @@ cd $HOME/git
 git clone https://github.com/cardano-community/cncli
 cd cncli
 git checkout $(curl -s https://api.github.com/repos/cardano-community/cncli/releases/latest | jq -r .tag_name)
-cargo install --path . --force
+cargo install --path . --force --target x86_64-unknown-linux-gnu
 ```
 
 CNCLIのバージョンを確認します。
 ```bash
 cncli --version
 ```
-> 5.3.0 が最新バージョンです
+> 5.3.1 が最新バージョンです
 
 ## **10-2. sqlite3インストール**
 
@@ -577,13 +577,13 @@ rustup update
 cd $HOME/git/cncli
 git fetch --all --prune
 git checkout $(curl -s https://api.github.com/repos/cardano-community/cncli/releases/latest | jq -r .tag_name)
-cargo install --path . --force
+cargo install --path . --force --target x86_64-unknown-linux-gnu
 ```
 バージョンを確認する
 ```
 cncli --version
 ```
-> 5.3.0 が最新バージョンです
+> 5.3.1 が最新バージョンです
 
 ノードを再起動する
 ```bash
