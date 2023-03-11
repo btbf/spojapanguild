@@ -1,4 +1,4 @@
-#2023/03/07 v1.8.9 @btbf
+#2023/03/11 v1.9.0 @btbf
 
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
@@ -165,7 +165,7 @@ def getNo(slotEpoch,epochNo):
         connection = sqlite3.connect(home + '/guild-db/blocklog/blocklog.db')
         cursor = connection.cursor()
         print("Connected to SQLite")
-        #epochNo = getEpoch()
+        getEpoch()
         sqlite_select_query = f"SELECT * FROM blocklog WHERE epoch=={epochNo} order by slot asc;"
         cursor.execute(sqlite_select_query)
         epoch_records = cursor.fetchall()
@@ -211,7 +211,6 @@ def getEpoch():
             print ("epoch:", bepochNo)
             break
         time.sleep(30)
-    return bepochNo
 
     
 def getScheduleSlot():
