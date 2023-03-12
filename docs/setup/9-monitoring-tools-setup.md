@@ -202,7 +202,7 @@ prometheus-node-exporterアップデート
               type:  'system'
           - targets: ['xxx.xxx.xxx.xxx:12798']
             labels:
-              alias: 'block-producer-node'
+              alias: 'block-producing-node'
               type:  'cardano-node'
           - targets: ['localhost:12798']
             labels:
