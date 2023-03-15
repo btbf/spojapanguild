@@ -1,4 +1,4 @@
-#2023/03/11 v1.9.0 @btbf
+#2023/03/15 v1.9.1 @btbf
 
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
@@ -211,7 +211,7 @@ def getEpoch():
             print ("epoch:", bepochNo)
             break
         time.sleep(30)
-
+    return bepochNo
     
 def getScheduleSlot():
     
