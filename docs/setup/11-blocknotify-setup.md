@@ -338,7 +338,7 @@ cd $NODE_HOME/guild-db/blocklog
 cat block_check.py | grep -HnI -m1 -r btbf
 ```
 現在の最新バージョン
-> #2023/03/11 v1.9.0 @btbf
+> #2023/03/15 v1.9.1 @btbf
 
 サービスを再起動する
 ```
