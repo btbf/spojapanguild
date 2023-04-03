@@ -1,4 +1,4 @@
-#2023/04/03 v1.9.2 @btbf
+#2023/04/03 v1.9.3 @btbf
 
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
@@ -229,7 +229,7 @@ def getScheduleSlot():
     slotn = slotComm.read()
     slotn = int(slotn.strip())
     global send
-    print(random_slot_num)
+    #print(random_slot_num)
     #slotn = 303000
     if (slotn >= random_slot_num):
         if send == 0:
