@@ -1,4 +1,4 @@
-#2023/03/15 v1.9.1 @btbf
+#2023/04/03 v1.9.2 @btbf
 
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
@@ -10,6 +10,7 @@ import sqlite3
 import requests
 import slackweb
 import subprocess
+import random
 from pytz import timezone
 from dateutil import parser
 from discordwebhook import Discord
@@ -93,6 +94,7 @@ def getAllRows(timing):
                     at_next_string = next_leader_row[2]
                     next_btime = parser.parse(at_next_string).astimezone(timezone(b_timezone))
                     print("Next_at: ", next_btime)
+                    print(f"スケジュール取得:{random_slot_num}\n")
                     p_next_btime = str(next_btime)
 
             else:
@@ -139,8 +141,11 @@ def getAllRows(timing):
             connection.close()
             print("The Sqlite connection is closed\n")
             if timing == 'start':
-                print("Guild-db monitoring started\n")
-                start_message = '\r\n[' + ticker + '] ブロック生成ステータス通知を起動しました🟢\r\n'
+                print(f"スケジュール取得:{random_slot_num}\n")
+                print("Guild-db monitoring started\n")                
+                start_message = '\r\n[' + ticker + '] ブロック生成ステータス通知を起動しました🟢\r\n'\
+                    + 'スケジュール取得は'+ str(random_slot_num) + 'スロットです\r\n'\
+                    
                 sendMessage(start_message)
 
 def sendMessage(b_message):
@@ -212,6 +217,10 @@ def getEpoch():
             break
         time.sleep(30)
     return bepochNo
+
+def randomSlot():
+    random_slot=random.randrange(313200, 334800, 300)
+    return random_slot
     
 def getScheduleSlot():
     
@@ -220,9 +229,9 @@ def getScheduleSlot():
     slotn = slotComm.read()
     slotn = int(slotn.strip())
     global send
-    #print(send)
+    print(random_slot_num)
     #slotn = 303000
-    if (slotn >= 302400):
+    if (slotn >= random_slot_num):
         if send == 0:
             currentEpoch = getEpoch()
             nextEpoch = int(currentEpoch) + 1
@@ -355,7 +364,7 @@ class MyFileWatchHandler(RegexMatchingEventHandler):
             getAllRows(timing)
 
 
-
+random_slot_num=randomSlot()
 
 if __name__ == "__main__":
 
@@ -387,6 +396,7 @@ if __name__ == "__main__":
             observer.schedule(event_handler, DIR_WATCH, recursive=True)
             observer.start()
             timing = 'start'
+            
             getAllRows(timing)
             timeslot = 1
             try:
