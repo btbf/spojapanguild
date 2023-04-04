@@ -1,7 +1,7 @@
 # **ノードアップデートマニュアル**
 
 !!! note "対応バージョン" 
-    このガイドは ノードバージョン1.35.5に対応しています。最終更新日：2023年01月29日
+    このガイドは ノードバージョン1.35.7に対応しています。最終更新日：2023年04月04日
 
 
 !!! info "概要"
@@ -11,14 +11,10 @@
 
 
 !!! hint "主な変更点と新機能"
-    ノード1.35.5
+    * 非P2PノードからダイナミックP2Pノードへの接続切断バグを解消。
 
-    * 元帳の内部データ構造の修正
+    * **<font color=red>ダイナミックP2Pを使用しないノードでも</font>1.35.7へのアップグレードが必要です**
 
-    ブロックログ
-
-    * リーダースケジュール取得高速化とメモリリソース使用の抑制   
-    これに伴い、スケジュール取得の際のノード再起動が不要になりましたので、近日中にブロック生成ステータス通知プログラムに **__スケジュール自動取得機能__**を導入します。
 
 
 !!! error "よくお読みになって進めてください"
@@ -27,25 +23,12 @@
 
 ### **更新フローチャート**
 更新フローチャートは、画像をクリックすると別ウィンドウで開きます。
-<a href="../../images/1.35.5-update.png" target=_blank><img src="../../images/1.35.5-update.png"></a>
+<a href="../../images/1.35.4-update.png" target=_blank><img src="../../images/1.35.4-update.png"></a>
 
 
 ## **1.依存環境アップデート**
 
 ### **1-1. システムアップデート**
-
-!!! danger "Grafanaをインストールしたリレーの場合はこちらを先に実行する"
-    GrafanaのGPGキー更新
-
-    古いキーの削除
-    ```
-    sudo apt-key del 4E40DDF6D76E284A4A6780E48C8C34C524098CB6
-    ```
-
-    キーの新規追加
-    ```
-    wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
-    ```
 
 システムアップデート
 ```bash
@@ -157,7 +140,7 @@ prometheus-node-exporter --version
     sudo systemctl start prometheus-node-exporter.service
     ```
 
-
+<!--
 ### **1-4.Guildスクリプト再取得**
 !!! error "注意"
     * リレーとBPでコマンドが異なりますので、タブを切り替えてください。
@@ -270,17 +253,18 @@ prometheus-node-exporter --version
     -e '1,73s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
     -e '1,73s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
     ```
+-->
 
-### **1-5.CNCLIバージョン確認(BPのみ)**
+### **1-4.CNCLIバージョン確認(BPのみ)**
 
 CNCLIバージョン確認
 ```
 cncli --version
 ```
 > 以下の戻り値ならOK  
-cncli 5.3.0
+cncli 5.3.1
 
-??? danger "cncli v5.2.0以下だった場合(クリックして開く)"
+??? danger "cncli v5.3.0以下だった場合(クリックして開く)"
 
     **CNCLIをアップデートする**
 
@@ -289,14 +273,14 @@ cncli 5.3.0
     cd $HOME/git/cncli
     git fetch --all --prune
     git checkout $(curl -s https://api.github.com/repos/cardano-community/cncli/releases/latest | jq -r .tag_name)
-    cargo install --path . --force
+    cargo install --path . --force --target x86_64-unknown-linux-gnu
     ```
 
     バージョン確認
     ```
     cncli --version
     ```
-    > cncli 5.3.0になったことを確認する  
+    > cncli 5.3.1になったことを確認する  
 
 
 ## 2.通常アップデート
@@ -334,7 +318,7 @@ cabal update
 
 ```
 git fetch --all --recurse-submodules --tags
-git checkout tags/1.35.5
+git checkout tags/1.35.7
 cabal configure -O0 -w ghc-8.10.7
 ```
 
@@ -356,11 +340,11 @@ $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-cli") 
 $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-node") version  
 ```
 以下の戻り値を確認する  
->cardano-cli 1.35.5 - linux-x86_64 - ghc-8.10  
-git rev 8762a10efe3f9f97939e3cb05edaf04250456702  
+>cardano-cli 1.35.7 - linux-x86_64 - ghc-8.10  
+git rev f0b4ac897dcbefba9fa0d247b204a24543cf55f6  
 
->cardano-node 1.35.5 - linux-x86_64 - ghc-8.10  
-git rev 8762a10efe3f9f97939e3cb05edaf04250456702  
+>cardano-node 1.35.7 - linux-x86_64 - ghc-8.10  
+git rev f0b4ac897dcbefba9fa0d247b204a24543cf55f6  
 
 **ビルド用TMUXセッションを終了する** 
 ```
@@ -390,11 +374,11 @@ cardano-node version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 1.35.5 - linux-x86_64 - ghc-8.10  
-git rev 8762a10efe3f9f97939e3cb05edaf04250456702  
+>cardano-cli 1.35.7 - linux-x86_64 - ghc-8.10  
+git rev f0b4ac897dcbefba9fa0d247b204a24543cf55f6  
 
->cardano-node 1.35.5 - linux-x86_64 - ghc-8.10  
-git rev 8762a10efe3f9f97939e3cb05edaf04250456702  
+>cardano-node 1.35.7 - linux-x86_64 - ghc-8.10  
+git rev f0b4ac897dcbefba9fa0d247b204a24543cf55f6  
 
 ### **2-4.サーバー再起動**
 
@@ -418,6 +402,9 @@ cd $HOME/git
 mv cardano-node/ cardano-node-old/
 mv cardano-node2/ cardano-node/
 ```
+
+!!! info "ダイナミックP2Pの設定について"
+    1.35.6以降からシングルリレーでP2Pモードの使用が許可されています。リレーを複数お持ちの方は1つのリレーをP2Pモードに設定できます。設定手順は[こちらのマニュアル](./p2p-settings.md)をご参照下さい。
 
 ## 3.RSYNC+SSHアップデート
 
@@ -464,11 +451,11 @@ df -h /usr
     $NODE_HOME/Transfer/cardano-node version
     ```
     以下の戻り値を確認する
-    >cardano-cli 1.35.5 - linux-x86_64 - ghc-8.10  
-    git rev 8762a10efe3f9f97939e3cb05edaf04250456702  
+    >cardano-cli 1.35.7 - linux-x86_64 - ghc-8.10  
+    git rev f0b4ac897dcbefba9fa0d247b204a24543cf55f6  
 
-    >cardano-node 1.35.5 - linux-x86_64 - ghc-8.10  
-    git rev 8762a10efe3f9f97939e3cb05edaf04250456702  
+    >cardano-node 1.35.7 - linux-x86_64 - ghc-8.10  
+    git rev f0b4ac897dcbefba9fa0d247b204a24543cf55f6  
     
 
 ### 3-2.転送元から転送先へ転送する
@@ -555,11 +542,11 @@ tmux new -s tar
     cardano-node version
     ```
     以下の戻り値を確認する
-    >cardano-cli 1.35.5 - linux-x86_64 - ghc-8.10  
-    git rev 8762a10efe3f9f97939e3cb05edaf04250456702  
+    >cardano-cli 1.35.7 - linux-x86_64 - ghc-8.10  
+    git rev f0b4ac897dcbefba9fa0d247b204a24543cf55f6  
 
-    >cardano-node 1.35.5 - linux-x86_64 - ghc-8.10  
-    git rev 8762a10efe3f9f97939e3cb05edaf04250456702  
+    >cardano-node 1.35.7 - linux-x86_64 - ghc-8.10  
+    git rev f0b4ac897dcbefba9fa0d247b204a24543cf55f6  
 
     <!--
     DBフォルダを入れ替える
@@ -807,9 +794,8 @@ cardano-cli version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 1.35.5 - linux-x86_64 - ghc-8.10  
-git rev 8762a10efe3f9f97939e3cb05edaf04250456702  
-
+>cardano-cli 1.35.7 - linux-x86_64 - ghc-8.10  
+git rev f0b4ac897dcbefba9fa0d247b204a24543cf55f6  
 
 
 !!! denger "確認"

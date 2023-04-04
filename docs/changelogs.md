@@ -1,5 +1,12 @@
 # 変更履歴
 
+## 2023/04/04　ver. 12.6.0
+!!! note ""
+    * Cardano-node1.35.7対応
+    * [[ダイナミックP2P設定](./operation/p2p-settings.md)] マニュアル追加
+    * ブロック生成ステーテス通知 v1.9.3
+    * [SJGラーニング](./learning.md)資料追加
+
 ## 2023/03/07　ver. 12.5.1
 !!! note ""
     * [[監視ツールセットアップ](./setup/9-monitoring-tools-setup.md#9-2)] prometheus.yml内容修正

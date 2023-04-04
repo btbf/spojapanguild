@@ -33,6 +33,7 @@ theme:
     - search.highlight
     - search.share
     - content.code.copy
+    - content.code.annotate
   icon:
     repo: fontawesome/brands/github
 
@@ -131,6 +132,7 @@ nav:
           - '事前設定': './operation/rsync-ssh.md'
           - 'ファイル転送手順': './operation/transfer.md'
         - 'リレーノード増設': './operation/add-relay.md'
+        - 'ダイナミックP2P設定': './operation/p2p-settings.md'
         - 'BPポート変更': './operation/bpport.md'
         - 'Grafanaセキュリティ強化': './operation/grafana-security.md'
         - 'Grafanaアラート設定': './operation/grafana-alert.md'
