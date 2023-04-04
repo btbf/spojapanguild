@@ -3,7 +3,7 @@
 ## 2023/04/04　ver. 12.6.0
 !!! note ""
     * Cardano-node1.35.7対応
-    * [[ダイナミックP2P設定マニュアル](./operation/p2p-settings.md)] 追加
+    * [[ダイナミックP2P設定](./operation/p2p-settings.md)] マニュアル追加
     * ブロック生成ステーテス通知 v1.9.3
     * [SJGラーニング](./learning.md)資料追加
 
