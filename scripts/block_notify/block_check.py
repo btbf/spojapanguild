@@ -1,4 +1,4 @@
-#2023/04/03 v1.9.3 @btbf
+#2023/04/05 v1.9.4 @btbf
 
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
@@ -219,7 +219,7 @@ def getEpoch():
     return bepochNo
 
 def randomSlot():
-    random_slot=random.randrange(313200, 334800, 300)
+    random_slot=random.randrange(303300, 317700, 120)
     return random_slot
     
 def getScheduleSlot():
