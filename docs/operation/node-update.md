@@ -1,7 +1,7 @@
 # **ノードアップデートマニュアル**
 
 !!! note "対応バージョン" 
-    このガイドは ノードバージョン1.35.7に対応しています。最終更新日：2023年04月04日
+    このガイドは ノードバージョン1.35.7に対応しています。最終更新日：2023年04月08日
 
 
 !!! info "概要"
@@ -262,9 +262,14 @@ CNCLIバージョン確認
 cncli --version
 ```
 > 以下の戻り値ならOK  
-cncli 5.3.1
+cncli 5.3.2
 
-??? danger "cncli v5.3.0以下だった場合(クリックして開く)"
+??? danger "cncli v5.3.1以下だった場合(クリックして開く)"
+    
+    **依存関係の追加とアップデート**
+    ``` bash
+    sudo apt update -y && sudo apt install -y automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool autoconf musl-tools
+    ```
 
     **CNCLIをアップデートする**
 
@@ -280,7 +285,7 @@ cncli 5.3.1
     ```
     cncli --version
     ```
-    > cncli 5.3.1になったことを確認する  
+    > cncli 5.3.2になったことを確認する  
 
 
 ## 2.通常アップデート

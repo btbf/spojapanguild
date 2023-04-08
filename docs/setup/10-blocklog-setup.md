@@ -86,7 +86,7 @@ rustup component add clippy rustfmt
 
 ```bash
 source $HOME/.cargo/env
-sudo apt-get update -y && sudo apt-get install -y automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool autoconf
+sudo apt update -y && sudo apt install -y automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool autoconf musl-tools
 cd $HOME/git
 git clone https://github.com/cardano-community/cncli
 cd cncli
@@ -98,7 +98,7 @@ CNCLIのバージョンを確認します。
 ```bash
 cncli --version
 ```
-> 5.3.1 が最新バージョンです
+> 5.3.2 が最新バージョンです
 
 ## **10-2. sqlite3インストール**
 
