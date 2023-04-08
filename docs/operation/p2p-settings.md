@@ -39,9 +39,10 @@ mv $NODE_HOME/mainnet-topology.json $NODE_HOME/mainnet-topology-non2p2.json
 ```
 
 ## **3.新トポロジーファイル作成**
-実行前に `+`をクリックして注釈を確認してください。
+実行前に `+`をクリックして注釈を確認してください。  
+`localRoots`には常にHot接続にしたい接続先を記入します。
 
-=== "BP1つの場合"
+=== "単一接続の場合"
 
     ``` yaml
     cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
@@ -75,7 +76,7 @@ mv $NODE_HOME/mainnet-topology.json $NODE_HOME/mainnet-topology-non2p2.json
     1.  BPのIPまたはDNSアドレスに置き換えてください
     2.  BPのポートに置き換えてください
 
-=== "BP2つの場合"
+=== "複数接続の場合(IP指定)"
 
     ``` yaml
     cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
@@ -83,11 +84,11 @@ mv $NODE_HOME/mainnet-topology.json $NODE_HOME/mainnet-topology-non2p2.json
     "localRoots": [
         { "accessPoints": [
             {
-            "address": "xxx.xxx.xxx.xx", #(1)!
+            "address": "xx.xxx.xx.xxx", #(1)!
             "port": yyyy #(2)!
             },
             {
-            "address": "bbb.bbb.bbb.bb", #(3)!
+            "address": "bb.bbb.bb.bbb", #(3)!
             "port": aaaa #(4)!
             }
             ],
@@ -110,10 +111,55 @@ mv $NODE_HOME/mainnet-topology.json $NODE_HOME/mainnet-topology-non2p2.json
     EOF
     ```
 
-    1.  BP1のIPまたはDNSアドレスに置き換えてください
+    1.  BP1のIPアドレスに置き換えてください
     2.  BP1のポートに置き換えてください
-    3.  BP2のIPまたはDNSアドレスに置き換えてください
-    4.  BP2のポートに置き換えてください
+    3.  BP2または他リレーのIPアドレスに置き換えてください
+    4.  BP2または他リレーのポートに置き換えてください
+
+=== "複数接続の場合(DNS指定)"
+
+    ``` yaml
+    cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
+    {
+    "localRoots": [
+        { "accessPoints": [
+            {
+            "address": "xxx1.xxx.com", #(1)!
+            "port": yyyy #(2)!
+            }
+            ],
+            "advertise": false,
+            "valency": 1
+        },
+        { "accessPoints": [
+            {
+            "address": "bbb2.ccc.com", #(3)!
+            "port": aaaa #(4)!
+            }
+            ],
+            "advertise": false,
+            "valency": 1
+        }
+    ],
+    "publicRoots": [
+        { "accessPoints": [
+        {
+            "address": "relays-new.cardano-mainnet.iohk.io",
+            "port": 3001
+        }
+        ],
+        "advertise": false
+        }
+    ],
+    "useLedgerAfterSlot": 87200000
+    }
+    EOF
+    ```
+
+    1.  BP1のDNSアドレスに置き換えてください
+    2.  BP1のポートに置き換えてください
+    3.  BP2または他リレーのDNSアドレスに置き換えてください
+    4.  BP2または他リレーのポートに置き換えてください
 
 新トポロジーファイル項目解説
 
