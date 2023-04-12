@@ -80,6 +80,7 @@ rustup install stable
 rustup default stable
 rustup update
 rustup component add clippy rustfmt
+rustup target add x86_64-unknown-linux-musl
 ```
 
 依存関係をインストールし、cncliをビルドします
@@ -87,11 +88,13 @@ rustup component add clippy rustfmt
 ```bash
 source $HOME/.cargo/env
 sudo apt update -y && sudo apt install -y automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool autoconf musl-tools
+```
+```bash
 cd $HOME/git
-git clone https://github.com/cardano-community/cncli
+git clone --recurse-submodules https://github.com/cardano-community/cncli
 cd cncli
 git checkout $(curl -s https://api.github.com/repos/cardano-community/cncli/releases/latest | jq -r .tag_name)
-cargo install --path . --force --target x86_64-unknown-linux-gnu
+cargo install --path . --force
 ```
 
 CNCLIのバージョンを確認します。
@@ -574,16 +577,24 @@ cncli旧バージョンからの更新手順
 
 ```bash
 rustup update
+rustup target add x86_64-unknown-linux-musl
+```
+
+```bash
+sudo apt update -y && sudo apt install -y automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool autoconf musl-tools
+```
+
+```bash
 cd $HOME/git/cncli
 git fetch --all --prune
 git checkout $(curl -s https://api.github.com/repos/cardano-community/cncli/releases/latest | jq -r .tag_name)
-cargo install --path . --force --target x86_64-unknown-linux-gnu
+cargo install --path . --force
 ```
 バージョンを確認する
 ```
 cncli --version
 ```
-> 5.3.1 が最新バージョンです
+> 5.3.2 が最新バージョンです
 
 ノードを再起動する
 ```bash
