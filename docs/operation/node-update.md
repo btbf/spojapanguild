@@ -1,7 +1,7 @@
 # **ノードアップデートマニュアル**
 
 !!! note "対応バージョン" 
-    このガイドは ノードバージョン1.35.7に対応しています。最終更新日：2023年04月08日
+    このガイドは ノードバージョン1.35.7に対応しています。最終更新日：2023年04月13日
 
 
 !!! info "概要"
@@ -275,10 +275,11 @@ cncli 5.3.2
 
     ```bash
     rustup update
+    rustup target add x86_64-unknown-linux-musl
     cd $HOME/git/cncli
     git fetch --all --prune
     git checkout $(curl -s https://api.github.com/repos/cardano-community/cncli/releases/latest | jq -r .tag_name)
-    cargo install --path . --force --target x86_64-unknown-linux-gnu
+    cargo install --path . --force
     ```
 
     バージョン確認
