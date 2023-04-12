@@ -128,6 +128,7 @@ nav:
         - 'プール廃止処理': './operation/pool-retire.md'
       - '2.ノード/サーバ管理':
         - 'ノードアップデート': './operation/node-update.md'
+        - 'Ubuntuアップグレード': './operation/ubuntu22.md'
         - 'サーバー間転送設定':
           - '事前設定': './operation/rsync-ssh.md'
           - 'ファイル転送手順': './operation/transfer.md'
