@@ -201,14 +201,26 @@ cat /etc/os-release | grep "VERSION="
 sudo apt install git jq bc automake tmux rsync htop curl build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ wget libncursesw5 libtool autoconf liblmdb-dev -y
 ```
 
-libssl1.1インストール
+libssl3アンインストール
+```
+sudo apt --purge remove libssl-dev
+```
+
+libssl-dev1.1インストール
 ```
 cd $HOME
-wget http://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.17_amd64.deb
+wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl-dev_1.1.1f-1ubuntu2.17_amd64.deb
+sudo dpkg -i libssl-dev_1.1.1f-1ubuntu2.17_amd64.deb
+```
+
+libssl1.1インストール
+```
+wget wget wget wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.17_amd64.deb
 sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.17_amd64.deb
 ```
 
-削除
+DLファイル削除
 ```
+rm $HOME/libssl-dev_1.1.1f-1ubuntu2.17_amd64.deb
 rm $HOME/libssl1.1_1.1.1f-1ubuntu2.17_amd64.deb
 ```
