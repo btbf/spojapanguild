@@ -139,6 +139,7 @@ nav:
       - '3.ツール設定':
         - 'SJGツール導入設定': './operation/tool.md'
         - 'SFTPソフト設定': './operation/sftp.md'
+        - 'SPO投票': './operation/spo-poll.md'
       - '4.Linuxコマンド集': './operation/command.md'
     - 'SJGラーニング': ./learning.md
     - 'よくある質問':
