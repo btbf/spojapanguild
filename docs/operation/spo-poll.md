@@ -1,11 +1,8 @@
 # カルダノ財団SPO投票マニュアル
 
 !!! warning "概要"
-    * 現在はPreProdテストネットで投票ツールの動作確認が行われております。
-    * PreProdテストネットにプール登録が必要です。
-    * 投票専用のcardano-cli v8.0.0が必要です。
-    * BPでセットアップします。
-
+    * SJG TOOLに統合します。
+<!--
 ## 投票用CLIインストール
 投票用cardano-cli v8.0.0のインストールスクリプトを実行する  
 スクリプト内の指示に従って下さい。
@@ -110,3 +107,5 @@ Txを確認する
 
 投票結果を確認する
 [https://adastat.net/polls/62c6be72bdf0b5b16e37e4f55cf87e46bd1281ee358b25b8006358bf25e71798](https://adastat.net/polls/62c6be72bdf0b5b16e37e4f55cf87e46bd1281ee358b25b8006358bf25e71798)
+
+-->

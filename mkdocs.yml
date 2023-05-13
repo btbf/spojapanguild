@@ -106,6 +106,8 @@ nav:
       - 'よくある質問': './faq/node.md'
       - '更新履歴': './changelogs.md'
       - '貢献者': './contributors.md'
+      - '寄付とクレジット': './setup/99-donation-credit.md'
+
     - 'プール構築マニュアル':
       - '1.Ubuntu初期設定': './setup/1-ubuntu-setup.md'
       - '2.ノードインストール': './setup/2-node-setup.md'
@@ -118,7 +120,7 @@ nav:
       - '9.監視ツールセットアップ': './setup/9-monitoring-tools-setup.md'
       - '10.ブロックログセットアップ': './setup/10-blocklog-setup.md'
       - '11.ブロック生成ステータス通知セットアップ': './setup/11-blocknotify-setup.md'
-      - '＊寄付とクレジット': './setup/99-donation-credit.md'
+      - '寄付とクレジット': './setup/99-donation-credit.md'
     - 'プール運用マニュアル':
       - '運用ガイド': './operation/start-guide.md'
       - '1.オペレーション':
