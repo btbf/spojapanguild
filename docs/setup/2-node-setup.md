@@ -7,10 +7,7 @@
 まずはじめに、パッケージを更新しUbuntuを最新の状態に保ちます。
 
 ```bash
-sudo apt update -y
-```
-```bash
-sudo apt upgrade -y
+sudo apt update -y && sudo apt upgrade -y
 ```
 ```bash
 sudo apt install git jq bc automake tmux rsync htop curl build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ wget libncursesw5 libtool autoconf liblmdb-dev -y
@@ -23,12 +20,14 @@ mkdir $HOME/git
 cd $HOME/git
 git clone https://github.com/input-output-hk/libsodium
 cd libsodium
-git checkout 66f017f1
+git checkout dbb48cc
 ./autogen.sh
 ./configure
 make
+make check
 sudo make install
 ```
+> makeコマンド実行後半に出現する `warning` は無視して大丈夫です。
 
 ### **Secp256k1ライブラリインストール**
 
@@ -136,27 +135,28 @@ echo export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH" >> $HOME/.bashrc
 echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
 echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
 ```
-接続するネットワークを指定する
-!!! info "確認"
-    通常はメインネットを選択してください。2種類のテストネットは一部パラメーターが異なり開発者向けとなります。
 
-=== "メインネット"
-    ```
-    echo export NODE_CONFIG=mainnet >> $HOME/.bashrc
-    echo export NODE_NETWORK='"--mainnet"' >> $HOME/.bashrc
-    ```
+環境変数に接続ネットワークを指定する
+```
+echo export NODE_CONFIG=mainnet >> $HOME/.bashrc
+echo export NODE_NETWORK='"--mainnet"' >> $HOME/.bashrc
+echo export CARDANO_NODE_NETWORK_ID=mainnet >> $HOME/.bashrc
+```
 
-=== "Preview(テストネット)"
-    ```
-    echo export NODE_CONFIG=preview >> $HOME/.bashrc
-    echo export NODE_NETWORK='"--testnet-magic 2"' >> $HOME/.bashrc
-    ```
+??? テストネットの場合はこちら
+    === "Preview(テストネット)"
+        ```
+        echo export NODE_CONFIG=preview >> $HOME/.bashrc
+        echo export NODE_NETWORK='"--testnet-magic 2"' >> $HOME/.bashrc
+        echo export CARDANO_NODE_NETWORK_ID=2 >> $HOME/.bashrc
+        ```
 
-=== "PreProd(テストネット)"
-    ```
-    echo export NODE_CONFIG=preprod >> $HOME/.bashrc
-    echo export NODE_NETWORK='"--testnet-magic 1"' >> $HOME/.bashrc
-    ```
+    === "PreProd(テストネット)"
+        ```
+        echo export NODE_CONFIG=preprod >> $HOME/.bashrc
+        echo export NODE_NETWORK='"--testnet-magic 1"' >> $HOME/.bashrc
+        echo export CARDANO_NODE_NETWORK_ID=1 >> $HOME/.bashrc
+        ```
 ```
 source $HOME/.bashrc
 ```
@@ -187,7 +187,7 @@ cd $HOME/git
 git clone https://github.com/input-output-hk/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/1.35.7
+git checkout tags/8.0.0
 ```
 
 Cabalのビルドオプションを構成します。
@@ -196,14 +196,6 @@ Cabalのビルドオプションを構成します。
 cabal clean
 cabal update
 cabal configure -O0 -w ghc-8.10.7
-```
-
-Cabal構成、プロジェクト設定を更新し、ビルドフォルダーをリセットします。
-
-```bash
-echo -e "package cardano-crypto-praos\n flags: -external-libsodium-vrf" > cabal.project.local
-sed -i $HOME/.cabal/config -e "s/overwrite-policy:/overwrite-policy: always/g"
-rm -rf $HOME/git/cardano-node/dist-newstyle/build/x86_64-linux/ghc-8.10.7
 ```
 
 カルダノノードをビルドします。
@@ -233,11 +225,11 @@ cardano-cli version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 1.35.7 - linux-x86_64 - ghc-8.10  
-git rev f0b4ac897dcbefba9fa0d247b204a24543cf55f6  
+>cardano-cli 8.0.0 - linux-x86_64 - ghc-8.10  
+git rev 69a117b7be3db0f4ce6d9fc5cd4c16a2a409dcb8 
 
->cardano-node 1.35.7 - linux-x86_64 - ghc-8.10  
-git rev f0b4ac897dcbefba9fa0d247b204a24543cf55f6 
+>cardano-node 8.0.0 - linux-x86_64 - ghc-8.10  
+git rev 69a117b7be3db0f4ce6d9fc5cd4c16a2a409dcb8
 
 
 ## **2-3. ノード設定ファイルの修正**
@@ -252,20 +244,70 @@ wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environmen
 wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/topology.json -O ${NODE_CONFIG}-topology.json
 wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
 wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
+wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
 wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/config.json -O ${NODE_CONFIG}-config.json
 ```
 
 以下のコードを実行し **config.json**ファイルを更新します。  
 
-```bash
-sed -i ${NODE_CONFIG}-config.json \
-    -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
-    -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
-    -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
-    -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-    -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-    -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},'
-```
+設定ファイルを書き換える
+
+=== "非P2Pの場合"
+    ```bash
+    sed -i ${NODE_CONFIG}-config.json \
+        -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
+        -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
+        -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
+        -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
+        -e "s/TraceMempool\": true/TraceMempool\": false/g" \
+        -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
+        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
+        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+        -e "s/127.0.0.1/0.0.0.0/g"
+    ```
+=== "P2Pの場合"
+    ```bash
+    sed -i ${NODE_CONFIG}-config.json \
+        -e '2i \  "EnableP2P": true,' \
+        -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
+        -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
+        -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
+        -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
+        -e "s/TraceMempool\": true/TraceMempool\": false/g" \
+        -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
+        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
+        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+        -e "s/127.0.0.1/0.0.0.0/g"
+    ```
+
+??? テストネットの場合はこちら
+    === "非P2Pの場合"
+        ```bash
+        sed -i ${NODE_CONFIG}-config.json \
+            -e 's!"EnableP2P": true!"EnableP2P": false!' \
+            -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
+            -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
+            -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
+            -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
+            -e "s/TraceMempool\": true/TraceMempool\": false/g" \
+            -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
+            -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
+            -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+            -e "s/127.0.0.1/0.0.0.0/g"
+        ```
+    === "P2Pの場合"
+        ```bash
+        sed -i ${NODE_CONFIG}-config.json \
+            -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
+            -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
+            -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
+            -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
+            -e "s/TraceMempool\": true/TraceMempool\": false/g" \
+            -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
+            -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
+            -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+            -e "s/127.0.0.1/0.0.0.0/g"
+            ```
 
 環境変数を追加し、.bashrcファイルを更新します。
 
@@ -590,6 +632,26 @@ Guild Liveviewを起動します。
 echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
 echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
 echo export NODE_NETWORK="--mainnet" >> $HOME/.bashrc
+echo export CARDANO_NODE_NETWORK_ID=mainnet >> $HOME/.bashrc
 source $HOME/.bashrc
 mkdir -p $NODE_HOME
 ```
+
+??? テストネットの場合はこちら
+    === "Preview"
+    echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
+    echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
+    echo export NODE_CONFIG=preview >> $HOME/.bashrc
+    echo export NODE_NETWORK='"--testnet-magic 2"' >> $HOME/.bashrc
+    echo export CARDANO_NODE_NETWORK_ID=2 >> $HOME/.bashrc
+    source $HOME/.bashrc
+    mkdir -p $NODE_HOME
+
+    === "PreProd"
+    echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
+    echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
+    echo export NODE_CONFIG=preview >> $HOME/.bashrc
+    echo export NODE_NETWORK='"--testnet-magic 1"' >> $HOME/.bashrc
+    echo export CARDANO_NODE_NETWORK_ID=1 >> $HOME/.bashrc
+    source $HOME/.bashrc
+    mkdir -p $NODE_HOME
