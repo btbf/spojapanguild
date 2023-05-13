@@ -35,6 +35,10 @@
 
     * P2P設定時、ローカルルートPeerに複数のDNS名を使用した際の接続不具合を解消
 
+    * Peersメトリクス変更  
+    1.35.x：`cardano_node_metrics_connectedPeers_int`  
+    8.0.x :`cardano_node_metrics_peers_connectedPeers_int`  
+
 !!! error "よくお読みになって進めてください"
     ご自身のアップデートスタイルによって手順が異なります。  
     更新フローチャートとアップデートマニュアルを照らし合わせながら、アップデート作業を進めてください。
@@ -1157,6 +1161,22 @@ git rev 69a117b7be3db0f4ce6d9fc5cd4c16a2a409dcb8
     エアギャップではcardano-nodeは使用しないため転送してもしなくてもOKです。
 
 
+## 6.Grafanaダッシュボード修正
+
+ピアパネルのMetricsを修正する
+
+`ピア`パネルのメニューからEditを開き、`metrics browser`欄を以下の文字に置き換える
+```
+cardano_node_metrics_peers_connectedPeers_int
+```
+
+アラート修正
+
+１．ダッシュボード左メニュー→「Alerting」→「Alert rules」→「ノード監視」の中にある「BPリレー接続監視」をEdit(ペンマーク)で開く  
+２．`Metrics browser`を以下の文に置き換える
+```
+cardano_node_metrics_peers_connectedPeers_int{alias="block-producing-node"}
+```
 
 <!--
 ## **4.新メトリクスについて**
