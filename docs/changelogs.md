@@ -1,6 +1,6 @@
 # 変更履歴
 
-## 2023/05/13　ver. 12.4.0
+## 2023/05/13　ver. 12.7.0
 !!! note ""
     * Cardano-node8.0.0対応
     * [ノードアップデート手順](./operation/node-update.md)更新
