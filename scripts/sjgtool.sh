@@ -1300,12 +1300,12 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
 
                       #最終msg-metadata.json作成
                       echo $msg_metadata | jq . > $poll_dir/msg-metadata.json
+                      message_flg=0
                       break
                     else
                       printf "\n${FG_YELLOW}メッセージが未入力です。再度入力してください${NC}\n"
                     fi
                   done
-                  message_flg=0
                 ;;
                 2) 
                   message_flg=1
