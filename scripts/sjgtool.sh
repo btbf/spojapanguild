@@ -29,7 +29,7 @@ myExit() {
 
 main () {
 clear
-update
+#update
 #getEraIdentifier
 if [ $? == 1 ]; then
   cd $NODE_HOME/scripts
