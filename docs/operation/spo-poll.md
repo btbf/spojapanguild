@@ -86,9 +86,16 @@ wget https://raw.githubusercontent.com/cardano-foundation/CIP-0094-polls/main/ne
 ```
 
 投票ファイル作成コマンドを実行する
-```
-${cli_path} governance answer-poll --poll-file $HOME/git/spo-poll/poll_${txHash}-CBOR.json > $HOME/git/spo-poll/poll_${txHash}-poll-answer.json
-```
+=== "v8.0.0の場合"
+    ```
+    ${cli_path} governance answer-poll --poll-file $HOME/git/spo-poll/poll_${txHash}-CBOR.json --out-file $HOME/git/spo-poll/poll_${txHash}-poll-answer.json 2> /dev/null
+    ```
+=== "v1.35.7+cip-0094の場合"
+    ```
+    ${cli_path} governance answer-poll --poll-file $HOME/git/spo-poll/poll_${txHash}-CBOR.json > $HOME/git/spo-poll/poll_${txHash}-poll-answer.json
+    ```
+
+投票トランザクション送信準備
 
 === "ブロックプロデューサーノード"
     ウォレット残高確認
