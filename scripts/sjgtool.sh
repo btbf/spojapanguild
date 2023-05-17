@@ -1174,6 +1174,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
 
   poll_dir=$HOME/git/spo-poll
   cli_version="$(cardano-cli version | head -1 | cut -d' ' -f2)"
+  cli_version="1.35.5"
   cli_version_check="${cli_version:0:1}"
   echo "------------------------------------------------------------"
   echo -e ">> SPO投票(CIP-0094) | cardano-cli: ${FG_YELLOW}${cli_version}${NC}"
@@ -1327,8 +1328,13 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       #投票データ作成
       txCBOR=$(curl -s GET "https://raw.githubusercontent.com/cardano-foundation/CIP-0094-polls/main/networks/${NODE_CONFIG}/${txHash}/poll.json")
       echo "$txCBOR" > $poll_dir/poll_${txHash}-CBOR.json
-      ${cli_path} governance answer-poll --poll-file $poll_dir/poll_${txHash}-CBOR.json --answer ${poll_num} --out-file $poll_dir/poll_${txHash}-poll-answer.json 2> /dev/null
       
+      #cliバージョン振り分け
+      if [ $cli_version_check -lt 8 ]; then
+        ${cli_path} governance answer-poll --poll-file $poll_dir/poll_${txHash}-CBOR.json --answer ${poll_num} > $poll_dir/poll_${txHash}-poll-answer.json
+      else
+        ${cli_path} governance answer-poll --poll-file $poll_dir/poll_${txHash}-CBOR.json --answer ${poll_num} --out-file $poll_dir/poll_${txHash}-poll-answer.json 2> /dev/null
+      fi
 
       if [[ $message_flg -eq 0 ]]; then
         tmp_message=$(cat $poll_dir/msg-metadata.json)
