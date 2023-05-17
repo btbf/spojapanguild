@@ -1174,12 +1174,13 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
 
   poll_dir=$HOME/git/spo-poll
   cli_version="$(cardano-cli version | head -1 | cut -d' ' -f2)"
-
+  cli_version_check="${cli_version:0:1}"
   echo "------------------------------------------------------------"
   echo -e ">> SPO投票(CIP-0094) | cardano-cli: ${FG_YELLOW}${cli_version}${NC}"
   echo "------------------------------------------------------------"
 
-  if [ $cli_version != "8.0.0" ]; then
+  
+  if [ $cli_version_check -lt 8 ]; then
     cli_path="$poll_dir/bin/cardano-cli"
     if [ ! -d $poll_dir ]; then
       mkdir $poll_dir
@@ -1192,6 +1193,10 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       $cli_path version
     fi
   else
+      if [ ! -d $poll_dir ]; then
+        mkdir $poll_dir
+        echo -e "作業ディレクトリ ${FG_GREEN}$poll_dir${NC} を作成しました"
+      fi
       cli_path=$(which cardano-cli)
   fi
 
