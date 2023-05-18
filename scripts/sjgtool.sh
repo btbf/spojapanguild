@@ -1174,7 +1174,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
 
   poll_dir=$HOME/git/spo-poll
   cli_version="$(cardano-cli version | head -1 | cut -d' ' -f2)"
-  cli_version="1.35.5"
+  #cli_version="1.35.5"
   cli_version_check="${cli_version:0:1}"
   echo "------------------------------------------------------------"
   echo -e ">> SPO投票(CIP-0094) | cardano-cli: ${FG_YELLOW}${cli_version}${NC}"
