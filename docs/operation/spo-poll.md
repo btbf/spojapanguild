@@ -6,7 +6,7 @@
     * CIP-0094ダッシュボード  
     Adastat.net [[Mainnet]](https://adastat.net/polls) / Cardanoscan.io [[Mainnet]](https://cardanoscan.io/spo-polls/)
     * トランザクション手数料のみで投票できます
-    * CIP-0094に対応したcardano-cli(v1.35.7+cip-0094 または v8.0.0)が必要です
+    * CIP-0094に対応したcardano-cli(v8.0.0-untested または v8.0.0)が必要です
     * 投票は初回１回のみが有効です。
 
 ## 1.SJG TOOLで投票する
@@ -14,8 +14,8 @@
 !!! Question "SJG TOOL投票仕様"
     * 投票データに簡易メッセージを添付可能！  
     [ADASTAT](https://adastat.net/polls/96861fe7da8d45ba5db95071ed3889ed1412929f33610636c072a4b5ab550211)に実装された投票データ簡易メッセージを表示できます。
-    * インストール済みのCLIがCIP-0094非対応の場合は、`cardano-cli v1.35.7+cip-0094`を別途自動インストールします。これは投票のみに使用し、通常のオペレーションには使用しません。
-    * エアギャップに`cardano-cli v1.35.7+cip-0094`をインストールする必要はありません。
+    * インストール済みのCLIがCIP-0094非対応の場合は、`cardano-cli v8.0.0-untested`を別途自動インストールします。これは投票のみに使用し、通常のオペレーションには使用しません。
+    * エアギャップに`cardano-cli v8.0.0-untested`をインストールする必要はありません。
     * 投票内容の自動翻訳はAPI自動翻訳のため、正しい日本語になっていない場合があります。 
 
 1-1. SJG TOOLを起動し、v5.3へアップグレードしてください。
@@ -52,27 +52,27 @@ cli_path=$(which cardano-cli)
 ```
 
 !!! Danger "CLI v1.35.7以下の場合"
-    CIP-0094に対応したCLIが必要のため、以下を実行し`v1.35.7+cip-0094`をダウンロードしてください。 これは投票のみに使用し、通常のオペレーションには使用しません。
+    CIP-0094に対応したCLIが必要のため、以下を実行し`v8.0.0-untested`をダウンロードしてください。 これは投票のみに使用し、通常のオペレーションには使用しません。
 
-    v1.35.7+cip-0094をダウンロードする
+    v8.0.0-untestedをダウンロードする
     ```
     mkdir $HOME/git/spo-poll && cd $HOME/git/spo-poll
-    wget https://github.com/CardanoSolutions/cardano-node/releases/download/1.35.7%2Bcip-0094/cardano-cli-1.35.7+cip-0094-x86_64-linux-static.tar.gz
-    tar -zxf cardano-cli-1.35.7+cip-0094-x86_64-linux-static.tar.gz
+    wget -q https://github.com/btbf/spojapanguild/raw/d7cd9792ab4cb532b74a8cd1bf30de3c1c03b8a6/scripts/spo-poll/cardano-cli.gz
+    gzip -d cardano-cli.gz
     ```
     バージョン確認
     ```
-    $HOME/git/spo-poll/bin/cardano-cli version
+    $HOME/git/spo-poll/cardano-cli version
     ```
-    > cardano-cli 1.35.7+cip-0094 - linux-x86_64 - ghc-8.10  
-    > git rev 88d751a76a894f388f604e7f87f56151bb547843  
+    > cardano-cli 8.0.0 - linux-x86_64 - ghc-8.10
+    > git rev 0000000000000000000000000000000000000000
 
     CLIパスを上書きする
     ```
-    cli_path=$HOME/git/spo-poll/bin/cardano-cli
+    cli_path=$HOME/git/spo-poll/cardano-cli
     ```
 
-    * エアギャップに`cardano-cli v1.35.7+cip-0094`をインストールする必要はありません。
+    * エアギャップに`cardano-cli v8.0.0-untested`をインストールする必要はありません。
 
 
 投票トランザクションハッシュを設定する
@@ -86,14 +86,10 @@ wget https://raw.githubusercontent.com/cardano-foundation/CIP-0094-polls/main/ne
 ```
 
 投票ファイル作成コマンドを実行する
-=== "v8.0.0の場合"
-    ```
-    ${cli_path} governance answer-poll --poll-file $HOME/git/spo-poll/poll_${txHash}-CBOR.json --out-file $HOME/git/spo-poll/poll_${txHash}-poll-answer.json 2> /dev/null
-    ```
-=== "v1.35.7+cip-0094の場合"
-    ```
-    ${cli_path} governance answer-poll --poll-file $HOME/git/spo-poll/poll_${txHash}-CBOR.json > $HOME/git/spo-poll/poll_${txHash}-poll-answer.json
-    ```
+
+```
+${cli_path} governance answer-poll --poll-file $HOME/git/spo-poll/poll_${txHash}-CBOR.json > $HOME/git/spo-poll/poll_${txHash}-poll-answer.json
+```
 
 投票トランザクション送信準備
 

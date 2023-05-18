@@ -29,7 +29,7 @@ myExit() {
 
 main () {
 clear
-#update
+update
 #getEraIdentifier
 if [ $? == 1 ]; then
   cd $NODE_HOME/scripts
@@ -1182,15 +1182,16 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
 
   
   if [ $cli_version_check -lt 8 ]; then
-    cli_path="$poll_dir/bin/cardano-cli"
+    cli_path="$poll_dir/cardano-cli"
     if [ ! -d $poll_dir ]; then
       mkdir $poll_dir
       echo -e "作業ディレクトリ ${FG_GREEN}$poll_dir${NC} を作成しました"
       cd $poll_dir
-      wget -q https://github.com/CardanoSolutions/cardano-node/releases/download/1.35.7%2Bcip-0094/cardano-cli-1.35.7+cip-0094-x86_64-linux-static.tar.gz
-      echo "投票用cliをダウンロードしました"
-      tar -zxf cardano-cli-1.35.7+cip-0094-x86_64-linux-static.tar.gz
-      echo -e "投票用CLIパスは ${FG_GREEN}$poll_dir/bin/cardano-cli${NC} です"
+      wget -q https://github.com/btbf/spojapanguild/raw/d7cd9792ab4cb532b74a8cd1bf30de3c1c03b8a6/scripts/spo-poll/cardano-cli.gz
+      echo -e "投票用cli(8.0.0-untested)をダウンロードしました\n"
+      gzip -d cardano-cli.gz
+      chmod 755 ./cardano-cli
+      echo -e "投票用CLIパスは ${FG_GREEN}${cli_path}${NC} です"
       $cli_path version
     fi
   else
@@ -1202,7 +1203,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
   fi
 
 
-  echo -e "投票用CLIパス:${FG_GREEN}$(which $cli_path)${NC} | バージョン:${FG_GREEN}$($cli_path version | head -1 | cut -d' ' -f2)${NC}"
+  echo -e "\n投票用CLIパス:${FG_GREEN}$(which $cli_path)${NC} | バージョン:${FG_GREEN}$($cli_path version | head -1 | cut -d' ' -f2)${NC}"
   echo
   echo -e "この手順は途中でも中断できます\n"
 
@@ -1330,11 +1331,11 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       echo "$txCBOR" > $poll_dir/poll_${txHash}-CBOR.json
       
       #cliバージョン振り分け
-      if [ $cli_version_check -lt 8 ]; then
-        ${cli_path} governance answer-poll --poll-file $poll_dir/poll_${txHash}-CBOR.json --answer ${poll_num} > $poll_dir/poll_${txHash}-poll-answer.json
-      else
-        ${cli_path} governance answer-poll --poll-file $poll_dir/poll_${txHash}-CBOR.json --answer ${poll_num} --out-file $poll_dir/poll_${txHash}-poll-answer.json 2> /dev/null
-      fi
+      #if [ $cli_version_check -lt 8 ]; then
+      ${cli_path} governance answer-poll --poll-file $poll_dir/poll_${txHash}-CBOR.json --answer ${poll_num} > $poll_dir/poll_${txHash}-poll-answer.json
+      #else
+      #  ${cli_path} governance answer-poll --poll-file $poll_dir/poll_${txHash}-CBOR.json --answer ${poll_num} --out-file $poll_dir/poll_${txHash}-poll-answer.json 2> /dev/null
+      #fi
 
       if [[ $message_flg -eq 0 ]]; then
         tmp_message=$(cat $poll_dir/msg-metadata.json)
@@ -1383,14 +1384,13 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       #echo ${tx_in}
 
       echo -e "\nWallet残高 :$(scale1 ${total_balance}) ADA\n"
-
-      cardano-cli transaction build \
-        $NETWORK_IDENTIFIER \
+      ${cli_path} transaction build \
         ${tx_in} \
         --change-address $(cat $WALLET_PAY_ADDR_FILENAME) \
         --metadata-json-file $poll_dir/poll_${txHash}-poll-answer.json \
         --json-metadata-detailed-schema \
         --required-signer-hash $(cat $NODE_HOME/stakepoolid_hex.txt) \
+        $NETWORK_IDENTIFIER \
         --out-file $NODE_HOME/poll-answer.tx > /dev/null
 
       #Txサイズチェック
@@ -1420,14 +1420,14 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       echo -e "${FG_YELLOW}2. エアギャップでトランザクションファイルに署名してください${NC}"
       echo '----------------------------------------'
       echo 'cd $NODE_HOME'
-      echo "chmod u+rwx $HOME/cold-keys"
+      echo 'chmod u+rwx $HOME/cold-keys'
       echo 'cardano-cli transaction sign \'
       echo '  --tx-body-file poll-answer.tx \'
       echo '  --signing-key-file $HOME/cold-keys/node.skey \'
       echo '  --signing-key-file payment.skey \'
       echo "  $NETWORK_IDENTIFIER "'\'
       echo '  --out-file poll-answer-tx.signed'
-      echo "chmod a-rwx $HOME/cold-keys"
+      echo 'chmod a-rwx $HOME/cold-keys'
       echo '----------------------------------------'
       echo
       echo -e "3. エアギャップの ${FG_GREEN}poll-answer-tx.signed${NC} をBPのcnodeディレクトリにコピーしてください"
