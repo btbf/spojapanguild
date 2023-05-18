@@ -1436,11 +1436,18 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       echo '----------------------------------------'
       echo
       echo "1～3の操作が終わったらEnterを押してください"
-      read -p "投票送信をキャンセルする場合はEnterを押して2を入力してください"
+      read -p "投票送信確認。キャンセルする場合はEnterを押して2を入力してください"
 
+      signe_file=`filecheck "$NODE_HOME/poll-answer-tx.signed"`
+
+      if [ ${signe_file} == "false" ]; then
+        echo -e "\n${FG_RED}$NODE_HOMEディレクトリにpoll-answer-tx.signedファイルが見つかりません${NC}"
+        echo -e "${FG_RED}投票を最初からやり直してください${NC}\n"
+        exit
+      fi
 
       #cardano-cli transaction view --tx-file $NODE_HOME/poll-answer-tx.signed
-
+      
       echo
       echo '[1] 投票Txを送信する　[2] キャンセル'
       echo
