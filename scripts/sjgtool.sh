@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=3.5.0
+TOOL_VERSION=3.5.1
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -1384,7 +1384,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       #echo ${tx_in}
 
       echo -e "\nWallet残高 :$(scale1 ${total_balance}) ADA\n"
-      ${cli_path} transaction build \
+      cardano-cli transaction build \
         ${tx_in} \
         --change-address $(cat $WALLET_PAY_ADDR_FILENAME) \
         --metadata-json-file $poll_dir/poll_${txHash}-poll-answer.json \
@@ -1457,8 +1457,8 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
           if [ "$retun_cmd" == "1" ] || [ "$retun_cmd" == "2" ]; then
             case ${retun_cmd} in
               1) 
-                tx_id=`${cli_path} transaction txid --tx-file $NODE_HOME/poll-answer.tx`
-                tx_result=`${cli_path} transaction submit --tx-file $NODE_HOME/poll-answer-tx.signed $NETWORK_IDENTIFIER`
+                tx_id=`cardano-cli transaction txid --tx-file $NODE_HOME/poll-answer.tx`
+                tx_result=`cardano-cli transaction submit --tx-file $NODE_HOME/poll-answer-tx.signed $NETWORK_IDENTIFIER`
                 echo
                 if [[ $tx_result == "Transaction"* ]]; then
                   echo '----------------------------------------'
