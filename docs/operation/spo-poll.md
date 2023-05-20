@@ -51,12 +51,16 @@ CLIパスを設定する
 cli_path=$(which cardano-cli)
 ```
 
+作業ディレクトリを作成する
+```
+mkdir $HOME/git/spo-poll && cd $HOME/git/spo-poll
+```
+
 !!! Danger "CLI v1.35.7以下の場合"
     CIP-0094に対応したCLIが必要のため、以下を実行し`v8.0.0-untested`をダウンロードしてください。 これは投票のみに使用し、通常のオペレーションには使用しません。
 
     v8.0.0-untestedをダウンロードする
     ```
-    mkdir $HOME/git/spo-poll && cd $HOME/git/spo-poll
     wget -q https://github.com/btbf/spojapanguild/raw/d7cd9792ab4cb532b74a8cd1bf30de3c1c03b8a6/scripts/spo-poll/cardano-cli.gz
     gzip -d cardano-cli.gz
     ```
