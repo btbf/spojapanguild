@@ -1,9 +1,13 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2022/12/07 v3.4.6
+最終更新日：2023/05/20 v3.5.1
 
 !!! info "主な機能"
-
+    * payment.addr残高照会
+    * 報酬引き出し
+    * ブロック生成可能可否確認
+    * envファイルアップデート切り替え
+    * SPO投票(簡易メッセージ添付可)
 
 ## **設定**
 
@@ -67,6 +71,14 @@ gtool
     また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
 
 ## 更新履歴
+
+### 3.5.1
+    * SPO投票機能
+    　cardano-cli 8.0.0-untested使用時、Txが作成されない不具合を解消
+
+### 3.5.0
+    * SPO投票機能実装
+        簡易メッセージ添付可能
 
 ### 3.4.6
 

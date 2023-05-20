@@ -127,7 +127,7 @@ ${cli_path} governance answer-poll --poll-file $HOME/git/spo-poll/poll_${txHash}
     投票用トランザクションファイルを作成する
     ```
     cd $NODE_HOME
-    ${cli_path} transaction build \
+    cardano-cli transaction build \
         $NODE_NETWORK \
         ${tx_in} \
         --change-address $(cat payment.addr) \
@@ -169,8 +169,8 @@ ${cli_path} governance answer-poll --poll-file $HOME/git/spo-poll/poll_${txHash}
 BPでトランザクションを送信します
 === "ブロックプロデューサーノード"
     ```
-    submit_txHash=$(${cli_path} transaction txid --tx-file $NODE_HOME/poll-answer.tx)
-    ${cli_path} transaction submit --tx-file $NODE_HOME/poll-answer-tx.signed $NODE_NETWORK
+    submit_txHash=$(cardano-cli transaction txid --tx-file $NODE_HOME/poll-answer.tx)
+    cardano-cli transaction submit --tx-file $NODE_HOME/poll-answer-tx.signed $NODE_NETWORK
     ```
 
 数分後にトランザクションメタデータを確認する
