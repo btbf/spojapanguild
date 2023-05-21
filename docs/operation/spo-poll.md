@@ -63,6 +63,7 @@ mkdir $HOME/git/spo-poll && cd $HOME/git/spo-poll
     ```
     wget -q https://github.com/btbf/spojapanguild/raw/d7cd9792ab4cb532b74a8cd1bf30de3c1c03b8a6/scripts/spo-poll/cardano-cli.gz
     gzip -d cardano-cli.gz
+    chmod 755 $HOME/git/spo-poll/cardano-cli
     ```
     バージョン確認
     ```
