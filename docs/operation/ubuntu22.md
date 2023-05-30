@@ -72,15 +72,12 @@ sudo do-release-upgrade -c | grep "New release"
 
 ## システムアップデート
 ```
-sudo apt update -y && sudo apt upgrade -y
+sudo apt full-upgrade -y
 ```
 
-## キャッシュ削除
+## パッケージインストール
 ```
-sudo apt autoremove -y
-```
-```
-sudo apt autoclean -y
+sudo apt install update-manager-core
 ```
 
 ## システムを再起動
@@ -108,8 +105,9 @@ If you continue, an additional ssh daemon will be started at port
 '1022'. 
 Do you want to continue? 
 
-Continue [yN] y
+Continue [yN]
 ```
+> y
 
 ```
 Starting additional sshd 
@@ -124,6 +122,7 @@ open the port with e.g.:
 
 To continue please press [ENTER]
 ```
+> ENTER
 
 ```
 Updating repository information
@@ -138,8 +137,10 @@ Do you want to rewrite your 'sources.list' file anyway? If you choose
 'Yes' here it will update all 'focal' to 'jammy' entries. 
 If you select 'No' the upgrade will cancel. 
 
-Continue [yN] y
+Continue [yN] 
 ```
+> y
+
 
 ```
 Do you want to start the upgrade? 
@@ -160,6 +161,9 @@ download has finished, the process cannot be canceled.
 
  Continue [yN]  Details [d] y
 ```
+> y
+
+
 
 chrony,opne-ssh
 
@@ -172,7 +176,7 @@ Remove obsolete packages?
 
  Continue [yN]  Details [d] y
 ```
-
+> y 
 
 System upgrade is complete.
 
@@ -183,9 +187,15 @@ If you select 'y' the system will be restarted.
 
 Continue [yN] 
 
+
 ## ブラケットペースモードOFF
 ```
 echo "set enable-bracketed-paste off" >> ~/.inputrc
+```
+
+## SSH再接続
+```
+exit
 ```
 
 ## 現在のUbuntuバージョンを確認する
