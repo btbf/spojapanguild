@@ -62,9 +62,14 @@ rootユーザーからログアウトする
 exit
 ```
 
-3.ターミナルソフトのユーザーをパスワードを上記で作成したユーザーとパスワードに書き換えて再接続。
+3.ターミナルソフトのユーザーをパスワードを上記で作成したユーザーとパスワードに書き換えて再接続します。
 
 
+!!! hint "Ubuntu22.04の場合"
+    Ubuntu22.04ではブラケットペーストモードがオンになっているため、以下のコマンドでオフにすることができます
+    ```
+    echo "set enable-bracketed-paste off" >> ~/.inputrc
+    ```
 
 ## **1-3.SSH鍵認証方式へ切り替え**
 
@@ -114,11 +119,16 @@ chmod 700 ~/.ssh
 sudo nano /etc/ssh/sshd_config
 ```
 
-**ChallengeResponseAuthentication**の項目を「no」にする
+**ResponseAuthentication**の項目を「no」にします。
+=== "Ubuntu20.04の場合"
+    ```text
+    ChallengeResponseAuthentication no
+    ```
 
-```text
-ChallengeResponseAuthentication no
-```
+=== "Ubuntu22.04の場合"
+    ```text
+    KbdInteractiveAuthentication no
+    ```
 
 **PasswordAuthentication**の項目を「no」にする
 
@@ -454,11 +464,16 @@ sudo systemctl restart sshd.service
 sudo nano /etc/ssh/sshd_config
 ```
 
-**ChallengeResponseAuthentication**の項目を「yes」にします。
+**ResponseAuthentication**の項目を「yes」にします。
+=== "Ubuntu20.04の場合"
+    ```text
+    ChallengeResponseAuthentication yes
+    ```
 
-```text
-ChallengeResponseAuthentication yes
-```
+=== "Ubuntu22.04の場合"
+    ```text
+    KbdInteractiveAuthentication yes
+    ```
 
 **UsePAM**の項目を「yes」にします。
 
@@ -488,11 +503,39 @@ google-authenticator
 
 いくつか質問事項が表示されます。推奨項目は以下のとおりです。
 
-* Make tokens “time-base”": yes
-* Update the `.google_authenticator` file: yes
-* Disallow multiple uses: yes
-* Increase the original generation time limit: no
-* Enable rate-limiting: yes
+``` { .yaml .no-copy }
+Do you want authentication tokens to be time-based (y/n) : y
+```
+
+``` { .yaml .no-copy }
+Do you want me to update your 
+"/home/cardano/.google_authenticator" file? (y/n): y
+```
+
+``` { .yaml .no-copy }
+Do you want to disallow multiple uses of the same authentication
+token? This restricts you to one login about every 30s, but it increases
+your chances to notice or even prevent man-in-the-middle attacks (y/n): y
+```
+
+``` { .yaml .no-copy }
+By default, a new token is generated every 30 seconds by the mobile app.
+In order to compensate for possible time-skew between the client and the server,
+we allow an extra token before and after the current time. This allows for a
+time skew of up to 30 seconds between authentication server and client. If you
+experience problems with poor time synchronization, you can increase the window
+from its default size of 3 permitted codes (one previous code, the current
+code, the next code) to 17 permitted codes (the 8 previous codes, the current
+code, and the 8 next codes). This will permit for a time skew of up to 4 minutes
+between client and server.
+Do you want to do so? (y/n): n
+```
+``` { .yaml .no-copy }
+If the computer that you are logging into isn't hardened against brute-force
+login attempts, you can enable rate-limiting for the authentication module.
+By default, this limits attackers to no more than 3 login attempts every 30s.
+Do you want to enable rate-limiting? (y/n) : y
+```
 
 プロセス中に大きなQRコードが表示されますが、その下には緊急時のスクラッチコードが表示されますので、忘れずに書き留めておいて下さい。
 

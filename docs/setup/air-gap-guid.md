@@ -18,7 +18,7 @@
 
 **ダウンロード/インストール**
 
-* Ubuntu Desktop 20.04.4 LTS  
+* Ubuntu Desktop 20.04.x LTS  
 * VirtualBox-7.0.4  
 ---
 

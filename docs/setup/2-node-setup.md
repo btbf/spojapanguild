@@ -1,5 +1,10 @@
 # **2. ノードインストール**
 
+!!! hint "インストールバージョン"
+    | Node/CLI | GHC | Cabal |
+    | :---------- | :---------- | :---------- |
+    | 8.1.1 | 8.10.7 | 3.8.1.0 |
+
 ## **2-1. 依存関係インストール**
 
 ターミナルを起動し、以下のコマンドを入力しましょう！
@@ -111,15 +116,15 @@ Installation may take a while.
 !!! attention "Cabal/GHCバージョンについて"
     最新バージョンはcardano-node/cliのビルドに失敗するため必ず以下で指定されたバージョンをインストールしてください。
 
-ghcupセットアップ確認
+cabalインストール
 ```bash
 source ~/.bashrc
 ghcup upgrade
-ghcup install cabal 3.6.2.0
-ghcup set cabal 3.6.2.0
+ghcup install cabal 3.8.1.0
+ghcup set cabal 3.8.1.0
 ```
 
-GHCをインストールします。
+GHCインストール
 
 ```bash
 ghcup install ghc 8.10.7
@@ -170,7 +175,7 @@ ghc --version
 ```
 
 !!! check "チェック"
-    Cabalバージョン：「3.6.2.0」  
+    Cabalバージョン：「3.8.1.0」  
     GHCバージョン：「8.10.7」であることを確認してください。
 
 
@@ -187,7 +192,7 @@ cd $HOME/git
 git clone https://github.com/input-output-hk/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/8.0.0
+git checkout tags/8.1.1
 ```
 
 Cabalのビルドオプションを構成します。
@@ -225,11 +230,11 @@ cardano-cli version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 8.0.0 - linux-x86_64 - ghc-8.10  
-git rev 69a117b7be3db0f4ce6d9fc5cd4c16a2a409dcb8 
+>cardano-cli 8.1.1 - linux-x86_64 - ghc-8.10  
+git rev 6f79e5c3ea109a70cd01910368e011635767305a  
 
->cardano-node 8.0.0 - linux-x86_64 - ghc-8.10  
-git rev 69a117b7be3db0f4ce6d9fc5cd4c16a2a409dcb8
+>cardano-node 8.1.1 - linux-x86_64 - ghc-8.10  
+git rev 6f79e5c3ea109a70cd01910368e011635767305a  
 
 
 ## **2-3. ノード設定ファイルの修正**
