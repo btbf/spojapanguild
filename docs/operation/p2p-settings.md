@@ -17,7 +17,7 @@
 cardano-node version
 ```
 !!! hint "ノードバージョン"
-    P2Pは1.35.7で利用可能です。  
+    P2Pは1.35.7以上で利用可能です。  
     1.35.6以下の場合は[ノードアップデートマニュアル](./node-update.md)に添ってバージョンアップをお願いします。
 
 ノードを停止する
@@ -191,7 +191,7 @@ cat $NODE_HOME/mainnet-topology.json | jq .
 sudo systemctl start cardano-node
 ```
 
-## **5.トポロジーアップデータ**
+## **5.トポロジーアップデータ修正**
 relay-topology_pull.sh内容変更  
 mainnet-topology.json上書き防止のため、生成ファイルをリネームします。
 ```
@@ -205,9 +205,20 @@ sed -i $NODE_HOME/relay-topology_pull.sh \
     Cronに設定している、トポロジーアップデータサーバーへの生存通知はしばらく継続して下さい。  
     廃止時期は別途ご案内致します。
 
+## **6.トポロジーリロード設定**
+リロード用環境変数を追加
+```
+echo alias cnreload='"kill -SIGHUP $(pidof cardano-node)"' >> $HOME/.bashrc
+source $HOME/.bashrc
+```
+!!! hint "P2P有効時の新機能"
+    トポロジーファイル更新時のノード再起動が不要になりました！！  
+    mainnet-topology.jsonファイルを修正した後、`cnreload`コマンドを実行することで
+    ノードを再起動することなく、トポロジーファイルの再読み込みが可能です。
 
-## **6. gLiveViewの見方**
-P2P専用項目を解説します。
+
+## **7. gLiveViewの見方**
+P2P専用項目を解説します。  
 ![](../images/glive-p2p-1.png)  
 
 `Cold` `Warm` `Hot`が適正値に落ち着くまでに数時間かかる場合があります。
@@ -223,7 +234,7 @@ P2P専用項目を解説します。
 | `Bi-Dir`    | 接続先/接続元が両端でP2P |  (Bidirectional 双方向接続) |
 | `Duplex`    | 接続先/接続元がP2Pで両端でHotで接続状態 | 相互アクティブ接続 |
 
-Peerアナリティクスについて
+Peerアナリティクスについて  
 ![](../images/glive-p2p-2.png)
 !!! hint "Peerアナリティクスの変更点"
     P2PモードのOutgoingはノードポートを使用するため、コマンドの特性上全て`In`でカウントされます。

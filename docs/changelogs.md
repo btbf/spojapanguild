@@ -1,6 +1,15 @@
 # 変更履歴
 
-## 2023/05/18 ver. 12.7.1
+## 2023/06/20　ver. 12.8.0
+!!! note ""
+    * Cardano-node8.1.1対応
+    * [ノードアップデート手順](./operation/node-update.md)更新
+    * [Ubuntu22.04任意アップグレード手順](./operation/ubuntu22.md)追加
+    * [SJGラーニング](./learning.md)資料追加
+    * [[ダイナミックP2P設定](./operation/p2p-settings.md#6)]トポロジーリロード用環境変数追加
+    * 軽微な修正
+
+## 2023/05/18　ver. 12.7.1
 !!! note ""
     * SJG TOOL v3.5リリース(SPO投票機能実装)
     * SPO投票メインネット手順追加
@@ -11,7 +20,7 @@
     * [ノードアップデート手順](./operation/node-update.md)更新
 
 
-## 2023/05/4　ver. 12.6.3
+## 2023/05/04　ver. 12.6.3
 !!! note ""
     * SPO投票(テストネット)手順追加
 

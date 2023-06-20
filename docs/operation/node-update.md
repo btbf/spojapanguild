@@ -1,17 +1,22 @@
 # **ノードアップデートマニュアル**
 
 !!! info "概要"
-    このガイドは ノードバージョン8.0.0に対応しています。最終更新日：2023年05月12日
+    このガイドは ノードバージョン8.1.1に対応しています。最終更新日：2023年06月20日
 
-    * ノードバージョンがプロトコルバージョンと一致するよう変更されました
-    * 変更点が多数あります。慎重に作業を行ってください
-    * 今回のアップデートではDB再構築が発生します。（5時間～8時間以上）
+    | Node/CLI | GHC | Cabal |
+    | :---------- | :---------- | :---------- |
+    | 8.1.1 | 8.10.7 | 3.8.1.0 |
+
+    * <font color=red>今回のアップデートではDB再構築が発生します。（5時間～8時間以上）</font>
 
 
 !!! hint "主な変更点と新機能"
+
+    **■v8.0.0**
+
     * libsodium更新
 
-    * Conway台帳対応用設定ファイル追加
+    * Conway台帳拡張対応
 
     * `--mainnet`や`--testnet-magic`を必要とするCLIクエリでは、環境変数に`CARDANO_NODE_NETWORK_ID=mainnet`または`CARDANO_NODE_NETWORK_ID=<number>`を設定することで、ネットワーク指定オプションが不要になりました。  
     > 例) `cardano-cli query tip`
@@ -37,9 +42,14 @@
 
     * Peersメトリクス変更  
     1.35.x：`cardano_node_metrics_connectedPeers_int`  
-    8.0.x :`cardano_node_metrics_peers_connectedPeers_int`  
+    8.0.x :`cardano_node_metrics_peers_connectedPeers_int` 
 
-!!! error "よくお読みになって進めてください"
+    **■v8.1.1**
+
+    * P2P DNSバグ解消
+    * エポック境界計算処理改善<font color=red>(エポック境界のミススロットがなくなります)</font>
+
+!!! danger "よくお読みになって進めてください"
     ご自身のアップデートスタイルによって手順が異なります。  
     更新フローチャートとアップデートマニュアルを照らし合わせながら、アップデート作業を進めてください。
 
@@ -70,8 +80,8 @@ cabalバージョン確認
 cabal --version
 ```
 > 以下の戻り値ならOK  
-cabal-install version 3.6.2.0  
-compiled using version 3.6.2.0 of the Cabal library
+cabal-install version 3.8.1.0  
+compiled using version 3.8.1.0 of the Cabal library
 
 GHCバージョン確認
 ```bash
@@ -102,14 +112,21 @@ prometheus-node-exporter --version
         mv cabal cabal_bk
         ```
 
-    ??? danger "cabal 3.6.1.0以下だった場合(クリックして開く)"
-        **cabal 3.6.1.0以下だった場合のみ実行**
+    ??? danger "cabal 3.6.2.0以下だった場合(クリックして開く)"
+        **cabal 3.6.2.0以下だった場合のみ実行**
         **cabalバージョンアップ**
         ```
         ghcup upgrade
-        ghcup install cabal 3.6.2.0
-        ghcup set cabal 3.6.2.0
+        ghcup install cabal 3.8.1.0
+        ghcup set cabal 3.8.1.0
         ```
+        cabalバージョン確認
+        ```
+        cabal --version
+        ```
+        > 以下の戻り値ならOK  
+        cabal-install version 3.8.1.0  
+        compiled using version 3.8.1.0 of the Cabal library
 
     ??? danger "GHC 8.10.4以下だった場合(クリックして開く)"
         **GHC 8.10.4以下だった場合のみ実行**
@@ -281,17 +298,18 @@ prometheus-node-exporter --version
 
 ### **1-3.libsodium更新**
 
-```
-cd ~/git/libsodium
-git fetch --all --prune
-git checkout dbb48cc
-./autogen.sh
-./configure
-make
-make check
-sudo make install
-```
-> `make`コマンド実行後半に出現する `warning` は無視して大丈夫です。
+!!! danger "<font color=red>**この項目(1-3)は、1.35.シリーズからアップデートする場合のみ実施してください**</font>"
+    ```
+    cd ~/git/libsodium
+    git fetch --all --prune
+    git checkout dbb48cc
+    ./autogen.sh
+    ./configure
+    make
+    make check
+    sudo make install
+    ```
+    > `make`コマンド実行後半に出現する `warning` は無視して大丈夫です。
 
 
 ### **1-4.CNCLIバージョン確認(BPのみ)**
@@ -350,11 +368,6 @@ git clone https://github.com/input-output-hk/cardano-node.git cardano-node2
 cd cardano-node2/
 ```
 
-!!! hint "ヒント"
-
-    * SSH接続が途中で切断されても処理が止まりません。  
-    * ビルド中にデタッチ(Ctrl+B D)してバックグラウンド処理へ切り替えられます。
-
 ### **2-3.ソースコードからビルド**
 
 ```bash
@@ -364,7 +377,7 @@ cabal update
 
 ```
 git fetch --all --recurse-submodules --tags
-git checkout tags/8.0.0
+git checkout tags/8.1.1
 cabal configure -O0 -w ghc-8.10.7
 ```
 !!! hint "libsodium-vrfフラグについて"
@@ -379,8 +392,12 @@ echo -e "package cardano-crypto-praos\n flags: -external-libsodium-vrf" > cabal.
 ```bash
 cabal build cardano-node cardano-cli
 ```
+!!! hint "ヒント"
+    * ビルド完了までに数十分ほどかかります。
+    * SSH接続が途中で切断されても処理が止まりません。  
+    * ビルド中にデタッチ(Ctrl+B D)してバックグラウンド処理へ切り替えられます。
 
-ビルド完了までに数十分ほどかかります。  
+  
 
 **バージョン確認**
 
@@ -389,11 +406,11 @@ $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-cli") 
 $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-node") version  
 ```
 以下の戻り値を確認する  
->cardano-cli 8.0.0 - linux-x86_64 - ghc-8.10  
-git rev 69a117b7be3db0f4ce6d9fc5cd4c16a2a409dcb8 
+>cardano-cli 8.1.1 - linux-x86_64 - ghc-8.10  
+git rev 6f79e5c3ea109a70cd01910368e011635767305a  
 
->cardano-node 8.0.0 - linux-x86_64 - ghc-8.10  
-git rev 69a117b7be3db0f4ce6d9fc5cd4c16a2a409dcb8  
+>cardano-node 8.1.1 - linux-x86_64 - ghc-8.10  
+git rev 6f79e5c3ea109a70cd01910368e011635767305a   
 
 **ビルド用TMUXセッションを終了する** 
 ```
@@ -423,54 +440,30 @@ cardano-node version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 8.0.0 - linux-x86_64 - ghc-8.10  
-git rev 69a117b7be3db0f4ce6d9fc5cd4c16a2a409dcb8 
+>cardano-cli 8.1.1 - linux-x86_64 - ghc-8.10  
+git rev 6f79e5c3ea109a70cd01910368e011635767305a  
 
->cardano-node 8.0.0 - linux-x86_64 - ghc-8.10  
-git rev 69a117b7be3db0f4ce6d9fc5cd4c16a2a409dcb8  
+>cardano-node 8.1.1 - linux-x86_64 - ghc-8.10  
+git rev 6f79e5c3ea109a70cd01910368e011635767305a  
 
-**設定ファイルの追加と更新**
-```
-cd $NODE_HOME
-wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
-wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/config.json -O ${NODE_CONFIG}-config.json
-```
 
-設定ファイルを書き換える
+### 2-4.設定ファイルの追加と更新
 
-=== "非P2Pの場合"
-    ```bash
-    sed -i ${NODE_CONFIG}-config.json \
-        -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
-        -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
-        -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
-        -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-        -e "s/TraceMempool\": true/TraceMempool\": false/g" \
-        -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
-        -e "s/127.0.0.1/0.0.0.0/g"
+
+
+!!! danger "<font color=red>**この項目(2-4)は、1.35.シリーズからアップデートする場合のみ実施してください**</font>"
+    
     ```
-=== "P2Pの場合"
-    ```bash
-    sed -i ${NODE_CONFIG}-config.json \
-        -e '2i \  "EnableP2P": true,' \
-        -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
-        -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
-        -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
-        -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-        -e "s/TraceMempool\": true/TraceMempool\": false/g" \
-        -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
-        -e "s/127.0.0.1/0.0.0.0/g"
+    cd $NODE_HOME
+    wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
+    wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/config.json -O ${NODE_CONFIG}-config.json
     ```
 
-??? テストネットの場合はこちら
+    設定ファイルを書き換える
+
     === "非P2Pの場合"
         ```bash
         sed -i ${NODE_CONFIG}-config.json \
-            -e 's!"EnableP2P": true!"EnableP2P": false!' \
             -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
             -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
             -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
@@ -484,6 +477,7 @@ wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environmen
     === "P2Pの場合"
         ```bash
         sed -i ${NODE_CONFIG}-config.json \
+            -e '2i \  "EnableP2P": true,' \
             -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
             -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
             -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
@@ -495,26 +489,55 @@ wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environmen
             -e "s/127.0.0.1/0.0.0.0/g"
         ```
 
-**環境変数を追加する**
-```
-echo export CARDANO_NODE_NETWORK_ID=mainnet >> $HOME/.bashrc
-```
-??? テストネットの場合はこちら
-    === "Preview(テストネット)"
-        ```
-        echo export CARDANO_NODE_NETWORK_ID=2 >> $HOME/.bashrc
-        ```
-    === "PreProd(テストネット)"
-        ```
-        echo export CARDANO_NODE_NETWORK_ID=1 >> $HOME/.bashrc
-        ```
+    ??? テストネットの場合はこちら
+        === "非P2Pの場合"
+            ```bash
+            sed -i ${NODE_CONFIG}-config.json \
+                -e 's!"EnableP2P": true!"EnableP2P": false!' \
+                -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
+                -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
+                -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
+                -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
+                -e "s/TraceMempool\": true/TraceMempool\": false/g" \
+                -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
+                -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
+                -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+                -e "s/127.0.0.1/0.0.0.0/g"
+            ```
+        === "P2Pの場合"
+            ```bash
+            sed -i ${NODE_CONFIG}-config.json \
+                -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
+                -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
+                -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
+                -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
+                -e "s/TraceMempool\": true/TraceMempool\": false/g" \
+                -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
+                -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
+                -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+                -e "s/127.0.0.1/0.0.0.0/g"
+            ```
 
-**環境変数再読み込み**
-```
-source $HOME/.bashrc
-```
+    **環境変数を追加する**
+    ```
+    echo export CARDANO_NODE_NETWORK_ID=mainnet >> $HOME/.bashrc
+    ```
+    ??? テストネットの場合はこちら
+        === "Preview(テストネット)"
+            ```
+            echo export CARDANO_NODE_NETWORK_ID=2 >> $HOME/.bashrc
+            ```
+        === "PreProd(テストネット)"
+            ```
+            echo export CARDANO_NODE_NETWORK_ID=1 >> $HOME/.bashrc
+            ```
 
-### **2-4.サーバー再起動**
+    **環境変数再読み込み**
+    ```
+    source $HOME/.bashrc
+    ```
+
+### **2-5.サーバー再起動**
 
 サーバーを再起動する
 ```bash
@@ -525,10 +548,11 @@ SSH接続してDB再構築進捗を確認する
 ```
 journalctl --unit=cardano-node --follow
 ```
-> `Progress:`が100%になるまで5時間～8時間以上かかる場合があります。
+> `Progress:`が100%になるまで5時間～8時間以上かかる場合があります。  
+100%になるとDBは自動的に同期します。放置している場合は100%表示を見逃す場合がありますが問題ありません。
 
 
-### **2-5.作業フォルダリネーム**
+### **2-6.作業フォルダリネーム**
 前バージョンで使用していたバイナリフォルダをリネームし、バックアップとして保持します。最新バージョンを構築したフォルダをcardano-nodeとして使用します。
 
 ```bash
@@ -566,6 +590,9 @@ mv cardano-node2/ cardano-node/
 
 ### 3-1.転送元サーバー作業
 
+!!! danger ""
+    ▼転送内容を選択して下さい▼
+
 === "バイナリのみ"
 
     !!! Success "確認"
@@ -588,11 +615,11 @@ mv cardano-node2/ cardano-node/
         $NODE_HOME/Transfer/cardano-node version
         ```
         以下の戻り値を確認する  
-        >cardano-cli 8.0.0 - linux-x86_64 - ghc-8.10  
-        git rev 69a117b7be3db0f4ce6d9fc5cd4c16a2a409dcb8 
+        >cardano-cli 8.1.1 - linux-x86_64 - ghc-8.10  
+        git rev 6f79e5c3ea109a70cd01910368e011635767305a  
 
-        >cardano-node 8.0.0 - linux-x86_64 - ghc-8.10  
-        git rev 69a117b7be3db0f4ce6d9fc5cd4c16a2a409dcb8   
+        >cardano-node 8.1.1 - linux-x86_64 - ghc-8.10  
+        git rev 6f79e5c3ea109a70cd01910368e011635767305a   
 
 
 === "バイナリ+DB"
@@ -624,11 +651,11 @@ mv cardano-node2/ cardano-node/
         $NODE_HOME/Transfer/cardano-node version
         ```
         以下の戻り値を確認する  
-        >cardano-cli 8.0.0 - linux-x86_64 - ghc-8.10  
-        git rev 69a117b7be3db0f4ce6d9fc5cd4c16a2a409dcb8 
+        >cardano-cli 8.1.1 - linux-x86_64 - ghc-8.10  
+        git rev 6f79e5c3ea109a70cd01910368e011635767305a  
 
-        >cardano-node 8.0.0 - linux-x86_64 - ghc-8.10  
-        git rev 69a117b7be3db0f4ce6d9fc5cd4c16a2a409dcb8   
+        >cardano-node 8.1.1 - linux-x86_64 - ghc-8.10  
+        git rev 6f79e5c3ea109a70cd01910368e011635767305a   
 
 
         **ノードを停止する**
@@ -644,7 +671,7 @@ mv cardano-node2/ cardano-node/
         ```
         圧縮する
         ```
-        tar cvzf $NODE_HOME/Transfer/8.0.0-db.tar.gz -C $NODE_HOME db
+        tar cvzf $NODE_HOME/Transfer/8.1.1-db.tar.gz -C $NODE_HOME db
         ```
 
         圧縮が終了したらTMUXを閉じる
@@ -723,7 +750,7 @@ mv cardano-node2/ cardano-node/
 
         圧縮ファイルを転送する
         ```
-        rsync -P --rsh=ssh $NODE_HOME/Transfer/8.0.0-db.tar.gz $for::Server/8.0.0-db.tar.gz
+        rsync -P --rsh=ssh $NODE_HOME/Transfer/8.1.1-db.tar.gz $for::Server/8.1.1-db.tar.gz
         ```
         > 転送が完了するまで待つ
 
@@ -749,11 +776,11 @@ mv cardano-node2/ cardano-node/
     cardano-node version
     ```
     以下の戻り値を確認する  
-    >cardano-cli 8.0.0 - linux-x86_64 - ghc-8.10  
-    git rev 69a117b7be3db0f4ce6d9fc5cd4c16a2a409dcb8 
+    >cardano-cli 8.1.1 - linux-x86_64 - ghc-8.10  
+    git rev 6f79e5c3ea109a70cd01910368e011635767305a  
 
-    >cardano-node 8.0.0 - linux-x86_64 - ghc-8.10  
-    git rev 69a117b7be3db0f4ce6d9fc5cd4c16a2a409dcb8   
+    >cardano-node 8.1.1 - linux-x86_64 - ghc-8.10  
+    git rev 6f79e5c3ea109a70cd01910368e011635767305a  
 
 === "バイナリ+DB"
 
@@ -772,7 +799,7 @@ mv cardano-node2/ cardano-node/
     DBを解凍する
     ```
     mkdir $NODE_HOME/temp
-    tar -xzvf $NODE_HOME/8.0.0-db.tar.gz -C $NODE_HOME/temp/
+    tar -xzvf $NODE_HOME/8.1.1-db.tar.gz -C $NODE_HOME/temp/
     ```
     
     
@@ -800,61 +827,32 @@ mv cardano-node2/ cardano-node/
     cardano-node version
     ```
     以下の戻り値を確認する  
-    >cardano-cli 8.0.0 - linux-x86_64 - ghc-8.10  
-    git rev 69a117b7be3db0f4ce6d9fc5cd4c16a2a409dcb8 
+    >cardano-cli 8.1.1 - linux-x86_64 - ghc-8.10  
+    git rev 6f79e5c3ea109a70cd01910368e011635767305a  
 
-    >cardano-node 8.0.0 - linux-x86_64 - ghc-8.10  
-    git rev 69a117b7be3db0f4ce6d9fc5cd4c16a2a409dcb8   
+    >cardano-node 8.1.1 - linux-x86_64 - ghc-8.10  
+    git rev 6f79e5c3ea109a70cd01910368e011635767305a  
 
     
     DBフォルダを入れ替える
     ```
-    mv $NODE_HOME/db $NODE_HOME/db_135
+    mv $NODE_HOME/db $NODE_HOME/db_old
     mv $NODE_HOME/temp/db $NODE_HOME/db
     ```
 
-**設定ファイル追加と更新**
-```
-cd $NODE_HOME
-wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
-wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/config.json -O ${NODE_CONFIG}-config.json
-```
-
-設定ファイルを書き換える
-
-=== "非P2Pの場合"
-    ```bash
-    sed -i ${NODE_CONFIG}-config.json \
-        -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
-        -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
-        -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
-        -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-        -e "s/TraceMempool\": true/TraceMempool\": false/g" \
-        -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
-        -e "s/127.0.0.1/0.0.0.0/g"
+!!! danger "<font color=red>**この項目は、1.35.シリーズからアップデートする場合のみ実施してください**</font>"
+    **設定ファイル追加と更新**
     ```
-=== "P2Pの場合"
-    ```bash
-    sed -i ${NODE_CONFIG}-config.json \
-        -e '2i \  "EnableP2P": true,' \
-        -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
-        -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
-        -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
-        -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-        -e "s/TraceMempool\": true/TraceMempool\": false/g" \
-        -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
-        -e "s/127.0.0.1/0.0.0.0/g"
+    cd $NODE_HOME
+    wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
+    wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/config.json -O ${NODE_CONFIG}-config.json
     ```
 
-??? テストネットの場合はこちら
+    設定ファイルを書き換える
+
     === "非P2Pの場合"
         ```bash
         sed -i ${NODE_CONFIG}-config.json \
-            -e 's!"EnableP2P": true!"EnableP2P": false!' \
             -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
             -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
             -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
@@ -868,6 +866,7 @@ wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environmen
     === "P2Pの場合"
         ```bash
         sed -i ${NODE_CONFIG}-config.json \
+            -e '2i \  "EnableP2P": true,' \
             -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
             -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
             -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
@@ -879,24 +878,53 @@ wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environmen
             -e "s/127.0.0.1/0.0.0.0/g"
         ```
 
-**環境変数を追加する**
-```
-echo export CARDANO_NODE_NETWORK_ID=mainnet >> $HOME/.bashrc
-```
-??? テストネットの場合はこちら
-    === "Preview(テストネット)"
-        ```
-        echo export CARDANO_NODE_NETWORK_ID=2 >> $HOME/.bashrc
-        ```
-    === "PreProd(テストネット)"
-        ```
-        echo export CARDANO_NODE_NETWORK_ID=1 >> $HOME/.bashrc
-        ```
+    ??? テストネットの場合はこちら
+        === "非P2Pの場合"
+            ```bash
+            sed -i ${NODE_CONFIG}-config.json \
+                -e 's!"EnableP2P": true!"EnableP2P": false!' \
+                -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
+                -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
+                -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
+                -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
+                -e "s/TraceMempool\": true/TraceMempool\": false/g" \
+                -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
+                -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
+                -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+                -e "s/127.0.0.1/0.0.0.0/g"
+            ```
+        === "P2Pの場合"
+            ```bash
+            sed -i ${NODE_CONFIG}-config.json \
+                -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
+                -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
+                -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
+                -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
+                -e "s/TraceMempool\": true/TraceMempool\": false/g" \
+                -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
+                -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
+                -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+                -e "s/127.0.0.1/0.0.0.0/g"
+            ```
 
-**環境変数再読み込み**
-```
-source $HOME/.bashrc
-```
+    **環境変数を追加する**
+    ```
+    echo export CARDANO_NODE_NETWORK_ID=mainnet >> $HOME/.bashrc
+    ```
+    ??? テストネットの場合はこちら
+        === "Preview(テストネット)"
+            ```
+            echo export CARDANO_NODE_NETWORK_ID=2 >> $HOME/.bashrc
+            ```
+        === "PreProd(テストネット)"
+            ```
+            echo export CARDANO_NODE_NETWORK_ID=1 >> $HOME/.bashrc
+            ```
+
+    **環境変数再読み込み**
+    ```
+    source $HOME/.bashrc
+    ```
 
 サーバーを再起動する
 ```bash
@@ -907,7 +935,8 @@ SSH接続してノード同期状況を確認する
 ```
 journalctl --unit=cardano-node --follow
 ```
-> `Progress:`が100%になるまで待ちます。
+> `Progress:`が100%になるまで待ちます。  
+100%になるとDBは自動的に同期します。放置している場合は100%表示を見逃す場合がありますが問題ありません。
 
 
 バイナリーファイルを移動する
@@ -930,8 +959,8 @@ mv $NODE_HOME/cardano-node $HOME/git/cardano-node/
         ```
     === "転送先"
         ```
-        rm -rf $NODE_HOME/db_135
-        rm $NODE_HOME/8.0.0-db.tar.gz
+        rm -rf $NODE_HOME/db_old
+        rm $NODE_HOME/8.1.1-db.tar.gz
         ```
 
 
@@ -1038,11 +1067,35 @@ tmux a -t cncli
 (バックグラウンド実行に切り替え)
 
 
-## 5. エアギャップアップデート
+## **5.Grafanaダッシュボード修正**
+!!! danger "<font color=red>**この項目は、1.35.シリーズからアップデートする場合のみ実施してください**</font>"
+    ピアパネルのMetricsを修正する
+
+    `ピア`パネルのメニューからEditを開き、`metrics browser`欄を以下の文字に置き換える
+    ```
+    cardano_node_metrics_peers_connectedPeers_int
+    ```
+
+    アラート修正
+
+    １．ダッシュボード左メニュー→「Alerting」→「Alert rules」→「ノード監視」の中にある「BPリレー接続監視」をEdit(ペンマーク)で開く  
+    ２．`Metrics browser`を以下の文に置き換える
+    ```
+    cardano_node_metrics_peers_connectedPeers_int{alias="block-producing-node"}
+    ```
+
+## **6.トポロジーアップデータ修正**
+!!! danger "<font color=red>**この項目は、リレーノードのみ実施してください**</font>"
+    トポロジー更新ファイルに、バックアップコマンドを追加
+    ```
+    sed -i '5i cp ${NODE_HOME}/${NODE_CONFIG}-topology.json ${NODE_HOME}/${NODE_CONFIG}-topology-bk.json' $NODE_HOME/relay-topology_pull.sh
+    ```
+
+## **7. エアギャップアップデート**
 !!! hint "SFTP機能ソフト導入"
     ファイル転送に便利な[SFTP機能ソフトの導入手順はこちら](./sftp.md)
 
-### **5-1.バイナリファイルコピー**
+### **7-1.バイナリファイルコピー**
 
 === "1.RSYNC+SSHでアップデートを行った場合"
 
@@ -1073,14 +1126,16 @@ tmux a -t cncli
     R-loginの転送機能が遅いので、大容量ファイルをダウン・アップロードする場合は、SFTP接続可能なソフトを使用すると効率的です。（FileZilaなど）
 
 <BR>
-** ２．エアギャップマシンにファイルを入れる**  
+
+**エアギャップマシンにファイルを入れる**  
+
 === "エアギャップ"
 
     * $HOME/git/cardano-node2/ に`cardano-cli`を入れる   
       <font color=red>(cardano-node2が無ければ作成する)</font>
 
 
-### **5-2.インストール**
+### **7-2.インストール**
 
 エアギャップマシンで以下を実行する
 === "エアギャップ"
@@ -1146,37 +1201,22 @@ tmux a -t cncli
     source $HOME/.bashrc
     ```
 
-### **5-3.バージョン確認**
+### **7-3.バージョン確認**
 
 ```bash
 cardano-cli version
 ```
 
-以下の戻り値を確認する   
->cardano-cli 8.0.0 - linux-x86_64 - ghc-8.10  
-git rev 69a117b7be3db0f4ce6d9fc5cd4c16a2a409dcb8 
+以下の戻り値を確認する  
+>cardano-cli 8.1.1 - linux-x86_64 - ghc-8.10  
+git rev 6f79e5c3ea109a70cd01910368e011635767305a  
+
+
 
 
 !!! denger "確認"
     エアギャップではcardano-nodeは使用しないため転送してもしなくてもOKです。
 
-
-## 6.Grafanaダッシュボード修正
-
-ピアパネルのMetricsを修正する
-
-`ピア`パネルのメニューからEditを開き、`metrics browser`欄を以下の文字に置き換える
-```
-cardano_node_metrics_peers_connectedPeers_int
-```
-
-アラート修正
-
-１．ダッシュボード左メニュー→「Alerting」→「Alert rules」→「ノード監視」の中にある「BPリレー接続監視」をEdit(ペンマーク)で開く  
-２．`Metrics browser`を以下の文に置き換える
-```
-cardano_node_metrics_peers_connectedPeers_int{alias="block-producing-node"}
-```
 
 <!--
 ## **4.新メトリクスについて**

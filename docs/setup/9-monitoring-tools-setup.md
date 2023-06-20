@@ -273,7 +273,7 @@ prometheus.ymlを移動します
 1. ローカルブラウザから http://&lt;リレーノード1IPアドレス&gt;:3000 を開きます。
 2. ログイン名・PWは **admin** / **admin**
 3. パスワードを変更します。
-4. 左メニューの歯車アイコンから データソースを追加します。
+4. 左上の三本線メニューを開き「Connections」→「Data sources」をクリックします。
 5. 「Add data source」をクリックし、「Prometheus」を選択します。
 6. 名前は `Prometheus`としてください。
 7. **URL** を [http://localhost:9090](http://localhost:9090)に設定します。
@@ -291,7 +291,7 @@ sed -i $NODE_HOME/SJG_Grafana_Dashboard.json \
     -e "s/bech32_id_of_your_pool/$(cat $NODE_HOME/stakepoolid_bech32.txt)/g"
 ```
 12. BPの`cnode`フォルダにある`SJG_Grafana_Dashboard.json`をローカルPCにダウンロードします  
-13. 左メニューの□アイコン(Dashboards)→`+import`をクリックします。  
+13. 左メニューの「Dashboards」→「New」→「`+import`」をクリックします。  
 14. 「Upload JSON file」をクリックし、10でダウンロードした`SJG_Grafana_Dashboard.json`を指定します。  
 15. 「Prometheus」と「Infinity」のプルダウンを選択し`Import`ボタンをクリックします。  
 

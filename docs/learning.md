@@ -22,3 +22,6 @@
 
 
 ## 第7回 [ダイナミックP2P](https://drive.google.com/file/d/1xpZs8d9f04WE3Ga5E116LO47uwKSQW-k/view?usp=share_link)
+
+
+## 第8回 [ノードトラブルシューティング](https://drive.google.com/file/d/1Gsv1wWD0THsUV6DKy4NjXF0I3c0SF3B5/view?usp=sharing)
