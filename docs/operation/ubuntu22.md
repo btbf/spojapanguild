@@ -516,9 +516,15 @@ df -h /root
 
 - [x] 6-6-2.Ubuntuを起動する
 
-- [x] 6-6-3.退避したキーファイルを`cnode`ディレクトリに戻す
+- [x] 6-6-3.ブラケットペーストモードOFF
 
-- [x] 6-6-4.戻した主要ファイルのアクセス制限
+```
+echo "set enable-bracketed-paste off" >> ~/.inputrc
+```
+
+- [x] 6-6-4.退避したキーファイルを`cnode`ディレクトリに戻す
+
+- [x] 6-6-5.戻した主要ファイルのアクセス制限
 
 ```
 cd $NODE_HOME
@@ -531,7 +537,7 @@ chmod 400 payment.addr
 chmod a-rwx $HOME/cold-keys
 ```
 
-- [x] 6-6-5.Ubuntu22.04で再ビルドしたcardano-cliをコピーする([参考手順](./node-update.md#5))
+- [x] 6-6-6.Ubuntu22.04で再ビルドしたcardano-cliをコピーする([参考手順](./node-update.md#5))
 
 
 

@@ -1,7 +1,7 @@
 # **ノードアップデートマニュアル**
 
 !!! info "概要"
-    このガイドは ノードバージョン8.1.1に対応しています。最終更新日：2023年06月20日
+    このガイドは ノードバージョン8.1.1に対応しています。最終更新日：2023年06月21日
 
     | Node/CLI | GHC | Cabal |
     | :---------- | :---------- | :---------- |
@@ -1181,25 +1181,25 @@ tmux a -t cncli
     source $HOME/.bashrc
     ```
     -->
+    !!! danger "<font color=red>**この項目は、1.35.シリーズからアップデートする場合のみ実施してください**</font>"
+        **環境変数を追加する**
+        ```
+        echo export CARDANO_NODE_NETWORK_ID=mainnet >> $HOME/.bashrc
+        ```
+        ??? テストネットの場合はこちら
+            === "Preview(テストネット)"
+                ```
+                echo export CARDANO_NODE_NETWORK_ID=2 >> $HOME/.bashrc
+                ```
+            === "PreProd(テストネット)"
+                ```
+                echo export CARDANO_NODE_NETWORK_ID=1 >> $HOME/.bashrc
+                ```
 
-    **環境変数を追加する**
-    ```
-    echo export CARDANO_NODE_NETWORK_ID=mainnet >> $HOME/.bashrc
-    ```
-    ??? テストネットの場合はこちら
-        === "Preview(テストネット)"
-            ```
-            echo export CARDANO_NODE_NETWORK_ID=2 >> $HOME/.bashrc
-            ```
-        === "PreProd(テストネット)"
-            ```
-            echo export CARDANO_NODE_NETWORK_ID=1 >> $HOME/.bashrc
-            ```
-
-    **環境変数再読み込み**
-    ```
-    source $HOME/.bashrc
-    ```
+        **環境変数再読み込み**
+        ```
+        source $HOME/.bashrc
+        ```
 
 ### **7-3.バージョン確認**
 
