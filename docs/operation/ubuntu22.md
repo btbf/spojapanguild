@@ -318,7 +318,12 @@ cat /etc/os-release | grep "VERSION=" # (1)!
 echo "set enable-bracketed-paste off" >> ~/.inputrc
 ```
 
-### 3-3.SSH再接続
+### 3-3.デーモン再起動自動化
+```
+echo "\$nrconf{restart} = 'a';" | sudo tee /etc/needrestart/conf.d/50local.conf
+```
+
+### 3-4.SSH再接続
 ```
 exit
 ```
