@@ -6,6 +6,7 @@
 * [Ubuntu22.04任意アップグレード手順](./operation/ubuntu22.md#3-3) 「3-3.デーモン再起動自動化」を追加
 * [1.Ubuntu初期設定](/docs/setup/1-ubuntu-setup.md#1-2) 「Ubuntu22.04の場合の特別設定」を追加
 * [Grafanaアラート設定](/docs/operation/grafana-alert.md) 2-2修正
+* [7.ステークプールの登録](/docs/setup/7-register-stakepool.md)メタデータの作成方法を変更
 
 
 ## 2023/06/20　ver. 12.8.1

@@ -20,26 +20,27 @@
     !!! example ""
 
         1.Githubアカウントを作成しログインします [https://github.com/](https://github.com/)  
+        　<font color=red>ユーザー名を最大13文字以内で作成してください</font>
 
-        2.右上の＋マークをクリックし**new repository** をクリックします。  
+        2.Repositoriesタブをクリックし、右上の**New** をクリックします。 
 
-        3.**Repository name**に任意のリポジトリ名を入力し、**Create repository**をクリックします。  
+        3.リポジトリ作成
+        
+        * **Repository name**に任意のリポジトリ名<font color=red>(最大13文字以内)</font>を入力
+        * Publicを選択
+        * **Create repository**をクリック
+
+        ![](../images/github-pages/github-page0.png)
 
         4.小さい文字で書かれた"**creating a new file**"をクリックします。  
 
-        ![](../images/git1.png)
+        ![](../images/github-pages/github-page1.png)
 
         5.ファイル名を **poolMetaData.json** として入力し **json** コンテンツを貼り付けます。
 
         ![](../images/git2.png)
 
-        !!! hint "作成時の注意"
-            * 下記は参考フォーマットとなります。ご自身のプール名、Ticker名に書き換えてください  
-            * まだhomepageアドレスが無い場合は、ご自身のTwitterアドレスでも大丈夫です。
-            * **ticker**名の長さは3～5文字以内で、A-Zと0-9のみで構成する必要があります。  
-            * **description**の長さは255文字以内(255byte)となります。（ひらがな、漢字、カタカナは1文字2byte）
-
-
+        
         ```bash
         {
         "name": "MyPoolName",
@@ -48,35 +49,57 @@
         "homepage": "https://myadapoolnamerocks.com"
         }
         ```
-        6.**Commit new file**をクリックします。
 
-        ![](../images/git3.png)
+        !!! danger "作成時の注意"
+            * 下記は参考フォーマットとなります。ご自身のプール名、Ticker名に書き換えてください  
+            * まだhomepageアドレスが無い場合は、ご自身のTwitterアドレスでも大丈夫です。
+            * **ticker**名の長さは3～5文字以内で、A-Zと0-9のみで構成する必要があります。  
+            * **description**の長さは255文字以内(255byte)となります。（ひらがな、漢字、カタカナは1文字2byte）
 
-        7.作成したファイルの名前をクリックします。
 
-        8.**Rawボタン**をクリックします。
+        6.**Commit Changes...**をクリックします。
 
-        9.「**https://raw**」から始まるURLをコピーします。
+        ![](../images/github-pages/github-page2.png)
+        ![](../images/github-pages/github-page3.png)
 
-        > 例: [https://raw.githubusercontent.com/coincashew/test/master/poolMetaData.json](https://raw.githubusercontent.com/coincashew/test/master/poolMetaData.json)
+        7.上部のメニュータブから**Settings**をクリックします
 
-        10.URLは64文字より短くする必要があります。 [https://bitly.com/](https://bitly.com/) または[https://tinyurl.com/](https://tinyurl.com/)を使用してURLを短縮します。
+        ![](../images/github-pages/github-page4.png)
 
-        11.9でコピーしたURLを貼り付けます。
-
-        12.短縮されたURLを[pool.cert作成時](./7-register-stakepool.md#poolcert)の`--metadata-url` に記述します。
-
-        > 例:  
-        > --metadata-url https://bit.ly/****
-
-        13．**ブロックプロデューサーノード**でjsonファイルをダウンロードし、ハッシュ値を計算する。  
-
-        !!! hint "ヒント"
-            下記のURLを12で作成した**短縮URL**に置き換えてから実行してください
+        8.GitPages設定
         
+        * 左メニューから**Pages**をクリックします。
+        * Branchのプルダウンから**main** **/root**を選択する
+        * **Save**をクリックします
+
+        ![](../images/github-pages/github-page5.png)
+
+        9.URLの生成
+
+        * 左メニューから**Pages**をクリックします。
+        * 上部にこのリポジトリの公開URLが表示されたことを確認します
+        * 赤枠のURLをコピーします
+
+        ![](../images/github-pages/github-page6.png)
+
+
+        10.メタデータURLの生成
+
+        9でコピーしたURLに`poolMetaData.json`を繋げます
+        
+        > **例）https://btbf.github.io/sjg/poolMetaData.json**
+
+        <font color=red>このURLの文字列が64文字以内であることを確認してください</font>
+
+
+        11．**ブロックプロデューサーノード**でjsonファイルをダウンロードし、ハッシュ値を計算する。  
+
+        !!! danger "URLを書き換えてから実行して下さい"
+            10で作成したメタデータURLを用いて下さい。
+
         ```bash
         cd $NODE_HOME
-        wget -O poolMetaData.json https://bit.ly/****
+        wget -O poolMetaData.json https://xxx.github.io/xxx/poolMetaData.json 
         ```
 
 
@@ -217,8 +240,19 @@ cat $NODE_HOME/poolMetaData.json | jq .
 
 
 === "エアギャップマシン(リレー1台の場合)"
-    `***.***.***.***`はリレー1のIPに置き換えてください  
-    下記のスクリプトは例です。ご自身のプール運用設定値に変更してから実行してください。  
+    下記のスクリプトは例です。ご自身のプール運用設定値に変更してから実行してください。
+
+    !!! danger "値を変更する"
+        `--pool-pledge` 誓約数  
+        `--pool-cost` 固定手数料  
+        `--pool-margin` 変動手数料  
+        `***.***.***.***`はリレー1のIPに置き換えてください  
+        `https://xxx.github.io/xxx/poolMetaData.json` はご自身のメタデータURLに置き換えてください
+
+
+
+
+  
     ```bash
     cd $NODE_HOME
     cardano-cli stake-pool registration-certificate \
@@ -232,15 +266,22 @@ cat $NODE_HOME/poolMetaData.json | jq .
         $NODE_NETWORK \
         --pool-relay-ipv4 ***.***.***.*** \
         --pool-relay-port 6000 \
-        --metadata-url https://bit.ly/**** \
+        --metadata-url https://xxx.github.io/xxx/poolMetaData.json \
         --metadata-hash $(cat poolMetaDataHash.txt) \
         --out-file pool.cert
     ```
 
 === "エアギャップマシン(リレー2台の場合)"
-    `111.***.***.***`はリレー1のIPに置き換えてください  
-    `222.***.***.***`はリレー2のIPに置き換えてください  
     下記のスクリプトは例です。ご自身のプール運用設定値に変更してから実行してください。  
+    
+    !!! danger "値を変更する"
+        `--pool-pledge` 誓約数  
+        `--pool-cost` 固定手数料  
+        `--pool-margin` 変動手数料  
+        `111.***.***.***`はリレー1のIPに置き換えてください  
+        `222.***.***.***`はリレー2のIPに置き換えてください  
+        `https://xxx.github.io/xxx/poolMetaData.json` はご自身のメタデータURLに置き換えてください
+
     ```bash
     cd $NODE_HOME
     cardano-cli stake-pool registration-certificate \
@@ -256,7 +297,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
         --pool-relay-port 6000 \
         --pool-relay-ipv4 222.***.***.*** \
         --pool-relay-port 6000 \
-        --metadata-url https://bit.ly/**** \
+        --metadata-url https://xxx.github.io/xxx/poolMetaData.json \
         --metadata-hash $(cat poolMetaDataHash.txt) \
         --out-file pool.cert
     ```
