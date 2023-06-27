@@ -84,7 +84,7 @@ sudo apt update -y && sudo apt upgrade -y
 ![](../images/grafana-alert/1-5.png)
 
 * ①:`BPリレー接続監視`など任意のルール名に書き換える
-* ⑥:`Metrics Browser`を`cardano_node_metrics_connectedPeers_int{alias="block-producing-node"}`に置き換える
+* ⑥:`Metrics Browser`を`cardano_node_metrics_peers_connectedPeers_int{alias="block-producing-node"}`に置き換える
 * ⑭:`last()` / `A` / `IS BELOW`に切り替え`1`を入力
 * ⑲:`Alerting`を選択
 * ⑳:`Alerting`を選択
@@ -172,7 +172,7 @@ sudo apt update -y && sudo apt upgrade -y
 
 * 任意の通知名`Self-Alert`を入力
 * 通知先を選択し情報を入力
-* [[3.通知先アプリの設定]](./3)で取得した通知アプリごとのトークンIDやWebhookURLを入力する
+* [[3.通知先アプリの設定]](../setup/11-blocknotify-setup.md#11-2)で取得した通知アプリごとのトークンIDやWebhookURLを入力する
 * `Option *** Settings`をクリックし`Discription`に以下のタグを入力
 ```
 {{ template "mymessage" . }}
