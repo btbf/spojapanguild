@@ -64,11 +64,17 @@ exit
 
 3.ターミナルソフトのユーザーをパスワードを上記で作成したユーザーとパスワードに書き換えて再接続します。
 
+!!! hint "Ubuntu22.04の場合の特別設定"
+    ご利用のOSがUbuntu22.04の場合は、以下のコマンドを実行してください。
 
-!!! hint "Ubuntu22.04の場合"
-    Ubuntu22.04ではブラケットペーストモードがオンになっているため、以下のコマンドでオフにすることができます
+    ブラケットペーストモードOFF
     ```
     echo "set enable-bracketed-paste off" >> ~/.inputrc
+    ```
+
+    デーモン再起動自動化
+    ```
+    echo "\$nrconf{restart} = 'a';" | sudo tee /etc/needrestart/conf.d/50local.conf
     ```
 
 ## **1-3.SSH鍵認証方式へ切り替え**
@@ -540,5 +546,8 @@ Do you want to enable rate-limiting? (y/n) : y
 プロセス中に大きなQRコードが表示されますが、その下には緊急時のスクラッチコードが表示されますので、忘れずに書き留めておいて下さい。
 
 スマートフォンでGoogle認証システムアプリを開き、QRコードを読み取り2段階認証を機能させます。
+
+
+
 
 

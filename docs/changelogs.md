@@ -1,5 +1,12 @@
 # 変更履歴
 
+## 2023/06/27　ver. 12.8.2
+
+* [ノードアップデート手順](./operation/node-update.md#2-5) 2-6を2-5へ統合
+* [Ubuntu22.04任意アップグレード手順](./operation/ubuntu22.md#3-3) 「3-3.デーモン再起動自動化」を追加
+* [1.Ubuntu初期設定](/docs/setup/1-ubuntu-setup.md#1-2) 「Ubuntu22.04の場合の特別設定」を追加
+
+
 ## 2023/06/20　ver. 12.8.1
 
 * [Ubuntu22.04任意アップグレード手順](./operation/ubuntu22.md)エアギャップ更新手順修正
