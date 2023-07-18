@@ -172,7 +172,7 @@ prometheus-node-exporterアップデート
         targets:の「bb.xxx.xxx」は、リレー2のパブリックIP(静的)アドレスに置き換えて下さい。
 
     ```bash
-    cat > prometheus.yml << EOF
+    cat > $HOME/prometheus.yml << EOF
     global:
       scrape_interval:     15s # By default, scrape targets every 15 seconds.
 
@@ -215,16 +215,34 @@ prometheus-node-exporterアップデート
     EOF
     ```
 
-prometheus.ymlを移動します
+prometheus.yml構文チェック
 === "リレーノード1"
-    ```bash
-    sudo mv prometheus.yml /etc/prometheus/prometheus.yml
+  ```
+  sudo promtool check config prometheus.yml
+  ```
+!!! hint "戻り値確認"
+    構文エラーなしの場合
+    ```{ .yaml .no-copy }
+    Checking prometheus.yml
+    SUCCESS: 0 rule files found
     ```
 
-    Grafanaプラグインをインストールする
+    構文エラーの場合(一例)
+    ```{ .yaml .no-copy }
+    Checking prometheus.yml
+    FAILED: parsing YAML file prometheus.yml: yaml: line XX: did not find expected '-' indicator
     ```
-    sudo grafana-cli plugins install yesoreyeram-infinity-datasource
-    ```
+    prometheus.ymlを開いて余分なスペースや記号の有無などを確認してください。
+
+  prometheus.ymlを移動します
+  ```bash
+  sudo mv $HOME/prometheus.yml /etc/prometheus/prometheus.yml
+  ```
+
+  Grafanaプラグインをインストールする
+  ```
+  sudo grafana-cli plugins install yesoreyeram-infinity-datasource
+  ```
 
 サービスを起動します。
 
@@ -249,6 +267,36 @@ prometheus.ymlを移動します
         * prometheus-node-exporter.service  
         上記3つのプログラムが 緑色 `active (running)` になっていることを確認する。
 
+### **既存の設定ファイルを更新する場合**
+
+```
+sudo nano /etc/prometheus/prometheus.yml
+```
+> 修正したら、Ctrl + Oで保存し、Enter。その後Ctrl + Xで閉じる
+
+prometheus.yml構文チェック
+=== "リレーノード1"
+  ```
+  sudo promtool check config prometheus.yml
+  ```
+!!! hint "戻り値確認"
+    構文エラーなしの場合
+    ```{ .yaml .no-copy }
+    Checking prometheus.yml
+    SUCCESS: 0 rule files found
+    ```
+
+    構文エラーの場合(一例)
+    ```{ .yaml .no-copy }
+    Checking prometheus.yml
+    FAILED: parsing YAML file prometheus.yml: yaml: line XX: did not find expected '-' indicator
+    ```
+    prometheus.ymlを開いて余分なスペースや記号の有無などを確認してください。
+
+サービスを再起動する
+```
+sudo systemctl restart prometheus.service
+```
 
 ## **9-3.ノード設定ファイルの更新**
 === "リレーノード/BP"
