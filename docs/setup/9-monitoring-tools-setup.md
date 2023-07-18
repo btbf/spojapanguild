@@ -223,16 +223,17 @@ prometheus.yml構文チェック
 !!! hint "戻り値確認"
     構文エラーなしの場合
     ```{ .yaml .no-copy }
-    Checking prometheus.yml
+    Checking /home/user/prometheus.yml
     SUCCESS: 0 rule files found
     ```
 
     構文エラーの場合(一例)
     ```{ .yaml .no-copy }
-    Checking prometheus.yml
-    FAILED: parsing YAML file prometheus.yml: yaml: line XX: did not find expected '-' indicator
+    Checking /home/user/prometheus.yml
+    FAILED: parsing YAML file /home/user/prometheus.yml: yaml: line XX: did not find expected '-' indicator
     ```
-    prometheus.ymlを開いて余分なスペースや記号の有無などを確認してください。
+    prometheus.ymlを開いて余分なスペースや記号の有無などを確認してください。  
+    ※/home/user/prometheus.yml（userは各自で設定したユーザー名）
 
   prometheus.ymlを移動します
   ```bash
