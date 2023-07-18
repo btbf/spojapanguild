@@ -131,7 +131,7 @@ prometheus-node-exporterアップデート
         targets:の「xxx.xxx.xxx」は、BPのパブリックIP(静的)アドレスに置き換えて下さい
 
     ```bash
-    cat > prometheus.yml << EOF
+    cat > $HOME/prometheus.yml << EOF
     global:
       scrape_interval:     15s # By default, scrape targets every 15 seconds.
 
@@ -218,7 +218,7 @@ prometheus-node-exporterアップデート
 prometheus.yml構文チェック
 === "リレーノード1"
   ```
-  sudo promtool check config prometheus.yml
+  sudo promtool check config $HOME/prometheus.yml
   ```
 !!! hint "戻り値確認"
     構文エラーなしの場合
@@ -277,21 +277,21 @@ sudo nano /etc/prometheus/prometheus.yml
 prometheus.yml構文チェック
 === "リレーノード1"
   ```
-  sudo promtool check config prometheus.yml
+  sudo promtool check config /etc/prometheus/prometheus.yml
   ```
 !!! hint "戻り値確認"
     構文エラーなしの場合
     ```{ .yaml .no-copy }
-    Checking prometheus.yml
+    Checking /etc/prometheus/prometheus.yml
     SUCCESS: 0 rule files found
     ```
 
     構文エラーの場合(一例)
     ```{ .yaml .no-copy }
-    Checking prometheus.yml
-    FAILED: parsing YAML file prometheus.yml: yaml: line XX: did not find expected '-' indicator
+    Checking /etc/prometheus/prometheus.yml
+    FAILED: parsing YAML file /etc/prometheus/prometheus.yml: yaml: line XX: did not find expected '-' indicator
     ```
-    prometheus.ymlを開いて余分なスペースや記号の有無などを確認してください。
+    /etc/prometheus/prometheus.ymlを開いて余分なスペースや記号の有無などを確認してください。
 
 サービスを再起動する
 ```
