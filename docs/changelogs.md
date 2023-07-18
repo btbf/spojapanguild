@@ -1,5 +1,9 @@
 # 変更履歴
 
+## 2023/07/18　ver. 12.8.3
+* [KES更新](./operation/kes-update.md) 既存ファイルバックアップ手順追加
+* [監視ツールセットアップ](./setup/9-monitoring-tools-setup.md#9-2) Prometheus.yml構文チェック追加
+
 ## 2023/06/27　ver. 12.8.2
 
 * [ノードアップデート手順](./operation/node-update.md#2-5) 2-6を2-5へ統合

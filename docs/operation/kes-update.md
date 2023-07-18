@@ -4,7 +4,9 @@
     (KES=Key Evolving Signature)の略  
     キーを悪用するハッカーからステークプールを保護するために作成され、90日ごとに再生成する必要があります。有効期限が切れる前に更新してください。期限内ならいつ更新しても問題ありません。  
 
-    以下の手順は、全て手作業で更新する方法です。[SJG TOOL](./tool.md)を導入すると半自動で更新できます。
+    以下の手順は、全て手作業で更新する方法です。
+
+    <font color=red>KES更新は、半自動更新が可能な[SJG TOOL](./tool.md)を推奨します。</font>
 
 
 !!! info "注意"
@@ -39,13 +41,20 @@
     > 戻り値の小数点以下が`.99800`付近の場合、`startKesPeriod`の切り替わりが近いため、切り替わってから以下の作業を進めてください。
 
 
-## **1.新しいKESファイル生成**
+## **1.KESファイル作成**
+既存ファイルバックアップ
 === "ブロックプロデューサーノード"
     ```bash
-    cd $NODE_HOME
+    cp $NODE_HOME/kes.vkey $NODE_HOME/kes-bk.vkey
+    cp $NODE_HOME/kes.skey $NODE_HOME/kes-bk.skey
+    cp $NODE_HOME/node.cert $NODE_HOME/node-bk.cert
+    ```
+
+    KESファイル新規作成
+    ```bash
     cardano-cli node key-gen-KES \
-        --verification-key-file kes.vkey \
-        --signing-key-file kes.skey
+        --verification-key-file $NODE_HOME/kes.vkey \
+        --signing-key-file $NODE_HOME/kes.skey
     ```
 
 ## **2.KESファイルをAGにコピー**
@@ -220,6 +229,31 @@ chmod a-rwx $HOME/cold-keys
     sudo systemctl reload-or-restart cardano-node
     ```
 
+    gLiveviewでノード同期を確認する
+    ```
+    glive
+    ```
+
+    ??? danger "10分以上経過しても同期しない場合はこちら"
+        KES更新に失敗している可能性があるため、バックアップファイルから復元してください。
+        ノード停止
+        ```
+        sudo systemctl stop cardano-node
+        ```
+        ファイル復元
+        ```
+        mv $NODE_HOME/kes-bk.vkey $NODE_HOME/kes.vkey
+        mv $NODE_HOME/kes-bk.skey $NODE_HOME/kes.skey
+        mv $NODE_HOME/node-bk.cert $NODE_HOME/node.cert
+        ```
+        ノード起動
+        ```
+        sudo systemctl start cardano-node
+        ```
+        同期状況確認
+        ```
+        glive
+        ```
 
 ## **11.チェックプログラム実行**
 
@@ -231,3 +265,12 @@ gtool
 >[2] ブロック生成状態チェック を選択する
 
 SPO JAPAN GUILD TOOLの導入は[こちら](./tool.md)をご参照ください
+
+## **12.バックアップファイル削除**
+上記でブロック生成状態の確認がすべてOKだった場合、KESバックアップファイルを削除してください
+
+```
+rm $NODE_HOME/kes-bk.vkey
+rm $NODE_HOME/kes-bk.skey
+rm $NODE_HOME/node-bk.cert
+```
