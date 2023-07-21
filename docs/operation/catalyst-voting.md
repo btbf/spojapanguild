@@ -78,6 +78,12 @@ cardano-signer help | grep -m 1 "cardano-signer"
 ```
 sudo cp $HOME/git/cardano-signer /usr/local/bin/cardano-signer
 ```
+
+パーミッション設定
+```
+sudo chmod 755 /usr/local/bin/cardano-signer
+```
+
 バージョン確認
 ```
 cardano-signer help | grep -m 1 "cardano-signer"
