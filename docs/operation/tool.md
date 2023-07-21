@@ -1,12 +1,13 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2023/05/20 v3.5.1
+最終更新日：2023/07/21 v3.6.0
 
 !!! info "主な機能"
     * payment.addr残高照会
     * 報酬引き出し
     * ブロック生成可能可否確認
     * envファイルアップデート切り替え
+    * Catalyst有権者登録
     * SPO投票(簡易メッセージ添付可)
 
 ![](../images/sjg-tool-start.png)
@@ -73,6 +74,10 @@ gtool
     また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
 
 ## 更新履歴
+
+### 3.6.0
+    * Catalyst有権者登録機能　実装
+    　payment.addrのADAをCatalyst Votingパワーに使用できます。
 
 ### 3.5.1
     * SPO投票機能

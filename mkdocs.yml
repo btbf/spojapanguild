@@ -127,6 +127,7 @@ nav:
         - 'KESの更新': './operation/kes-update.md'
         - 'プール情報更新': './operation/cert-update.md'
         - '資金引き出し': './operation/withdrawal.md'
+        - 'カタリスト有権者登録': './operation/catalyst-voting.md'
         - 'プール廃止処理': './operation/pool-retire.md'
       - '2.ノード/サーバ管理':
         - 'ノードアップデート': './operation/node-update.md'
