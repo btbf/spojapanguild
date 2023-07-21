@@ -1,5 +1,9 @@
 # 変更履歴
 
+## 2023/07/18　ver. 12.8.4
+* SJG TOOL v3.6.0リリース(Catalyst有権者登録機能実装)
+* [Catalyst有権者登録](./operation/catalyst-voting.md) Catalyst有権者登録を追加
+
 ## 2023/07/18　ver. 12.8.3
 * [KES更新](./operation/kes-update.md) 既存ファイルバックアップ手順追加
 * [監視ツールセットアップ](./setup/9-monitoring-tools-setup.md#9-2) Prometheus.yml構文チェック追加

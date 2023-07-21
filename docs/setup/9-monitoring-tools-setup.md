@@ -232,8 +232,14 @@ prometheus.yml構文チェック
     Checking /home/user/prometheus.yml
     FAILED: parsing YAML file /home/user/prometheus.yml: yaml: line XX: did not find expected '-' indicator
     ```
-    prometheus.ymlを開いて余分なスペースや記号の有無などを確認してください。  
+      
     ※/home/user/prometheus.yml（userは各自で設定したユーザー名）
+
+    構文エラーだった場合は、$HOME/prometheus.ymlを開いて余分なスペースや記号の有無などを確認し、修正してください。
+    ```
+    sudo nano $HOME/prometheus.yml
+    ```
+    > 修正したら、Ctrl + Oで保存し、Enter。その後Ctrl + Xで閉じる
 
   prometheus.ymlを移動します
   ```bash

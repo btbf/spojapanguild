@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=3.5.1
+TOOL_VERSION=3.6.0
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -57,17 +57,20 @@ cardano-cli query protocol-parameters \
   --out-file params.json
 
 
-echo '---------------------------------------------------'
-echo -e ">> SPO JAPAN GUILD TOOL ${FG_YELLOW}ver$TOOL_VERSION${NC} | Server:${FG_YELLOW}-$node_name-${NC} <<"
-echo '---------------------------------------------------'
-echo -e "| NodeVer:${FG_YELLOW}${node_version}${NC} | NetWork:${FG_GREEN}-${NETWORK_NAME}-${NC} | Era:${FG_YELLOW}${NETWORK_ERA}${NC} |"
+echo ' ---------------------------------------------------'
+echo -e " >> SPO JAPAN GUILD TOOL ${FG_YELLOW}ver$TOOL_VERSION${NC} | Server:${FG_YELLOW}-$node_name-${NC} <<"
+echo ' ---------------------------------------------------'
+echo -e " | NodeVer:${FG_YELLOW}${node_version}${NC} | NetWork:${FG_GREEN}-${NETWORK_NAME}-${NC} | Era:${FG_YELLOW}${NETWORK_ERA}${NC} |"
 echo '
-[1] ウォレット操作
-[2] ブロック生成状態チェック
-[3] KES更新
-[4] envUpdateチェックフラグ切替
-[5] SPO投票ツール
-[q] 終了
+ [1] ウォレット操作
+ [2] ブロック生成状態チェック
+ [3] KES更新
+ [4] envUpdateフラグ切替
+ ---------------------------------
+ [5] Catalyst有権者登録
+ [6] SPO投票ツール
+ ---------------------------------
+ [q] 終了
 '
 echo
 read -n 1 -p "メニュー番号を入力してください : >" num
@@ -446,22 +449,8 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     echo '------------------------------------------------------------------------'
     echo -e "> BPブロック生成可能状態チェック"
     echo '------------------------------------------------------------------------'
-    idfile_check=`filecheck "$NODE_HOME/stakepoolid_bech32.txt"`
-    if [ $idfile_check == "false" ]; then
-      echo "stakepoolid_bech32.txtが見つかりません"
-      echo "エアギャップで作成し、$NODE_HOMEにコピーしてください"
-      echo
-      echo "エアギャップ stakepoolid_bech32.txt作成コマンド"
-      echo '---------------------------------------------------------------'
-      echo "chmod u+rwx $COLDKEYS_DIR"
-      echo 'cardano-cli stake-pool id \'
-      echo    "--cold-verification-key-file $COLDKEYS_DIR/$POOL_COLDKEY_VK_FILENAME"' \'
-      echo    '--output-format bech32 > $NODE_HOME/stakepoolid_bech32.txt'
-      echo "chmod a-rwx $COLDKEYS_DIR"
-      echo '---------------------------------------------------------------'
-      select_rtn
-    fi
 
+    poolfileCheck
     kesfileCheck
 
     #kes_vk_file_check=`filecheck "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME"`
@@ -474,22 +463,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     mempool_CHK=`cat $CONFIG | jq ".TraceMempool"`
 
-
-    #APIリクエストクエリjson生成
-    pId_json="{\""_pool_bech32_ids"\":[\""$(cat $NODE_HOME/stakepoolid_bech32.txt)"\"]}"
-
-    #API プールデータ取得
-    curl -s -X POST "$KOIOS_API/pool_info" \
-    -H "Accept: application/json" \
-    -H "Content-Type: application/json" \
-    -d $pId_json > $NODE_HOME/pooldata.txt
-    wait
-
-    pooldata_chk=`cat pooldata.txt`
-    if [[ $pooldata_chk != *"pool_id_bech32"* ]]; then
-      echo "APIからプールデータを取得できませんでした。再度お試しください"
-      select_rtn
-    fi
+    get_pooldata
 
     #メトリクスKES
     metrics_KES=`curl -s localhost:12798/metrics | grep remainingKES | awk '{ print $2 }'`
@@ -1143,7 +1117,340 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       esac
     ;;
 
+  ################################################
+  ## Catalyst有権者登録 
+  ################################################
   5)
+  clear
+
+    echo '------------------------------------------------------------------------'
+    echo -e "> KES更新作業"
+    echo '------------------------------------------------------------------------'
+    
+    poolfileCheck
+    get_pooldata
+    bech32_path="$(which bech32)"
+    signer_path="$(which cardano-signer)"
+    toolbox_path="$(which catalyst-toolbox)"
+    pool_ticker="$(cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_json.ticker")"
+    version_chk=0
+
+    pre_check(){
+      #依存関係インストールチェック
+      echo
+      echo " Catalyst有権者登録 要件チェック"
+      echo " --------------------------------------------------------"
+      if [ -n "$bech32_path" ]; then
+        bech32_version="$(bech32 -v)"
+        printf " 　　　　　bech32 : ${FG_GREEN}$bech32_version${NC}\n"
+        version_chk=$(($version_chk+1))
+      else
+        printf " 　　　　　bech32 : ${FG_RED}未インストール${NC}\n"
+      fi
+
+      if [ -n "$signer_path" ]; then
+        signer_version="$(cardano-signer help | grep -m 1 "cardano-signer" | cut -d' ' -f2)"
+        printf " 　cardano-signer : ${FG_GREEN}$signer_version${NC}\n"
+        version_chk=$(($version_chk+1))
+      else
+        printf " 　cardano-signer : ${FG_RED}未インストール${NC}\n"
+      fi
+      
+      if [ -n "$toolbox_path" ]; then
+        toolbox_version="$(catalyst-toolbox --version | cut -d' ' -f2)"
+        printf " catalyst-toolbox : ${FG_GREEN}$toolbox_version${NC}\n"
+        version_chk=$(($version_chk+1))
+      else
+        printf " catalyst-toolbox : ${FG_RED}未インストール${NC}\n\n"
+      fi
+
+      if [ $version_chk -eq 3 ]; then
+        #payment.addr残高チェック
+        payment_utxo
+        #total_balance=490000000
+        if [ $total_balance -lt 500000000 ]; then
+          printf " payment.addr残高 : ${FG_RED}$(scale1 ${total_balance}) ADA${NC}\n"
+          printf " 　　payment.addr : ${FG_GREEN}$(cat $NODE_HOME/payment.addr)${NC}\n\n"
+          printf " ${FG_RED}有権者登録には500ADA以上の残高が必要です${NC}\n"
+          printf " payment.addrに500ADA以上入金してから実施してください\n\n"
+          select_rtn
+        else
+          printf " payment.addr残高 : ${FG_GREEN}$(scale1 ${total_balance}) ADA${NC}\n"
+          printf " 　　payment.addr : ${FG_GREEN}$(cat $NODE_HOME/payment.addr)${NC}\n"
+          printf " 　　 Pool Ticker : ${FG_GREEN}$pool_ticker${NC}\n\n"
+          
+          printf " 有権者登録が可能です\n\n"
+        fi
+
+      else
+        printf "${FG_RED}依存関係がインストールされていません${NC}\n\n"
+        select_rtn
+      fi
+
+      voting_dir="$HOME/CatalystVoting"
+      if [ ! -d $voting_dir ]; then
+        mkdir $voting_dir
+        printf "作業ディレクトリ ${FG_GREEN}$voting_dir${NC} を作成しました\n\n"
+      fi
+    }
+    
+
+    create_voting_keys(){
+      #Votingキーファイル作成
+      cardano-signer keygen \
+      --cip36 \
+      --json-extended \
+      --out-skey $HOME/CatalystVoting/${pool_ticker}_voting.skey \
+      --out-vkey $HOME/CatalystVoting/${pool_ticker}_voting.vkey \
+      --out-file $HOME/CatalystVoting/${pool_ticker}_voting.json
+
+      printf "${FG_YELLOW}投票用キーファイルとjsonを作成しました${NC}\n"
+      printf "${FG_GREEN}$HOME/CatalystVoting/${pool_ticker}_voting.skey${NC}\n"
+      printf "${FG_GREEN}$HOME/CatalystVoting/${pool_ticker}_voting.vkey${NC}\n"
+      printf "${FG_GREEN}$HOME/CatalystVoting/${pool_ticker}_voting.json${NC}\n\n"
+      echo
+      printf " ${FG_RED}■ 重要事項 ■${NC}\n"
+      echo '---------------------------------------------------------------------------------------------------------------------------------'
+      printf " 1. 上記の3ファイルを使用して有権者登録作業を行うため、まだ削除しないでください\n\n"
+      printf " 1. 上記の3ファイルをダウンロードして、USBなどへバックアップしてください\n\n"
+      printf " 2. ${FG_YELLOW}${pool_ticker}_voting.json${NC} には、${FG_RED}復元フレーズ${NC}が含まれています\n"
+      printf " 　　Fund11から開始予定のWeb版Catalyst投票センターを使用する際に必要になりますので、${FG_RED}厳重に保管して下さい${NC}\n"
+      echo '---------------------------------------------------------------------------------------------------------------------------------'
+      echo
+      read -p "重要事項を実行・理解したらEnterを押して下さい"
+      echo
+    }
+
+    create_regist_cbor(){
+      echo
+      echo "エアギャップオフラインマシンで以下の操作を実施してください"
+      echo
+      echo -e "${FG_YELLOW}1. 上記でダウンロードした${pool_ticker}_voting.vkey をエアギャップのcnodeディレクトリにコピーしてください${NC}"
+      echo '----------------------------------------'
+      echo ">> [BP] ⇒ ${pool_ticker}_voting.vkey ⇒ [エアギャップ]"
+      echo '----------------------------------------'
+      echo
+      echo -e "${FG_YELLOW}2. エアギャップで登録ファイルを作成してください${NC}"
+      echo '----------------------------------------'
+      echo 'cd $NODE_HOME'
+      echo 'cardano-signer sign --cip36 \'
+      echo '  --payment-address $(cat payment.addr) \'
+      echo "  --vote-public-key ${pool_ticker}_voting.vkey"' \'
+      echo '  --secret-key stake.skey \'
+      #echo '  --json \'
+      echo '  --out-cbor vote-registration.cbor'
+      echo '----------------------------------------'
+      echo
+      echo -e "${FG_YELLOW}3. エアギャップの vote-registration.cbor をBPの${FG_RED}$HOME/CatalystVoting${NC} ディレクトリにコピーしてください${NC}"
+      echo '----------------------------------------'
+      echo ">> [エアギャップ] ⇒ vote-registration.cbor ⇒ [BP]"
+      echo '----------------------------------------'
+      read -p "1～3の操作が終わったらEnterを押してください"
+    }
+    
+
+    submited_voting_tx(){
+      #トランザクション作成
+      while :
+        do
+        regifile_check=`filecheck "$HOME/CatalystVoting/vote-registration.cbor"`
+        if [ $regifile_check == "true" ]; then
+          break
+        else
+          printf "\n ${FG_RED}vote-registration.cborが見つかりません${NC}\n"
+          read -p " BPの$HOME/CatalystVotingディレクトリにコピーしたらEnterを押して下さい"
+        fi
+      done
+      
+      clear
+      echo "トランザクションを作成します..."
+
+      
+      current_Slot
+      payment_utxo
+
+      echo -e "\nWallet残高 :$(scale1 ${total_balance}) ADA\n"
+      #トランザクションファイル仮作成
+      cardano-cli transaction build-raw \
+      ${tx_in} \
+      --tx-out $(cat $NODE_HOME/payment.addr)+${total_balance} \
+      --invalid-hereafter $(( ${currentSlot} + 10000)) \
+      --fee 0 \
+      --metadata-cbor-file $HOME/CatalystVoting/vote-registration.cbor \
+      --out-file tx.tmp
+
+      #手数料計算
+      fee=$(cardano-cli transaction calculate-min-fee \
+      --tx-body-file tx.tmp \
+      --tx-in-count ${txcnt} \
+      --tx-out-count 1 \
+      --witness-count 1 \
+      $NETWORK_IDENTIFIER \
+      --protocol-params-file $NODE_HOME/params.json | awk '{ print $1 }')
+      
+      txOut=$((${total_balance}-${fee}))
+
+      cardano-cli transaction build-raw \
+      ${tx_in} \
+      --tx-out $(cat $NODE_HOME/payment.addr)+${txOut} \
+      --invalid-hereafter $(( ${currentSlot} + 10000)) \
+      --fee ${fee} \
+      --metadata-cbor-file $HOME/CatalystVoting/vote-registration.cbor \
+      --out-file tx.raw
+
+      #エアギャップ操作メッセージ
+      echo
+      echo
+      echo
+      echo '■Txファイルを作成しました。エアギャップオフラインマシンで以下の操作を実施してください'
+      echo
+      echo -e "${FG_YELLOW}1. BPのtx.raw をエアギャップのcnodeディレクトリにコピーしてください${NC}"
+      echo '----------------------------------------'
+      echo ">> [BP] ⇒ tx.raw ⇒ [エアギャップ]"
+      echo '----------------------------------------'
+      echo
+      echo -e "${FG_YELLOW}2. エアギャップでトランザクションファイルに署名してください${NC}"
+      echo '----------------------------------------'
+      echo 'cd $NODE_HOME'
+      echo 'cardano-cli transaction sign \'
+      echo '  --tx-body-file tx.raw \'
+      echo '  --signing-key-file payment.skey \'
+      echo "  $NETWORK_IDENTIFIER "'\'
+      echo '  --out-file tx.signed'
+      echo '----------------------------------------'
+      echo
+      echo -e "${FG_YELLOW}3. エアギャップの tx.signed をBPのcnodeディレクトリにコピーしてください${NC}"
+      echo '----------------------------------------'
+      echo ">> [エアギャップ] ⇒ tx.signed ⇒ [BP]"
+      echo '----------------------------------------'
+      echo
+      echo "1～3の操作が終わったらEnterを押してください"
+      read -p "出金をキャンセルする場合はEnterを押して2を入力してください"
+
+      #トランザクション送信
+      tx_submit
+
+      echo $tx_id > $HOME/CatalystVoting/txhash.log
+
+      #トランザクション確認
+      printf "\n${FG_YELLOW}Tx承認を確認しています。このまましばらくお待ち下さい...${NC}\n\n"
+      while :
+        do
+        koios_tx_status=`curl -s -X POST "$KOIOS_API/tx_status" -H "Accept: application/json" -H "content-type: application/json" -d "{\"_tx_hashes\":[\"$tx_id\"]}" | jq -r '.[].num_confirmations'`
+        if [ $koios_tx_status != "null" ] && [ $koios_tx_status -gt 1 ]; then
+          printf "確認済みブロック:$koios_tx_status ${FG_GREEN}Txが承認されました${NC}\n\n"
+          sleep 3s
+          break
+        else
+          sleep 30s
+        fi
+      done
+    }
+    
+    create_qrcode(){
+      #QRコード作成
+      clear
+      echo
+      echo "-----------------------------------------------"
+      printf " 投票アプリで使用するQRコードを作成します\n"
+      echo "-----------------------------------------------"
+      echo
+      sleep 3s
+
+      while :
+        do
+        read -n 4 -p " 任意の4桁PINコード(数字4桁)を入力してください > " send_pincode
+        if [[ "$send_pincode" =~ ^[0-9]{4}+$ ]]; then
+          printf "\n\n 入力したPINコードは ${FG_GREEN}$send_pincode${NC} です\n\n"
+          printf "この数字で決定しますか？ ${FG_YELLOW}決定する場合は数字を忘れないよう保管してください。${NC}\n\n"
+          printf " [1] 決定する　[2] 変更する\n"
+          read -s -n 1 pin_retun_msg
+            if [ $pin_retun_msg -eq 1 ]; then
+              break 1
+            else
+              printf "\n ${FG_RED}PINコードを再度入力してください${NC}\n\n"
+              continue 1
+            fi
+        else
+          printf "\n ${FG_RED}PINコードは4桁の数字で入力してください${NC}\n\n"
+        fi
+      done
+      
+      while :
+        do
+        skey_check=`filecheck "$HOME/CatalystVoting/${pool_ticker}_voting.skey"`
+        if [ ${skey_check} == "true" ]; then
+          catalyst-toolbox qr-code encode \
+            --pin $(echo ${send_pincode}) \
+            --input <(cat $HOME/CatalystVoting/${pool_ticker}_voting.skey | jq -r .cborHex | cut -c 5-132 | bech32 "ed25519e_sk") \
+            --output $HOME/CatalystVoting/${pool_ticker}_vote_qrcode.png \
+            img
+            break
+        else
+          printf "\n ${FG_RED}${pool_ticker}_voting.skeyが見つかりません${NC}\n"
+          read -p " ${FG_YELLOW}$HOME/CatalystVoting${NC} ディレクトリに保存してENTERを押して下さい"
+        fi
+      done
+
+
+      qr_check=`filecheck "$HOME/CatalystVoting/${pool_ticker}_vote_qrcode.png"`
+      if [ $qr_check == "true" ]; then
+        echo
+        echo "QRコードを作成しました"
+        echo "---------------------------------------------------------------------------------------------------------"
+        printf " $HOME/CatalystVoting/ ディレクトリに ${FG_GREEN}${pool_ticker}_vote.qrcode.png${NC} が作成されました\n"
+        printf " ${FG_YELLOW}このファイルをダウンロードして保管してください${NC}\n\n"
+        printf " このQRコードとPINコードを使用して、Catalyst Voting appで投票することが可能です\n\n"
+        echo "---------------------------------------------------------------------------------------------------------"
+      else
+        printf " QRコードの作成に失敗しました\n"
+      fi
+
+    select_rtn
+    }
+
+    #起動チェック
+    voting_s_file_check=`filecheck "$HOME/CatalystVoting/${pool_ticker}_voting.skey"`
+    voting_v_file_check=`filecheck "$HOME/CatalystVoting/${pool_ticker}_voting.vkey"`
+    voting_j_file_check=`filecheck "$HOME/CatalystVoting/${pool_ticker}_voting.json"`
+    cbor_file_check=`filecheck "$HOME/CatalystVoting/vote-registration.cbor"`
+    txlog_file_check=`filecheck "$HOME/CatalystVoting/txhash.log"`
+    qrcode_file_check=`filecheck "$HOME/CatalystVoting/${pool_ticker}_vote_qrcode.png"`
+
+    if [ $voting_s_file_check == "false" ] && [ $voting_v_file_check == "false" ] && [ $voting_j_file_check == "false" ] && [ $cbor_file_check == "false" ] && [ $txlog_file_check == "false" ] && [ $qrcode_file_check == "false" ]; then
+      printf "投票用キーファイル作成: ${FG_YELLOW}未作成${NC}　CBORファイル作成: ${FG_YELLOW}未作成${NC}　トランザクション送信: ${FG_YELLOW}未送信${NC}　QRコード作成: ${FG_YELLOW}未作成${NC}\n\n"
+      sleep 3s
+      pre_check
+      create_voting_keys
+      create_regist_cbor
+      submited_voting_tx
+      create_qrcode
+    elif [ $voting_s_file_check == "true" ] && [ $voting_v_file_check == "true" ] && [ $voting_j_file_check == "true" ] && [ $cbor_file_check == "false" ] && [ $txlog_file_check == "false" ] && [ $qrcode_file_check == "false" ]; then
+      printf "投票用キーファイル作成: ${FG_GREEN}作成済${NC}　CBORファイル作成: ${FG_YELLOW}未作成${NC}　トランザクション送信: ${FG_YELLOW}未送信${NC}　QRコード作成: ${FG_YELLOW}未作成${NC}\n\n"
+      sleep 3s
+      create_regist_cbor
+      submited_voting_tx
+      create_qrcode
+    elif [ $voting_s_file_check == "true" ] && [ $voting_v_file_check == "true" ] && [ $voting_j_file_check == "true" ] && [ $cbor_file_check == "true" ] && [ $txlog_file_check == "false" ] && [ $qrcode_file_check == "false" ]; then
+      printf "投票用キーファイル作成: ${FG_GREEN}作成済${NC}　CBORファイル作成: ${FG_GREEN}作成済${NC}　トランザクション送信: ${FG_YELLOW}未送信${NC}　QRコード作成: ${FG_YELLOW}未作成${NC}\n\n"
+      sleep 3s
+      submited_voting_tx
+      create_qrcode
+    elif [ $voting_s_file_check == "true" ] && [ $voting_v_file_check == "true" ] && [ $voting_j_file_check == "true" ] && [ $cbor_file_check == "true" ] && [ $txlog_file_check == "true" ] && [ $qrcode_file_check == "false" ]; then
+      printf "投票用キーファイル作成: ${FG_GREEN}作成済${NC}　CBORファイル作成: ${FG_GREEN}作成済${NC}　トランザクション送信: ${FG_GREEN}送信済${NC}　QRコード作成: ${FG_YELLOW}未作成${NC}\n\n"
+      sleep 3s
+      create_qrcode
+    elif [ $txlog_file_check == "true" ] && [ $qrcode_file_check == "true" ]; then
+      printf " 有権者登録済です\n\n"
+      select_rtn
+    else
+      printf " 有権者登録済です\n\n"
+      select_rtn
+    fi
+    
+  ;;
+
+  6)
   clear
 
   efile_check=`filecheck "$NODE_HOME/$WALLET_PAY_ADDR_FILENAME"`
@@ -1681,7 +1988,7 @@ tx_submit(){
   echo
   while :
     do
-      read -n 1 retun_cmd
+      read -s -n 1 retun_cmd
       if [ "$retun_cmd" == "1" ] || [ "$retun_cmd" == "2" ]; then
         case ${retun_cmd} in
           1) 
@@ -1831,6 +2138,45 @@ scale3(){
   #r_amount=`echo "scale=3; $1 / 1000000" | bc | awk '{printf "%.5f\n", $0}'`
   r_amount=`echo "scale=6; $1 / 1000000" | bc | awk '{printf "%.5f\n", $0}'`
   echo $r_amount
+}
+
+
+#プールIDファイルチェック
+poolfileCheck(){
+  idfile_check=`filecheck "$NODE_HOME/stakepoolid_bech32.txt"`
+  if [ $idfile_check == "false" ]; then
+    echo "stakepoolid_bech32.txtが見つかりません"
+    echo "エアギャップで作成し、$NODE_HOMEにコピーしてください"
+    echo
+    echo "エアギャップ stakepoolid_bech32.txt作成コマンド"
+    echo '---------------------------------------------------------------'
+    echo "chmod u+rwx $COLDKEYS_DIR"
+    echo 'cardano-cli stake-pool id \'
+    echo    "--cold-verification-key-file $COLDKEYS_DIR/$POOL_COLDKEY_VK_FILENAME"' \'
+    echo    '--output-format bech32 > $NODE_HOME/stakepoolid_bech32.txt'
+    echo "chmod a-rwx $COLDKEYS_DIR"
+    echo '---------------------------------------------------------------'
+    select_rtn
+  fi
+}
+
+#プールデータAPI取得
+get_pooldata(){
+  #APIリクエストクエリjson生成
+  pId_json="{\""_pool_bech32_ids"\":[\""$(cat $NODE_HOME/stakepoolid_bech32.txt)"\"]}"
+
+  #API プールデータ取得
+  curl -s -X POST "$KOIOS_API/pool_info" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d $pId_json > $NODE_HOME/pooldata.txt
+  wait
+
+  pooldata_chk=`cat pooldata.txt`
+  if [[ $pooldata_chk != *"pool_id_bech32"* ]]; then
+    echo "APIからプールデータを取得できませんでした。再度お試しください"
+    select_rtn
+  fi
 }
 
 update(){
