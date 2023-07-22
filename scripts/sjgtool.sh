@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=3.6.0
+TOOL_VERSION=3.6.1
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -1124,7 +1124,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
   clear
 
     echo '------------------------------------------------------------------------'
-    echo -e "> KES更新作業"
+    echo -e "> Catalyst有権者登録"
     echo '------------------------------------------------------------------------'
     
     poolfileCheck
