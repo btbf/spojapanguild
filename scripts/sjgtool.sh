@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=3.6.1
+TOOL_VERSION=3.6.2
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -1325,7 +1325,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       echo '----------------------------------------'
       echo
       echo "1～3の操作が終わったらEnterを押してください"
-      read -p "出金をキャンセルする場合はEnterを押して2を入力してください"
+      read -p "トランザクション送信をキャンセルする場合はEnterを押して2を入力してください"
 
       #トランザクション送信
       tx_submit
