@@ -192,7 +192,7 @@ cd $HOME/git
 git clone https://github.com/input-output-hk/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/8.1.1
+git checkout tags/8.1.2
 ```
 
 Cabalのビルドオプションを構成します。
@@ -200,7 +200,7 @@ Cabalのビルドオプションを構成します。
 ```bash
 cabal clean
 cabal update
-cabal configure -O0 -w ghc-8.10.7
+cabal configure --with-compiler=ghc-8.10.7
 ```
 
 カルダノノードをビルドします。
@@ -230,11 +230,11 @@ cardano-cli version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 8.1.1 - linux-x86_64 - ghc-8.10  
-git rev 6f79e5c3ea109a70cd01910368e011635767305a  
+>cardano-cli 8.1.2 - linux-x86_64 - ghc-8.10  
+git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767  
 
->cardano-node 8.1.1 - linux-x86_64 - ghc-8.10  
-git rev 6f79e5c3ea109a70cd01910368e011635767305a  
+>cardano-node 8.1.2 - linux-x86_64 - ghc-8.10  
+git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767   
 
 
 ## **2-3. ノード設定ファイルの修正**

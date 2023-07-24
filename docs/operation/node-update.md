@@ -1,13 +1,16 @@
 # **ノードアップデートマニュアル**
 
 !!! info "概要"
-    このガイドは ノードバージョン8.1.1に対応しています。最終更新日：2023年06月21日
+    このガイドは ノードバージョン8.1.2に対応しています。最終更新日：2023年07月24日
 
     | Node/CLI | GHC | Cabal |
     | :---------- | :---------- | :---------- |
-    | 8.1.1 | 8.10.7 | 3.8.1.0 |
+    | 8.1.2 | 8.10.7 | 3.8.1.0 |
 
-    * <font color=red>今回のアップデートではDB再構築が発生します。（5時間～8時間以上）</font>
+    * <font color=red>各バージョンのDB再構築について</font>  
+     → 1.35.xからv8.1.2 再構築あり（5時間～8時間以上）  
+     → v8.0.0からv8.1.2 再構築あり（5時間～8時間以上）  
+     → v8.1.1からv8.1.2 再構築なし（数分）  
 
 
 !!! hint "主な変更点と新機能"
@@ -48,6 +51,11 @@
 
     * P2P DNSバグ解消
     * エポック境界計算処理改善<font color=red>(エポック境界のミススロットがなくなります)</font>
+
+    **■v8.1.2**
+
+    * Plutus インタープリター更新
+    * <font color=red>v8.1.1利用者は速やかにアップデートを行って下さい</font>
 
 !!! danger "よくお読みになって進めてください"
     ご自身のアップデートスタイルによって手順が異なります。  
@@ -377,8 +385,8 @@ cabal update
 
 ```
 git fetch --all --recurse-submodules --tags
-git checkout tags/8.1.1
-cabal configure -O0 -w ghc-8.10.7
+git checkout tags/8.1.2
+cabal configure --with-compiler=ghc-8.10.7
 ```
 !!! hint "libsodium-vrfフラグについて"
     `cabal.project.local`に追記していた`-external-libsodium-vrf`は、セキュリティ上実稼働ノードでは非推奨となりました。
@@ -406,11 +414,11 @@ $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-cli") 
 $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-node") version  
 ```
 以下の戻り値を確認する  
->cardano-cli 8.1.1 - linux-x86_64 - ghc-8.10  
-git rev 6f79e5c3ea109a70cd01910368e011635767305a  
+>cardano-cli 8.1.2 - linux-x86_64 - ghc-8.10  
+git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767  
 
->cardano-node 8.1.1 - linux-x86_64 - ghc-8.10  
-git rev 6f79e5c3ea109a70cd01910368e011635767305a   
+>cardano-node 8.1.2 - linux-x86_64 - ghc-8.10  
+git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767  
 
 **ビルド用TMUXセッションを終了する** 
 ```
@@ -440,11 +448,11 @@ cardano-node version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 8.1.1 - linux-x86_64 - ghc-8.10  
-git rev 6f79e5c3ea109a70cd01910368e011635767305a  
+>cardano-cli 8.1.2 - linux-x86_64 - ghc-8.10  
+git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767  
 
->cardano-node 8.1.1 - linux-x86_64 - ghc-8.10  
-git rev 6f79e5c3ea109a70cd01910368e011635767305a  
+>cardano-node 8.1.2 - linux-x86_64 - ghc-8.10  
+git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767  
 
 
 ### **2-4.設定ファイルの追加と更新**
@@ -559,7 +567,7 @@ SSH接続してDB再構築進捗を確認する
 ```
 journalctl --unit=cardano-node --follow
 ```
-> `Progress:`が100%になるまで5時間～8時間以上かかる場合があります。  
+> DB再構築が入る場合は、`Progress:`が100%になるまで5時間～8時間以上かかる場合があります。  
 100%になるとDBは自動的に同期します。放置している場合は100%表示を見逃す場合がありますが問題ありません。
 
 
@@ -614,11 +622,11 @@ journalctl --unit=cardano-node --follow
         $NODE_HOME/Transfer/cardano-node version
         ```
         以下の戻り値を確認する  
-        >cardano-cli 8.1.1 - linux-x86_64 - ghc-8.10  
-        git rev 6f79e5c3ea109a70cd01910368e011635767305a  
+        >cardano-cli 8.1.2 - linux-x86_64 - ghc-8.10  
+        git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767  
 
-        >cardano-node 8.1.1 - linux-x86_64 - ghc-8.10  
-        git rev 6f79e5c3ea109a70cd01910368e011635767305a   
+        >cardano-node 8.1.2 - linux-x86_64 - ghc-8.10  
+        git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767    
 
 
 === "バイナリ+DB"
@@ -650,11 +658,11 @@ journalctl --unit=cardano-node --follow
         $NODE_HOME/Transfer/cardano-node version
         ```
         以下の戻り値を確認する  
-        >cardano-cli 8.1.1 - linux-x86_64 - ghc-8.10  
-        git rev 6f79e5c3ea109a70cd01910368e011635767305a  
+        >cardano-cli 8.1.2 - linux-x86_64 - ghc-8.10  
+        git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767  
 
-        >cardano-node 8.1.1 - linux-x86_64 - ghc-8.10  
-        git rev 6f79e5c3ea109a70cd01910368e011635767305a   
+        >cardano-node 8.1.2 - linux-x86_64 - ghc-8.10  
+        git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767   
 
 
         **ノードを停止する**
@@ -775,11 +783,11 @@ journalctl --unit=cardano-node --follow
     cardano-node version
     ```
     以下の戻り値を確認する  
-    >cardano-cli 8.1.1 - linux-x86_64 - ghc-8.10  
-    git rev 6f79e5c3ea109a70cd01910368e011635767305a  
+    >cardano-cli 8.1.2 - linux-x86_64 - ghc-8.10  
+    git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767  
 
-    >cardano-node 8.1.1 - linux-x86_64 - ghc-8.10  
-    git rev 6f79e5c3ea109a70cd01910368e011635767305a  
+    >cardano-node 8.1.2 - linux-x86_64 - ghc-8.10  
+    git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767  
 
 === "バイナリ+DB"
 
@@ -826,11 +834,11 @@ journalctl --unit=cardano-node --follow
     cardano-node version
     ```
     以下の戻り値を確認する  
-    >cardano-cli 8.1.1 - linux-x86_64 - ghc-8.10  
-    git rev 6f79e5c3ea109a70cd01910368e011635767305a  
+    >cardano-cli 8.1.2 - linux-x86_64 - ghc-8.10  
+    git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767  
 
-    >cardano-node 8.1.1 - linux-x86_64 - ghc-8.10  
-    git rev 6f79e5c3ea109a70cd01910368e011635767305a  
+    >cardano-node 8.1.2 - linux-x86_64 - ghc-8.10  
+    git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767  
 
     
     DBフォルダを入れ替える
@@ -1207,8 +1215,9 @@ cardano-cli version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 8.1.1 - linux-x86_64 - ghc-8.10  
-git rev 6f79e5c3ea109a70cd01910368e011635767305a  
+>cardano-cli 8.1.2 - linux-x86_64 - ghc-8.10  
+git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767  
+
 
 
 
