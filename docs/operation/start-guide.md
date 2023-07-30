@@ -147,12 +147,11 @@
 
 === "リレーノード"
   ```bash
-  cd $NODE_HOME
-  ./relay-topology_pull.sh
+  relay
   ```
 
 !!! hint "ヒント"
-    relay-topology_pull.shを実行すると新しいトポロジーファイル\(mainnet-topology.json\)を生成します。
+    relayを実行すると新しいトポロジーファイル\(mainnet-topology.json\)を生成します。
     新しいトポロジーファイルはノード再起動後に有効になります。
 
 === "リレーノード"
