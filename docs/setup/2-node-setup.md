@@ -312,7 +312,7 @@ wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environmen
             -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
             -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
             -e "s/127.0.0.1/0.0.0.0/g"
-            ```
+        ```
 
 環境変数を追加し、.bashrcファイルを更新します。
 

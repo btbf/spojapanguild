@@ -339,7 +339,7 @@ fail2banを再起動して設定を有効にします。
 sudo systemctl restart fail2ban
 ```
 
-## **1-10.Chronyを設定する**
+## **1-9.Chronyを設定する**
 
 
 chronyをインストールします。
@@ -424,7 +424,7 @@ chronyc tracking
 
 
 
-## **1-11.SSHの2段階認証を設定する**
+## **1-10.SSHの2段階認証を設定する**
 
 !!! info "" 
     こちらの導入は必須ではありません  
