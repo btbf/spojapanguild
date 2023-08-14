@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=3.6.2
+TOOL_VERSION=3.6.3
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -1169,14 +1169,14 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
         payment_utxo
         #total_balance=490000000
         if [ $total_balance -lt 500000000 ]; then
-          printf " payment.addr残高 : ${FG_RED}$(scale1 ${total_balance}) ADA${NC}\n"
-          printf " 　　payment.addr : ${FG_GREEN}$(cat $NODE_HOME/payment.addr)${NC}\n\n"
+          printf " $WALLET_PAY_ADDR_FILENAME残高 : ${FG_RED}$(scale1 ${total_balance}) ADA${NC}\n"
+          printf " 　　$WALLET_PAY_ADDR_FILENAME : ${FG_GREEN}$(cat $NODE_HOME/$WALLET_PAY_ADDR_FILENAME)${NC}\n\n"
           printf " ${FG_RED}有権者登録には500ADA以上の残高が必要です${NC}\n"
-          printf " payment.addrに500ADA以上入金してから実施してください\n\n"
+          printf " $WALLET_PAY_ADDR_FILENAMEに500ADA以上入金してから実施してください\n\n"
           select_rtn
         else
-          printf " payment.addr残高 : ${FG_GREEN}$(scale1 ${total_balance}) ADA${NC}\n"
-          printf " 　　payment.addr : ${FG_GREEN}$(cat $NODE_HOME/payment.addr)${NC}\n"
+          printf " $WALLET_PAY_ADDR_FILENAME残高 : ${FG_GREEN}$(scale1 ${total_balance}) ADA${NC}\n"
+          printf " 　　$WALLET_PAY_ADDR_FILENAME : ${FG_GREEN}$(cat $NODE_HOME/$WALLET_PAY_ADDR_FILENAME)${NC}\n"
           printf " 　　 Pool Ticker : ${FG_GREEN}$pool_ticker${NC}\n\n"
           
           printf " 有権者登録が可能です\n\n"
@@ -1234,7 +1234,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       echo '----------------------------------------'
       echo 'cd $NODE_HOME'
       echo 'cardano-signer sign --cip36 \'
-      echo '  --payment-address $(cat payment.addr) \'
+      echo "  --payment-address $(cat $NODE_HOME/$WALLET_PAY_ADDR_FILENAME)"' \'
       echo "  --vote-public-key ${pool_ticker}_voting.vkey"' \'
       echo '  --secret-key stake.skey \'
       #echo '  --json \'
@@ -1273,7 +1273,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       #トランザクションファイル仮作成
       cardano-cli transaction build-raw \
       ${tx_in} \
-      --tx-out $(cat $NODE_HOME/payment.addr)+${total_balance} \
+      --tx-out $(cat $NODE_HOME/$WALLET_PAY_ADDR_FILENAME)+${total_balance} \
       --invalid-hereafter $(( ${currentSlot} + 10000)) \
       --fee 0 \
       --metadata-cbor-file $HOME/CatalystVoting/vote-registration.cbor \
@@ -1292,7 +1292,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
 
       cardano-cli transaction build-raw \
       ${tx_in} \
-      --tx-out $(cat $NODE_HOME/payment.addr)+${txOut} \
+      --tx-out $(cat $NODE_HOME/$WALLET_PAY_ADDR_FILENAME)+${txOut} \
       --invalid-hereafter $(( ${currentSlot} + 10000)) \
       --fee ${fee} \
       --metadata-cbor-file $HOME/CatalystVoting/vote-registration.cbor \

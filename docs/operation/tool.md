@@ -1,6 +1,6 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2023/07/24 v3.6.2
+最終更新日：2023/08/14 v3.6.3
 
 !!! info "主な機能"
     * payment.addr残高照会
@@ -74,6 +74,9 @@ gtool
     また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
 
 ## 更新履歴
+
+### 3.6.3
+    * Catalyst有権者登録機能　payment.addrエラー修正
 
 ### 3.6.2
     * Catalyst有権者登録機能　表示文言修正
