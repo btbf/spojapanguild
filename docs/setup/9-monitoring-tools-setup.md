@@ -39,11 +39,15 @@ prometheusインストール
 grafanaインストール
 
 === "リレーノード1"
+
     ```bash
-    wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+    sudo apt-get install -y apt-transport-https software-properties-common
     ```
     ```bash
-    echo "deb https://packages.grafana.com/oss/deb stable main" > grafana.list
+    sudo wget -q -O /usr/share/keyrings/grafana.key https://apt.grafana.com/gpg.key
+    ```
+    ```bash
+    echo "deb [signed-by=/usr/share/keyrings/grafana.key] https://apt.grafana.com stable main" > grafana.list
     sudo mv grafana.list /etc/apt/sources.list.d/grafana.list
     ```
     ```bash
