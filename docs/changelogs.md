@@ -1,5 +1,12 @@
 # 変更履歴
 
+## 2023/09/19　ver. 12.8.7
+!!! note ""
+    * [Grafanaインストール](./setup/9-monitoring-tools-setup.md#9-1) 手順修正
+    * [Grafanaリポジトリ](./operation/grafana-repo.md) 更新手順追加
+    * [ノードインストール](./setup/2-node-setup.md#2-2) ノードビルド前にTMUXを追加
+    * 軽微な修正
+
 ## 2023/08/11　ver. 12.8.6
 !!! note ""
     * [Ubuntu22.04任意アップグレード手順](./operation/ubuntu22.md#3-3) BPにおけるCNCLI再ビルド注意書きを追加

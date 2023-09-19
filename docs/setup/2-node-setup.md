@@ -203,6 +203,12 @@ cabal update
 cabal configure --with-compiler=ghc-8.10.7
 ```
 
+新しいTMUXセッションを開く
+
+```
+tmux new -s build
+```
+
 カルダノノードをビルドします。
 
 ```sh
@@ -235,6 +241,13 @@ git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767
 
 >cardano-node 8.1.2 - linux-x86_64 - ghc-8.10  
 git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767   
+
+
+TMUXセッションを閉じる
+
+```
+exit
+```
 
 
 ## **2-3. ノード設定ファイルの修正**

@@ -227,7 +227,7 @@ ISO Imagae・・・1でダウンロードしたUbuntu-ISOファイルを指定�
 
 アプリ一覧からターミナル(端末)を起動し以下コマンドを手動入力する。
 ```
-sudo apt updata -y
+sudo apt update -y
 sudo apt upgrade -y
 sudo apt install gcc make perl -y
 ```
