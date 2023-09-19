@@ -318,18 +318,11 @@ cat /etc/os-release | grep "VERSION=" # (1)!
 echo "set enable-bracketed-paste off" >> ~/.inputrc
 ```
 
-### 3-3.デーモン再起動自動化
-```
-echo "\$nrconf{restart} = 'a';" | sudo tee /etc/needrestart/conf.d/50local.conf
-```
-
-### 3-4.SSH再接続
+### 3-3.SSH再接続
 ```
 exit
 ```
 > SSHで再接続する
-
-
 
 
 ## 4.依存関係再インストール
@@ -341,16 +334,24 @@ sudo apt update -y && sudo apt upgrade -y
 
 === "リレーの場合"
     ```
-    sudo apt install git jq bc automake tmux rsync htop curl build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ wget libncursesw5 libtool autoconf liblmdb-dev -y
+    sudo apt install needrestart git jq bc automake tmux rsync htop curl build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ wget libncursesw5 libtool autoconf liblmdb-dev -y
     ```
 
 === "BPの場合"
     ```
-    sudo apt install git jq bc automake tmux rsync htop curl build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ wget libncursesw5 libtool autoconf liblmdb-dev -y
+    sudo apt install needrestart git jq bc automake tmux rsync htop curl build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ wget libncursesw5 libtool autoconf liblmdb-dev -y
     ```
     ```
     pip install discordwebhook python-dotenv slackweb
     ```
+
+デーモン再起動自動化
+```
+echo "\$nrconf{restart} = 'a';" | sudo tee /etc/needrestart/conf.d/50local.conf
+```
+```
+echo "\$nrconf{blacklist_rc} = [qr(^cardano-node\\.service$) => 0,];" | sudo tee -a /etc/needrestart/conf.d/50local.conf
+```
 
 <!--
 libssl3アンインストール

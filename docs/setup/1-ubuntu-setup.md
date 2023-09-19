@@ -76,6 +76,9 @@ exit
     ```
     echo "\$nrconf{restart} = 'a';" | sudo tee /etc/needrestart/conf.d/50local.conf
     ```
+    ```
+    echo "\$nrconf{blacklist_rc} = [qr(^cardano-node\\.service$) => 0,];" | sudo tee -a /etc/needrestart/conf.d/50local.conf
+    ```
 
 ## **1-3.SSH鍵認証方式へ切り替え**
 

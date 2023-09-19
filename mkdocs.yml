@@ -139,6 +139,7 @@ nav:
         - 'BPポート変更': './operation/bpport.md'
         - 'Grafanaセキュリティ強化': './operation/grafana-security.md'
         - 'Grafanaアラート設定': './operation/grafana-alert.md'
+        - 'Grafanaリポジトリ変更': './operation/grafana-repo.md'
         - 'Ubuntu22.04アップグレード': './operation/ubuntu22.md'
       - '3.ツール設定':
         - 'SJGツール導入設定': './operation/tool.md'
