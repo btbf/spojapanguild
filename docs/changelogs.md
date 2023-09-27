@@ -1,5 +1,9 @@
 # 変更履歴
 
+## 2023/09/27　ver. 12.8.8
+!!! note ""
+    * [DB同期(Mithril)ベータ版](./operation/mithril-client.md)手順追加
+
 ## 2023/09/19　ver. 12.8.7
 !!! note ""
     * [Grafanaインストール](./setup/9-monitoring-tools-setup.md#9-1) 手順修正

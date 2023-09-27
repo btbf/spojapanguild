@@ -134,6 +134,7 @@ nav:
         - 'サーバー間転送設定':
           - '事前設定': './operation/rsync-ssh.md'
           - 'ファイル転送手順': './operation/transfer.md'
+        - 'DB同期(Mithril)':  './operation/mithril-client.md'
         - 'リレーノード増設': './operation/add-relay.md'
         - 'ダイナミックP2P設定': './operation/p2p-settings.md'
         - 'BPポート変更': './operation/bpport.md'
