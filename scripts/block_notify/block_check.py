@@ -1,4 +1,4 @@
-#2023/04/05 v1.9.4 @btbf
+#2023/09/28 v1.9.5 @btbf
 
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
@@ -223,7 +223,7 @@ def randomSlot():
     return random_slot
     
 def getScheduleSlot():
-    
+    line_leader_str_list = []
     leader_str = ""
     slotComm = os.popen('curl -s localhost:12798/metrics | grep slotIn | grep -o [0-9]*')
     slotn = slotComm.read()
