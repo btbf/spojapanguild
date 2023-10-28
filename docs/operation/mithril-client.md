@@ -58,7 +58,7 @@ rustup target add x86_64-unknown-linux-musl
 
 ## 2.Mithril-Clientインストール
 ```
-cd $NODE_HOME/git
+cd $HOME/git
 git clone https://github.com/input-output-hk/mithril.git
 ```
 
