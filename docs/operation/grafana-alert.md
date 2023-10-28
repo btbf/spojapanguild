@@ -133,6 +133,47 @@ sudo apt update -y && sudo apt upgrade -y
 * 「4 Add details for your alert rule」の検知内容のメッセージ内容を書き換える
 * ㉔:ページ上部へスクロールし、Save and exitをクリック
 
+### 2-5.KES残り日数監視
+上記で作成したルールをコピーする
+![](../images/grafana-alert/1-5.png)
+
+* ①:`BP-KES残り日数監視`など任意のルール名に書き換える
+* ⑥:`Metrics Browser`を`(cardano_node_metrics_remainingKESPeriods_int * 1.5)`に置き換える
+* ⑭:`last()` / `A` / `IS BELOW`に切り替え`10`を入力
+* ⑲:`OK`を選択
+* ⑳:`OK`を選択
+* 「4 Add details for your alert rule」の検知内容のメッセージ内容を書き換える  
+例）`KESキーの期限が迫っています。ブロック生成予定のないタイミングでKESキーを更新してください`
+* ㉔:ページ上部へスクロールし、`Save and exit`をクリック
+
+### 2-6.ディスク使用率監視
+上記で作成したルールをコピーする
+![](../images/grafana-alert/1-5.png)
+
+* ①:`Relay1-ディスク使用率監視`など任意のルール名に書き換える
+* ⑥:`Metrics Browser`を`1 - node_filesystem_avail_bytes / node_filesystem_size_bytes{alias="relaynode1",mountpoint="/"}`に置き換える 
+* ⑭:`last()` / `A` / `IS ABOVE`に切り替え`0.9`を入力
+* ⑲:`OK`を選択
+* ⑳:`OK`を選択
+* 「4 Add details for your alert rule」の検知内容のメッセージ内容を書き換える  
+例）`Relay1のディスク使用率が90%を超えています。100%に達する前に契約サーバーのアップグレードなどを行う必要があります`
+* ㉔:ページ上部へスクロールし、`Save and exit`をクリック
+
+
+残り全てのノードのディスク使用率監視を設定する  
+
+上記で作成したルールをコピーする
+![](../images/grafana-alert/1-5.png)
+
+* ①を書き換える
+* ⑥:`Metrics Browser`を書き換える  
+例）  
+`1 - node_filesystem_avail_bytes / node_filesystem_size_bytes{alias="block-producing-node",mountpoint="/"}`  
+`1 - node_filesystem_avail_bytes / node_filesystem_size_bytes{alias="relaynode2",mountpoint="/"}`  
+
+* 「4 Add details for your alert rule」の検知内容のメッセージ内容を書き換える
+* ㉔:ページ上部へスクロールし、Save and exitをクリック
+
 
 
 ## 3.通知先アプリの設定
