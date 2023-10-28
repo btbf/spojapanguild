@@ -309,7 +309,7 @@ rm -rf $NODE_HOME/cardano-wallet-shelley-2020.7.28
     支払いアドレスを表示させ、このアドレスに送金します。
 
     ```bash
-    echo "$(cat payment.addr)"
+    echo "$(cat $NODE_HOME/payment.addr)"
     ```
     !!! Question "何ADA入金したらいい？"
         初回はテストで少額から入金してください  
@@ -327,8 +327,8 @@ rm -rf $NODE_HOME/cardano-wallet-shelley-2020.7.28
 
     次のコードを実行し。支払いアドレスを表示させます。
 
-    ```text
-    echo "$(cat payment.addr)"
+    ```bash
+    echo "$(cat $NODE_HOME/payment.addr)"
     ```
 
     このアドレスを上記ページのリクエスト欄に貼り付けます。

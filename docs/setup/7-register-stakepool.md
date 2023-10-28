@@ -174,7 +174,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
     sha256sum vrf.vkey
     ```
 
-最小プールコスト(固定費)を出力します。
+最小プールコスト(最低固定費)を出力します。
 
 === "ブロックプロデューサーノード"
     ```bash
@@ -183,20 +183,20 @@ cat $NODE_HOME/poolMetaData.json | jq .
     ```
 
 !!! info ""
-    minPoolCost(固定費)は 340000000 lovelace \(340 ADA\)です。
+    minPoolCost(最低固定費)は 170000000 lovelace \(170 ADA\)です。
 
 
  **エアギャップマシンでpool.certを作成する**
 
 !!! note annotate "pool.cert作成時の注意点▼"
     
-    pool.certはプール登録証明書の役割を果たし、プール情報を記載します。  
+    pool.certはプール登録証明書の役割を果たし、プール情報を記載します。サンプルコードは以下の値に設定されています。  
 
-    * ** 誓約 100ADA ** 　(--pool-pledge) 　注釈→(1)  
-    * ** 固定手数料 340ADA ** (--pool-cost) 　注釈→(2)  
-    * ** 変動手数料5% ** (--pool-margin) 　注釈→(3)  
+    * **誓約 100ADA** 　(--pool-pledge) 　注釈→(1)  
+    * **固定手数料 170ADA** (--pool-cost) 　注釈→(2)  
+    * **変動手数料5%** (--pool-margin) 　注釈→(3)  
 1.  :man_raising_hand: __誓約(Pledge)とは？__<br>Pledge(誓約)はシビル攻撃を防ぐ目的で導入されているパラメータで、SPOが自身のプールにADAをより預けることで委任者様の報酬が若干多く分配される設計になっており、複数プールを開設するよりも単一プールでの運営メリット促すために設けられた制度です。2022/02/16時点でのPledge(誓約)の設計は、SPOが差し出すADA(Pledge)が10M ADA以上からじゃないと報酬が増える割合が変わらないため、あまり機能していないのが実情です。(現在改良が検討されています)
-2.  :man_raising_hand: __固定手数料(cost)とは？__<br>プール運営におけるオペレーター報酬の1つで、最低340ADAから設定可能
+2.  :man_raising_hand: __固定手数料(cost)とは？__<br>プール運営におけるオペレーター報酬の1つで、最低170ADAから設定可能
 3.  :man_raising_hand: __変動手数料(margin)とは？__<br>プール運営におけるオペレーター報酬の1つで (総報酬-固定手数料費)におけるオペレーター報酬率
 
 ??? note "誓約(Pledge)について▼"
@@ -259,7 +259,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
         --cold-verification-key-file $HOME/cold-keys/node.vkey \
         --vrf-verification-key-file vrf.vkey \
         --pool-pledge 100000000 \
-        --pool-cost 340000000 \
+        --pool-cost 170000000 \
         --pool-margin 0.05 \
         --pool-reward-account-verification-key-file stake.vkey \
         --pool-owner-stake-verification-key-file stake.vkey \
@@ -288,7 +288,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
         --cold-verification-key-file $HOME/cold-keys/node.vkey \
         --vrf-verification-key-file vrf.vkey \
         --pool-pledge 100000000 \
-        --pool-cost 340000000 \
+        --pool-cost 170000000 \
         --pool-margin 0.05 \
         --pool-reward-account-verification-key-file stake.vkey \
         --pool-owner-stake-verification-key-file stake.vkey \

@@ -52,7 +52,7 @@ poolMetaData.jsonをGithubでホストしている場合はダウンロードす
     以下は参考コードです。ご自身のプール設定値に変更してください  
     例）  
     
-    * 固定費・・・340ADA
+    * 固定費・・・170ADA
     * Margin・・・5%
     * 誓約・・・1000ADA
 
@@ -67,7 +67,7 @@ poolMetaData.jsonをGithubでホストしている場合はダウンロードす
         --cold-verification-key-file $HOME/cold-keys/node.vkey \
         --vrf-verification-key-file vrf.vkey \
         --pool-pledge 1000000000 \
-        --pool-cost 340000000 \
+        --pool-cost 170000000 \
         --pool-margin 0.05 \
         --pool-reward-account-verification-key-file stake.vkey \
         --pool-owner-stake-verification-key-file stake.vkey \

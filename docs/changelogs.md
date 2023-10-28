@@ -1,5 +1,10 @@
 # 変更履歴
 
+## 2023/10/28　ver. 12.8.9
+!!! note ""
+    * minPoolCost変更に伴う表記およびコマンド修正
+    * 軽微な修正
+
 ## 2023/09/27　ver. 12.8.8
 !!! note ""
     * [DB同期(Mithril)ベータ版](./operation/mithril-client.md)手順追加
