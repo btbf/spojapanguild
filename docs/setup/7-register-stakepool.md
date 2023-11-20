@@ -278,8 +278,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
         `--pool-pledge` 誓約数  
         `--pool-cost` 固定手数料  
         `--pool-margin` 変動手数料  
-        `111.***.***.***`はリレー1のIPに置き換えてください  
-        `222.***.***.***`はリレー2のIPに置き換えてください  
+        `***.***.***.***`はリレー1、リレー2のIPに置き換えてください   
         `https://xxx.github.io/xxx/poolMetaData.json` はご自身のメタデータURLに置き換えてください
 
     ```bash
@@ -293,9 +292,9 @@ cat $NODE_HOME/poolMetaData.json | jq .
         --pool-reward-account-verification-key-file stake.vkey \
         --pool-owner-stake-verification-key-file stake.vkey \
         $NODE_NETWORK \
-        --pool-relay-ipv4 111.***.***.*** \
+        --pool-relay-ipv4 ***.***.***.*** \
         --pool-relay-port 6000 \
-        --pool-relay-ipv4 222.***.***.*** \
+        --pool-relay-ipv4 ***.***.***.*** \
         --pool-relay-port 6000 \
         --metadata-url https://xxx.github.io/xxx/poolMetaData.json \
         --metadata-hash $(cat poolMetaDataHash.txt) \

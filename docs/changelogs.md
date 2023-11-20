@@ -1,5 +1,12 @@
 # 変更履歴
 
+## 2023/11/20　ver. 12.9.0
+!!! note ""
+    * R-Login使用時の推奨設定を掲載 [Ubuntu初期設定](./setup/1-ubuntu-setup.md)
+    * Tracemempool初期値変更対応
+    * SPOミーティング議事録リンク掲載 [SJGラーニング](./learning.md)
+    * 軽微な修正
+
 ## 2023/10/28　ver. 12.8.9
 !!! note ""
     * minPoolCost変更に伴う表記およびコマンド修正

@@ -13,6 +13,10 @@
 
 1.R-Login(Windows)   
 [https://kmiya-culti.github.io/RLogin/](https://kmiya-culti.github.io/RLogin/) 
+!!! tip "接続状態維持のための設定"
+    R-Login使用の際は、未操作時の接続状態を保持するため以下の設定を行ってください。
+    ![](../images/r-login-setting.jpg)
+
 
 2.Terminal(Mac)  
 [https://www.webdesignleaves.com/pr/plugins/mac_terminal_basics_01.html](https://www.webdesignleaves.com/pr/plugins/mac_terminal_basics_01.html)  

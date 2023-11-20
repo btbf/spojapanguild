@@ -102,7 +102,7 @@ cat $NODE_HOME/scripts/cncli.sh | grep -o '#USE_KOIOS_API=Y'
     * **1.LINEグループを作成する**  
     ![*](../images/block_notify/2-1-1-1.png)
 
-    * **2.「Line Notify」を追加する**
+    * **2.「Line Notify」を追加する**  
     ![*](../images/block_notify/2-1-1-2.png)
 
     * **3.任意のグループ名を設定し「作成」をクリックする**

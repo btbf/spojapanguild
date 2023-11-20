@@ -3,6 +3,8 @@
 !!! tip "SJGラーニングとは？"
     こちらの内容はSJGディスコードで毎週土曜日21時から開催のSPOミーティング内で不定期に実施しているSJGラーニング教材です。プールオペレーションにおける基礎知識を共有しSPOのレベルアップを図ります。
 
+    SPOミーティング議事録は[こちら](https://spojapanguild.net/category/meeting/)
+
 ## 第1回 [ファイアウォールとポートの基礎知識](https://drive.google.com/file/d/1rFWFgo-zX0dCPdfqz_FwN5nbqL9R5__i/view?usp=share_link)
 
 
