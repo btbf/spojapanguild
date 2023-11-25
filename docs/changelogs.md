@@ -1,5 +1,9 @@
 # 変更履歴
 
+## 2023/11/25　ver. 12.9.1
+!!! note ""
+    * [ノードセットアップ時](/docs/setup/1-ubuntu-setup.md)のP2P設定を削除
+
 ## 2023/11/20　ver. 12.9.0
 !!! note ""
     * R-Login使用時の推奨設定を掲載 [Ubuntu初期設定](./setup/1-ubuntu-setup.md)
