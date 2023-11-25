@@ -271,60 +271,32 @@ wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environmen
 
 設定ファイルを書き換える
 
-=== "非P2Pの場合"
-    ```bash
-    sed -i ${NODE_CONFIG}-config.json \
-        -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
-        -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
-        -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
-        -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-        -e "s/TraceMempool\": false/TraceMempool\": true/g" \
-        -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
-        -e "s/127.0.0.1/0.0.0.0/g"
-    ```
-=== "P2Pの場合"
-    ```bash
-    sed -i ${NODE_CONFIG}-config.json \
-        -e '2i \  "EnableP2P": true,' \
-        -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
-        -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
-        -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
-        -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-        -e "s/TraceMempool\": false/TraceMempool\": true/g" \
-        -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
-        -e "s/127.0.0.1/0.0.0.0/g"
-    ```
+```bash
+sed -i ${NODE_CONFIG}-config.json \
+    -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
+    -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
+    -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
+    -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
+    -e "s/TraceMempool\": false/TraceMempool\": true/g" \
+    -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
+    -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
+    -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+    -e "s/127.0.0.1/0.0.0.0/g"
+```
 
 ??? テストネットの場合はこちら
-    === "非P2Pの場合"
-        ```bash
-        sed -i ${NODE_CONFIG}-config.json \
-            -e 's!"EnableP2P": true!"EnableP2P": false!' \
-            -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
-            -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
-            -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
-            -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-            -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-            -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-            -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
-            -e "s/127.0.0.1/0.0.0.0/g"
-        ```
-    === "P2Pの場合"
-        ```bash
-        sed -i ${NODE_CONFIG}-config.json \
-            -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
-            -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
-            -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
-            -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-            -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-            -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-            -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
-            -e "s/127.0.0.1/0.0.0.0/g"
-        ```
+    ```bash
+    sed -i ${NODE_CONFIG}-config.json \
+        -e 's!"EnableP2P": true!"EnableP2P": false!' \
+        -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
+        -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
+        -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
+        -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
+        -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
+        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
+        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+        -e "s/127.0.0.1/0.0.0.0/g"
+    ```
 
 環境変数を追加し、.bashrcファイルを更新します。
 
