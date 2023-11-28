@@ -1446,6 +1446,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
   current_glive_ver=${current_glive_ver#GLV_VERSION=v}
 
   update_glive() {
+    clear
     cd $NODE_HOME/scripts
     printf "既存ファイルをバックアップ...\n\n"
     cp cncli.sh cncli.sh-1.27
@@ -1514,8 +1515,6 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       
     fi
 
-    printf "gLiveViewを起動してください\n\n"
-
   }
   
   printf "現在のバージョン: ${FG_YELLOW}$current_glive_ver${NC}\n"
@@ -1527,6 +1526,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
     yes_no
     echo
     update_glive
+    printf "gLiveViewを起動してください\n\n"
   else
     library_file_check=$(cat $NODE_HOME/scripts/cntools.library | grep 'getPoolID()')
     if [ -n "$library_file_check" ]; then
@@ -1536,6 +1536,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       select_rtn
     fi
   fi
+
   ;;
 
   # 6)
