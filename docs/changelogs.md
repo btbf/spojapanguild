@@ -1,5 +1,13 @@
 # 変更履歴
 
+## 2023/11/29　ver. 12.9.2
+!!! note ""
+    * [SJG TOOL v3.6.4リリース](./operation/tool.md#364)
+    * プールIDファイル名変更  
+      stakepoolid_hex → pool.id  
+      stakepoolid_bech32 → pool.id-bech32
+
+
 ## 2023/11/25　ver. 12.9.1
 !!! note ""
     * [ノードセットアップ時](/docs/setup/1-ubuntu-setup.md)のP2P設定を削除
