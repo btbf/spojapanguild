@@ -147,22 +147,24 @@ echo "BPポートは${b_PORT}です"
 ```
 ```bash
 sed -i $NODE_HOME/scripts/env \
+  -e '1,73s!#CNODEBIN="${HOME}/.local/bin/cardano-node"!CNODEBIN="/usr/local/bin/cardano-node"!' \
   -e '1,73s!#CCLI="${HOME}/.local/bin/cardano-cli"!CCLI="/usr/local/bin/cardano-cli"!' \
   -e '1,73s!#CNCLI="${HOME}/.local/bin/cncli"!CNCLI="${HOME}/.cargo/bin/cncli"!' \
   -e '1,73s!#CNODE_HOME="/opt/cardano/cnode"!CNODE_HOME='${NODE_HOME}'!' \
   -e '1,73s!#CNODE_PORT=6000!CNODE_PORT='${b_PORT}'!' \
   -e '1,73s!#UPDATE_CHECK="Y"!UPDATE_CHECK="N"!' \
-  -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/mainnet-config.json"!' \
+  -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/'${NODE_CONFIG}'-config.json"!' \
   -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node0.socket"!SOCKET="${CNODE_HOME}/db/socket"!' \
-  -e '1,73s!#BLOCKLOG_TZ="UTC"!BLOCKLOG_TZ="Asia/Tokyo"!'
+  -e '1,73s!#BLOCKLOG_TZ="UTC"!BLOCKLOG_TZ="Asia/Tokyo"!' \
+  -e '1,73s!#POOL_NAME=""!POOL_DIR=${CNODE_HOME}!'
 ```
 
 **cncli.shファイルを修正します**
 
 プールIDを確認する。以下のコマンドをすべてコピーして実行してください
 ```
-pool_hex=`cat $NODE_HOME/stakepoolid_hex.txt`
-pool_bech32=`cat $NODE_HOME/stakepoolid_bech32.txt`
+pool_hex=`cat $NODE_HOME/pool.id`
+pool_bech32=`cat $NODE_HOME/pool.id-bech32`
 printf "\nプールID(hex)は \e[32m${pool_hex}\e[m です\n\n"
 printf "\nプールID(bech32)は \e[32m${pool_bech32}\e[m です\n\n"
 ```

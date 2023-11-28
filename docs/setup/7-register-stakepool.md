@@ -472,16 +472,16 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "エアギャップマシン"
     ```bash
     chmod u+rwx $HOME/cold-keys
-    cardano-cli stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format bech32 --out-file stakepoolid_bech32.txt
-    cardano-cli stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format hex --out-file stakepoolid_hex.txt
+    cardano-cli stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format bech32 --out-file pool.id-bech32
+    cardano-cli stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format hex --out-file pool.id
     chmod a-rwx $HOME/cold-keys
     ```
 
 !!! important "ファイル転送"
-    エアギャップマシンの`stakepoolid_bech32.txt`と`stakepoolid_hex.txt`をBPのcnodeディレクトリにコピーします。
+    エアギャップマシンの`pool.id-bech32`と`pool.id`をBPのcnodeディレクトリにコピーします。
     ``` mermaid
     graph LR
-        A[エアギャップ] -->|stakepoolid_bech32.txt / stakepoolid_hex.txt| B[BP];
+        A[エアギャップ] -->|pool.id-bech32 / pool.id| B[BP];
     ```
 
 **以下のコマンドを実行し、プール情報が表示されればブロックチェーンに登録されています**
@@ -490,7 +490,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
     curl -s -X POST "https://api.koios.rest/api/v0/pool_info" \
         -H "Accept: application/json" \
         -H "Content-Type: application/json" \
-        -d '{"_pool_bech32_ids":["'$(cat $NODE_HOME/stakepoolid_bech32.txt)'"]}' | jq .
+        -d '{"_pool_bech32_ids":["'$(cat $NODE_HOME/pool.id-bech32)'"]}' | jq .
     ```
 
 
@@ -498,7 +498,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "ブロックプロデューサーノード"
     ```
     cd $NODE_HOME
-    cat stakepoolid_bech32.txt
+    cat pool.id-bech32
     ```
 
 表示されたPoolIDであなたのステークプールがブロックチェーンに登録されているか、次のサイトで確認することが出来ます。  

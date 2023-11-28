@@ -1,6 +1,6 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2023/08/14 v3.6.3
+最終更新日：2023/11/29 v3.6.4
 
 !!! info "主な機能"
     * payment.addr残高照会
@@ -8,7 +8,6 @@
     * ブロック生成可能可否確認
     * envファイルアップデート切り替え
     * Catalyst有権者登録
-    * SPO投票(簡易メッセージ添付可)
 
 ![](../images/sjg-tool-start.png)
 
@@ -75,6 +74,12 @@ gtool
 
 ## 更新履歴
 
+### 3.6.4
+    * gLiveView1.28.xアップデート機能
+    * プールIDファイル名変更  
+    　stakepoolid_hex → pool.id  
+    　stakepoolid_bech32 → pool.id-bech32 
+
 ### 3.6.3
     * Catalyst有権者登録機能　payment.addrエラー修正
 
@@ -91,7 +96,7 @@ gtool
 
 ### 3.5.0
     * SPO投票機能実装
-        簡易メッセージ添付可能
+    　簡易メッセージ添付可能
 
 ### 3.4.6
 

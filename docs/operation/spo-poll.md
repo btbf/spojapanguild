@@ -138,7 +138,7 @@ ${cli_path} governance answer-poll --poll-file $HOME/git/spo-poll/poll_${txHash}
         --change-address $(cat payment.addr) \
         --metadata-json-file $HOME/git/spo-poll/poll_${txHash}-poll-answer.json \
         --json-metadata-detailed-schema \
-        --required-signer-hash $(cat stakepoolid_hex.txt) \
+        --required-signer-hash $(cat pool.id) \
         --out-file $NODE_HOME/poll-answer.tx
     ```
 
