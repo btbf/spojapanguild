@@ -1436,106 +1436,107 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
   ;;
 
   6)
-  clear
-
-  echo "------------------------------------------------------------"
-  echo -e ">> gLiveView 1.27.x → 1.28.x アップデート"
-  echo "------------------------------------------------------------"
-
-  current_glive_ver="$(cat $NODE_HOME/scripts/gLiveView.sh | grep "GLV_VERSION=")"
-  current_glive_ver=${current_glive_ver#GLV_VERSION=v}
-
-  update_glive() {
     clear
-    cd $NODE_HOME/scripts
-    printf "既存ファイルをバックアップ...\n\n"
-    cp cncli.sh cncli.sh-1.27
-    echo "$NODE_HOME/scripts/cncli.sh-1.27"
-    cp env env-1.27
-    echo "$NODE_HOME/scripts/env-1.27"
-    cp gLiveView.sh gLiveView.sh-1.27
-    echo "$NODE_HOME/scripts/gLiveView.sh-1.27"
-    cp cntools.library cntools.library-1.27
-    echo "$NODE_HOME/scripts/cntools.library-1.27"
-    echo
 
-    wget -q https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cncli.sh -O ./cncli.sh
-    wget -q https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/env -O ./env
-    wget -q https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/gLiveView.sh -O ./gLiveView.sh
-    wget -q https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cntools.library -O cntools.library
-    printf "${FG_GREEN}依存ファイルを更新しました${NC}\n\n"
+    echo "------------------------------------------------------------"
+    echo -e ">> gLiveView 1.27.x → 1.28.x アップデート"
+    echo "------------------------------------------------------------"
 
-    PORT=`grep "PORT=" $NODE_HOME/startBlockProducingNode.sh`
-    b_PORT=${PORT#"PORT="}
+    current_glive_ver="$(cat $NODE_HOME/scripts/gLiveView.sh | grep "GLV_VERSION=")"
+    current_glive_ver=${current_glive_ver#GLV_VERSION=v}
 
-    sed -i $NODE_HOME/scripts/env \
-      -e '1,73s!#CNODEBIN="${HOME}/.local/bin/cardano-node"!CNODEBIN="/usr/local/bin/cardano-node"!' \
-      -e '1,73s!#CCLI="${HOME}/.local/bin/cardano-cli"!CCLI="/usr/local/bin/cardano-cli"!' \
-      -e '1,73s!#CNCLI="${HOME}/.local/bin/cncli"!CNCLI="${HOME}/.cargo/bin/cncli"!' \
-      -e '1,73s!#CNODE_HOME="/opt/cardano/cnode"!CNODE_HOME='${NODE_HOME}'!' \
-      -e '1,73s!#CNODE_PORT=6000!CNODE_PORT='${b_PORT}'!' \
-      -e '1,73s!#UPDATE_CHECK="Y"!UPDATE_CHECK="N"!' \
-      -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/'${NODE_CONFIG}'-config.json"!' \
-      -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node0.socket"!SOCKET="${CNODE_HOME}/db/socket"!' \
-      -e '1,73s!#BLOCKLOG_TZ="UTC"!BLOCKLOG_TZ="Asia/Tokyo"!' \
-      -e '1,73s!#POOL_NAME=""!POOL_DIR=${CNODE_HOME}!' \
-      -e '1,73s!#WALLET_PAY_ADDR_FILENAME="payment.addr"!WALLET_PAY_ADDR_FILENAME="payment.addr"!' \
-      -e '1,73s!#WALLET_STAKE_ADDR_FILENAME="reward.addr"!WALLET_STAKE_ADDR_FILENAME="stake.addr"!' \
-      -e '1,73s!#POOL_HOTKEY_VK_FILENAME="hot.vkey"!POOL_HOTKEY_VK_FILENAME="kes.vkey"!' \
-      -e '1,73s!#POOL_HOTKEY_SK_FILENAME="hot.skey"!POOL_HOTKEY_SK_FILENAME="kes.skey"!' \
-      -e '1,73s!#POOL_COLDKEY_VK_FILENAME="cold.vkey"!POOL_COLDKEY_VK_FILENAME="node.vkey"!' \
-      -e '1,73s!#POOL_COLDKEY_SK_FILENAME="cold.skey"!POOL_COLDKEY_SK_FILENAME="node.skey"!' \
-      -e '1,73s!#POOL_OPCERT_COUNTER_FILENAME="cold.counter"!POOL_OPCERT_COUNTER_FILENAME="node.counter"!' \
-      -e '1,73s!#POOL_OPCERT_FILENAME="op.cert"!POOL_OPCERT_FILENAME="node.cert"!' \
-      -e '1,73s!#POOL_VRF_SK_FILENAME="vrf.skey"!POOL_VRF_SK_FILENAME="vrf.skey"!'
-    
-    printf "${FG_YELLOW}envファイルのユーザー変数を変更しました${NC}\n"
+    update_glive() {
+      clear
+      cd $NODE_HOME/scripts
+      printf "既存ファイルをバックアップ...\n\n"
+      cp cncli.sh cncli.sh-1.27
+      echo "$NODE_HOME/scripts/cncli.sh-1.27"
+      cp env env-1.27
+      echo "$NODE_HOME/scripts/env-1.27"
+      cp gLiveView.sh gLiveView.sh-1.27
+      echo "$NODE_HOME/scripts/gLiveView.sh-1.27"
+      cp cntools.library cntools.library-1.27
+      echo "$NODE_HOME/scripts/cntools.library-1.27"
+      echo
 
-    sed -i $NODE_HOME/scripts/cncli.sh \
-      -e '1,73s!#POOL_ID=""!POOL_ID="'$(cat $NODE_HOME/$POOL_ID_FILENAME)'"!' \
-      -e '1,73s!#POOL_ID_BECH32=""!POOL_ID_BECH32="'$(cat $NODE_HOME/$POOL_ID_FILENAME-bech32)'"!' \
-      -e '1,73s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
-      -e '1,73s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
-    
-    printf "${FG_YELLOW}cncli.shのユーザー変数を変更しました${NC}\n\n"
-    
-    api_key=$(cat $NODE_HOME/scripts/cncli.sh-1.27 | grep "^PT_API_KEY=" | awk '{ sub(" .*$",""); print $0; }')
-    pt_ticker=$(cat $NODE_HOME/scripts/cncli.sh-1.27 | grep "^POOL_TICKER=" | awk '{ sub(" .*$",""); print $0; }')
+      wget -q https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cncli.sh -O ./cncli.sh
+      wget -q https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/env -O ./env
+      wget -q https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/gLiveView.sh -O ./gLiveView.sh
+      wget -q https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cntools.library -O cntools.library
+      printf "${FG_GREEN}依存ファイルを更新しました${NC}\n\n"
 
-    if [[ -n $api_key || -n $pt_ticker ]]; then
+      PORT=`grep "PORT=" $NODE_HOME/startBlockProducingNode.sh`
+      b_PORT=${PORT#"PORT="}
 
-      api_key=${api_key#PT_API_KEY=}
-      pt_ticker=${pt_ticker#POOL_TICKER=}
+      sed -i $NODE_HOME/scripts/env \
+        -e '1,73s!#CNODEBIN="${HOME}/.local/bin/cardano-node"!CNODEBIN="/usr/local/bin/cardano-node"!' \
+        -e '1,73s!#CCLI="${HOME}/.local/bin/cardano-cli"!CCLI="/usr/local/bin/cardano-cli"!' \
+        -e '1,73s!#CNCLI="${HOME}/.local/bin/cncli"!CNCLI="${HOME}/.cargo/bin/cncli"!' \
+        -e '1,73s!#CNODE_HOME="/opt/cardano/cnode"!CNODE_HOME='${NODE_HOME}'!' \
+        -e '1,73s!#CNODE_PORT=6000!CNODE_PORT='${b_PORT}'!' \
+        -e '1,73s!#UPDATE_CHECK="Y"!UPDATE_CHECK="N"!' \
+        -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/'${NODE_CONFIG}'-config.json"!' \
+        -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node0.socket"!SOCKET="${CNODE_HOME}/db/socket"!' \
+        -e '1,73s!#BLOCKLOG_TZ="UTC"!BLOCKLOG_TZ="Asia/Tokyo"!' \
+        -e '1,73s!#POOL_NAME=""!POOL_DIR=${CNODE_HOME}!' \
+        -e '1,73s!#WALLET_PAY_ADDR_FILENAME="payment.addr"!WALLET_PAY_ADDR_FILENAME="payment.addr"!' \
+        -e '1,73s!#WALLET_STAKE_ADDR_FILENAME="reward.addr"!WALLET_STAKE_ADDR_FILENAME="stake.addr"!' \
+        -e '1,73s!#POOL_HOTKEY_VK_FILENAME="hot.vkey"!POOL_HOTKEY_VK_FILENAME="kes.vkey"!' \
+        -e '1,73s!#POOL_HOTKEY_SK_FILENAME="hot.skey"!POOL_HOTKEY_SK_FILENAME="kes.skey"!' \
+        -e '1,73s!#POOL_COLDKEY_VK_FILENAME="cold.vkey"!POOL_COLDKEY_VK_FILENAME="node.vkey"!' \
+        -e '1,73s!#POOL_COLDKEY_SK_FILENAME="cold.skey"!POOL_COLDKEY_SK_FILENAME="node.skey"!' \
+        -e '1,73s!#POOL_OPCERT_COUNTER_FILENAME="cold.counter"!POOL_OPCERT_COUNTER_FILENAME="node.counter"!' \
+        -e '1,73s!#POOL_OPCERT_FILENAME="op.cert"!POOL_OPCERT_FILENAME="node.cert"!' \
+        -e '1,73s!#POOL_VRF_SK_FILENAME="vrf.skey"!POOL_VRF_SK_FILENAME="vrf.skey"!'
+      
+      printf "${FG_YELLOW}envファイルのユーザー変数を変更しました${NC}\n"
 
       sed -i $NODE_HOME/scripts/cncli.sh \
-        -e '1,73s!#PT_API_KEY=""!PT_API_KEY='${api_key}'!' \
-        -e '1,73s!#POOL_TICKER=""!POOL_TICKER='${pt_ticker}'!'
+        -e '1,73s!#POOL_ID=""!POOL_ID="'$(cat $NODE_HOME/$POOL_ID_FILENAME)'"!' \
+        -e '1,73s!#POOL_ID_BECH32=""!POOL_ID_BECH32="'$(cat $NODE_HOME/$POOL_ID_FILENAME-bech32)'"!' \
+        -e '1,73s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
+        -e '1,73s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
       
-      printf "${FG_YELLOW}cncli.shにPOOL-TOOl API-KEYを追記しました${NC}\n"
+      printf "${FG_YELLOW}cncli.shのユーザー変数を変更しました${NC}\n\n"
       
-    fi
+      api_key=$(cat $NODE_HOME/scripts/cncli.sh-1.27 | grep "^PT_API_KEY=" | awk '{ sub(" .*$",""); print $0; }')
+      pt_ticker=$(cat $NODE_HOME/scripts/cncli.sh-1.27 | grep "^POOL_TICKER=" | awk '{ sub(" .*$",""); print $0; }')
 
-  }
-  
-  printf "現在のバージョン: ${FG_YELLOW}$current_glive_ver${NC}\n"
+      if [[ -n $api_key || -n $pt_ticker ]]; then
 
-  if [ ${current_glive_ver::-2} != "1.28" ]; then
-    echo "アップデートを開始しますか？"
-    echo
-    echo "[1]開始する [2]キャンセル"
-    yes_no
-    echo
-    update_glive
-    printf "gLiveViewを起動してください\n\n"
-  else
-    library_file_check=$(cat $NODE_HOME/scripts/cntools.library | grep 'getPoolID()')
-    if [ -n "$library_file_check" ]; then
-      echo "cntools.libraryがアップデートされていません"
+        api_key=${api_key#PT_API_KEY=}
+        pt_ticker=${pt_ticker#POOL_TICKER=}
+
+        sed -i $NODE_HOME/scripts/cncli.sh \
+          -e '1,73s!#PT_API_KEY=""!PT_API_KEY='${api_key}'!' \
+          -e '1,73s!#POOL_TICKER=""!POOL_TICKER='${pt_ticker}'!'
+        
+        printf "${FG_YELLOW}cncli.shにPOOL-TOOl API-KEYを追記しました${NC}\n"
+        
+      fi
+
+    }
+    
+    printf "現在のバージョン: ${FG_YELLOW}$current_glive_ver${NC}\n"
+
+    if [ ${current_glive_ver::-2} != "1.28" ]; then
+      echo "アップデートを開始しますか？"
+      echo
+      echo "[1]開始する [2]キャンセル"
+      yes_no
+      echo
+      update_glive
+      printf "gLiveViewを起動してください\n\n"
     else
-      echo "すでにアップデート済みです"
-      select_rtn
+      library_file_check=$(cat $NODE_HOME/scripts/cntools.library | grep 'getPoolID()')
+      if [ -n "$library_file_check" ]; then
+        echo "cntools.libraryがアップデートされていません"
+      else
+        echo "すでにアップデート済みです"
+        select_rtn
+      fi
     fi
-  fi
+
   ;;
 
   # 6)
@@ -1908,7 +1909,6 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
   # fi
 
   # ;;
-
 
   q)
     clear
