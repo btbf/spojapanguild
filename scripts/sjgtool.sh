@@ -1496,7 +1496,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       -e '1,73s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
       -e '1,73s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
     
-    echo "${FG_YELLOW}cncli.shのユーザー変数を変更しました${NC}\n\n"
+    printf "${FG_YELLOW}cncli.shのユーザー変数を変更しました${NC}\n\n"
     
     api_key=$(cat $NODE_HOME/scripts/cncli.sh-1.27 | grep "^PT_API_KEY=" | awk '{ sub(" .*$",""); print $0; }')
     pt_ticker=$(cat $NODE_HOME/scripts/cncli.sh-1.27 | grep "^POOL_TICKER=" | awk '{ sub(" .*$",""); print $0; }')
