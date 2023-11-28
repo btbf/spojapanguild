@@ -1536,7 +1536,8 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
         select_rtn
       fi
     fi
-
+  
+  select_rtn
   ;;
 
   # 6)
