@@ -1518,7 +1518,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
   }
   
   printf "現在のバージョン: ${FG_YELLOW}$current_glive_ver${NC}\n"
-  #current_glive_ver="1.28.1"
+
   if [ ${current_glive_ver::-2} != "1.28" ]; then
     echo "アップデートを開始しますか？"
     echo
@@ -1536,7 +1536,6 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       select_rtn
     fi
   fi
-
   ;;
 
   # 6)
