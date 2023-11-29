@@ -65,12 +65,12 @@ git clone https://github.com/input-output-hk/mithril.git
 ```
 cd mithril
 git fetch --all --prune
-git checkout tags/2337.0
+git checkout tags/2347.0
 ```
 
 ビルド
 ```
-cd mithril-client
+cd mithril-client-cli
 make build
 ```
 
@@ -78,7 +78,7 @@ make build
 ```
 ./mithril-client -V
 ```
-> mithril-client 0.4.2
+> mithril-client 0.5.5
 
 システムフォルダへコピー
 ```
@@ -89,7 +89,7 @@ sudo mv mithril-client /usr/local/bin/mithril-client
 ```
 mithril-client -V
 ```
-> mithril-client 0.4.2
+> mithril-client 0.5.5
 
 ## 3.DBブートストラップ
 
