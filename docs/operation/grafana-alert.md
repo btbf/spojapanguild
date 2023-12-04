@@ -24,7 +24,7 @@ sudo apt update -y && sudo apt upgrade -y
 
 通知の基準となるアラートルールを作成します。  
 
-1.左サイドメニューから「ベルマーク」→「Alert rules」→「Create alert rule」の順にクリックする
+1.「左サイドメニュー」→「Alerting」の右の矢印→「Alert rules」→「New alert rule」の順にクリックする
 ![](../images/grafana-alert/1-0.png)
 
 ### 2-1.ノードスロット監視
