@@ -202,7 +202,7 @@ sudo apt update -y && sudo apt upgrade -y
 * 「Save tempelate」をクリック 
 
 ## 5.通知先設定
-* 「Contact points」をクリックし「Add contact point」をクリック
+* 「Add contact point」をクリック
 ![](../images/grafana-alert/1-8.png)
 
 通知先を指定する
@@ -238,7 +238,7 @@ sudo apt update -y && sudo apt upgrade -y
 * `Group by`に`grafana_folder`と`alertname`を指定
 * `Group interval`→ `1 Minutes`に設定
 * `Repeat interval`→ `10 Minutes`に設定
-* Saveをクリック
+* 「Update default policy」をクリック
 ![](../images/grafana-alert/1-11.png)
 
 
