@@ -32,7 +32,7 @@ sudo apt update -y && sudo apt upgrade -y
 * ①:`Relay1-スロット監視`など任意のルール名
 * ②:`Metrics Browser`をクリック
 * ③:`cardano_node_metrics_slotInEpoch_int`を選択
-* ④:`alias`を選択
+* ④:`alias`が選択されていることを確認
 * ⑤:監視するノード名を選択
 * ⑥:`Use query`をクリック
 ![](../images/grafana-alert/1-1.png)
