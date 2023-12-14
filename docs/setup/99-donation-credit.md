@@ -29,21 +29,3 @@ SPO JAPAN GUILDでは、ステークプール構築マニュアルの整備、�
     $spojapanguild
     ```
     ![](../images/handle.png)
-
-
-<!--
-### CoinCashew への寄付
-
-!!! quote "ADAアドレス"
-```bash
-addr1qxhazv2dp8yvqwyxxlt7n7ufwhw582uqtcn9llqak736ptfyf8d2zwjceymcq6l5gxht0nx9zwazvtvnn22sl84tgkyq7guw7q
-```
-
-### 全ての協力者
-* 👏 Antonie of CNT for being awesomely helpful with Youtube content and in telegram.
-* 👏 Special thanks to Kaze-Stake for the pull requests and automatic script contributions.
-* 👏 The Legend of ₳da [TLOA] for translating this guide to Spanish.
-* 👏 X-StakePool [BTBF] for translating this guide to Japanese.
-* 👏 Chris of OMEGA \| CODEX for security improvements.
-* 👏 Raymond of GROW for topologyUpdater improvements and being awesome.
--->

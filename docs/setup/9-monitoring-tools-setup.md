@@ -309,27 +309,9 @@ prometheus.yml構文チェック
 sudo systemctl restart prometheus.service
 ```
 
-## **9-3.ノード設定ファイルの更新**
-=== "リレーノード/BP"
+## **9-3.Grafanaダッシュボードの設定**
 
-    ```bash
-    cd $NODE_HOME
-    sed -i ${NODE_CONFIG}-config.json -e "s/127.0.0.1/0.0.0.0/g"
-    ```
-
-
-ノードを再起動し設定ファイルを有効化します。
-
-=== "リレーノード/BP"
-
-    ```bash
-    sudo systemctl reload-or-restart cardano-node
-    ```
-
-
-## **9-4.Grafanaダッシュボードの設定**
-
-1. ローカルブラウザから http://&lt;リレーノード1IPアドレス&gt;:3000 を開きます。
+1. ローカルPCのブラウザから http://&lt;リレーノード1IPアドレス&gt;:3000 を開きます。
 2. ログイン名・PWは **admin** / **admin**
 3. パスワードを変更します。
 4. 左上の三本線メニューを開き「Connections」→「Data sources」をクリックします。
@@ -341,14 +323,14 @@ sudo systemctl restart prometheus.service
 10. 設定内容を変更することなく、**Save & Test**をクリックし`OK. Settings saved`と表示されたら`back`をクリックします。
 11. BPサーバーでパネル用JSONファイルをダウンロードします。
 === "ブロックプロデューサーノード"
-```
-curl -s -o $NODE_HOME/SJG_Grafana_Dashboard.json https://raw.githubusercontent.com/akyo3/Extends-SJG-Knowledge/main/SJG_Grafana_Dashboard.json
-```
-一部ファイル内容を書き換える
-```
-sed -i $NODE_HOME/SJG_Grafana_Dashboard.json \
-    -e "s/bech32_id_of_your_pool/$(cat $NODE_HOME/stakepoolid_bech32.txt)/g"
-```
+  ```
+  curl -s -o $NODE_HOME/SJG_Grafana_Dashboard.json https://raw.githubusercontent.com/akyo3/Extends-SJG-Knowledge/main/SJG_Grafana_Dashboard.json
+  ```
+  一部ファイル内容を書き換える
+  ```
+  sed -i $NODE_HOME/SJG_Grafana_Dashboard.json \
+      -e "s/bech32_id_of_your_pool/$(cat $NODE_HOME/pool.id-bech32)/g"
+  ```
 12. BPの`cnode`フォルダにある`SJG_Grafana_Dashboard.json`をローカルPCにダウンロードします  
 13. 左メニューの「Dashboards」→「New」→「`+import`」をクリックします。  
 14. 「Upload JSON file」をクリックし、10でダウンロードした`SJG_Grafana_Dashboard.json`を指定します。  
@@ -360,4 +342,9 @@ sed -i $NODE_HOME/SJG_Grafana_Dashboard.json \
 
 
 !!! success "🎊おめでとうございます🎊"
-    これで基本的な監視設定は完了です。必要に応じてノード異常時の通知設定を行ってください
+    これで基本的な監視設定は完了です。
+    
+    以下の追加設定も実施してください。
+
+    * [セキュリティ強化設定](../operation/grafana-security.md)
+    * 異常時に通知する[アラート設定](../operation/grafana-alert.md)

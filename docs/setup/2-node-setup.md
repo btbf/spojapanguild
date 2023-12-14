@@ -1,9 +1,9 @@
 # **2. ノードインストール**
 
 !!! hint "インストールバージョン"
-    | Node/CLI | GHC | Cabal |
-    | :---------- | :---------- | :---------- |
-    | 8.1.2 | 8.10.7 | 3.8.1.0 |
+    | Node | CLI | GHC | Cabal |
+    | :---------- | :---------- | :---------- | :---------- |
+    | 8.7.2 | 8.17.0.0 | 8.10.7 | 3.8.1.0 | 
 
 ## **2-1. 依存関係インストール**
 
@@ -76,13 +76,64 @@ make check
 sudo make install
 ```
 
-### **GHCUPインストール**
+### **blstインストール**
 
+1.blstダウンロード
 ```bash
-cd $HOME
-curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+cd $HOME/git
+git clone https://github.com/supranational/blst
+cd blst
+git checkout v0.3.10
+./build.sh
 ```
 
+2.設定ファイル作成
+> このボックスはすべてコピーして実行してください
+
+```text
+cat > libblst.pc << EOF
+prefix=/usr/local
+exec_prefix=\${prefix}
+libdir=\${exec_prefix}/lib
+includedir=\${prefix}/include
+
+Name: libblst
+Description: Multilingual BLS12-381 signature library
+URL: https://github.com/supranational/blst
+Version: 0.3.10
+Cflags: -I\${includedir}
+Libs: -L\${libdir} -lblst
+EOF
+```
+
+3.設定ファイルコピー
+> このボックスは1行ずつコピーして実行してください
+
+```bash
+sudo cp libblst.pc /usr/local/lib/pkgconfig/
+sudo cp bindings/blst_aux.h bindings/blst.h bindings/blst.hpp  /usr/local/include/
+sudo cp libblst.a /usr/local/lib
+sudo chmod u=rw,go=r /usr/local/{lib/{libblst.a,pkgconfig/libblst.pc},include/{blst.{h,hpp},blst_aux.h}}
+```
+
+### **GHCUPインストール**
+インストール変数設定
+```bash
+cd $HOME
+BOOTSTRAP_HASKELL_NONINTERACTIVE=1
+BOOTSTRAP_HASKELL_NO_UPGRADE=1
+BOOTSTRAP_HASKELL_INSTALL_NO_STACK=yes
+BOOTSTRAP_HASKELL_ADJUST_BASHRC=1
+unset BOOTSTRAP_HASKELL_INSTALL_HLS
+export BOOTSTRAP_HASKELL_NONINTERACTIVE BOOTSTRAP_HASKELL_INSTALL_STACK BOOTSTRAP_HASKELL_ADJUST_BASHRC
+```
+
+インストール
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | bash
+```
+
+<!--
 !!! note ""
     戻り値対応
 
@@ -119,6 +170,7 @@ If you want to keep stacks vanilla behavior, answer 'No'.
 Installation may take a while.
 
 ⇒Enter
+-->
 
 !!! attention "Cabal/GHCバージョンについて"
     最新バージョンはcardano-node/cliのビルドに失敗するため必ず以下で指定されたバージョンをインストールしてください。
@@ -138,6 +190,19 @@ ghcup install ghc 8.10.7
 ghcup set ghc 8.10.7
 ```
 
+バージョン確認
+
+```bash
+cabal update
+cabal --version
+ghc --version
+```
+
+!!! check "チェック"
+    Cabalバージョン：「3.8.1.0」  
+    GHCバージョン：「8.10.7」であることを確認してください。
+
+
 環境変数を設定しパスを通します。  
 ノード設定ファイルは **$NODE\_HOME**(例：/home/user/cnode) に設定されます。
 
@@ -149,7 +214,7 @@ echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
 ```
 
 環境変数に接続ネットワークを指定する
-```
+```bash
 echo export NODE_CONFIG=mainnet >> $HOME/.bashrc
 echo export NODE_NETWORK='"--mainnet"' >> $HOME/.bashrc
 echo export CARDANO_NODE_NETWORK_ID=mainnet >> $HOME/.bashrc
@@ -169,22 +234,11 @@ echo export CARDANO_NODE_NETWORK_ID=mainnet >> $HOME/.bashrc
         echo export NODE_NETWORK='"--testnet-magic 1"' >> $HOME/.bashrc
         echo export CARDANO_NODE_NETWORK_ID=1 >> $HOME/.bashrc
         ```
+
+bashrc再読み込み
 ```
 source $HOME/.bashrc
 ```
-
-バージョン確認
-
-```bash
-cabal update
-cabal --version
-ghc --version
-```
-
-!!! check "チェック"
-    Cabalバージョン：「3.8.1.0」  
-    GHCバージョン：「8.10.7」であることを確認してください。
-
 
 ## **2-2. ソースコードからビルド**
 
@@ -199,7 +253,7 @@ cd $HOME/git
 git clone https://github.com/input-output-hk/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/8.1.2
+git checkout tags/8.7.1
 ```
 
 Cabalのビルドオプションを構成します。
@@ -237,11 +291,12 @@ cardano-cli version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 8.1.2 - linux-x86_64 - ghc-8.10  
-git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767  
+>cardano-node 8.7.2 - linux-x86_64 - ghc-8.10  
+git rev 30b6e447c7e4586f43e30a68fe47c8481b0ba205  
 
->cardano-node 8.1.2 - linux-x86_64 - ghc-8.10  
-git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767   
+>cardano-cli 8.17.0.0 - linux-x86_64 - ghc-8.10  
+git rev 30b6e447c7e4586f43e30a68fe47c8481b0ba205  
+  
 
 
 TMUXセッションを閉じる
@@ -259,12 +314,12 @@ config.json、genesis.json、topology.json
 ```bash
 mkdir $NODE_HOME
 cd $NODE_HOME
-wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/byron-genesis.json -O ${NODE_CONFIG}-byron-genesis.json
-wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/topology.json -O ${NODE_CONFIG}-topology.json
-wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
-wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
-wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
-wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/config.json -O ${NODE_CONFIG}-config.json
+wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/byron-genesis.json -O ${NODE_CONFIG}-byron-genesis.json
+wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/topology-legacy.json -O ${NODE_CONFIG}-topology.json
+wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
+wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
+wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
+wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/config.json -O ${NODE_CONFIG}-config.json
 ```
 
 以下のコードを実行し **config.json**ファイルを更新します。  
@@ -273,12 +328,15 @@ wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environmen
 
 ```bash
 sed -i ${NODE_CONFIG}-config.json \
+    -e 's!"EnableP2P": true!"EnableP2P": false!' \
     -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
     -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
     -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
     -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
     -e "s/TraceMempool\": false/TraceMempool\": true/g" \
     -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
+    -e 's!"rpKeepFilesNum": 10!"rpKeepFilesNum": 30!' \
+    -e 's!"rpMaxAgeHours": 24!"rpMaxAgeHours": 48!' \
     -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
     -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
     -e "s/127.0.0.1/0.0.0.0/g"
@@ -328,7 +386,7 @@ source $HOME/.bashrc
     DB_PATH=\${DIRECTORY}/db
     SOCKET_PATH=\${DIRECTORY}/db/socket
     CONFIG=\${DIRECTORY}/${NODE_CONFIG}-config.json
-    /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A16m -F1.5 -H2500M -T -S -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
+    /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A16m -F1.5 -H2500M -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
     EOF
     ```
 
@@ -354,7 +412,7 @@ source $HOME/.bashrc
     DB_PATH=\${DIRECTORY}/db
     SOCKET_PATH=\${DIRECTORY}/db/socket
     CONFIG=\${DIRECTORY}/${NODE_CONFIG}-config.json
-    /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A16m -F1.5 -H2500M -T -S -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
+    /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A16m -F1.5 -H2500M -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
     EOF
     ```
 
@@ -507,7 +565,7 @@ journalctl --unit=cardano-node --follow
     ```
 
     単語を入力するだけで、起動状態(ログ)を確認できます。  
-    ```
+    ``` { .yaml .no-copy }
     cnode ・・・ログ表示
     cnstart ・・・ノード起動
     cnrestart ・・・ノード再起動
