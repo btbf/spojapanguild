@@ -1,7 +1,7 @@
 # **ノードアップデートマニュアル**
 
 !!! info "概要"
-    このガイドは ノードバージョン8.1.2に対応しています。最終更新日：2023年07月24日
+    このガイドは ノードバージョン8.1.2に対応しています。最終更新日：2023年12月15日
 
     | Node | CLI | GHC | Cabal |
     | :---------- | :---------- | :---------- | :---------- |
@@ -21,19 +21,12 @@
 
 ### **更新フローチャート**
 更新フローチャートは、画像をクリックすると別ウィンドウで開きます。
-<a href="../../images/1.35.4-update.png" target=_blank><img src="../../images/1.35.4-update.png"></a>
+<a href="../../images/8.7.2-update.png" target=_blank><img src="../../images/8.7.2-update.png"></a>
 
 
 ## **1.依存環境アップデート**
 
 ### **1-1. システムアップデート**
-
-新しいTMUXセッションを開く
-
-```
-tmux new -s build
-```
-> アップデート作業中にSSHが中断した場合は、`tmux a -t build`で再開できます。
 
 
 システムアップデート
@@ -67,9 +60,9 @@ ghc --version
 **libsodiumコミット確認**
 ```
 cd $HOME/git/libsodium
-git branch --contains | cut -c 21-28
+git branch --contains | grep -m1 HEAD | cut -c 21-28
 ```
-> 次の戻り値ならOK `dbb48cce`
+> 戻り値が `dbb48cce` ならOK
 
 ??? example "各アプリのバージョンが異なる場合"
 
@@ -365,6 +358,14 @@ cncli 5.3.2
 
 ### **2-1.ソースコードダウンロード**
 
+新しいTMUXセッションを開く
+
+```
+tmux new -s build
+```
+> アップデート作業中にSSHが中断した場合は、`tmux a -t build`で再開できます。
+
+
 ```bash
 cd $HOME/git
 rm -rf cardano-node-old/
@@ -553,11 +554,13 @@ journalctl --unit=cardano-node --follow
 !!! note "概要"
     ■メリット
 
-    * **複数台のサーバーがある場合に、以下の処理を行うことでビルド時間の短縮やノードのダウンタイムを抑えることが出来ます。**
+    * **複数台のサーバーがある場合に、ビルド時間の短縮やノードのダウンタイムを抑えることが出来ます。**
 
     ■デメリット
 
-    * DBフォルダ転送を行う場合に転送元・転送先サーバーのディスク空き容量が200GB以上必要となります。
+    * DBフォルダ転送を行う場合にディスク空き容量が必要となります。  
+    <font color=red>転送元・・・最低100GB  
+    転送先・・・最低250GB</font>  
 
     ■事前準備
 
@@ -579,7 +582,7 @@ journalctl --unit=cardano-node --follow
 === "バイナリのみ"
 
     !!! Success "確認"
-        こちらの手順はcardano-node / cardano-cliのみを転送します
+        こちらの手順はcardano-node / cardano-cliのみを転送します。
 
     !!! Warning "確認"
         この作業は1回で大丈夫です。
@@ -608,17 +611,20 @@ journalctl --unit=cardano-node --follow
 === "バイナリ+DB"
 
     !!! Success "確認"
-        cardano-node / cardano-cli / 圧縮DBフォルダを転送します
+
+        * cardano-node / cardano-cli / 圧縮DBフォルダを転送します
+        * Ubuntu20.04の場合はZstandardをインストールしてください。
+        ```
+        sudo apt install zstd
+        ```
 
     容量確認
     **転送元・転送先サーバー両方で確認してください**
     ```
     df -h /usr
     ```
-    <strong><font color=red>Availが200GB以上あることを確認してください。</font></strong>
-
-    !!! hint "確認"
-        この作業は1回で大丈夫です。
+    <strong><font color=red>Availが200GB以上あることを確認してください。</font></strong><br>
+    <strong><font color=red>容量が少ないときは前回作業時の圧縮DBファイルを削除すると空き容量が増える場合があります</font></strong>
 
     === "転送元サーバー"
         **バイナリーファイルを転送フォルダ用にコピーする**
@@ -649,11 +655,12 @@ journalctl --unit=cardano-node --follow
 
         新しいTMUXセッションを開く
         ```
-        tmux new -s tar
+        tmux new -s db
         ```
         圧縮する
+
         ```
-        tar cvzf $NODE_HOME/Transfer/8.7.1-db.tar.gz -C $NODE_HOME db
+        tar -acvf $NODE_HOME/Transfer/8.7.2-db.tar.zst -C $NODE_HOME db
         ```
 
         圧縮が終了したらTMUXを閉じる
@@ -698,6 +705,7 @@ journalctl --unit=cardano-node --follow
         > 転送が完了するまで待つ
 
 
+
 === "バイナリ+DB"
 
     === "転送元サーバー"
@@ -732,9 +740,14 @@ journalctl --unit=cardano-node --follow
 
         圧縮ファイルを転送する
         ```
-        rsync -P --rsh=ssh $NODE_HOME/Transfer/8.7.1-db.tar.gz $for::Server/8.7.1-db.tar.gz
+        rsync -P --rsh=ssh $NODE_HOME/Transfer/8.7.2-db.tar.zst $for::Server/8.7.2-db.tar.zst
         ```
         > 転送が完了するまで待つ
+
+        TMUXセッションを終了する
+        ```
+        exit
+        ```
 
 ### 3-3.転送先サーバー作業
 
@@ -775,15 +788,14 @@ journalctl --unit=cardano-node --follow
     ```
     df -h /usr
     ```
-    <strong><font color=red>Availが140GB以上あることを確認してください。</font></strong>
+    <strong><font color=red>Availが200GB以上あることを確認してください。</font></strong>
     
     
     DBを解凍する
     ```
-    mkdir $NODE_HOME/temp
-    tar -xzvf $NODE_HOME/8.7.1-db.tar.gz -C $NODE_HOME/temp/
+    mkdir $NODE_HOME/temp && cd $NODE_HOME/temp
+    tar xvf $NODE_HOME/8.7.2-db.tar.zst
     ```
-    
     
     解凍が終わったらTMUXを閉じる
     ```
@@ -834,11 +846,13 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
 === "手動P2P運用の場合"
     ```bash
     sed -i ${NODE_CONFIG}-config.json \
+        -e 's!"EnableP2P": true!"EnableP2P": false!' \
         -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
         -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
         -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
         -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-        -e "s/TraceMempool\": true/TraceMempool\": false/g" \
+        -e 's!"rpKeepFilesNum": 10!"rpKeepFilesNum": 30!' \
+        -e 's!"rpMaxAgeHours": 24!"rpMaxAgeHours": 48!' \
         -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
         -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
         -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
@@ -847,12 +861,12 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
 === "ダイナミックP2P運用の場合"
     ```bash
     sed -i ${NODE_CONFIG}-config.json \
-        -e '2i \  "EnableP2P": true,' \
         -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
         -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
         -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
         -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-        -e "s/TraceMempool\": true/TraceMempool\": false/g" \
+        -e 's!"rpKeepFilesNum": 10!"rpKeepFilesNum": 30!' \
+        -e 's!"rpMaxAgeHours": 24!"rpMaxAgeHours": 48!' \
         -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
         -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
         -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
@@ -868,7 +882,6 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
             -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
             -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
             -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-            -e "s/TraceMempool\": true/TraceMempool\": false/g" \
             -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
             -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
             -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
@@ -881,7 +894,6 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
             -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
             -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
             -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-            -e "s/TraceMempool\": true/TraceMempool\": false/g" \
             -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
             -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
             -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
@@ -896,11 +908,15 @@ sudo reboot
 
 SSH接続してノード同期状況を確認する
 ```
-journalctl --unit=cardano-node --follow
+glive
 ```
-> `Progress:`が100%になるまで待ちます。  
-100%になるとDBは自動的に同期します。放置している場合は100%表示を見逃す場合がありますが問題ありません。
+> 同期まで4分弱かかります
 
+
+圧縮ファイルを削除する
+```
+rm $NODE_HOME/8.7.2-db.tar.zst
+```
 
 バイナリーファイルを移動する
 ```
@@ -923,7 +939,6 @@ mv $NODE_HOME/cardano-node $HOME/git/cardano-node/
     === "転送先"
         ```
         rm -rf $NODE_HOME/db_old
-        rm $NODE_HOME/8.7.1-db.tar.gz
         ```
 
 
@@ -1030,11 +1045,11 @@ tmux a -t cncli
 (バックグラウンド実行に切り替え)
 
 
-## **6. エアギャップアップデート**
+## **5. エアギャップアップデート**
 !!! hint "SFTP機能ソフト導入"
     ファイル転送に便利な[SFTP機能ソフトの導入手順はこちら](./sftp.md)
 
-### **6-1.バイナリファイルコピー**
+### **5-1.バイナリファイルコピー**
 
 === "1.RSYNC+SSHでアップデートを行った場合"
 
@@ -1074,7 +1089,7 @@ tmux a -t cncli
       <font color=red>(cardano-node2が無ければ作成する)</font>
 
 
-### **6-2.インストール**
+### **5-2.インストール**
 
 エアギャップマシンで以下を実行する
 === "エアギャップ"
@@ -1121,7 +1136,7 @@ tmux a -t cncli
     ```
     -->
 
-### **6-3.バージョン確認**
+### **5-3.バージョン確認**
 
 ```bash
 cardano-cli version
@@ -1342,7 +1357,7 @@ sudo systemctl start cardano-node
     再起動して同期が開始しているか確認して下さい。
 
 --> 
-## **7.Grafanaピアパネルが表示されない場合**
+## **Grafanaピアパネルが表示されない場合**
 ピアパネルのMetricsを修正する
 
 `ピア`パネルのメニューからEditを開き、`metrics browser`欄を以下の文字に置き換える
