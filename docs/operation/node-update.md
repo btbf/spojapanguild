@@ -463,8 +463,8 @@ git rev d2d90b48c5577b4412d5c9c9968b55f8ab4b9767
     
     ```
     cd $NODE_HOME
-    wget --no-use-server-timestamps -q https://github.com/btbf/spojapanguild/tree/alpha/file/mainnet-conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
-    wget --no-use-server-timestamps -q https://github.com/btbf/spojapanguild/tree/alpha/file/mainnet-config.json -O ${NODE_CONFIG}-config.json
+    wget --no-use-server-timestamps -q https://raw.githubusercontent.com/btbf/spojapanguild/alpha/file/mainnet-conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
+    wget --no-use-server-timestamps -q https://raw.githubusercontent.com/btbf/spojapanguild/alpha/file/mainnet-config.json -O ${NODE_CONFIG}-config.json
     ```
 
     設定ファイルを書き換える
@@ -800,8 +800,8 @@ journalctl --unit=cardano-node --follow
     **設定ファイル追加と更新**
     ```
     cd $NODE_HOME
-    wget --no-use-server-timestamps -q https://github.com/btbf/spojapanguild/tree/alpha/file/mainnet-conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
-    wget --no-use-server-timestamps -q https://github.com/btbf/spojapanguild/tree/alpha/file/mainnet-config.json -O ${NODE_CONFIG}-config.json
+    wget --no-use-server-timestamps -q https://raw.githubusercontent.com/btbf/spojapanguild/alpha/file/mainnet-conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
+    wget --no-use-server-timestamps -q https://raw.githubusercontent.com/btbf/spojapanguild/alpha/file/mainnet-config.json -O ${NODE_CONFIG}-config.json
     ```
 
     設定ファイルを書き換える
