@@ -5,6 +5,8 @@
     | :---------- | :---------- | :---------- |
     | 8.1.2 | 8.10.7 | 3.8.1.0 |
 
+    * <font color=red>現在の最新版は8.7.xシリーズですが、安定性を重視し8.1.2を採用します</font>
+
 ## **2-1. 依存関係インストール**
 
 ターミナルを起動し、以下のコマンドを入力しましょう！
@@ -259,44 +261,14 @@ config.json、genesis.json、topology.json
 ```bash
 mkdir $NODE_HOME
 cd $NODE_HOME
-wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/byron-genesis.json -O ${NODE_CONFIG}-byron-genesis.json
-wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/topology.json -O ${NODE_CONFIG}-topology.json
-wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
-wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
-wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
-wget --no-use-server-timestamps -q https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/config.json -O ${NODE_CONFIG}-config.json
+wget --no-use-server-timestamps -q https://book.play.dev.cardano.org//environments/${NODE_CONFIG}/byron-genesis.json -O ${NODE_CONFIG}-byron-genesis.json
+wget --no-use-server-timestamps -q https://book.play.dev.cardano.org//environments/${NODE_CONFIG}/topology-legacy.json -O ${NODE_CONFIG}-topology.json
+wget --no-use-server-timestamps -q https://book.play.dev.cardano.org//environments/${NODE_CONFIG}/shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
+wget --no-use-server-timestamps -q https://book.play.dev.cardano.org//environments/${NODE_CONFIG}/alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
+wget --no-use-server-timestamps -q https://github.com/btbf/spojapanguild/tree/alpha/file/mainnet-conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
+wget --no-use-server-timestamps -q https://github.com/btbf/spojapanguild/tree/alpha/file/mainnet-config.json -O ${NODE_CONFIG}-config.json
 ```
 
-以下のコードを実行し **config.json**ファイルを更新します。  
-
-設定ファイルを書き換える
-
-```bash
-sed -i ${NODE_CONFIG}-config.json \
-    -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
-    -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
-    -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
-    -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-    -e "s/TraceMempool\": false/TraceMempool\": true/g" \
-    -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-    -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-    -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
-    -e "s/127.0.0.1/0.0.0.0/g"
-```
-
-??? テストネットの場合はこちら
-    ```bash
-    sed -i ${NODE_CONFIG}-config.json \
-        -e 's!"EnableP2P": true!"EnableP2P": false!' \
-        -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
-        -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
-        -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
-        -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-        -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
-        -e "s/127.0.0.1/0.0.0.0/g"
-    ```
 
 環境変数を追加し、.bashrcファイルを更新します。
 
@@ -328,7 +300,7 @@ source $HOME/.bashrc
     DB_PATH=\${DIRECTORY}/db
     SOCKET_PATH=\${DIRECTORY}/db/socket
     CONFIG=\${DIRECTORY}/${NODE_CONFIG}-config.json
-    /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A16m -F1.5 -H2500M -T -S -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
+    /usr/local/bin/cardano-node +RTS -N -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
     EOF
     ```
 
@@ -354,7 +326,7 @@ source $HOME/.bashrc
     DB_PATH=\${DIRECTORY}/db
     SOCKET_PATH=\${DIRECTORY}/db/socket
     CONFIG=\${DIRECTORY}/${NODE_CONFIG}-config.json
-    /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A16m -F1.5 -H2500M -T -S -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
+    /usr/local/bin/cardano-node +RTS -N -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
     EOF
     ```
 

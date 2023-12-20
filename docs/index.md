@@ -10,7 +10,9 @@ SPO JAPAN GUILDでは、カルダノネットワーク分散化促進活動の�
 
 !!! info "情報"
     このマニュアルは、カルダノノードv8.1.2に対応しています。  
-    最終更新日：2023年11月29日 guide version 12.9.2
+    <font color=red>現在の最新版は8.7.xシリーズですが、安定性を重視し8.1.2を採用します</font>
+
+    最終更新日：2023年12月20日 guide version 12.9.3
 
 !!! tip "サポート"
     サポートが必要な場合は、ディスコード[SPO JAPAN GUILDコミュニティ](https://discord.gg/U3gU54c)で現役のSPOに質問できます
@@ -73,7 +75,7 @@ SPO＝Stake Pool Operator
     | **サーバー**      | BP用1台  リレー用1台  エアギャップマシン1台  |
     | **OS**       | 64-bit Linux \(Ubuntu 20.04 LTS\) |
     | **CPU**   | 2Ghz以上 2コアのIntelまたはAMD x86プロセッサー|
-    | **メモリ**    | 16GB |
+    | **メモリ**    | 24GB |
     | **ストレージ**    | 250GB |
     | **ネットワーク**    | 10Mbps |
     | **帯域**    | 1時間あたり1GBの帯域 |
@@ -87,7 +89,7 @@ SPO＝Stake Pool Operator
     | **サーバー**      | BP用1台  リレー用2台  エアギャップマシン1台  |
     | **OS**       | 64-bit Linux \(Ubuntu 20.04 LTS\) |
     | **CPU**   | 2Ghz以上 4コアのIntelまたはAMD x86プロセッサー|
-    | **メモリ**    | 16GB over |
+    | **メモリ**    | 24GB over |
     | **ストレージ**    | 300GB以上 |
     | **ネットワーク**    | 100Mbps |
     | **帯域**    | 無制限 |
