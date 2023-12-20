@@ -5,6 +5,8 @@
     | :---------- | :---------- | :---------- |
     | 8.1.2 | 8.10.7 | 3.8.1.0 |
 
+    * <font color=red>現在の最新版は8.7.xシリーズですが、安定性を重視し8.1.2を採用します</font>
+
 ## **2-1. 依存関係インストール**
 
 ターミナルを起動し、以下のコマンドを入力しましょう！
@@ -263,8 +265,8 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org//environmen
 wget --no-use-server-timestamps -q https://book.play.dev.cardano.org//environments/${NODE_CONFIG}/topology-legacy.json -O ${NODE_CONFIG}-topology.json
 wget --no-use-server-timestamps -q https://book.play.dev.cardano.org//environments/${NODE_CONFIG}/shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
 wget --no-use-server-timestamps -q https://book.play.dev.cardano.org//environments/${NODE_CONFIG}/alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
-wget --no-use-server-timestamps -q https://github.com/btbf/spojapanguild/tree/master/file/mainnet-conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
-wget --no-use-server-timestamps -q https://github.com/btbf/spojapanguild/tree/master/file/mainnet-config.json -O ${NODE_CONFIG}-config.json
+wget --no-use-server-timestamps -q https://github.com/btbf/spojapanguild/tree/alpha/file/mainnet-conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
+wget --no-use-server-timestamps -q https://github.com/btbf/spojapanguild/tree/alpha/file/mainnet-config.json -O ${NODE_CONFIG}-config.json
 ```
 
 

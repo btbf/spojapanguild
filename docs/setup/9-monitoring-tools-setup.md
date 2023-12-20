@@ -347,7 +347,7 @@ curl -s -o $NODE_HOME/SJG_Grafana_Dashboard.json https://raw.githubusercontent.c
 一部ファイル内容を書き換える
 ```
 sed -i $NODE_HOME/SJG_Grafana_Dashboard.json \
-    -e "s/bech32_id_of_your_pool/$(cat $NODE_HOME/stakepoolid_bech32.txt)/g"
+    -e "s/bech32_id_of_your_pool/$(cat $NODE_HOME/pool.id-bech32)/g"
 ```
 12. BPの`cnode`フォルダにある`SJG_Grafana_Dashboard.json`をローカルPCにダウンロードします  
 13. 左メニューの「Dashboards」→「New」→「`+import`」をクリックします。  
