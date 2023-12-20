@@ -1,5 +1,21 @@
 # 変更履歴
 
+## 2023/11/29　ver. 12.9.3
+* Cardano-node8.1.2対応
+* [ノードセットアップ手順](/docs/setup/1-ubuntu-setup.md)
+    * blstインストール追加
+    * GHCUP変数インストールへ変更
+
+* [ノードアップデート手順](./operation/node-update.md)更新
+    * RSYNC利用時のDB圧縮形式を変更 gzip → zstd
+
+* [Grafanaアラート設定](./operation/grafana-alert.md) Grafanaの最新バージョン対応
+
+* [SJG TOOL v3.7.0リリース](./operation/tool.md#364)
+    * CLI 8.17.0.0対応
+    * ディスク空き容量とDB容量表示追加
+
+
 ## 2023/11/29　ver. 12.9.2
 !!! note ""
     * [SJG TOOL v3.6.4リリース](./operation/tool.md#364)

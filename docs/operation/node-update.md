@@ -1,7 +1,7 @@
 # **ノードアップデートマニュアル**
 
 !!! info "概要"
-    このガイドは ノードバージョン8.1.2に対応しています。最終更新日：2023年12月15日
+    このガイドは ノードバージョン8.7.2に対応しています。最終更新日：2023年12月16日
 
     | Node | CLI | GHC | Cabal |
     | :---------- | :---------- | :---------- | :---------- |
@@ -12,8 +12,9 @@
 
     **■v8.7.2**
 
-    * <font color=red>ノードアップデート後はDB再構築処理が入るため、ノード同期までに数時間かかります。</font>
-
+    * 8.1.2以前からのダイナミックP2Pの潜在的なバグが解消されています。
+    * <font color=red>ダイナミックP2P運用リレーの場合、一部の環境でBPへの接続が不安定になるバグが報告されています。</font>
+    * ノードアップデート後はDB再構築処理が入るため、ノード同期までに6時間～7時間かかります。
 
 !!! danger "よくお読みになって進めてください"
     ご自身のアップデートスタイルによって手順が異なります。  
@@ -369,7 +370,7 @@ tmux new -s build
 ```bash
 cd $HOME/git
 rm -rf cardano-node-old/
-git clone https://github.com/input-output-hk/cardano-node.git cardano-node2
+git clone https://github.com/IntersectMBO/cardano-node.git cardano-node2
 cd cardano-node2/
 ```
 
@@ -452,11 +453,14 @@ git rev 30b6e447c7e4586f43e30a68fe47c8481b0ba205
 
 ### **2-4.設定ファイルの追加と更新**
 
-!!! danger "設定ファイル更新"
-    ログファイルローテーションを初期値から次のように変更します。
-    
-    *過去48時間のログを1ファイル5MB・最大30ファイルに分割して保存
+既存ファイルバックアップ
+```
+mkdir $NODE_HOME/backup
+cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config.json
+cp $NODE_HOME/${NODE_CONFIG}-conway-genesis.json $NODE_HOME/backup/${NODE_CONFIG}-conway-genesis.json
+```
 
+新ファイルダウンロード
 ```
 cd $NODE_HOME
 wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
@@ -468,6 +472,7 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
 === "手動P2P運用の場合"
     ```bash
     sed -i ${NODE_CONFIG}-config.json \
+        -e '2i \  "SnapshotInterval": 86400,' \
         -e 's!"EnableP2P": true!"EnableP2P": false!' \
         -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
         -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
@@ -483,6 +488,7 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
 === "ダイナミックP2P運用の場合"
     ```bash
     sed -i ${NODE_CONFIG}-config.json \
+        -e '2i \  "SnapshotInterval": 86400,' \
         -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
         -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
         -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
@@ -534,6 +540,27 @@ cd $HOME/git
 mv cardano-node/ cardano-node-old/
 mv cardano-node2/ cardano-node/
 ```
+
+??? danger "8.1.2用のDBもバックアップしたい場合(任意)"
+    8.7.2へアップグレードするとDB再構築が行われ約6時間～7時間かかります。  
+    このバージョンで不具合が発生した場合8.1.2へ戻す作業が発生しますが、戻す際もDB再構築が行われ約6時間～7時間かかります。この不測の事態に備え8.1.2用のDBとしてバックアップすることで再構築の時間を短縮することが出来ます。
+    ただしディスク空き容量が最低100GB必要になります。
+
+    1.空き容量を確認します
+    ```
+    df -h /usr | awk '{print $4}'
+    ```
+    <strong><font color=red>Availが100B以上あることを確認してください。</font></strong><br>
+
+    2.圧縮ライブラリをインストールする
+    ```
+    sudo apt install zstd
+    ```
+
+    3.DBを圧縮する
+    ```
+    tar -acvf $NODE_HOME/8.1.2-db.tar.zst -C $NODE_HOME db
+    ```
 
 サーバーを再起動する
 ```bash
@@ -621,7 +648,7 @@ journalctl --unit=cardano-node --follow
     容量確認
     **転送元・転送先サーバー両方で確認してください**
     ```
-    df -h /usr
+    df -h /usr | awk '{print $4}'
     ```
     <strong><font color=red>Availが200GB以上あることを確認してください。</font></strong><br>
     <strong><font color=red>容量が少ないときは前回作業時の圧縮DBファイルを削除すると空き容量が増える場合があります</font></strong>
@@ -786,7 +813,7 @@ journalctl --unit=cardano-node --follow
 
     SSDの空き容量を再確認する
     ```
-    df -h /usr
+    df -h /usr | awk '{print $4}'
     ```
     <strong><font color=red>Availが200GB以上あることを確認してください。</font></strong>
     
@@ -830,11 +857,20 @@ journalctl --unit=cardano-node --follow
     
     DBフォルダを入れ替える
     ```
-    mv $NODE_HOME/db $NODE_HOME/db_old
+    mv $NODE_HOME/db $NODE_HOME/backup/db_old
     mv $NODE_HOME/temp/db $NODE_HOME/db
     ```
 
 **設定ファイル追加と更新**
+
+既存ファイルバックアップ
+```
+mkdir $NODE_HOME/backup
+cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config.json
+cp $NODE_HOME/${NODE_CONFIG}-conway-genesis.json $NODE_HOME/backup/${NODE_CONFIG}-conway-genesis.json
+```
+
+新ファイルダウンロード
 ```
 cd $NODE_HOME
 wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
@@ -846,6 +882,7 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
 === "手動P2P運用の場合"
     ```bash
     sed -i ${NODE_CONFIG}-config.json \
+        -e '2i \  "SnapshotInterval": 86400,' \
         -e 's!"EnableP2P": true!"EnableP2P": false!' \
         -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
         -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
@@ -861,6 +898,7 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
 === "ダイナミックP2P運用の場合"
     ```bash
     sed -i ${NODE_CONFIG}-config.json \
+        -e '2i \  "SnapshotInterval": 86400,' \
         -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
         -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
         -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
@@ -900,7 +938,6 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
             -e "s/127.0.0.1/0.0.0.0/g"
         ```
 
-
 サーバーを再起動する
 ```bash
 sudo reboot
@@ -938,7 +975,7 @@ mv $NODE_HOME/cardano-node $HOME/git/cardano-node/
         ```
     === "転送先"
         ```
-        rm -rf $NODE_HOME/db_old
+        rm -rf $NODE_HOME/backup/db_old
         ```
 
 

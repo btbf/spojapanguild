@@ -30,7 +30,7 @@ sudo apt install git jq bc automake tmux rsync htop curl build-essential pkg-con
 ```bash
 mkdir $HOME/git
 cd $HOME/git
-git clone https://github.com/input-output-hk/libsodium
+git clone https://github.com/IntersectMBO/libsodium
 cd libsodium
 git checkout dbb48cc
 ./autogen.sh
@@ -250,10 +250,10 @@ Gitからソースコードをダウンロードし、最新のタグに切り�
 
 ```bash
 cd $HOME/git
-git clone https://github.com/input-output-hk/cardano-node.git
+git clone https://github.com/IntersectMBO/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/8.7.1
+git checkout tags/8.7.2
 ```
 
 Cabalのビルドオプションを構成します。

@@ -29,6 +29,7 @@ theme:
     - navigation.tracking
     - navigation.footer
     - navigation.path
+    - navigation.expand
     - search.suggest
     - search.highlight
     - search.share
