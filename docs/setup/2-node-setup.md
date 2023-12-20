@@ -265,8 +265,8 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org//environmen
 wget --no-use-server-timestamps -q https://book.play.dev.cardano.org//environments/${NODE_CONFIG}/topology-legacy.json -O ${NODE_CONFIG}-topology.json
 wget --no-use-server-timestamps -q https://book.play.dev.cardano.org//environments/${NODE_CONFIG}/shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
 wget --no-use-server-timestamps -q https://book.play.dev.cardano.org//environments/${NODE_CONFIG}/alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
-wget --no-use-server-timestamps -q https://github.com/btbf/spojapanguild/tree/alpha/file/mainnet-conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
-wget --no-use-server-timestamps -q https://github.com/btbf/spojapanguild/tree/alpha/file/mainnet-config.json -O ${NODE_CONFIG}-config.json
+wget --no-use-server-timestamps -q https://raw.githubusercontent.com/btbf/spojapanguild/alpha/file/mainnet-conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
+wget --no-use-server-timestamps -q https://raw.githubusercontent.com/btbf/spojapanguild/alpha/file/mainnet-config.json -O ${NODE_CONFIG}-config.json
 ```
 
 
