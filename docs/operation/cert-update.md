@@ -1,7 +1,8 @@
 # **プール情報(pool.cert)の更新**
 
 !!! summary "概要"
-    誓約、固定手数料、変動手数料、リレー情報、メタ情報を変更する場合に実施します。
+    * 誓約、固定手数料、変動手数料、リレー情報、メタデータを変更する場合に実施します。
+    * メタデータURLのみ変更になる場合でも「メタデータ更新を含む場合」を実施しメタデータファイルを再作成してください。
 
 !!! info "注意"
     誓約・固定手数料・変動手数料の反映は提出エポック＋3エポック後からになります。  
@@ -12,27 +13,72 @@
     323エポックで反映  
 
 
-poolMetaData.jsonをGithubでホストしている場合はダウンロードする  
-短縮URLをご自身のものに修正してからコマンドを実行してください
 === "メタデータ更新を含む場合"
-
-    !!! Success "poolMetaData.json"
-        予め**poolMetaData.jsonを修正し、各ホストサーバーへアップロードする**
-        （poolMetaData.jsonをGithubでホストしている場合はGithub上で修正し、ダウンロードする）
-
     === "ブロックプロデューサーノード"
-        ```bash
-        cd $NODE_HOME
-        wget -O poolMetaData.json https://git.io/****
+        変数にプールメタデータ値を設定し実行してください
+        > 文字列は`""`で囲ってください  
+        > extended_urlを設定していない場合は `""`のままで大丈夫です
+        ```
+        pool_name=""
+        description=""
+        ticker=""
+        homepage_url=""
+        extended_url=""
         ```
 
-    **poolMetaData.jsonのハッシュファイルを作成する**
+        メタデータファイルを作成する
+        > 全選択コピーしてそのまま実行してください
+        ```
+        cat > $NODE_HOME/poolMetaData.json << EOF
+        {
+            "name": "$pool_name",
+            "description": "$description",
+            "ticker": "$ticker",
+            "homepage": "$homepage_url",
+            "extended": "$extended_url",
+            "nonce":"$(date +%s)"
+        }
+        EOF
+        ```
+
+    !!! Success "poolMetaData.jsonを各ホストサーバーへアップロードする"
+        poolMetaData.jsonをローカルマシンにダウンロードし、Githubまたはご自身のサーバーの所定の位置にアップロードしてください
+
+
+    **ハッシュ値確認**
 
     === "ブロックプロデューサーノード"
         ```text
         cd $NODE_HOME
         cardano-cli stake-pool metadata-hash --pool-metadata-file poolMetaData.json > poolMetaDataHash.txt
         ```
+
+        オンラインファイルハッシュ値確認
+        > `https:****.**.**`をメタデータファイルのURLに置き換えてから実行してください
+
+        ```
+        cd $NODE_HOME
+        wget -O onlineMetaData.json https:****.**.**
+        ```
+
+        オンラインメタデータハッシュ値
+        ```
+        cardano-cli stake-pool metadata-hash --pool-metadata-file onlineMetaData.json > onlineMetaDataHash.txt
+        ```
+
+        ハッシュ値
+        ```
+        printf "\n　サーバー:$(cat poolMetaDataHash.txt)\nオンライン:$(cat onlineMetaDataHash.txt)\n\n"
+        ```
+        >ハッシュ値が一致する必要があります。異なる場合はホストサーバーへ正しくアップロードされているかご確認ください。
+        
+        ハッシュ値が一致したら、確認用ファイルを削除する。
+        ```
+        rm onlineMetaDataHash.txt
+        rm onlineMetaData.json
+        ```
+
+
     
     !!! important "ファイル転送"
         BPの``poolMetaDataHash.txt`` をエアギャップマシンのcnodeディレクトリにコピーします。
@@ -40,6 +86,20 @@ poolMetaData.jsonをGithubでホストしている場合はダウンロードす
         graph LR
             A[BP] -->|poolMetaDataHash.txt| B[エアギャップ];
         ```
+
+    BPとエアギャップハッシュ値確認
+    === "ブロックプロデューサーノード"
+    ```bash
+    cd $NODE_HOME
+    $(cat poolMetaDataHash.txt)
+    ```
+
+    === "エアギャップオフラインマシン"
+    ```bash
+    cd $NODE_HOME
+    $(cat poolMetaDataHash.txt)
+    ```
+    > ハッシュ値が異なっている場合は、BPのpoolMetaDataHash.txtがエアギャップに正しくコピーされていません。
 
 === "誓約、手数料、リレー情報のみ更新の場合"
 
