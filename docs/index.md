@@ -12,7 +12,7 @@ SPO JAPAN GUILDでは、カルダノネットワーク分散化促進活動の�
     このマニュアルは、カルダノノードv8.1.2に対応しています。  
     <font color=red>現在の最新版は8.7.xシリーズですが、安定性を重視し8.1.2を採用します</font>
 
-    最終更新日：2023年12月30日 guide version 12.9.4
+    最終更新日：2023年1月5日 guide version 12.9.5
 
 !!! tip "サポート"
     サポートが必要な場合は、ディスコード[SPO JAPAN GUILDコミュニティ](https://discord.gg/U3gU54c)で現役のSPOに質問できます
