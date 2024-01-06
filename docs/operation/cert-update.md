@@ -16,14 +16,14 @@
 === "メタデータ更新を含む場合"
     === "ブロックプロデューサーノード"
         変数にプールメタデータ値を設定し実行してください
-        > 文字列は`""`で囲ってください  
-        > extended_urlを設定していない場合は `""`のままで大丈夫です
+        > 文字列は`''`で囲ってください  
+        > extended_urlを設定していない場合は `''`のままで大丈夫です
         ```
-        pool_name=""
-        description=""
-        ticker=""
-        homepage_url=""
-        extended_url=""
+        name=''
+        description=''
+        ticker=''
+        homepage=''
+        extended=''
         ```
 
         メタデータファイルを作成する
