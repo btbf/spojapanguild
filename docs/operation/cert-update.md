@@ -17,7 +17,7 @@
     === "ブロックプロデューサーノード"
         変数にプールメタデータ値を設定し実行してください
         > 文字列は`''`で囲ってください  
-        > extended_urlを設定していない場合は `''`のままで大丈夫です
+        > extendedを設定していない場合は `''`のままで大丈夫です
         ```
         name=''
         description=''
@@ -31,11 +31,11 @@
         ```
         cat > $NODE_HOME/poolMetaData.json << EOF
         {
-            "name": "$pool_name",
+            "name": "$name",
             "description": "$description",
             "ticker": "$ticker",
-            "homepage": "$homepage_url",
-            "extended": "$extended_url",
+            "homepage": "$homepage",
+            "extended": "$extended",
             "nonce":"$(date +%s)"
         }
         EOF
