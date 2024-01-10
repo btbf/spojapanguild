@@ -3,7 +3,7 @@
 !!! hint "インストールバージョン"
     | Node | CLI | GHC | Cabal |
     | :---------- | :---------- | :---------- | :---------- |
-    | 8.7.2 | 8.17.0.0 | 8.10.7 | 3.8.1.0 | 
+    | 8.7.3 | 8.17.0.0 | 8.10.7 | 3.8.1.0 | 
 
 ## **2-1. 依存関係インストール**
 
@@ -253,7 +253,7 @@ cd $HOME/git
 git clone https://github.com/IntersectMBO/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/8.7.2
+git checkout tags/8.7.3
 ```
 
 Cabalのビルドオプションを構成します。
@@ -291,11 +291,11 @@ cardano-cli version
 ```
 
 以下の戻り値を確認する  
->cardano-node 8.7.2 - linux-x86_64 - ghc-8.10  
-git rev 30b6e447c7e4586f43e30a68fe47c8481b0ba205  
-
 >cardano-cli 8.17.0.0 - linux-x86_64 - ghc-8.10  
-git rev 30b6e447c7e4586f43e30a68fe47c8481b0ba205  
+git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
+
+>cardano-node 8.7.3 - linux-x86_64 - ghc-8.10  
+git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
   
 
 

@@ -64,7 +64,7 @@ mv $NODE_HOME/mainnet-topology.json $NODE_HOME/mainnet-topology-non2p2.json
         }
     ],
     "publicRoots": [
-      "accessPoints": [
+      { "accessPoints": [
         {
           "address": "backbone.cardano-mainnet.iohk.io",
           "port": 3001
@@ -111,19 +111,18 @@ mv $NODE_HOME/mainnet-topology.json $NODE_HOME/mainnet-topology-non2p2.json
     ],
     "publicRoots": [
         { "accessPoints": [
-      "accessPoints": [
-        {
-          "address": "backbone.cardano-mainnet.iohk.io",
-          "port": 3001
-        },
-        {
-          "address": "backbone.cardano.iog.io",
-          "port": 3001
-        },
-        {
-          "address": "backbone.mainnet.emurgornd.com",
-          "port": 3001
-        }
+            {
+            "address": "backbone.cardano-mainnet.iohk.io",
+            "port": 3001
+            },
+            {
+            "address": "backbone.cardano.iog.io",
+            "port": 3001
+            },
+            {
+            "address": "backbone.mainnet.emurgornd.com",
+            "port": 3001
+            }
         ],
         "advertise": false
         }

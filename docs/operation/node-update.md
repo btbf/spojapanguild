@@ -1,20 +1,20 @@
 # **ノードアップデートマニュアル**
 
 !!! info "概要"
-    このガイドは ノードバージョン8.7.2に対応しています。最終更新日：2023年12月16日
+    このガイドは ノードバージョン8.7.3に対応しています。最終更新日：2024年1月10日
 
-    | Node | CLI | GHC | Cabal |
+    | Node | CLI | GHC | Cabal | 
     | :---------- | :---------- | :---------- | :---------- |
-    | 8.7.2 | 8.17.0.0 | 8.10.7 | 3.8.1.0 | 
+    | 8.7.3 | 8.17.0.0 | 8.10.7 | 3.8.1.0 | 
 
 
 !!! hint "主な変更点と新機能"
 
-    **■v8.7.2**
+    **■v8.7.3**
 
     * 8.1.2以前からのダイナミックP2Pの潜在的なバグが解消されています。
-    * <font color=red>ダイナミックP2P運用リレーの場合、一部の環境でBPへの接続が不安定になるバグが報告されています。</font>
     * ノードアップデート後はDB再構築処理が入るため、ノード同期までに6時間～7時間かかります。
+    * RAM 24GB以上必須
 
 !!! danger "よくお読みになって進めてください"
     ご自身のアップデートスタイルによって手順が異なります。  
@@ -383,7 +383,7 @@ cabal update
 
 ```
 git fetch --all --recurse-submodules --tags
-git checkout tags/8.7.2
+git checkout tags/8.7.3
 cabal configure --with-compiler=ghc-8.10.7
 ```
 
@@ -411,10 +411,10 @@ $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-node")
 ```
 以下の戻り値を確認する  
 >cardano-cli 8.17.0.0 - linux-x86_64 - ghc-8.10  
-git rev 30b6e447c7e4586f43e30a68fe47c8481b0ba205  
+git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
 
->cardano-node 8.7.2 - linux-x86_64 - ghc-8.10  
-git rev 30b6e447c7e4586f43e30a68fe47c8481b0ba205  
+>cardano-node 8.7.3 - linux-x86_64 - ghc-8.10  
+git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
 
 **ビルド用TMUXセッションを終了する** 
 ```
@@ -445,10 +445,10 @@ cardano-node version
 
 以下の戻り値を確認する  
 >cardano-cli 8.17.0.0 - linux-x86_64 - ghc-8.10  
-git rev 30b6e447c7e4586f43e30a68fe47c8481b0ba205  
+git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
 
->cardano-node 8.7.2 - linux-x86_64 - ghc-8.10  
-git rev 30b6e447c7e4586f43e30a68fe47c8481b0ba205  
+>cardano-node 8.7.3 - linux-x86_64 - ghc-8.10  
+git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
 
 
 ### **2-4.設定ファイルの追加と更新**
@@ -542,7 +542,7 @@ mv cardano-node2/ cardano-node/
 ```
 
 ??? danger "8.1.2用のDBもバックアップしたい場合(任意)"
-    8.7.2へアップグレードするとDB再構築が行われ約6時間～7時間かかります。  
+    8.7.3へアップグレードするとDB再構築が行われ約6時間～7時間かかります。  
     このバージョンで不具合が発生した場合8.1.2へ戻す作業が発生しますが、戻す際もDB再構築が行われ約6時間～7時間かかります。この不測の事態に備え8.1.2用のDBとしてバックアップすることで再構築の時間を短縮することが出来ます。
     ただしディスク空き容量が最低100GB必要になります。
 
@@ -629,10 +629,10 @@ journalctl --unit=cardano-node --follow
         ```
         以下の戻り値を確認する  
         >cardano-cli 8.17.0.0 - linux-x86_64 - ghc-8.10  
-        git rev 30b6e447c7e4586f43e30a68fe47c8481b0ba205  
+        git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
 
-        >cardano-node 8.7.2 - linux-x86_64 - ghc-8.10  
-        git rev 30b6e447c7e4586f43e30a68fe47c8481b0ba205  
+        >cardano-node 8.7.3 - linux-x86_64 - ghc-8.10  
+        git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
 
 
 === "バイナリ+DB"
@@ -668,10 +668,10 @@ journalctl --unit=cardano-node --follow
         ```
         以下の戻り値を確認する  
         >cardano-cli 8.17.0.0 - linux-x86_64 - ghc-8.10  
-        git rev 30b6e447c7e4586f43e30a68fe47c8481b0ba205  
+        git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
 
-        >cardano-node 8.7.2 - linux-x86_64 - ghc-8.10  
-        git rev 30b6e447c7e4586f43e30a68fe47c8481b0ba205  
+        >cardano-node 8.7.3 - linux-x86_64 - ghc-8.10  
+        git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
 
         **ノードを停止する**
         ```
@@ -687,7 +687,7 @@ journalctl --unit=cardano-node --follow
         圧縮する
 
         ```
-        tar -acvf $NODE_HOME/Transfer/8.7.2-db.tar.zst -C $NODE_HOME db
+        tar -acvf $NODE_HOME/Transfer/8.7.3-db.tar.zst -C $NODE_HOME db
         ```
 
         圧縮が終了したらTMUXを閉じる
@@ -767,7 +767,7 @@ journalctl --unit=cardano-node --follow
 
         圧縮ファイルを転送する
         ```
-        rsync -P --rsh=ssh $NODE_HOME/Transfer/8.7.2-db.tar.zst $for::Server/8.7.2-db.tar.zst
+        rsync -P --rsh=ssh $NODE_HOME/Transfer/8.7.3-db.tar.zst $for::Server/8.7.3-db.tar.zst
         ```
         > 転送が完了するまで待つ
 
@@ -799,10 +799,10 @@ journalctl --unit=cardano-node --follow
     ```
     以下の戻り値を確認する  
     >cardano-cli 8.17.0.0 - linux-x86_64 - ghc-8.10  
-    git rev 30b6e447c7e4586f43e30a68fe47c8481b0ba205  
+    git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
 
-    >cardano-node 8.7.2 - linux-x86_64 - ghc-8.10  
-    git rev 30b6e447c7e4586f43e30a68fe47c8481b0ba205  
+    >cardano-node 8.7.3 - linux-x86_64 - ghc-8.10  
+    git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
 
 === "バイナリ+DB"
 
@@ -821,7 +821,7 @@ journalctl --unit=cardano-node --follow
     DBを解凍する
     ```
     mkdir $NODE_HOME/temp && cd $NODE_HOME/temp
-    tar xvf $NODE_HOME/8.7.2-db.tar.zst
+    tar xvf $NODE_HOME/8.7.3-db.tar.zst
     ```
     
     解凍が終わったらTMUXを閉じる
@@ -849,10 +849,10 @@ journalctl --unit=cardano-node --follow
     ```
     以下の戻り値を確認する  
     >cardano-cli 8.17.0.0 - linux-x86_64 - ghc-8.10  
-    git rev 30b6e447c7e4586f43e30a68fe47c8481b0ba205  
+    git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
 
-    >cardano-node 8.7.2 - linux-x86_64 - ghc-8.10  
-    git rev 30b6e447c7e4586f43e30a68fe47c8481b0ba205  
+    >cardano-node 8.7.3 - linux-x86_64 - ghc-8.10  
+    git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
 
     
     DBフォルダを入れ替える
@@ -952,7 +952,7 @@ glive
 
 圧縮ファイルを削除する
 ```
-rm $NODE_HOME/8.7.2-db.tar.zst
+rm $NODE_HOME/8.7.3-db.tar.zst
 ```
 
 バイナリーファイルを移動する

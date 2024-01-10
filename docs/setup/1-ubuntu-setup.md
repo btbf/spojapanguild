@@ -277,41 +277,7 @@ sudo nano /etc/fstab
 tmpfs	/run/shm	tmpfs	ro,noexec,nosuid	0 0
 ```
 
-## **1-8.Swap領域設定**
-!!! hint "ヒント"
-    サーバーメモリが16GBの場合、Swap設定を行ってください。ただし契約サーバーによっては追加できない場合があります。
-
-
-```
-cd $HOME
-sudo fallocate -l 16G /swapfile
-```
-```
-sudo chmod 600 /swapfile
-```
-```
-sudo mkswap /swapfile
-sudo swapon /swapfile
-sudo swapon --show
-```
-```
-sudo cp /etc/fstab /etc/fstab.bak
-echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
-echo 'vm.swappiness=10' | sudo tee -a /etc/sysctl.conf
-echo 'vm.vfs_cache_pressure=50' | sudo tee -a /etc/sysctl.conf
-cat /proc/sys/vm/vfs_cache_pressure
-cat /proc/sys/vm/swappiness
-```
-
-変更を有効にするには、システムを再起動します。
-
-```
-sudo reboot
-```
-
-
-
-## **1-9.Fail2banのインストール**
+## **1-8.Fail2banのインストール**
 
 !!! info ""
     Fail2banは、ログファイルを監視し、ログイン試行に失敗した特定のパターンを監視する侵入防止システムです。特定のIPアドレスから（指定された時間内に）一定数のログイン失敗が検知された場合、Fail2banはそのIPアドレスからのアクセスをブロックします。
@@ -346,7 +312,7 @@ fail2banを再起動して設定を有効にします。
 sudo systemctl restart fail2ban
 ```
 
-## **1-10.Chronyを設定する**
+## **1-9.Chronyを設定する**
 
 
 chronyをインストールします。
@@ -429,9 +395,7 @@ chronyc tracking
 ```
 
 
-
-
-## **1-11.SSHの2段階認証を設定する**
+## **1-10.SSHの2段階認証を設定する**
 
 !!! info "" 
 
