@@ -315,12 +315,12 @@ sudo systemctl restart prometheus.service
 2. ログイン名・PWは **admin** / **admin**
 3. パスワードを変更します。
 4. 左上の三本線メニューを開き「Connections」→「Data sources」をクリックします。
-5. 「Add data source」をクリックし、「Prometheus」を選択します。
+5. 「Add new data source」をクリックし、「Prometheus」を選択します。
 6. 名前は `Prometheus`としてください。
 7. **URL** を [http://localhost:9090](http://localhost:9090)に設定します。
-8. **Save & Test**をクリックし`Data source is working`と表示されたら`back`をクリックします。
-9. 再度「Add data source」をクリックし、下部にある「Infinity」をクリックします。
-10. 設定内容を変更することなく、**Save & Test**をクリックし`OK. Settings saved`と表示されたら`back`をクリックします。
+8. **Save & Test**をクリックし`Successfully queried the Prometheus API.`と表示されたら再度`Data sources`をクリックします。
+9. 「Add new data source」をクリックし、下部にある「Infinity」をクリックします。
+10. 設定内容を変更することなく、**Save & Test**をクリックし`Settings saved`と表示されたらOK。
 11. BPサーバーでパネル用JSONファイルをダウンロードします。
 === "ブロックプロデューサーノード"
   ```

@@ -35,7 +35,9 @@ mainnet-config.jsonにP2Pフラグを追記する
     ```
 
 === "ノード8.7.2の場合"
+    ```
     sed -i -e 's!"EnableP2P": false!"EnableP2P": true!' $NODE_HOME/mainnet-config.json
+    ```
 
 
 トポロジーファイルのバックアップを作成する

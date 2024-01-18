@@ -328,15 +328,10 @@ CNCLIバージョン確認
 cncli --version
 ```
 > 以下の戻り値ならOK  
-cncli 5.3.2
+cncli 6.0.0
 
-??? danger "cncli v5.3.1以下だった場合(クリックして開く)"
+??? danger "cncli v5.3.2以下だった場合(クリックして開く)"
     
-    **依存関係の追加とアップデート**
-    ``` bash
-    sudo apt update -y && sudo apt install -y automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool autoconf musl-tools
-    ```
-
     **CNCLIをアップデートする**
 
     ```bash
@@ -352,7 +347,7 @@ cncli 5.3.2
     ```
     cncli --version
     ```
-    > cncli 5.3.2になったことを確認する  
+    > cncli 6.0.0になったことを確認する  
 
 
 ## 2.通常アップデート
@@ -481,8 +476,8 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
         -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
         -e 's!"rpKeepFilesNum": 10!"rpKeepFilesNum": 30!' \
         -e 's!"rpMaxAgeHours": 24!"rpMaxAgeHours": 48!' \
-        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "'${NODE_HOME}'/logs/node.json"\n    \],' \
+        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
         -e "s/127.0.0.1/0.0.0.0/g"
     ```
 === "ダイナミックP2P運用の場合"
@@ -496,8 +491,8 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
         -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
         -e 's!"rpKeepFilesNum": 10!"rpKeepFilesNum": 30!' \
         -e 's!"rpMaxAgeHours": 24!"rpMaxAgeHours": 48!' \
-        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "'${NODE_HOME}'/logs/node.json"\n    \],' \
+        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
         -e "s/127.0.0.1/0.0.0.0/g"
     ```
 
@@ -511,8 +506,8 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
             -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
             -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
             -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-            -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-            -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+            -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "'${NODE_HOME}'/logs/node.json"\n    \],' \
+            -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
             -e "s/127.0.0.1/0.0.0.0/g"
         ```
     === "ダイナミックP2P運用の場合"
@@ -523,8 +518,8 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
             -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
             -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
             -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-            -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-            -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+            -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "'${NODE_HOME}'/logs/node.json"\n    \],' \
+            -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
             -e "s/127.0.0.1/0.0.0.0/g"
         ```
 
@@ -544,13 +539,13 @@ mv cardano-node2/ cardano-node/
 ??? danger "8.1.2用のDBもバックアップしたい場合(任意)"
     8.7.3へアップグレードするとDB再構築が行われ約6時間～7時間かかります。  
     このバージョンで不具合が発生した場合8.1.2へ戻す作業が発生しますが、戻す際もDB再構築が行われ約6時間～7時間かかります。この不測の事態に備え8.1.2用のDBとしてバックアップすることで再構築の時間を短縮することが出来ます。
-    ただしディスク空き容量が最低100GB必要になります。
+    ただしディスク空き容量が最低150GB必要になります。
 
     1.空き容量を確認します
     ```
     df -h /usr | awk '{print $4}'
     ```
-    <strong><font color=red>Availが100B以上あることを確認してください。</font></strong><br>
+    <strong><font color=red>Availが150B以上あることを確認してください。</font></strong><br>
 
     2.圧縮ライブラリをインストールする
     ```
@@ -586,7 +581,7 @@ journalctl --unit=cardano-node --follow
     ■デメリット
 
     * DBフォルダ転送を行う場合にディスク空き容量が必要となります。  
-    <font color=red>転送元・・・最低100GB  
+    <font color=red>転送元・・・最低150GB  
     転送先・・・最低250GB</font>  
 
     ■事前準備
@@ -650,7 +645,6 @@ journalctl --unit=cardano-node --follow
     ```
     df -h /usr | awk '{print $4}'
     ```
-    <strong><font color=red>Availが200GB以上あることを確認してください。</font></strong><br>
     <strong><font color=red>容量が少ないときは前回作業時の圧縮DBファイルを削除すると空き容量が増える場合があります</font></strong>
 
     === "転送元サーバー"
@@ -891,8 +885,8 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
         -e 's!"rpKeepFilesNum": 10!"rpKeepFilesNum": 30!' \
         -e 's!"rpMaxAgeHours": 24!"rpMaxAgeHours": 48!' \
         -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "'${NODE_HOME}'/logs/node.json"\n    \],' \
+        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
         -e "s/127.0.0.1/0.0.0.0/g"
     ```
 === "ダイナミックP2P運用の場合"
@@ -906,8 +900,8 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
         -e 's!"rpKeepFilesNum": 10!"rpKeepFilesNum": 30!' \
         -e 's!"rpMaxAgeHours": 24!"rpMaxAgeHours": 48!' \
         -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "'${NODE_HOME}'/logs/node.json"\n    \],' \
+        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
         -e "s/127.0.0.1/0.0.0.0/g"
     ```
 
@@ -921,8 +915,8 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
             -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
             -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
             -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-            -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-            -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+            -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "'${NODE_HOME}'/logs/node.json"\n    \],' \
+            -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
             -e "s/127.0.0.1/0.0.0.0/g"
         ```
     === "ダイナミックP2P運用の場合"
@@ -933,8 +927,8 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
             -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
             -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
             -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-            -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-            -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+            -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "'${NODE_HOME}'/logs/node.json"\n    \],' \
+            -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
             -e "s/127.0.0.1/0.0.0.0/g"
         ```
 
@@ -949,34 +943,45 @@ glive
 ```
 > 同期まで4分弱かかります
 
+=== "バイナリのみ"
 
-圧縮ファイルを削除する
-```
-rm $NODE_HOME/8.7.3-db.tar.zst
-```
+    バイナリーファイルを移動する
+    ```
+    cd $HOME/git
+    rm -rf cardano-node-old/
+    mv $HOME/git/cardano-node/ $HOME/git/cardano-node-old/
+    mkdir cardano-node
+    mv $NODE_HOME/cardano-cli $HOME/git/cardano-node/
+    mv $NODE_HOME/cardano-node $HOME/git/cardano-node/
+    ```
 
-バイナリーファイルを移動する
-```
-cd $HOME/git
-rm -rf cardano-node-old/
-mv $HOME/git/cardano-node/ $HOME/git/cardano-node-old/
-mkdir cardano-node
-mv $NODE_HOME/cardano-cli $HOME/git/cardano-node/
-mv $NODE_HOME/cardano-node $HOME/git/cardano-node/
-```
+=== "バイナリ+DB"
 
+    圧縮ファイルを削除する
+    ```
+    rm $NODE_HOME/8.7.3-db.tar.zst
+    ```
 
-!!! hint "旧DB削除の確認"
-    ＜バイナリ+DBで転送した場合のみ＞
-    ノードの同期が成功しブロック生成に成功し数エポック様子を見たあと、転送用ファイル・バックアップDBを削除してください
-    === "転送元"
-        ```
-        rm -rf $NODE_HOME/Transfer
-        ```
-    === "転送先"
-        ```
-        rm -rf $NODE_HOME/backup/db_old
-        ```
+    バイナリーファイルを移動する
+    ```
+    cd $HOME/git
+    rm -rf cardano-node-old/
+    mv $HOME/git/cardano-node/ $HOME/git/cardano-node-old/
+    mkdir cardano-node
+    mv $NODE_HOME/cardano-cli $HOME/git/cardano-node/
+    mv $NODE_HOME/cardano-node $HOME/git/cardano-node/
+    ```
+
+    !!! hint "旧DB削除の確認"
+        ノードの同期が成功しブロック生成に成功し数エポック様子を見たあと、転送用ファイル・バックアップDBを削除してください
+        === "転送元"
+            ```
+            rm -rf $NODE_HOME/Transfer
+            ```
+        === "転送先"
+            ```
+            rm -rf $NODE_HOME/backup/db_old
+            ```
 
 
 
@@ -1181,7 +1186,7 @@ cardano-cli version
 
 以下の戻り値を確認する  
 >cardano-cli 8.17.0.0 - linux-x86_64 - ghc-8.10  
-git rev 30b6e447c7e4586f43e30a68fe47c8481b0ba205  
+git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7   
 
 
 

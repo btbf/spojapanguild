@@ -337,8 +337,8 @@ sed -i ${NODE_CONFIG}-config.json \
     -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
     -e 's!"rpKeepFilesNum": 10!"rpKeepFilesNum": 30!' \
     -e 's!"rpMaxAgeHours": 24!"rpMaxAgeHours": 48!' \
-    -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-    -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+    -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "'${NODE_HOME}'/logs/node.json"\n    \],' \
+    -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
     -e "s/127.0.0.1/0.0.0.0/g"
 ```
 
@@ -351,8 +351,8 @@ sed -i ${NODE_CONFIG}-config.json \
         -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
         -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
         -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "logs/node.json"\n    \],' \
-        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "logs/node.json"\n    \},' \
+        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "'${NODE_HOME}'/logs/node.json"\n    \],' \
+        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
         -e "s/127.0.0.1/0.0.0.0/g"
     ```
 
