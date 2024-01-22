@@ -150,7 +150,7 @@ graph LR
     ls $NODE_HOME/bp-move.zst
     ```
     > ファイルパスが表示されることを確認する。  
-    > 例）`/home/cardano/cnode/move/bp-move.zst`
+    > 例）`/home/cardano/cnode/bp-move.zst`
     
     ファイルを展開する
     ```
@@ -168,7 +168,7 @@ graph LR
     chmod +x startBlockProducingNode.sh
     ```
 
-    2-7. ノードを再起動します。
+    ノードを再起動します。
     ```
     sudo systemctl reload-or-restart cardano-node
     ```

@@ -13,8 +13,13 @@
     **■v8.7.3**
 
     * 8.1.2以前からのダイナミックP2Pの潜在的なバグが解消されています。
-    * ノードアップデート後はDB再構築処理が入るため、ノード同期までに6時間～7時間かかります。
     * RAM 24GB以上必須
+
+    **■Mithrilクライアントの導入**
+    
+    * Mithrilクライアントを用いてDBスナップショットからブートストラップします。  
+    通常はDB再構築処理が入るためノード同期までに6時間～7時間かかりますが、このブートストラップを導入することで約30分で同期することが可能になります。
+
 
 !!! danger "よくお読みになって進めてください"
     ご自身のアップデートスタイルによって手順が異なります。  
@@ -350,7 +355,7 @@ cncli 6.0.0
     > cncli 6.0.0になったことを確認する  
 
 
-## 2.通常アップデート
+## 2.ノードアップデート
 
 ### **2-1.ソースコードダウンロード**
 
@@ -523,8 +528,56 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
             -e "s/127.0.0.1/0.0.0.0/g"
         ```
 
+## 3.Mithrilクライアント設定
 
-### **2-5.サーバー再起動**
+### **3-1. インストール**
+```
+cd $NODE_HOME/git
+mithril_release="$(curl -s https://api.github.com/repos/input-output-hk/mithril/releases/latest | jq -r '.tag_name')"
+wget https://github.com/input-output-hk/mithril/releases/download/${mithril_release}/mithril-${mithril_release}-linux-x64.tar.gz -o mithril.tar.gz
+```
+
+設定
+```
+tar zxvf mithril.tar.gz mithril-client
+sudo cp mithril-client /usr/local/bin/mithril-client
+```
+DLファイル削除
+```
+rm mithril.tar.gz mithril-client
+```
+バージョン確認
+```
+mithril-client -V
+```
+変数セット
+```
+export NETWORK=mainnet
+export AGGREGATOR_ENDPOINT=https://aggregator.release-mainnet.api.mithril.network/aggregator
+export GENESIS_VERIFICATION_KEY=$(wget -q -O - https://raw.githubusercontent.com/input-output-hk/mithril/main/mithril-infra/configuration/release-mainnet/genesis.vkey)
+export SNAPSHOT_DIGEST=latest
+```
+
+### 3-2.スナップショット復元
+
+作業用TMUX起動
+```
+tmux new -s mithril
+```
+
+
+最新スナップショットDL
+```
+mithril-client snapshot download --download-dir $NODE_HOME latest
+```
+> スナップショットダウンロード～解凍まで自動的に行われます。1/6～6/6が終了するまで待ちましょう
+
+tmux作業ウィンドウを終了する
+```
+exit
+```
+
+### **3-3.サーバー再起動**
 
 **作業フォルダリネーム**
 
@@ -536,26 +589,6 @@ mv cardano-node/ cardano-node-old/
 mv cardano-node2/ cardano-node/
 ```
 
-??? danger "8.1.2用のDBもバックアップしたい場合(任意)"
-    8.7.3へアップグレードするとDB再構築が行われ約6時間～7時間かかります。  
-    このバージョンで不具合が発生した場合8.1.2へ戻す作業が発生しますが、戻す際もDB再構築が行われ約6時間～7時間かかります。この不測の事態に備え8.1.2用のDBとしてバックアップすることで再構築の時間を短縮することが出来ます。
-    ただしディスク空き容量が最低150GB必要になります。
-
-    1.空き容量を確認します
-    ```
-    df -h /usr | awk '{print $4}'
-    ```
-    <strong><font color=red>Availが150B以上あることを確認してください。</font></strong><br>
-
-    2.圧縮ライブラリをインストールする
-    ```
-    sudo apt install zstd
-    ```
-
-    3.DBを圧縮する
-    ```
-    tar -acvf $NODE_HOME/8.1.2-db.tar.zst -C $NODE_HOME db
-    ```
 
 サーバーを再起動する
 ```bash
@@ -569,499 +602,6 @@ journalctl --unit=cardano-node --follow
 > DB再構築が入る場合は、`Progress:`が100%になるまで5時間～8時間以上かかる場合があります。  
 100%になるとDBは自動的に同期します。放置している場合は100%表示を見逃す場合がありますが問題ありません。
 
-
-## 3.RSYNC+SSHアップデート
-
-
-!!! note "概要"
-    ■メリット
-
-    * **複数台のサーバーがある場合に、ビルド時間の短縮やノードのダウンタイムを抑えることが出来ます。**
-
-    ■デメリット
-
-    * DBフォルダ転送を行う場合にディスク空き容量が必要となります。  
-    <font color=red>転送元・・・最低150GB  
-    転送先・・・最低250GB</font>  
-
-    ■事前準備
-
-    * RSYNCを使用する場合、最初に[事前設定](./rsync-ssh.md)を行ってください
-    * 転送元サーバーで [2.通常アップデート](./node-update.md#2)を実施してください
-    * 転送先サーバーで [1.依存環境アップデート](./node-update.md#1)を実施してください
-
-    ■転送内容を選べます
-
-    * バイナリのみ・・・cardano-node / cardano-cliのみを転送します
-    * バイナリ+DB・・・cardano-node / cardano-cli / 圧縮DBフォルダを転送します
-
-
-### 3-1.転送元サーバー作業
-
-!!! danger ""
-    ▼転送内容を選択して下さい▼
-
-=== "バイナリのみ"
-
-    !!! Success "確認"
-        こちらの手順はcardano-node / cardano-cliのみを転送します。
-
-    !!! Warning "確認"
-        この作業は1回で大丈夫です。
-
-    === "転送元サーバー"
-        **バイナリーファイルを転送フォルダ用にコピーする**
-        ```
-        mkdir $NODE_HOME/Transfer
-        cp $(find $HOME/git/cardano-node/dist-newstyle/build -type f -name "cardano-cli") $NODE_HOME/Transfer/cardano-cli
-        cp $(find $HOME/git/cardano-node/dist-newstyle/build -type f -name "cardano-node") $NODE_HOME/Transfer/cardano-node
-        ```
-
-        バージョン確認
-        ```
-        $NODE_HOME/Transfer/cardano-cli version
-        $NODE_HOME/Transfer/cardano-node version
-        ```
-        以下の戻り値を確認する  
-        >cardano-cli 8.17.0.0 - linux-x86_64 - ghc-8.10  
-        git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
-
-        >cardano-node 8.7.3 - linux-x86_64 - ghc-8.10  
-        git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
-
-
-=== "バイナリ+DB"
-
-    !!! Success "確認"
-
-        * cardano-node / cardano-cli / 圧縮DBフォルダを転送します
-        * Ubuntu20.04の場合はZstandardをインストールしてください。
-        ```
-        sudo apt install zstd
-        ```
-
-    容量確認
-    **転送元・転送先サーバー両方で確認してください**
-    ```
-    df -h /usr | awk '{print $4}'
-    ```
-    <strong><font color=red>容量が少ないときは前回作業時の圧縮DBファイルを削除すると空き容量が増える場合があります</font></strong>
-
-    === "転送元サーバー"
-        **バイナリーファイルを転送フォルダ用にコピーする**
-        ```
-        mkdir $NODE_HOME/Transfer
-        cp $(find $HOME/git/cardano-node/dist-newstyle/build -type f -name "cardano-cli") $NODE_HOME/Transfer/cardano-cli
-        cp $(find $HOME/git/cardano-node/dist-newstyle/build -type f -name "cardano-node") $NODE_HOME/Transfer/cardano-node
-        ```
-
-        バージョン確認
-        ```
-        $NODE_HOME/Transfer/cardano-cli version
-        $NODE_HOME/Transfer/cardano-node version
-        ```
-        以下の戻り値を確認する  
-        >cardano-cli 8.17.0.0 - linux-x86_64 - ghc-8.10  
-        git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
-
-        >cardano-node 8.7.3 - linux-x86_64 - ghc-8.10  
-        git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
-
-        **ノードを停止する**
-        ```
-        sudo systemctl stop cardano-node
-        ```
-
-        **DBフォルダを圧縮する**
-
-        新しいTMUXセッションを開く
-        ```
-        tmux new -s db
-        ```
-        圧縮する
-
-        ```
-        tar -acvf $NODE_HOME/Transfer/8.7.3-db.tar.zst -C $NODE_HOME db
-        ```
-
-        圧縮が終了したらTMUXを閉じる
-        ```
-        exit
-        ```
-
-        **ノードをスタートする**
-        ```
-        sudo systemctl start cardano-node
-        ```
-        
-    
-
-### 3-2.転送元から転送先へ転送
-
-=== "バイナリのみ"
-
-    === "転送元サーバー"
-        
-        設定済みの転送先エイリアスを調べる
-        ```
-        cat ~/.ssh/config
-        ```
-
-        転送先エイリアスを指定する
-        変数`for`に転送先エイリアスを代入する
-        ```
-        for=xxxx
-        ```
-        > 転送先エイリアスは、事前設定の [1-2.SSH設定ファイル作成](./rsync-ssh.md#1-2ssh) で設定した転送先Host名(エイリアス)を指定します。
-
-        バイナリファイルを転送する
-        ```
-        rsync -P --rsh=ssh $NODE_HOME/Transfer/cardano-cli $for::Server/cardano-cli
-        ```
-        > 転送が完了するまで待つ
-
-        ```
-        rsync -P --rsh=ssh $NODE_HOME/Transfer/cardano-node $for::Server/cardano-node
-        ```
-        > 転送が完了するまで待つ
-
-
-
-=== "バイナリ+DB"
-
-    === "転送元サーバー"
-        
-        新しいTMUXセッションを開く
-        ```
-        tmux new -s rsync
-        ```
-        
-        設定済みの転送先エイリアスを調べる
-        ```
-        cat ~/.ssh/config
-        ```
-
-        転送先エイリアスを指定する
-        変数`for`に転送先エイリアスを代入する
-        ```
-        for=xxxx
-        ```
-        > 転送先エイリアスは、事前設定の [1-2.SSH設定ファイル作成](./rsync-ssh.md#1-2ssh) で設定した転送先Host名(エイリアス)を指定します。
-
-        バイナリファイルを転送する
-        ```
-        rsync -P --rsh=ssh $NODE_HOME/Transfer/cardano-cli $for::Server/cardano-cli
-        ```
-        > 転送が完了するまで待つ
-
-        ```
-        rsync -P --rsh=ssh $NODE_HOME/Transfer/cardano-node $for::Server/cardano-node
-        ```
-        > 転送が完了するまで待つ
-
-        圧縮ファイルを転送する
-        ```
-        rsync -P --rsh=ssh $NODE_HOME/Transfer/8.7.3-db.tar.zst $for::Server/8.7.3-db.tar.zst
-        ```
-        > 転送が完了するまで待つ
-
-        TMUXセッションを終了する
-        ```
-        exit
-        ```
-
-### 3-3.転送先サーバー作業
-
-=== "バイナリのみ"
-    
-    ノードを停止する
-    ```
-    sudo systemctl stop cardano-node
-    ```
-
-    バイナリーファイルをシステムフォルダーへコピーする
-    ```
-    sudo cp $NODE_HOME/cardano-cli /usr/local/bin/cardano-cli
-    ```
-    ```
-    sudo cp $NODE_HOME/cardano-node /usr/local/bin/cardano-node
-    ```
-    バージョン確認
-    ```
-    cardano-cli version
-    cardano-node version
-    ```
-    以下の戻り値を確認する  
-    >cardano-cli 8.17.0.0 - linux-x86_64 - ghc-8.10  
-    git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
-
-    >cardano-node 8.7.3 - linux-x86_64 - ghc-8.10  
-    git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
-
-=== "バイナリ+DB"
-
-    新しいTMUXセッションを開く
-    ```
-    tmux new -s tar
-    ```
-
-    SSDの空き容量を再確認する
-    ```
-    df -h /usr | awk '{print $4}'
-    ```
-    <strong><font color=red>Availが200GB以上あることを確認してください。</font></strong>
-    
-    
-    DBを解凍する
-    ```
-    mkdir $NODE_HOME/temp && cd $NODE_HOME/temp
-    tar xvf $NODE_HOME/8.7.3-db.tar.zst
-    ```
-    
-    解凍が終わったらTMUXを閉じる
-    ```
-    exit
-    ```
-    
-
-    ノードを停止する
-    ```
-    sudo systemctl stop cardano-node
-    ```
-
-    バイナリーファイルをシステムフォルダーへコピーする
-    ```
-    sudo cp $NODE_HOME/cardano-cli /usr/local/bin/cardano-cli
-    ```
-    ```
-    sudo cp $NODE_HOME/cardano-node /usr/local/bin/cardano-node
-    ```
-    バージョン確認
-    ```
-    cardano-cli version
-    cardano-node version
-    ```
-    以下の戻り値を確認する  
-    >cardano-cli 8.17.0.0 - linux-x86_64 - ghc-8.10  
-    git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
-
-    >cardano-node 8.7.3 - linux-x86_64 - ghc-8.10  
-    git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
-
-    
-    DBフォルダを入れ替える
-    ```
-    mv $NODE_HOME/db $NODE_HOME/backup/db_old
-    mv $NODE_HOME/temp/db $NODE_HOME/db
-    ```
-
-**設定ファイル追加と更新**
-
-既存ファイルバックアップ
-```
-mkdir $NODE_HOME/backup
-cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config.json
-cp $NODE_HOME/${NODE_CONFIG}-conway-genesis.json $NODE_HOME/backup/${NODE_CONFIG}-conway-genesis.json
-```
-
-新ファイルダウンロード
-```
-cd $NODE_HOME
-wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
-wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/config.json -O ${NODE_CONFIG}-config.json
-```
-
-設定ファイルを書き換える
-
-=== "手動P2P運用の場合"
-    ```bash
-    sed -i ${NODE_CONFIG}-config.json \
-        -e '2i \  "SnapshotInterval": 86400,' \
-        -e 's!"EnableP2P": true!"EnableP2P": false!' \
-        -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
-        -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
-        -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
-        -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-        -e 's!"rpKeepFilesNum": 10!"rpKeepFilesNum": 30!' \
-        -e 's!"rpMaxAgeHours": 24!"rpMaxAgeHours": 48!' \
-        -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "'${NODE_HOME}'/logs/node.json"\n    \],' \
-        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
-        -e "s/127.0.0.1/0.0.0.0/g"
-    ```
-=== "ダイナミックP2P運用の場合"
-    ```bash
-    sed -i ${NODE_CONFIG}-config.json \
-        -e '2i \  "SnapshotInterval": 86400,' \
-        -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
-        -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
-        -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
-        -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-        -e 's!"rpKeepFilesNum": 10!"rpKeepFilesNum": 30!' \
-        -e 's!"rpMaxAgeHours": 24!"rpMaxAgeHours": 48!' \
-        -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "'${NODE_HOME}'/logs/node.json"\n    \],' \
-        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
-        -e "s/127.0.0.1/0.0.0.0/g"
-    ```
-
-??? テストネットの場合はこちら
-    === "手動P2P運用の場合"
-        ```bash
-        sed -i ${NODE_CONFIG}-config.json \
-            -e 's!"EnableP2P": true!"EnableP2P": false!' \
-            -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
-            -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
-            -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
-            -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-            -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-            -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "'${NODE_HOME}'/logs/node.json"\n    \],' \
-            -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
-            -e "s/127.0.0.1/0.0.0.0/g"
-        ```
-    === "ダイナミックP2P運用の場合"
-        ```bash
-        sed -i ${NODE_CONFIG}-config.json \
-            -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
-            -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
-            -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
-            -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-            -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-            -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "'${NODE_HOME}'/logs/node.json"\n    \],' \
-            -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
-            -e "s/127.0.0.1/0.0.0.0/g"
-        ```
-
-サーバーを再起動する
-```bash
-sudo reboot
-```
-
-SSH接続してノード同期状況を確認する
-```
-glive
-```
-> 同期まで4分弱かかります
-
-=== "バイナリのみ"
-
-    バイナリーファイルを移動する
-    ```
-    cd $HOME/git
-    rm -rf cardano-node-old/
-    mv $HOME/git/cardano-node/ $HOME/git/cardano-node-old/
-    mkdir cardano-node
-    mv $NODE_HOME/cardano-cli $HOME/git/cardano-node/
-    mv $NODE_HOME/cardano-node $HOME/git/cardano-node/
-    ```
-
-=== "バイナリ+DB"
-
-    圧縮ファイルを削除する
-    ```
-    rm $NODE_HOME/8.7.3-db.tar.zst
-    ```
-
-    バイナリーファイルを移動する
-    ```
-    cd $HOME/git
-    rm -rf cardano-node-old/
-    mv $HOME/git/cardano-node/ $HOME/git/cardano-node-old/
-    mkdir cardano-node
-    mv $NODE_HOME/cardano-cli $HOME/git/cardano-node/
-    mv $NODE_HOME/cardano-node $HOME/git/cardano-node/
-    ```
-
-    !!! hint "旧DB削除の確認"
-        ノードの同期が成功しブロック生成に成功し数エポック様子を見たあと、転送用ファイル・バックアップDBを削除してください
-        === "転送元"
-            ```
-            rm -rf $NODE_HOME/Transfer
-            ```
-        === "転送先"
-            ```
-            rm -rf $NODE_HOME/backup/db_old
-            ```
-
-
-
-<!--
-
-以下のコードを実行して、ユニットファイルを作成します。
-
-{% tabs %}
-{% tab title="リレーノード" %}
-```bash
-cat > $NODE_HOME/cardano-node.service << EOF 
-# The Cardano node service (part of systemd)
-# file: /etc/systemd/system/cardano-node.service 
-
-[Unit]
-Description     = Cardano node service
-Wants           = network-online.target
-After           = network-online.target 
-
-[Service]
-User            = ${USER}
-Type            = simple
-WorkingDirectory= ${NODE_HOME}
-ExecStart       = /bin/bash -c '${NODE_HOME}/startRelayNode1.sh'
-KillSignal=SIGINT
-RestartKillSignal=SIGINT
-TimeoutStopSec=300
-LimitNOFILE=32768
-Restart=always
-RestartSec=5
-SyslogIdentifier=cardano-node
-
-[Install]
-WantedBy	= multi-user.target
-EOF
-```
-{% endtab %}
-
-{% tab title="ブロックプロデューサーノード" %}
-```bash
-cat > $NODE_HOME/cardano-node.service << EOF 
-# The Cardano node service (part of systemd)
-# file: /etc/systemd/system/cardano-node.service 
-
-[Unit]
-Description     = Cardano node service
-Wants           = network-online.target
-After           = network-online.target 
-
-[Service]
-User            = ${USER}
-Type            = simple
-WorkingDirectory= ${NODE_HOME}
-ExecStart       = /bin/bash -c '${NODE_HOME}/startBlockProducingNode.sh'
-KillSignal=SIGINT
-RestartKillSignal=SIGINT
-TimeoutStopSec=300
-LimitNOFILE=32768
-Restart=always
-RestartSec=5
-SyslogIdentifier=cardano-node
-
-[Install]
-WantedBy	= multi-user.target
-EOF
-```
-{% endtab %}
-{% endtabs %}
-
-
-## 1-9.Serviceファイルをシステムフォルダにコピーする
-```
-sudo cp $NODE_HOME/cardano-node.service /etc/systemd/system/cardano-node.service
-```
-
-## 1-10.systemctlデーモンを再起動する
-```
-sudo systemctl daemon-reload
-```
--->
 
 ## **4. サービス起動確認(BPのみ)**
 
