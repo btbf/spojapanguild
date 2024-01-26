@@ -1,33 +1,43 @@
+---
+status: new
+---
 # **ノードアップデートマニュアル**
 
 !!! info "概要"
-    このガイドは ノードバージョン8.7.3に対応しています。最終更新日：2024年1月10日
+    このガイドは ノードバージョン8.7.3に対応しています。最終更新日：2024年1月26日
 
-    | Node | CLI | GHC | Cabal | 
-    | :---------- | :---------- | :---------- | :---------- |
-    | 8.7.3 | 8.17.0.0 | 8.10.7 | 3.8.1.0 | 
+    | Node | CLI | GHC | Cabal | CNCLI |
+    | :---------- | :---------- | :---------- | :---------- | :---------- |
+    | 8.7.3 | 8.17.0.0 | 8.10.7 | 3.8.1.0 | 6.0.1 |
+
+    * <font color=red>よくお読みになって進めてください</font>
+    * <font color=blue>複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。</font>
 
 
 !!! hint "主な変更点と新機能"
 
-    **■v8.7.3**
+    **■cardano-node v8.7.3**
 
     * 8.1.2以前からのダイナミックP2Pの潜在的なバグが解消されています。
     * RAM 24GB以上必須
 
-    **■Mithrilクライアントの導入**
+    **■ビルド済みバイナリの使用**
+
+    * SJGではこれまでソースコードからビルドしてきましたが、検証体制が整ったことで安全性・安定性を十分に確認できるためビルド時間工数削減を目的にIntersectMBO(旧IOG)発行のビルド済みバイナリを使用したインストールを採用を採用します。
+    これにより、これまで約30分前後かかっていたバイナリファイル作成のビルド時間を省略できます。
+
+    **■Mithrilブートストラップの導入**
     
     * Mithrilクライアントを用いてDBスナップショットからブートストラップします。  
-    通常はDB再構築処理が入るためノード同期までに6時間～7時間かかりますが、このブートストラップを導入することで約30分で同期することが可能になります。
+    8.1.2以前のバージョンから8.7.3へのバージョンアップはDB再構築処理が入るため、ノード同期までに6時間～7時間かかりますがこのブートストラップを導入することで約20分で同期することが可能になります。
+
+    * <font color=red>ビルド済みバイナリの使用＋Mithrilブートストラップを使用した場合、アップデート全工程所要時間は1サーバーにつき約30分～40分ですべて完了します。</font>
 
 
-!!! danger "よくお読みになって進めてください"
-    ご自身のアップデートスタイルによって手順が異なります。  
-    更新フローチャートとアップデートマニュアルを照らし合わせながら、アップデート作業を進めてください。
 
-### **更新フローチャート**
+<!--### **更新フローチャート**
 更新フローチャートは、画像をクリックすると別ウィンドウで開きます。
-<a href="../../images/8.7.2-update.png" target=_blank><img src="../../images/8.7.2-update.png"></a>
+<a href="../../images/8.7.2-update.png" target=_blank><img src="../../images/8.7.2-update.png"></a>-->
 
 
 ## **1.依存環境アップデート**
@@ -333,15 +343,14 @@ CNCLIバージョン確認
 cncli --version
 ```
 > 以下の戻り値ならOK  
-cncli 6.0.0
+cncli 6.0.1
 
-??? danger "cncli v5.3.2以下だった場合(クリックして開く)"
+??? danger "cncli v6.0.0以下だった場合(クリックして開く)"
     
     **CNCLIをアップデートする**
 
     ```bash
     rustup update
-    rustup target add x86_64-unknown-linux-musl
     cd $HOME/git/cncli
     git fetch --all --prune
     git checkout $(curl -s https://api.github.com/repos/cardano-community/cncli/releases/latest | jq -r .tag_name)
@@ -352,89 +361,153 @@ cncli 6.0.0
     ```
     cncli --version
     ```
-    > cncli 6.0.0になったことを確認する  
+    > cncli 6.0.1になったことを確認する  
 
 
-## 2.ノードアップデート
+## **2.ノードアップデート**
 
-### **2-1.ソースコードダウンロード**
+!!! danger "バイナリファイルインストール方法の違いについて"
+    
+    * **_ビルド済みバイナリ_**・・・IntersectMBO(旧IOG)リポジトリソースコードからビルドされたバイナリファイルをダウンロードします。ビルド不要のためビルド時間を短縮できます。
+    * **_ソースコードからビルド_**・・・ご自身のサーバーでソースコードからビルドしてバイナリファイルを作成します。検証目的やソースコードからビルドしたい場合に利用できます。ビルドに30分前後かかります。
 
-新しいTMUXセッションを開く
+    どちらも同じソースコードからビルドされたバイナリファイルなので安定性・安全面に差異はございません。お好みの方法でインストールして頂けます。
 
-```
-tmux new -s build
-```
-> アップデート作業中にSSHが中断した場合は、`tmux a -t build`で再開できます。
+=== "ビルド済みバイナリを使用する場合"
+
+    ### 2-1.バイナリダウンロード
+    旧バイナリを削除する
+    ```bash
+    rm -rf $HOME/git/cardano-node-old/
+    ```
+
+    バイナリファイルをダウンロードする
+    ```
+    mkdir $HOME/git/cardano-node2
+    cd $HOME/git/cardano-node2
+    wget https://github.com/IntersectMBO/cardano-node/releases/download/8.7.3/cardano-node-8.7.3-linux.tar.gz
+    ```
+
+    解凍する
+    ```
+    tar zxvf cardano-node-8.7.3-linux.tar.gz ./cardano-node ./cardano-cli
+    ```
+
+    **バージョン確認**
+
+    ```bash
+    $(find $HOME/git/cardano-node2 -type f -name "cardano-cli") version  
+    $(find $HOME/git/cardano-node2 -type f -name "cardano-node") version  
+    ```
+    以下の戻り値を確認する  
+    >cardano-cli 8.17.0.0 - linux-x86_64 - ghc-8.10  
+    git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
+
+    >cardano-node 8.7.3 - linux-x86_64 - ghc-8.10  
+    git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
 
 
-```bash
-cd $HOME/git
-rm -rf cardano-node-old/
-git clone https://github.com/IntersectMBO/cardano-node.git cardano-node2
-cd cardano-node2/
-```
+    **ノードをストップする** 
+    ```
+    sudo systemctl stop cardano-node
+    ```
 
-### **2-2.ソースコードからビルド**
+    ### 2-2.バイナリインストール
 
-```bash
-cabal clean
-cabal update
-```
+    **バイナリーファイルをシステムフォルダーへコピーする**
 
-```
-git fetch --all --recurse-submodules --tags
-git checkout tags/8.7.3
-cabal configure --with-compiler=ghc-8.10.7
-```
+    ```bash
+    sudo cp $(find $HOME/git/cardano-node2 -type f -name "cardano-cli") /usr/local/bin/cardano-cli
+    ```
 
-<!--```bash
-echo -e "package cardano-crypto-praos\n flags: -external-libsodium-vrf" > cabal.project.local
-```-->
+    ```bash
+    sudo cp $(find $HOME/git/cardano-node2 -type f -name "cardano-node") /usr/local/bin/cardano-node
+    ```
 
-<!--sed -i $HOME/git/cardano-node2/cabal.project -e 's!HSOpenSSL >= 0.11.7.2!HsOpenSSL == 0.11.7.2!'-->
 
-```bash
-cabal build cardano-node cardano-cli
-```
-!!! hint "ヒント"
-    * ビルド完了までに数十分ほどかかります。
-    * SSH接続が途中で切断された場合、再度接続して`tmux a -t build`で再開してください。  
-    * ビルド中にデタッチ(Ctrl+B D)してバックグラウンド処理へ切り替えられます。
+=== "ソースコードからビルドする場合はこちら"
+    **2-1.ソースコードダウンロード**
 
-  
+    新しいTMUXセッションを開く
 
-**バージョン確認**
+    ```
+    tmux new -s build
+    ```
+    > アップデート作業中にSSHが中断した場合は、`tmux a -t build`で再開できます。
 
-```bash
-$(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-cli") version  
-$(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-node") version  
-```
-以下の戻り値を確認する  
->cardano-cli 8.17.0.0 - linux-x86_64 - ghc-8.10  
-git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
+    旧ビルドを削除する
+    ```bash
+    rm -rf $HOME/git/cardano-node-old/
+    ```
 
->cardano-node 8.7.3 - linux-x86_64 - ghc-8.10  
-git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
+    ソースコードをダウンロードする
+    ```
+    cd $HOME/git
+    git clone https://github.com/IntersectMBO/cardano-node.git cardano-node2
+    cd cardano-node2/
+    ```
 
-**ビルド用TMUXセッションを終了する** 
-```
-exit
-```
+    **2-2.ソースコードからビルド**
 
-**ノードをストップする** 
-```
-sudo systemctl stop cardano-node
-```
+    ```bash
+    cabal clean
+    cabal update
+    ```
 
-**バイナリーファイルをシステムフォルダーへコピーする**
+    ```
+    git fetch --all --recurse-submodules --tags
+    git checkout tags/8.7.3
+    cabal configure --with-compiler=ghc-8.10.7
+    ```
 
-```bash
-sudo cp $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-cli") /usr/local/bin/cardano-cli
-```
+    <!--```bash
+    echo -e "package cardano-crypto-praos\n flags: -external-libsodium-vrf" > cabal.project.local
+    ```-->
 
-```bash
-sudo cp $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-node") /usr/local/bin/cardano-node
-```
+    <!--sed -i $HOME/git/cardano-node2/cabal.project -e 's!HSOpenSSL >= 0.11.7.2!HsOpenSSL == 0.11.7.2!'-->
+
+    ```bash
+    cabal build cardano-node cardano-cli
+    ```
+    !!! hint "ヒント"
+        * ビルド完了までに数十分ほどかかります。
+        * SSH接続が途中で切断された場合、再度接続して`tmux a -t build`で再開してください。  
+        * ビルド中にデタッチ(Ctrl+B D)してバックグラウンド処理へ切り替えられます。
+
+    
+
+    **バージョン確認**
+
+    ```bash
+    $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-cli") version  
+    $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-node") version  
+    ```
+    以下の戻り値を確認する  
+    >cardano-cli 8.17.0.0 - linux-x86_64 - ghc-8.10  
+    git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
+
+    >cardano-node 8.7.3 - linux-x86_64 - ghc-8.10  
+    git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
+
+    **ビルド用TMUXセッションを終了する** 
+    ```
+    exit
+    ```
+
+    **ノードをストップする** 
+    ```
+    sudo systemctl stop cardano-node
+    ```
+
+    **バイナリーファイルをシステムフォルダーへコピーする**
+
+    ```bash
+    sudo cp $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-cli") /usr/local/bin/cardano-cli
+    ```
+
+    ```bash
+    sudo cp $(find $HOME/git/cardano-node2/dist-newstyle/build -type f -name "cardano-node") /usr/local/bin/cardano-node
+    ```
 
 **システムに反映されたノードバージョンを確認する**
 
@@ -451,13 +524,13 @@ git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7
 git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
 
 
-### **2-4.設定ファイルの追加と更新**
+### **2-3.設定ファイルの追加と更新**
 
 既存ファイルバックアップ
 ```
 mkdir $NODE_HOME/backup
 cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config.json
-cp $NODE_HOME/${NODE_CONFIG}-conway-genesis.json $NODE_HOME/backup/${NODE_CONFIG}-conway-genesis.json
+cp $NODE_HOME/${NODE_CONFIG}-conway-genesis.json $NODE_HOME/backup/${NODE_CONFIG}-conway-genesis.json\n
 ```
 
 新ファイルダウンロード
@@ -468,6 +541,14 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
 ```
 
 設定ファイルを書き換える
+
+!!! tip "運用中のP2P形式を調べる方法"
+    ```
+    cat mainnet-topology.json | grep localRoots
+    ```
+
+    * 戻り値がない場合・・・手動P2P運用  
+    * `"localRoots": [`の戻り値がある場合・・・ダイナミックP2P
 
 === "手動P2P運用の場合"
     ```bash
@@ -532,9 +613,9 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
 
 ### **3-1. インストール**
 ```
-cd $NODE_HOME/git
+cd $HOME/git
 mithril_release="$(curl -s https://api.github.com/repos/input-output-hk/mithril/releases/latest | jq -r '.tag_name')"
-wget https://github.com/input-output-hk/mithril/releases/download/${mithril_release}/mithril-${mithril_release}-linux-x64.tar.gz -o mithril.tar.gz
+wget https://github.com/input-output-hk/mithril/releases/download/${mithril_release}/mithril-${mithril_release}-linux-x64.tar.gz -O mithril.tar.gz
 ```
 
 設定
@@ -542,21 +623,22 @@ wget https://github.com/input-output-hk/mithril/releases/download/${mithril_rele
 tar zxvf mithril.tar.gz mithril-client
 sudo cp mithril-client /usr/local/bin/mithril-client
 ```
+パーミッション設定
+```
+sudo chmod +x /usr/local/bin/mithril-client
+```
+
 DLファイル削除
 ```
 rm mithril.tar.gz mithril-client
 ```
+
 バージョン確認
 ```
 mithril-client -V
 ```
-変数セット
-```
-export NETWORK=mainnet
-export AGGREGATOR_ENDPOINT=https://aggregator.release-mainnet.api.mithril.network/aggregator
-export GENESIS_VERIFICATION_KEY=$(wget -q -O - https://raw.githubusercontent.com/input-output-hk/mithril/main/mithril-infra/configuration/release-mainnet/genesis.vkey)
-export SNAPSHOT_DIGEST=latest
-```
+> mithril-client 0.5.17+254d266
+
 
 ### 3-2.スナップショット復元
 
@@ -565,12 +647,46 @@ export SNAPSHOT_DIGEST=latest
 tmux new -s mithril
 ```
 
+変数セット
+```
+export NETWORK=mainnet
+export AGGREGATOR_ENDPOINT=https://aggregator.release-mainnet.api.mithril.network/aggregator
+export GENESIS_VERIFICATION_KEY=$(wget -q -O - https://raw.githubusercontent.com/input-output-hk/mithril/main/mithril-infra/configuration/release-mainnet/genesis.vkey)
+export SNAPSHOT_DIGEST=latest
+```
+
+??? 旧DBをバックアップしたい方はこちら
+    !!! danger "空き容量に関しての注意事項"
+        DBをバックアップする場合、サーバーディスクの空き容量をご確認ください。
+        安定稼働のためには250GB以上の空き容量が必要です。
+        ```
+        df -h /usr | awk '{print $4}'
+        ```
+        <strong><font color=red>Availが250GB以上あることを確認してください。</font></strong>
+
+    dbをリネームする
+    ```
+    mv $NODE_HOME/db/ $NODE_HOME/backup/db8-1-2/
+    ```
+
+    ノードバージョンアップ後、稼働に問題がないことが確認できれば削除することをお勧めます
+    ```
+    rm -rf $NODE_HOME/backup/db8-1-2/
+    ```
+
+既存DB削除
+```
+rm -rf $NODE_HOME/db
+```
 
 最新スナップショットDL
 ```
 mithril-client snapshot download --download-dir $NODE_HOME latest
 ```
-> スナップショットダウンロード～解凍まで自動的に行われます。1/6～6/6が終了するまで待ちましょう
+> スナップショットダウンロード～解凍まで自動的に行われます。1/5～5/5が終了するまで待ちましょう  
+> 5/5 - Verifying the snapshotsignature…        
+Snapshot 'xxxxx' has been unpacked and successfully checked against Mithril multi-signature contained in the certificate.
+('xxxxx'は作業時期によって変わります。下の文字列は無視して大丈夫です)
 
 tmux作業ウィンドウを終了する
 ```
@@ -599,19 +715,22 @@ SSH接続してDB再構築進捗を確認する
 ```
 journalctl --unit=cardano-node --follow
 ```
-> DB再構築が入る場合は、`Progress:`が100%になるまで5時間～8時間以上かかる場合があります。  
-100%になるとDBは自動的に同期します。放置している場合は100%表示を見逃す場合がありますが問題ありません。
+> 数分経過しても`Progress: xx.xx%`が表示されない場合、何かが不備でエラーになっています。
 
 
 ## **4. サービス起動確認(BPのみ)**
 
-BPノードが完全に同期した後、サービス起動状態を確認する
+BPノードが完全に同期した後、サービスを再起動し起動状態を確認する
 ```bash
-tmux ls
+sudo systemctl restart cnode-cncli-sync.service
 ```
 
 !!! info "ヒント"
     ノードを再起動してから、約20秒後に5プログラムがバックグラウンドで起動中であればOKです  
+
+    ```
+    tmux ls
+    ```
 
     * cncli  
     * leaderlog  
@@ -622,44 +741,43 @@ tmux ls
 ```
 tmux a -t cncli
 ```
->「100.00% synced」になるまで待ちます。
+>「100.00% synced」になっていることを確認します
 100%になったら、Ctrl+bを押した後に d を押し元の画面に戻ります
 (バックグラウンド実行に切り替え)
 
 
 ## **5. エアギャップアップデート**
 !!! hint "SFTP機能ソフト導入"
+    R-loginの転送機能が遅いので、大容量ファイルをダウン・アップロードする場合は、SFTP接続可能なソフトを使用すると効率的です。（FileZilaなど）  
     ファイル転送に便利な[SFTP機能ソフトの導入手順はこちら](./sftp.md)
 
 ### **5-1.バイナリファイルコピー**
 
-=== "1.RSYNC+SSHでアップデートを行った場合"
+=== "ビルド済みバイナリをダウンロードした場合"
 
-    === "転送元サーバー"
-        SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し以下をダウンロードする 
-        
-        * /home/usr/cnode/Transfer/cardano-cli
-        
-        をローカルパソコンにダウンロードします  
-        (エアギャップUbuntuとの共有フォルダ)
+    リレーサーバーで以下を実行する
 
-=== "2.通常アップデートのみで行った場合"
+    ```bash
+    sudo cp $(find $HOME/git/cardano-node -type f -name "cardano-cli") ~/cardano-cli
+    ```
 
-    2.通常アップデートを終えたBPかリレーサーバーで以下を実行する
+
+=== "ソースコードからビルドした場合"
+
+    リレーサーバーで以下を実行する
 
     ```bash
     sudo cp $(find $HOME/git/cardano-node/dist-newstyle/build -type f -name "cardano-cli") ~/cardano-cli
     ```
 
-    SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し、以下をダウンロードする 
-    
-    * /home/usr/cardano-cli
-    
-    をローカルパソコンにダウンロードします  
-    (エアギャップUbuntuとの共有フォルダ)
+SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し、以下をダウンロードする 
 
-!!! hint "ヒント"
-    R-loginの転送機能が遅いので、大容量ファイルをダウン・アップロードする場合は、SFTP接続可能なソフトを使用すると効率的です。（FileZilaなど）
+* /home/usr/cardano-cli
+
+をローカルパソコンにダウンロードします  
+(エアギャップUbuntuとの共有フォルダ)
+
+
 
 <BR>
 
@@ -939,18 +1057,3 @@ sudo systemctl start cardano-node
     再起動して同期が開始しているか確認して下さい。
 
 --> 
-## **Grafanaピアパネルが表示されない場合**
-ピアパネルのMetricsを修正する
-
-`ピア`パネルのメニューからEditを開き、`metrics browser`欄を以下の文字に置き換える
-```
-cardano_node_metrics_peers_connectedPeers_int
-```
-
-アラート修正
-
-１．ダッシュボード左メニュー→「Alerting」→「Alert rules」→「ノード監視」の中にある「BPリレー接続監視」をEdit(ペンマーク)で開く  
-２．`Metrics browser`を以下の文に置き換える
-```
-cardano_node_metrics_peers_connectedPeers_int{alias="block-producing-node"}
-```

@@ -1,3 +1,6 @@
+---
+status: new
+---
 # **プール情報(pool.cert)の更新**
 
 !!! summary "概要"

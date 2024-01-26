@@ -1,21 +1,26 @@
 # 変更履歴
 
-## 2024/1/20　ver. 13.0.0
-* Cardano-node8.7.3対応
-* [ノードセットアップ手順](/docs/setup/1-ubuntu-setup.md)
-    * blstインストール追加
-    * GHCUP変数インストールへ変更
+## 2024/1/26　ver. 13.0.0
+!!! note ""
+    * [**推奨サーバースペック変更**](./index.md) RAM 16GB→24GB / SSD 200GB→300GB
 
-* [ノードアップデート手順](./operation/node-update.md)更新
-    * RSYNC利用時のDB圧縮形式を変更 gzip → zstd
+    * **Cardano-node8.7.3対応**
+    * [**ノードセットアップ手順**](/docs/setup/1-ubuntu-setup.md)
+        * blstインストール追加
+        * GHCUP変数インストール導入
 
-* サーバー引越し手順追加 [リレー用](./operation/relay-move.md) / [BP用](./operation/bp-move.md)
+    * [**ノードアップデート手順**](./operation/node-update.md)更新
+        * cardano-node v8.7.3対応
+        * ビルド済みバイナリの使用
+        * Mithrilブートストラップの導入
 
-* [Grafanaアラート設定](./operation/grafana-alert.md) Grafanaの最新バージョン対応
+    * **サーバー引越し手順追加** [リレー用](./operation/relay-move.md) / [BP用](./operation/bp-move.md)
 
-* [SJG TOOL v3.7.0リリース](./operation/tool.md#364)
-    * CLI 8.17.0.0対応
-    * ディスク空き容量とDB容量表示追加
+    * [**Grafanaアラート設定**](./operation/grafana-alert.md) Grafana最新バージョン対応
+
+    * [**SJG TOOL v3.7.0リリース**](./operation/tool.md#364)
+        * CLI 8.17.0.0対応
+        * ディスク空き容量とDB容量表示追加
     
 
 ## 2024/1/5　ver. 12.9.5

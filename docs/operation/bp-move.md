@@ -1,3 +1,6 @@
+---
+status: new
+---
 # BPサーバーの引越し手順（旧VPS会社→新VPS会社）
 
 
@@ -5,12 +8,9 @@
     * 本まとめは現VPS会社→新VPS会社へと `BPのみ` を移行するまとめです。
     * 実際に行う際には手順をよく読みながら進めてください。
     * ブロック生成予定まで余裕がある時に実施してください。
-    * 旧BPは[2-4. 旧BPノード停止](./#2-4-bp)まで、**起動状態** にしておいてください。
+    * 旧BPは[3-3.旧BPシャットダウン](./#3-3bp)まで、**起動状態** にしておいてください。
 
-
-## **1.Ubuntu初期設定**
-
-1-1. 新サーバーで[Ubuntu初期設定](../../setup/1-ubuntu-setup/#0-3)を実施します。  
+## **1.新BPセットアップ**
 
 !!! info "留意事項"
     1. サーバ独自機能に留意する
@@ -20,31 +20,19 @@
         * もし変更する場合は、以下のファイル内のパス名を手動で変更してください。
         * `startBlockProducingNode.sh` DIRECTORY=/home/ユーザー名/cnode
 
-## **2.セットアップ**
+### **1-1.Ubuntu初期設定**
 
-### 2-1.インストール 
+新サーバーで[Ubuntu初期設定](../../setup/1-ubuntu-setup/#0-3)を実施します。  
+
+
+### **1-2.ノードセットアップ**
+
 [依存関係インストール](../../setup/2-node-setup/#2-1-cabalghc) 〜
 [gLiveViewのインストール](../../setup/2-node-setup/#2-7-gliveview)まで実施します。
 
 
-### 2-2. 旧BPトポロジー引継ぎ
-旧BPのcnodeディレクトリにある`mainnet-topology.json`を新BPのcnodeディレクトリにコピーし、新BPのノードを再起動します。
-``` mermaid
-graph LR
-    A[旧BP] -->|mainnet-topology.json| B[新BP];
-``` 
-
-=== "新BP"
-    ノード再起動
-    ```
-    sudo systemctl reload-or-restart cardano-node
-    ```
-    ノードログ確認
-    ```
-    journalctl --unit=cardano-node --follow
-    ```
-
-### 2-3. リレートポロジー情報変更 
+## **2.既存リレー作業**
+リレートポロジー情報変更 
  
 === "手動P2Pの場合"
     !!! tip ""
@@ -67,7 +55,7 @@ graph LR
     ```
     sudo systemctl reload-or-restart cardano-node
     ```
-    > リレーが最新ブロックと同期するまでお待ち下さい
+    > gLiveviewでリレーが最新ブロックと同期することをご確認ください
 
 === "ダイナミックP2Pの場合"
 
@@ -82,10 +70,10 @@ graph LR
     ```
     > ダイナミックP2P有効時、トポロジーファイル変更による再起動は不要です。
 
-!!! danger "旧BPのIP記載について"
-    このマニュアルの流れで旧BPは停止状態になりますが、万が一起動状態になりBP2重起動によるブロック伝播を防ぐため旧BPのIPはリレートポロジーに記載しないものとします。
 
-### 2-4. 旧BPノード停止
+## **3.旧BP移行処理**
+
+### **3-1.旧BPノード停止**
 
 === "旧BP"
 
@@ -94,14 +82,93 @@ graph LR
     ```
     ```
     sudo systemctl disable cardano-node
+    ```  
+
+### **3-2.旧BPファイル移動**
+
+??? tio "**参考）移行ファイル一覧**"
+
+    | ファイル名 | 用途 |
+    :----|:----
+    | vrf.skey | ブロック生成に必須 |
+    | vrf.vkey | ブロック生成に必須 |
+    | kes.skey | ブロック生成に必須 |
+    | kes.vkey | KES公開鍵 |
+    | node.cert | ブロック生成に必須 |
+    | payment.addr | 残高確認で必要 |
+    | stake.addr | 残高確認で必要 |
+    | mainnet-topology.json | トポロジーファイル |
+    | poolMetaData.json | pool.cert作成時に必要 |
+    | poolMetaDataHash.txt | pool.cert作成時に必要 |
+    | startBlockProducingNode.sh | ノード起動スクリプト |
+    | pool.id-bech32 | stakepoolid(bech32形式) |
+    | pool.id | stakepoolid(hex形式) |
+    | guild-db | ブロックログ関連フォルダ(cncli.db以外) |
+
+上記の移行ファイルを一つのファイルに圧縮する
+=== "旧BP"
     ```
-    > ここで`旧BP`とリレーとの接続が切れます。  
-    > 旧BPのノードが絶対に起動しないようにVPS管理コンソールからサーバーを停止しておいてください。
+    cd $NODE_HOME
+    tar --exclude "guild-db/cncli/cncli.db" -acvf bp-move.zst guild-db/ vrf.skey vrf.vkey kes.skey kes.vkey node.cert payment.addr stake.addr mainnet-topology.json poolMetaData.json poolMetaDataHash.txt startBlockProducingNode.sh pool.id-bech32 pool.id
+    ```
+
+旧BPのcnodeにある`bp-move.zst`を新BPのcnodeディレクトリにコピーする
+``` mermaid
+graph LR
+    A[旧BP] -->|bp-move.zst| B[新BP];
+``` 
+
+### **3-3.旧BPシャットダウン**
+```
+sudo shutdown -h now
+```
 
 
+## **4.新BP再設定**
 
-### 2-5. 新BP接続確認
-gLiveViewで新BPとリレーの双方向の疎通(I/O)ができているかを確認します。
+### **4-1.移行ファイル復元**
+
+=== "新BP"
+
+    ノード停止
+    ```
+    sudo systemctl stop cardano-node
+    ```
+
+    ファイル確認
+    ```
+    ls $NODE_HOME/bp-move.zst
+    ```
+    > ファイルパスが表示されることを確認する。  
+    > 例）`/home/cardano/cnode/bp-move.zst`
+    
+    ファイル展開
+    ```
+    cd $NODE_HOME
+    tar -xvf bp-move.zst
+    ```
+    > 戻り値に移行ファイル一覧のファイル名が表示されることを確認する
+
+### **4-2. パーミッション変更**
+=== "新BP"
+    ```
+    cd $NODE_HOME
+    chmod 400 vrf.skey
+    chmod 400 vrf.vkey
+    chmod +x startBlockProducingNode.sh
+    ```
+
+    ノードを起動します。
+    ```
+    sudo systemctl start cardano-node
+    ```
+    ノードログ確認
+    ```
+    journalctl --unit=cardano-node --follow
+    ```
+
+### **4-3. 新BP接続確認**
+gLiveViewで新BPが最新ブロックと同期後、リレーと疎通(I/O)ができているかを確認します。
 
 === "新BP"
     gLiveView確認
@@ -111,73 +178,7 @@ gLiveViewで新BPとリレーの双方向の疎通(I/O)ができているかを�
     ```
     > InとOutにリレーのIPがあることを確認してください。
 
-
-### 2-6. 旧BPファイル移動
-
-**参考）移行ファイル一覧**
-
-| ファイル名 | 用途 |
-:----|:----
-| vrf.skey | ブロック生成に必須 |
-| vrf.vkey | ブロック生成に必須 |
-| kes.skey | ブロック生成に必須 |
-| kes.vkey | KES公開鍵 |
-| node.cert | ブロック生成に必須 |
-| payment.addr | 残高確認で必要 |
-| stake.addr | 残高確認で必要 |
-| poolMetaData.json | pool.cert作成時に必要 |
-| poolMetaDataHash.txt | pool.cert作成時に必要 |
-| startBlockProducingNode.sh | ノード起動スクリプト |
-| pool.id-bech32 | stakepoolid(bech32形式) |
-| pool.id | stakepoolid(hex形式) |
-| guild-db | ブロックログ関連フォルダ(cncli.db以外) |
-
-上記の移行ファイルを一つのファイルに圧縮する
-=== "旧BP"
-    ```
-    cd $NODE_HOME
-    tar --exclude "guild-db/cncli/cncli.db" -acvf bp-move.zst guild-db/ vrf.skey vrf.vkey kes.skey kes.vkey node.cert payment.addr stake.addr poolMetaData.json poolMetaDataHash.txt startBlockProducingNode.sh pool.id-bech32 pool.id
-    ```
-
-旧BPのcnodeにある`bp-move.zst`を新BPのcnodeディレクトリにコピーする
-``` mermaid
-graph LR
-    A[旧BP] -->|bp-move.zst| B[新BP];
-``` 
-
-=== "新BP"
-    ```
-    ls $NODE_HOME/bp-move.zst
-    ```
-    > ファイルパスが表示されることを確認する。  
-    > 例）`/home/cardano/cnode/bp-move.zst`
-    
-    ファイルを展開する
-    ```
-    cd $NODE_HOME
-    tar -xvf bp-move.zst
-    ```
-    > 戻り値に移行ファイル一覧のファイル名が表示されることを確認する
-
-### 2-7. パーミッション変更
-=== "新BP"
-    ```
-    cd $NODE_HOME
-    chmod 400 vrf.skey
-    chmod 400 vrf.vkey
-    chmod +x startBlockProducingNode.sh
-    ```
-
-    ノードを再起動します。
-    ```
-    sudo systemctl reload-or-restart cardano-node
-    ```
-    ノードログ確認
-    ```
-    journalctl --unit=cardano-node --follow
-    ```
-
-### 2-8. params.json再作成
+### **4-4. params.json再作成**
 
 === "新BP"
 ```
@@ -187,7 +188,7 @@ cardano-cli query protocol-parameters \
     --out-file params.json
 ```
 
-### 2-9. ブロックログ設定
+### **4-5. ブロックログ設定**
 
 - [ステークプールブロックログ導入手順](../../setup/10-blocklog-setup/)
 
@@ -195,16 +196,16 @@ cardano-cli query protocol-parameters \
     「10-6. 過去のブロック生成実績取得」は実施しないでください。
 
 
-### 2-10. SJGツール導入
+### **4-6. SJGツール導入**
 
 - [SPO JAPAN GUILD TOOL](../../operation/tool/#spo-japan-guild-tool)
 
 
-### 2-11. ブロック生成状態チェック
+### **4-7. ブロック生成状態チェック**
 
 SJGツールを起動し、「[2] ブロック生成状態チェック」ですべての項目がOKになることを確認する
 
-### 2-12. ブロック生成ステータス通知設定
+### **4-8. ブロック生成ステータス通知設定**
 
 === "旧BPで導入済みの場合"
     依存環境インストール
@@ -266,9 +267,9 @@ SJGツールを起動し、「[2] ブロック生成状態チェック」です�
     [ブロック生成ステータス通知セットアップ](../setup/11-blocknotify-setup.md)から導入してください。
 
 
-### 2-13. Prometheus設定
+## **5. Prometheus設定**
 
-- 新BPにて`prometheus node exporter`をインストールします。
+### **5-1.新BP`node exporter`インストール**
 
 === "新BP"
     ```
@@ -285,13 +286,14 @@ SJGツールを起動し、「[2] ブロック生成状態チェック」です�
     sudo systemctl reload-or-restart cardano-node
     ```
 
-`prometheus.yml`の修正  
+### **5-2.Grafanaサーバー`prometheus.yml`の修正**
 
 === "Grafanaサーバー(リレー1)"
+
+    `prometheus.yml`に記載されてる旧BPのIPを新BPのIPへ変更してください
     ```
     sudo nano /etc/prometheus/prometheus.yml
     ```
-    > * 旧BPのIPを新BPのIPへ変更してください
 
     サービス再起動
     ```
@@ -308,8 +310,10 @@ SJGツールを起動し、「[2] ブロック生成状態チェック」です�
     GrafanaにBPのメトリクス(KESなど)が表示されているか確認する。
 
 ---
-### 補足
-- Txの増加が確認できたらTracemempoolを無効にします。
+## **6.補足**
+### **Tracemempool無効化**
+
+Txの増加が確認できたらTracemempoolを無効にします。
 
 === "新BP"
 ```
@@ -321,4 +325,7 @@ sed -i $NODE_HOME/${NODE_CONFIG}-config.json \
 ```
 sudo systemctl reload-or-restart cardano-node
 ```
+
+### **Mithril-Signer再セットアップ**
+旧サーバーでMithril-Signer-Nodeを実行していた場合は、新サーバーでも再セットアップしてください。不明点がある場合はBTBF SPO LAB.でご質問ください。
 
