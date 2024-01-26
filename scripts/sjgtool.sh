@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION=3.6.4
+TOOL_VERSION="3.7.0"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -56,11 +56,17 @@ cardano-cli query protocol-parameters \
   $NETWORK_IDENTIFIER \
   --out-file params.json
 
+node_version=$(${CNODEBIN} version | head -1 | cut -d' ' -f2)
+cli_version=$(${CCLI} version | head -1 | cut -d' ' -f2)
 
-echo ' ---------------------------------------------------'
-echo -e " >> SPO JAPAN GUILD TOOL ${FG_YELLOW}ver$TOOL_VERSION${NC} | Server:${FG_YELLOW}-$node_name-${NC} <<"
-echo ' ---------------------------------------------------'
-echo -e " | NodeVer:${FG_YELLOW}${node_version}${NC} | NetWork:${FG_GREEN}-${NETWORK_NAME}-${NC} | Era:${FG_YELLOW}${NETWORK_ERA}${NC} |"
+db_size=$(du -sh $NODE_HOME/db | awk '{print $1}')
+avail_disk=$(df -h /usr | awk 'NR==2 {print $4}')
+
+echo -e " >> SPO JAPAN GUILD TOOL ${FG_YELLOW}ver$TOOL_VERSION${NC} <<"
+echo ' ---------------------------------------------------------------------'
+echo -e " Server:${FG_YELLOW}-$node_name-${NC} | NetWork:${FG_GREEN}-${NETWORK_NAME}-${NC} | Era:${FG_YELLOW}${NETWORK_ERA}${NC} |"
+echo ' ---------------------------------------------------------------------'
+echo -e " Node:${FG_YELLOW}${node_version}${NC} | CLI:${FG_YELLOW}${cli_version}${NC} | Disk残容量:${FG_YELLOW}${avail_disk}${NC} | DBサイズ:${FG_YELLOW}${db_size}${NC} |"
 echo '
  [1] ウォレット操作
  [2] ブロック生成状態チェック
@@ -122,12 +128,12 @@ case ${num} in
         if [ ${efile_check} == "true" ]; then
           echo "■stakeアドレス"
           printf "${FG_YELLOW}$(cat $WALLET_STAKE_ADDR_FILENAME)${NC}\n\n"
-          stake_json=`cardano-cli query stake-address-info --address $(cat $WALLET_STAKE_ADDR_FILENAME) $NETWORK_IDENTIFIER > $PARENT/stake_json.txt`
-          pool_reward=`cat $PARENT/stake_json.txt | grep rewardAccountBalance | awk '{ print $2 }'`
+          pool_reward=$(cardano-cli query stake-address-info --address $(cat $WALLET_STAKE_ADDR_FILENAME) $NETWORK_IDENTIFIER | jq .[].rewardAccountBalance)
+          #pool_reward=`cat $PARENT/stake_json.txt | grep rewardAccountBalance | awk '{ print $2 }'`
           #echo $pool_reward
           pool_reward_Amount=`scale1 $pool_reward`
           printf "報酬額:${FG_GREEN}$pool_reward_Amount${NC} ADA ($pool_reward Lovelace)\n"
-          rm $PARENT/stake_json.txt
+
         else
           echo "$WALLET_STAKE_ADDR_FILENAMEファイルが見つかりません"
           echo

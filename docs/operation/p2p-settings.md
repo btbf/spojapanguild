@@ -29,9 +29,16 @@ sudo systemctl stop cardano-node
 ## **2.設定ファイル変更**
 
 mainnet-config.jsonにP2Pフラグを追記する
-```
-sed -i -e '2i \  "EnableP2P": true,' $NODE_HOME/mainnet-config.json
-```
+=== "ノード8.1.2の場合"
+    ```
+    sed -i -e '2i \  "EnableP2P": true,' $NODE_HOME/mainnet-config.json
+    ```
+
+=== "ノード8.7.2の場合"
+    ```
+    sed -i -e 's!"EnableP2P": false!"EnableP2P": true!' $NODE_HOME/mainnet-config.json
+    ```
+
 
 トポロジーファイルのバックアップを作成する
 ```
@@ -59,10 +66,18 @@ mv $NODE_HOME/mainnet-topology.json $NODE_HOME/mainnet-topology-non2p2.json
         }
     ],
     "publicRoots": [
-        { "accessPoints": [
+      { "accessPoints": [
         {
-            "address": "relays-new.cardano-mainnet.iohk.io",
-            "port": 3001
+          "address": "backbone.cardano-mainnet.iohk.io",
+          "port": 3001
+        },
+        {
+          "address": "backbone.cardano.iog.io",
+          "port": 3001
+        },
+        {
+          "address": "backbone.mainnet.emurgornd.com",
+          "port": 3001
         }
         ],
         "advertise": false
@@ -98,15 +113,23 @@ mv $NODE_HOME/mainnet-topology.json $NODE_HOME/mainnet-topology-non2p2.json
     ],
     "publicRoots": [
         { "accessPoints": [
-        {
-            "address": "relays-new.cardano-mainnet.iohk.io",
+            {
+            "address": "backbone.cardano-mainnet.iohk.io",
             "port": 3001
-        }
+            },
+            {
+            "address": "backbone.cardano.iog.io",
+            "port": 3001
+            },
+            {
+            "address": "backbone.mainnet.emurgornd.com",
+            "port": 3001
+            }
         ],
         "advertise": false
         }
     ],
-    "useLedgerAfterSlot": 87200000
+    "useLedgerAfterSlot": 110332824
     }
     EOF
     ```
@@ -151,7 +174,7 @@ mv $NODE_HOME/mainnet-topology.json $NODE_HOME/mainnet-topology-non2p2.json
         "advertise": false
         }
     ],
-    "useLedgerAfterSlot": 87200000
+    "useLedgerAfterSlot": 110332824
     }
     EOF
     ```

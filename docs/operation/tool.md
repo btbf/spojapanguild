@@ -1,6 +1,6 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2023/11/29 v3.6.4
+最終更新日：2023/12/16 v3.7.0
 
 !!! info "主な機能"
     * payment.addr残高照会
@@ -73,6 +73,10 @@ gtool
     また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
 
 ## 更新履歴
+
+### 3.7.0
+    * CLI 8.17.0.0対応
+    * ディスク空き容量とDB容量表示追加
 
 ### 3.6.4
     * gLiveView1.28.xアップデート機能

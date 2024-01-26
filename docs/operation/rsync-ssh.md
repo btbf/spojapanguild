@@ -82,6 +82,11 @@ chmod 600 ~/.ssh/config
 mv ~/.ssh/rsync_ed25519.pub $NODE_HOME/
 ```
 
+### 1-4.ZStandardインストール
+```
+sudo apt install zstd
+```
+
 
 ## **2.転送先サーバー設定**
 

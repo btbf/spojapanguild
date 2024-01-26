@@ -1,5 +1,42 @@
 # 変更履歴
 
+## 2024/1/26　ver. 13.0.0
+!!! note ""
+    * [**推奨サーバースペック変更**](./index.md) RAM 16GB→24GB / SSD 200GB→300GB
+
+    * **Cardano-node8.7.3対応**
+    * [**ノードセットアップ手順**](/docs/setup/1-ubuntu-setup.md)
+        * blstインストール追加
+        * GHCUP変数インストール導入
+
+    * [**ノードアップデート手順**](./operation/node-update.md)更新
+        * cardano-node v8.7.3対応
+        * ビルド済みバイナリの使用
+        * Mithrilブートストラップの導入
+
+    * **サーバー引越し手順追加** [リレー用](./operation/relay-move.md) / [BP用](./operation/bp-move.md)
+
+    * [**Grafanaアラート設定**](./operation/grafana-alert.md) Grafana最新バージョン対応
+
+    * [**SJG TOOL v3.7.0リリース**](./operation/tool.md#364)
+        * CLI 8.17.0.0対応
+        * ディスク空き容量とDB容量表示追加
+    
+
+## 2024/1/5　ver. 12.9.5
+!!! note ""
+    * [プール情報(pool.cert)の更新](./operation/cert-update.md) メタデータファイルにnonce値を追加  
+    プール情報更新時においてメタデータURLのみの変更で、同一ファイル(ハッシュ値)を使用した場合、SMASHサーバーのキャッシュ読み込みにおいて参照データの整合性が取れず、KoiosAPIでもデータ参照出来ないためメタデータにnonce値を設定し異なるハッシュ値でチェーンに登録する仕様へ変更。
+
+## 2023/12/30　ver. 12.9.4
+!!! note ""
+    * [Ubuntu22.04任意アップグレード手順](./operation/ubuntu22.md#5) 軽微な修正
+
+## 2023/12/20　ver. 12.9.3
+!!! note ""
+    * 8.1.2用設定ファイルダウンロード元変更
+
+
 ## 2023/11/29　ver. 12.9.2
 !!! note ""
     * [SJG TOOL v3.6.4リリース](./operation/tool.md#364)
