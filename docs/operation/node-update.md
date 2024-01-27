@@ -745,6 +745,20 @@ tmux a -t cncli
 100%になったら、Ctrl+bを押した後に d を押し元の画面に戻ります
 (バックグラウンド実行に切り替え)
 
+??? failure "`Missing eta_v for block xxxxxx` エラーが出る場合の対処法"
+    cncliを再同期してください
+
+    ```
+    rm $NODE_HOME/guild-db/cncli/*
+    ```
+    ```
+    sudo systemctl restart cnode-cncli-sync.service
+    ```
+    ```
+    tmux a -t cncli
+    ```
+    100% sync'dになるまでお待ち下さい
+
 
 ## **5. エアギャップアップデート**
 !!! hint "SFTP機能ソフト導入"
