@@ -476,7 +476,8 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     Expiry_KES=`curl -s localhost:12798/metrics | grep ExpiryKES | awk '{ print $2 }'`
     Start_KES=`curl -s localhost:12798/metrics | grep StartKES | awk '{ print $2 }'`
     current_KES=`curl -s localhost:12798/metrics | grep currentKES | awk '{ print $2 }'`
-
+    current_epoch=`curl -s localhost:12798/metrics | grep epoch_int | awk '{ print $2 }'`
+    
     if [ -z "$metrics_KES" ]; then
       echo "KESメトリクスを取得できませんでした"
       echo "このノードがBPであることを確認してください"
@@ -498,8 +499,11 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     pledge=`cat $NODE_HOME/pooldata.txt | jq -r ".[].pledge"`
     pledge_scale=`scale1 $pledge`
 
-    payment_utxo
-    
+    active_epoch=`cat $NODE_HOME/pooldata.txt | jq -r ".[].active_epoch_no"`
+    future_pledge=`cardano-cli query pool-params --stake-pool-id $(cat $NODE_HOME/pool.id-bech32) | jq .[].futurePoolParams.pledge`
+    current_pledge=`cardano-cli query pool-params --stake-pool-id $(cat $NODE_HOME/pool.id-bech32) | jq .[].poolParams.pledge`
+
+  
     printf "ノード起動タイプ:BP ${FG_GREEN}OK${NC}　ネットワーク:${FG_YELLOW}$NETWORK_NAME${NC}\n"
     echo
     printf "　　対象プール :${FG_CYAN}[`cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_json.ticker"`] `cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_json.name"`${NC}\n"
@@ -542,7 +546,17 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     
     rm -rf $NODE_HOME/metaCheck
     
+
     koios_stake_total=`curl -s -X POST "$KOIOS_API/account_info" -H "Accept: application/json" -H "content-type: application/json" -d "{\"_stake_addresses\":[\"$(cat $NODE_HOME/$WALLET_STAKE_ADDR_FILENAME)\"]}" | jq -r '.[].total_balance'`
+
+    if [ $active_epoch -gt $current_epoch ] && [ $future_pledge -ne $current_pledge ]; then
+      pledge=$current_pledge
+      pledge_scale=`scale1 $pledge`
+      future_pledge_scale=`scale1 $future_pledge`
+      print_pledge="${FG_YELLOW}$pledge_scale${NC} ADA → ${FG_RED}$future_pledge_scale${NC} ADA ($active_epoch エポックで有効)\n"
+    else
+      print_pledge="${FG_YELLOW}$pledge_scale${NC} ADA\n"
+    fi
 
     #誓約チェック
     if [[ $koios_stake_total -ge $pledge ]]; then
@@ -553,7 +567,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       echo
       printf "${FG_MAGENTA}■誓約チェック${NC}： ${FG_RED}NG${NC} ${FG_YELLOW}payment.addrに宣言済み誓約(Pledge)以上のADAを入金してください${NC}\n"
     fi
-      printf "　宣言済み誓約 :${FG_YELLOW}$pledge_scale${NC} ADA\n"
+      printf "　宣言済み誓約 :$print_pledge"
       printf "　　委任合計　 :$(scale1 ${koios_stake_total}) ADA (payment.addr + stake.addr報酬合計)\n"
 
    #ノード起動スクリプトファイル名読み取り
