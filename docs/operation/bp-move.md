@@ -105,8 +105,15 @@ status: new
     | pool.id | stakepoolid(hex形式) |
     | guild-db | ブロックログ関連フォルダ(cncli.db以外) |
 
-上記の移行ファイルを一つのファイルに圧縮する
+
 === "旧BP"
+
+    Zstandardインストール
+    ```
+    sudo apt install zstd
+    ```
+
+    上記の移行ファイルを一つのファイルに圧縮する
     ```
     cd $NODE_HOME
     tar --exclude "guild-db/cncli/cncli.db" -acvf bp-move.zst guild-db/ vrf.skey vrf.vkey kes.skey kes.vkey node.cert payment.addr stake.addr mainnet-topology.json poolMetaData.json poolMetaDataHash.txt startBlockProducingNode.sh pool.id-bech32 pool.id
