@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="3.7.0"
+TOOL_VERSION="3.7.1"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -542,9 +542,10 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     
     rm -rf $NODE_HOME/metaCheck
     
+    koios_stake_total=`curl -s -X POST "$KOIOS_API/account_info" -H "Accept: application/json" -H "content-type: application/json" -d "{\"_stake_addresses\":[\"$(cat $NODE_HOME/$WALLET_STAKE_ADDR_FILENAME)\"]}" | jq -r '.[].total_balance'`
 
     #誓約チェック
-    if [[ $total_balance -ge $pledge ]]; then
+    if [[ $koios_stake_total -ge $pledge ]]; then
       echo
       printf "${FG_MAGENTA}■誓約チェック${NC}： ${FG_GREEN}OK${NC}\n"
       okCnt=$((${okCnt}+1))
@@ -553,7 +554,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       printf "${FG_MAGENTA}■誓約チェック${NC}： ${FG_RED}NG${NC} ${FG_YELLOW}payment.addrに宣言済み誓約(Pledge)以上のADAを入金してください${NC}\n"
     fi
       printf "　宣言済み誓約 :${FG_YELLOW}$pledge_scale${NC} ADA\n"
-      printf "　　Wallet残高 :$(scale1 ${total_balance}) ADA\n"
+      printf "　　委任合計　 :$(scale1 ${koios_stake_total}) ADA (payment.addr + stake.addr報酬合計)\n"
 
    #ノード起動スクリプトファイル名読み取り
     exec_path=`grep -H "ExecStart" /etc/systemd/system/cardano-node.service`

@@ -1,6 +1,6 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2023/12/16 v3.7.0
+最終更新日：2024/1/30 v3.7.1
 
 !!! info "主な機能"
     * payment.addr残高照会
@@ -73,6 +73,10 @@ gtool
     また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
 
 ## 更新履歴
+
+### 3.7.1
+    * ブロック生成状態チェック　誓約チェック判定修正
+       (payment.addr + stake.addr報酬合計)
 
 ### 3.7.0
     * CLI 8.17.0.0対応
