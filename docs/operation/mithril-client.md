@@ -66,7 +66,7 @@ git clone https://github.com/input-output-hk/mithril.git
 ```
 cd mithril
 git fetch --all --prune
-git checkout tags/2347.0
+git checkout tags/2403.1
 ```
 
 ビルド
@@ -79,7 +79,7 @@ make build
 ```
 ./mithril-client -V
 ```
-> mithril-client 0.5.5
+> mithril-client 0.5.17
 
 システムフォルダへコピー
 ```
@@ -90,9 +90,14 @@ sudo mv mithril-client /usr/local/bin/mithril-client
 ```
 mithril-client -V
 ```
-> mithril-client 0.5.5
+> mithril-client 0.5.17
 
 ## 3.DBブートストラップ
+
+tmux作業ウィンドウを作成する
+```
+tmux new -s mithril
+```
 
 ### 3-1.変数セット
 
@@ -108,11 +113,6 @@ export SNAPSHOT_DIGEST=latest
 既存DBフォルダ削除
 ```
 rm -rf $NODE_HOME/db
-```
-
-tmux作業ウィンドウを作成する
-```
-tmux new -s mithril
 ```
 
 最新スナップショットダウンロード及び解凍

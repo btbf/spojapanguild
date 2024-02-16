@@ -236,21 +236,6 @@ chmod a-rwx $HOME/cold-keys
 
 * KOIOS APIを使用してリタイア処理ステータスを確認できます。
 
-pool.id-bech32の作成
-
-=== "エアギャップオフラインマシン"
-    ```bash
-    cd $NODE_HOME
-    cardano-cli stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format bech32 > pool.id-bech32
-    ```
-
-!!! important "ファイル転送"
-    エアギャップマシンの`pool.id-bech32`をBPのcnodeディレクトリにコピーします。
-    ``` mermaid
-    graph LR
-        A[エアギャップ] -->|pool.id-bech32| B[BP];
-    ```
-
 === "ブロックプロデューサノード"
     ```bash
     cd $NODE_HOME
