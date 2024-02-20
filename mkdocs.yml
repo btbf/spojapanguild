@@ -29,7 +29,6 @@ theme:
     - navigation.tracking
     - navigation.footer
     - navigation.path
-    - navigation.expand
     - search.suggest
     - search.highlight
     - search.share
@@ -116,14 +115,14 @@ nav:
       - '1.Ubuntu初期設定': './setup/1-ubuntu-setup.md'
       - '2.ノードインストール': './setup/2-node-setup.md'
       - '3.リレー/BPの接続': './setup/3-relay-bp-setup.md'
-      - '4.BPセットアップ': './setup/4-bp-setup.md'
+      - '4.BP用キー作成': './setup/4-bp-setup.md'
       - '5.アドレスの作成': './setup/5-generate-address.md'
       - '6.ステークアドレスの登録': './setup/6-register-stakeaddress.md'
       - '7.ステークプールの登録': './setup/7-register-stakepool.md'
       - '8.P2Pトポロジー設定': './setup/8.topology-setup.md'
-      - '9.監視ツールセットアップ': './setup/9-monitoring-tools-setup.md'
-      - '10.ブロックログセットアップ': './setup/10-blocklog-setup.md'
-      - '11.ブロック生成ステータス通知セットアップ': './setup/11-blocknotify-setup.md'
+      - '9.監視ツール設定': './setup/9-monitoring-tools-setup.md'
+      - '10.ブロックログ設定': './setup/10-blocklog-setup.md'
+      - '11.SPO BlockNotify設定': './setup/11-blocknotify-setup.md'
       - '寄付とクレジット': './setup/99-donation-credit.md'
     - 'プール運用マニュアル':
       - '運用ガイド': './operation/start-guide.md'
@@ -155,6 +154,7 @@ nav:
           - 'Grafanaセキュリティ強化': './operation/grafana-security.md'
           - 'Grafanaアラート設定': './operation/grafana-alert.md'
           - 'Grafanaリポジトリ変更': './operation/grafana-repo.md'
+        - '4-5.SPOBlockNotify移行手順': './operation/blocknotify-reinstall.md'
       - '5.Linuxコマンド集': './operation/command.md'
     - 'SJGラーニング': ./learning.md
     - 'よくある質問':
