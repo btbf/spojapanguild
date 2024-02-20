@@ -335,6 +335,19 @@ sudo systemctl enable cnode-cncli-leaderlog.service
 sudo systemctl enable cnode-logmonitor.service
 ```
 
+### 便利なエイリアス設定
+!!! hint "エイリアス設定"
+    スクリプトへのパスを通し、エイリアスで起動出来るようにする。
+    ```
+    echo export cnclilog='"journalctl --no-hostname -u cnode-cncli-sync -f"' >> $HOME/.bashrc
+    echo export validate='"journalctl --no-hostname -u cnode-cncli-validate -f"' >> $HOME/.bashrc
+    echo export leaderlog='"journalctl --no-hostname -u cnode-cncli-leaderlog -f"' >> $HOME/.bashrc
+    echo export logmonitor='"journalctl --no-hostname -u cnode-logmonitor -f"' >> $HOME/.bashrc
+    ```
+    以下のコマンドを入力して実行すると、サービスファイルログが閲覧できます。  
+    単語を入力するだけで、起動状態(ログ)を確認できます。  
+    `cnclilog`　`validate`　`leaderlog`　`logmonitor`
+
 ## **10-5. ブロックチェーンとDBを同期**
 
 **cncli-sync**サービスを開始します
@@ -344,7 +357,7 @@ sudo systemctl start cnode-cncli-sync.service
 
 cncliログ確認
 ```
-journalctl --unit=cnode-cncli-sync --follow
+cnclilog
 ```
 
 !!! info "確認"
@@ -359,7 +372,7 @@ journalctl --unit=cnode-cncli-sync --follow
         こちらのサービスは生成したブロックがブロックチェーン上に記録されているか照合します。
 
         ```
-        journalctl --unit=cnode-cncli-validate --follow
+        validate
         ```
 
         以下の表示なら正常です。
@@ -375,7 +388,7 @@ journalctl --unit=cnode-cncli-sync --follow
         次エポックの1.5日前から次エポックのスケジュールを算出することができます。
 
         ```
-        journalctl --unit=cnode-cncli-leaderlog --follow
+        leaderlog
         ```
 
         以下の表示なら正常です。  
@@ -389,7 +402,7 @@ journalctl --unit=cnode-cncli-sync --follow
         こちらのサービスはプールのノードログからブロック生成結果を抽出します。
 
         ```
-        journalctl --unit=cnode-logmonitor --follow
+        logmonitor
         ```
 
         以下の表示なら正常です。  
