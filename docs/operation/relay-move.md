@@ -233,7 +233,7 @@ cd $NODE_HOME
 
 
 ## **6.プール情報更新**
-[プール情報の更新](../operation/cert-update.md#__tabbed_1_2)を用いて、チェーン登録中のリレーIPを変更する。  
+[プール情報の更新](../operation/cert-update.md)を用いて、チェーン登録中のリレーIPを変更する。  
 (DNS運用の場合は不要です)
 
 ---
