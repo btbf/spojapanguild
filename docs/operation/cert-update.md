@@ -94,13 +94,13 @@ status: new
     === "ブロックプロデューサーノード"
     ```bash
     cd $NODE_HOME
-    $(cat poolMetaDataHash.txt)
+    echo $(cat poolMetaDataHash.txt)
     ```
 
     === "エアギャップオフラインマシン"
     ```bash
     cd $NODE_HOME
-    $(cat poolMetaDataHash.txt)
+    echo $(cat poolMetaDataHash.txt)
     ```
     > ハッシュ値が異なっている場合は、BPのpoolMetaDataHash.txtがエアギャップに正しくコピーされていません。
 
