@@ -1,15 +1,22 @@
-# ** ブロック生成ステータス通知 **
+# **SPO Block Notify設定**
+
+!!! danger "お知らせ"
+    ブロック生成ステータス通知が「SPO Block Notify」に生まれ変わりました！
+    
+
 
 !!! info "概要"
-    最終更新日：2023/09/28  v1.9.5
+    最終更新日：2024/2/26  v2.1.2
 
-    * ブロックログで表示されるブロック生成結果を任意のソーシャルアプリへ通知します。 
+    * ブロックログで表示されるブロック生成結果を任意のソーシャルアプリへ通知します。   
     ![*](../images/block_notify/image.png)
 
-    * ブロック生成スケジュールを自動取得し、取得スケジュール一覧を通知します。
+    * ブロック生成スケジュールを自動取得し、取得スケジュール一覧を通知します。  
     ![*](../images/block_notify/auto_leader.png)
 
     * 通知先対応アプリ LINE/Slack/discord/telegram
+
+    * 多言語ファイルを用意することで様々な言語に対応しました！
  
     * ブロックログと連動しておりますので、まだ設定されてない場合は[ブロックログ導入手順](./10-blocklog-setup.md)を先に導入してください。
 
@@ -20,6 +27,9 @@
 
 ??? info "更新履歴▼"
 
+    * 2.1.2　・次エポックスケジュール日付の通知有無対応
+    * 2.1.1　・ブロックログサービスファイル対応
+    * 2.0.0　・多言語対応
     * 1.9.5　・LINE通知不具合修正
     * 1.9.4　・スケジュール取得スロットを`303300`～`317700`間でランダム化
     * 1.9.0　・ノード再起動時のエラー修正
@@ -50,7 +60,7 @@
 
 ## **11-1. 依存プログラムをインストールする**
 
-### **Python環境をセットアップする**
+**Python環境をセットアップする**
 
 pythonバージョンを確認する
 ```bash
@@ -67,31 +77,28 @@ sudo apt update -y
 sudo apt install -y python3-watchdog python3-tz python3-dateutil python3-requests build-essential libssl-dev libffi-dev python3-dev python3-pip
 ```
 ```bash
-pip install discordwebhook python-dotenv slackweb
+pip install discordwebhook python-dotenv slackweb i18nice
 ```
 
-### **実行スクリプトと設定ファイルをダウンロードする**
+**実行スクリプトと設定ファイルをダウンロードする**
 
 ```bash
-cd $NODE_HOME/guild-db/blocklog
-wget -N https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/block_notify/block_check.py
-wget -N https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/block_notify/.env
-chmod 755 block_check.py
+bn_release="$(curl -s https://api.github.com/repos/btbf/block-notify/releases/latest | jq -r '.tag_name')"
+wget https://github.com/btbf/block-notify/archive/refs/tags/${bn_release}.tar.gz -P $NODE_HOME/scripts
+cd $NODE_HOME/scripts
+tar zxvf ${bn_release}.tar.gz block-notify-${bn_release}/block_notify.py block-notify-${bn_release}/.env block-notify-${bn_release}/i18n/
+mv block-notify-${bn_release} block-notify
+cd block-notify
 ```
-### cncli.sh適用状態確認
-** cncli.sh適用状態を確認する**  
-スケジュール取得自動化にはKOIOS-API対応のcncli.shが必要となります。以下のコマンドを実行し確認してください。
-```
-cat $NODE_HOME/scripts/cncli.sh | grep -o '#USE_KOIOS_API=Y'
-```
-!!! hint "戻り値確認"
-    === "戻り値あり"
-        `#USE_KOIOS_API=Y` の戻り値があれば、対応するcncli.shが適用されています。  
-        次へ進んでください。
 
-    === "戻り値なし"
-        * cardano-node1.35.5へ[アップデート](../operation/node-update.md)を実施してください。
-        * ノード1.35.5適用済の方は[Guildスクリプト](../operation/node-update.md#__tabbed_1_2)のバージョンアップを実施してください。
+**envファイルをSJG用に書き換える**
+```
+sed -i .env \
+    -e 's!/opt/cardano/cnode/guild-db!'${NODE_HOME}/guild-db'!' \
+    -e 's!/opt/cardano/cnode/files!'${NODE_HOME}'!' \
+    -e 's!'\''en'\''!'\''ja'\''!' \
+    -e 's!'\''Etc/UTC'\''!'\''Asia/Tokyo'\''!'
+```
 
 
 ## **11-2. 通知アプリの設定**
@@ -190,9 +197,9 @@ cat $NODE_HOME/scripts/cncli.sh | grep -o '#USE_KOIOS_API=Y'
 
 ## **11-3. 通知プログラムの設定**
 
-###  **設定ファイルの編集**
+**設定ファイルの編集**
 ```bash
-cd $NODE_HOME/guild-db/blocklog
+cd $NODE_HOME/scripts/block-notify
 nano .env
 ```
 > .envは隠しファイルになっているので、`ls -a`コマンドで一覧表示されます。
@@ -200,6 +207,10 @@ nano .env
 !!! hint "envファイル内容詳細"
     | 項目      | 使用用途                          |
     | ----------- | ------------------------------------ |
+    | `guild_db_dir` | guild-dbのパスを入力する |
+    | `shelley_genesis` | shelley_genesisのファイルパスを入力する |
+    | `byron_genesis` | byron_genesisのファイルパスを入力する |
+    | `language` | 通知言語を入力する
     | `ticker`       | プールティッカー名を入力する  |
     | `line_notify_token`      | Line Notifyトークンを入力する |
     | `dc_notify_url`    | DiscordウェブフックURLを入力する |
@@ -209,42 +220,36 @@ nano .env
     | `b_timezone`    | お住いのタイムゾーンを指定する |
     | `bNotify`    | 通知先を指定する |
     | `bNotify_st`    | 通知基準を設定する |
-    | `auto_leader`    | スケジュール取得方法を設定する |
-
-    * 各自の運用方針に合せて、次エポックのスケジュール **「自動取得」**または **「手動取得」** を選択してください。 
-    * **「自動取得」** は、エポックスロットが約302400を過ぎてから自動的に発動します。
-    * **「手動取得」** は、[手動でのコマンド実行](./10-blocklog-setup.md#10-9)によるスケジュール取得となります。
+    | `nextepoch_leader_date`    | 次エポックスケジュール日時の通知有無 |
 
 
-### **サービスファイルを設定する**
+**サービスファイルを設定する**
 === "ブロックプロデューサーノード"
     ```bash
-    cat > $NODE_HOME/service/cnode-blockcheck.service << EOF 
-    # file: /etc/systemd/system/cnode-blockcheck.service
+    cat > $NODE_HOME/service/cnode-blocknotify.service << EOF 
+    # file: /etc/systemd/system/cnode-blocknotify.service
 
     [Unit]
-    Description=Cardano Node - CNCLI blockcheck
+    Description=Cardano Node - SPO Blocknotify
     BindsTo=cnode-cncli-sync.service
     After=cnode-cncli-sync.service
 
     [Service]
-    Type=oneshot
+    Type=simple
     RemainAfterExit=yes
     Restart=on-failure
     RestartSec=20
     User=$(whoami)
-    WorkingDirectory=$NODE_HOME
-    ExecStart=/usr/bin/tmux new -d -s blockcheck
-    ExecStartPost=/usr/bin/tmux send-keys -t blockcheck 'cd $NODE_HOME/guild-db/blocklog' Enter
-    ExecStartPost=/usr/bin/tmux send-keys -t blockcheck python3 Space block_check.py Enter
-    ExecStop=/usr/bin/tmux kill-session -t blockcheck
-    KillSignal=SIGINT
-    RestartKillSignal=SIGINT
+    WorkingDirectory=${NODE_HOME}/scripts
+    Environment="NODE_HOME=${NODE_HOME}"
+    ExecStart=/bin/bash -c 'cd ${NODE_HOME}/scripts/block-notify/ && python3 -u ./block_notify.py'
+    StandardInput=tty-force
     SuccessExitStatus=143
     StandardOutput=syslog
     StandardError=syslog
-    SyslogIdentifier=cnode-blockcheck
+    SyslogIdentifier=cnode-blocknotify
     TimeoutStopSec=5
+    KillMode=mixed
 
     [Install]
     WantedBy=cnode-cncli-sync.service
@@ -252,115 +257,107 @@ nano .env
     ```
 
     ```
-    sudo cp $NODE_HOME/service/cnode-blockcheck.service /etc/systemd/system/cnode-blockcheck.service
-    sudo chmod 644 /etc/systemd/system/cnode-blockcheck.service
+    sudo cp $NODE_HOME/service/cnode-blocknotify.service /etc/systemd/system/cnode-blocknotify.service
     ```
 
     ```
+    sudo chmod 644 /etc/systemd/system/cnode-blocknotify.service
     sudo systemctl daemon-reload
-    sudo systemctl enable cnode-blockcheck.service
+    sudo systemctl enable cnode-blocknotify.service
     ```
-    ノードを再起動する
+    SPO BlockNotifyを起動する
     ```
-    sudo systemctl reload-or-restart cardano-node
+    sudo systemctl start cnode-blocknotify.service
     ```
 
-### **起動確認**
-```
-tmux a -t blockcheck
-```
-> 「Guild-db monitoring started」 が表示されていればOKです  
-> 任意の通知先に通知が届いているか確認してください  
-> cnode-cncli-sync.serviceと同じく、node再起動・停止と連動します
+    環境変数にログ確認用エイリアスを追加する
+    ```
+    echo alias blocknotify='"journalctl --no-hostname -u cnode-blocknotify -f"' >> $HOME/.bashrc
+    ```
+    環境変数再読み込み
+    ```
+    source $HOME/.bashrc
+    ```
 
-### **通知確認**
-ブロック生成スケジュール予定時刻が過ぎてから、約15分以内に通知が届きます。
+    起動確認
+    ```
+    blocknotify
+    ```
+    以下の表示なら正常です。
+    > [xxx] ブロック生成ステータス通知を起動しました 
 
+
+!!! danger ""
+    新規セットアップは以上です。
+
+<!--
 ## **11-4. バージョンアップ手順**
 
 サービスを停止する
 ```
-sudo systemctl stop cnode-blockcheck.service
+sudo systemctl stop cnode-blocknotify.service
 ```
 
 **バージョン確認**
 ```
-cd $NODE_HOME/guild-db/blocklog
-cat block_check.py | grep -HnI -m1 -r btbf
+cd $NODE_HOME/scripts/block-notify
+cat block_notify.py | grep -HnI -m1 -r version
 ```
-
-??? danger "バージョン1.7以下の場合はこちらを先に実行する(クリックして開く)"
-    **1) cncli.sh適用状態を確認する**  
-    スケジュール取得自動化にはKOIOS-API対応のcncli.shが必要となります。以下のコマンドを実行し確認してください。
-    ```
-    cat $NODE_HOME/scripts/cncli.sh | grep -o '#USE_KOIOS_API=Y'
-    ```
-    !!! hint "戻り値確認"
-        === "戻り値あり"
-            `#USE_KOIOS_API=Y` の戻り値があれば、対応するcncli.shが適用されています。  
-            2)へ進んでください。
-
-        === "戻り値なし"
-            * cardano-node1.35.5へ[アップデート](../operation/node-update.md)を実施してください。
-            * ノード1.35.5適用済の方は[Guildスクリプト](../operation/node-update.md#__tabbed_1_2)のバージョンアップを実施してください。
-
-    <br>
-    **2) ステータス通知用`.env`ファイルを修正する**  
-
-    * 各自の運用方針に合せて、次エポックのスケジュール **「自動取得」**または **「手動取得」** を選択してください。 
-    * **「自動取得」** は、エポックスロットが約302400を過ぎてから自動的に発動します。
-    * **「手動取得」** は、[手動でのコマンド実行](./10-blocklog-setup.md#10-9)によるスケジュール取得となります。
-
-    === "自動取得にする場合"
-        ```
-        sed -i $NODE_HOME/guild-db/blocklog/.env \
-        -e '1,73s!###############################!\n#リーダースケジュール自動取得 自動:1 手動:0\nauto_leader = "1"!'
-        ```
-    === "手動取得にする場合"
-        ```
-        sed -i $NODE_HOME/guild-db/blocklog/.env \
-        -e '1,73s!###############################!\n#リーダースケジュール自動取得 自動:1 手動:0\nauto_leader = "0"!'
-        ```
-
-    !!! hint "参考"
-        上記で実行するコマンドは、スケジュール自動/手動化に対応するフラグを`.env`に追加しています。 
-        ```
-        #リーダースケジュール自動取得 自動:1 手動:0
-        auto_leader = "1"
-        ```
-
 
 スクリプトをダウンロードする
 ```
-cd $NODE_HOME/guild-db/blocklog
-wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/block_notify/block_check.py -O block_check.py
+cd $NODE_HOME/scripts/block-notify
+bn_release="$(curl -s https://api.github.com/repos/btbf/block-notify/releases/latest | jq -r '.tag_name')"
+wget -q https://raw.githubusercontent.com/btbf/block-notify/${bn_release}/block_notify.py
 ```
 **バージョン確認**
 ```
-cd $NODE_HOME/guild-db/blocklog
-cat block_check.py | grep -HnI -m1 -r btbf
+cd $NODE_HOME/scripts/block-notify
+cat block_notify.py | grep -HnI -m1 -r version
 ```
 現在の最新バージョン
-> #2023/09/28 v1.9.5 @btbf
+> version = "2.1.1"
 
 サービスを再起動する
 ```
-sudo systemctl start cnode-blockcheck.service
+sudo systemctl start cnode-blocknotify.service
 ```
 
-サービス起動確認
+起動確認
 ```
-tmux a -t blockcheck
+blocknotify
 ```
-> 「Guild-db monitoring started」 が表示されていればOKです。(デタッチして戻る)   
+> 「Guild-db monitoring started」 が表示されていればOKです。  
 > 任意の通知先に通知が届いているか確認してください 
 
+-->
 
+## **11-4.アップデート手順**
 
-## **11-5.通知を停止(アンインストール)する手順**
+SPO BlockNotifyを停止する
+```
+sudo systemctl stop cnode-blocknotify.service
+```
+
+アップデートファイルをダウンロードする
+```bash
+bn_release="$(curl -s https://api.github.com/repos/btbf/block-notify/releases/latest | jq -r '.tag_name')"
+wget https://github.com/btbf/block-notify/archive/refs/tags/${bn_release}.tar.gz -P $NODE_HOME/scripts
+cd $NODE_HOME/scripts
+tar zxvf ${bn_release}.tar.gz block-notify-${bn_release}/block_notify.py
+cp block-notify-${bn_release}/block_notify.py block-notify/block_notify.py
+rm -rf block-notify-${bn_release} ${bn_release}.tar.gz
+```
+
+SPO BlockNotifyを起動する
+```
+sudo systemctl start cnode-blocknotify.service
+```
+
+## **11-5.アンインストール手順**
 
 ```
-sudo systemctl stop cnode-blockcheck.service
-sudo systemctl disable cnode-blockcheck.service
-sudo rm /etc/systemd/system/cnode-blockcheck.service
+sudo systemctl stop cnode-blocknotify.service
+sudo systemctl disable cnode-blocknotify.service
+sudo rm /etc/systemd/system/cnode-blocknotify.service
 ```
