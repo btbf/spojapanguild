@@ -1,5 +1,11 @@
 # 変更履歴
 
+## 2024/2/26　ver. 13.1.0
+!!! note ""
+    * [**SPO Block Notify設定**](./setup/11-blocknotify-setup.md)更新
+    * [**SPO Block Notify移行マニュアル**](./operation/blocknotify-reinstall.md)追加
+    * 軽微な修正
+
 ## 2024/1/27　ver. 13.0.1
 !!! note ""
     * [**ノードアップデート手順**](./operation/node-update.md)更新

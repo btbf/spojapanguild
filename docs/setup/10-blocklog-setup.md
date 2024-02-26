@@ -35,10 +35,10 @@
                 a8[blocklog.db]
             end
             subgraph ステータス通知
-                a9[blockcheck] --> 各アプリ
+                a9[blocknotify] --> 各アプリ
             end
             Guild-DB --> blocks.sh
-            a8[blocklog.db] --> a9[blockcheck]
+            a8[blocklog.db] --> a9[blocknotify]
             a3[cncli.service] --> a7[cncli.db]
             a5[leaderlog.service] --> a8[blocklog.db]
             a6[validate.service] --> a8[blocklog.db]
@@ -121,7 +121,7 @@ wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/
 wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/gLiveView.sh -O ./gLiveView.sh
 wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/cntools.library -O ./cntools.library
 wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/blocks.sh -O ./blocks.sh 
-wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/logMonitor.sh -q -O ./logMonitor.sh
+wget wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/logMonitor.sh -q -O ./logMonitor.sh -q -O ./logMonitor.sh
 ```
 
 **パーミッションを設定する**
@@ -188,7 +188,7 @@ cd service
 
 === "cncli"
     ```bash
-    cat > $NODE_HOME/service/cnode-cncli-sync.service << EOF
+    cat > $NODE_HOME/service/cnode-cncli-sync.service << EOF 
     # file: /etc/systemd/system/cnode-cncli-sync.service
 
     [Unit]
@@ -339,10 +339,11 @@ sudo systemctl enable cnode-logmonitor.service
 !!! hint "エイリアス設定"
     スクリプトへのパスを通し、エイリアスで起動出来るようにする。
     ```
-    echo export cnclilog='"journalctl --no-hostname -u cnode-cncli-sync -f"' >> $HOME/.bashrc
-    echo export validate='"journalctl --no-hostname -u cnode-cncli-validate -f"' >> $HOME/.bashrc
-    echo export leaderlog='"journalctl --no-hostname -u cnode-cncli-leaderlog -f"' >> $HOME/.bashrc
-    echo export logmonitor='"journalctl --no-hostname -u cnode-logmonitor -f"' >> $HOME/.bashrc
+    echo alias cnclilog='"journalctl --no-hostname -u cnode-cncli-sync -f"' >> $HOME/.bashrc
+    echo alias validate='"journalctl --no-hostname -u cnode-cncli-validate -f"' >> $HOME/.bashrc
+    echo alias leaderlog='"journalctl --no-hostname -u cnode-cncli-leaderlog -f"' >> $HOME/.bashrc
+    echo alias logmonitor='"journalctl --no-hostname -u cnode-logmonitor -f"' >> $HOME/.bashrc
+    echo alias blocknotify='"journalctl --no-hostname -u cnode-blocknotify -f"' >> $HOME/.bashrc
     ```
     以下のコマンドを入力して実行すると、サービスファイルログが閲覧できます。  
     単語を入力するだけで、起動状態(ログ)を確認できます。  
@@ -527,7 +528,7 @@ cargo install --path . --force
 ```
 cncli --version
 ```
-> 5.3.2 が最新バージョンです
+> 6.0.1 が最新バージョンです
 
 ノードを再起動する
 ```bash
@@ -536,16 +537,9 @@ sudo systemctl reload-or-restart cardano-node
 > ノードが同期したことを確認する
 
 ```
-tmux a -t cncli
+cnclilog
 ```
 >100% syncedになったことを確認する
-
-各サービスを表示し、envまたはcncli.shのアップデートメッセージがある場合は"n"で拒否
-```
-tmux a -t leaderlog
-tmux a -t validate
-```
-> envまたはcncli.shのアップデートが必要になった場合は改めてアナウンスします。
 
 
 ### スケジュールにないブロックが生成される場合
