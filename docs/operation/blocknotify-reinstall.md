@@ -242,9 +242,14 @@ Block Notifyダウンロード
 ```
 bn_release="$(curl -s https://api.github.com/repos/btbf/block-notify/releases/latest | jq -r '.tag_name')"
 wget https://github.com/btbf/block-notify/archive/refs/tags/${bn_release}.tar.gz -P $NODE_HOME/scripts
+```
+
+スクリプト展開
+```
 cd $NODE_HOME/scripts
 tar zxvf ${bn_release}.tar.gz block-notify-${bn_release}/block_notify.py block-notify-${bn_release}/i18n/
 mv block-notify-${bn_release} block-notify
+rm ${bn_release}.tar.gz
 cd block-notify
 ```
 
