@@ -35,6 +35,8 @@
 === "リレーノード"
   ```bash
   sudo ufw allow 6000/tcp
+  ```
+  ```bash
   sudo ufw reload
   ```
 
@@ -58,7 +60,7 @@
 自身のリレーノードから接続するノードを指定します。  
 「xxx.xxx.xxx.xxx」はBPのパブリックIP(静的)アドレスと[2-4で設定した](../setup/2-node-setup.md#2-4)BPポート番号に置き換えて下さい。
 
-```bash
+```bash title="このボックスはすべてコピーして実行してください"
 cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF 
  {
     "Producers": [
@@ -102,13 +104,13 @@ BPノードで使用するポート(上記で表示された番号)の通信を�
 `<リレーノード1のIP>` の `<>`を除いてIPのみ入力してください。
 
 === "BP(リレー1台の場合)"
-    ```bash
+    ```bash title="Ubuntu22.04の場合は１行づつ実行してください"
     sudo ufw allow from <リレーノード1のIP> to any port ${b_PORT}
     sudo ufw reload
     ```
 
 === "BP(リレー2台の場合)"
-    ```bash
+    ```bash title="Ubuntu22.04の場合は１行づつ実行してください"
     sudo ufw allow from <リレーノード1のIP> to any port ${b_PORT}
     sudo ufw allow from <リレーノード2のIP> to any port ${b_PORT}
     sudo ufw reload
@@ -123,7 +125,7 @@ BPノードで使用するポート(上記で表示された番号)の通信を�
 
 === "BP(リレー1台の場合)"
 
-    ```bash
+    ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF 
     {
         "Producers": [
@@ -138,7 +140,7 @@ BPノードで使用するポート(上記で表示された番号)の通信を�
     ```
 
 === "BP(リレー2台の場合)"
-    ```bash
+    ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF 
     {
         "Producers": [

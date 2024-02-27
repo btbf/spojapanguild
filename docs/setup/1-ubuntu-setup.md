@@ -234,7 +234,7 @@ sudo ufw status
 !!! tip "重要"
     不正アクセスを予防するには、システムに最新のパッチを適用することが重要です。
 
-```bash
+```bash title="Ubuntu22.04の場合は１行づつ実行してください"
 sudo apt update -y && sudo apt upgrade -y
 sudo apt autoremove
 sudo apt autoclean
@@ -243,7 +243,7 @@ sudo apt autoclean
 自動更新を有効にすると、手動でインストールする手間を省けます。
 > `YES`を選択しEnter
 
-```text
+```bash title="Ubuntu22.04の場合は１行づつ実行してください"
 sudo apt install unattended-upgrades
 sudo dpkg-reconfigure --priority=low unattended-upgrades
 ```
@@ -323,7 +323,7 @@ sudo apt install chrony
 
 /etc/chrony/chrony.conf を更新します。
 
-```
+``` title="このボックスはすべてコピーして実行してください"
 cat > $HOME/chrony.conf << EOF
 pool time.google.com       iburst minpoll 2 maxpoll 2 maxsources 3 maxdelay 0.3
 pool time.facebook.com     iburst minpoll 2 maxpoll 2 maxsources 3 maxdelay 0.3
@@ -403,7 +403,7 @@ chronyc tracking
     * 設定に失敗するとログインできなくなる場合があるので、設定前に二つ目のウィンドウでサーバーにログインしておいてください。万が一ログインできなくなった場合、復旧できます。
 
 
-```text
+```bash title="Ubuntu22.04の場合は１行づつ実行してください"
 sudo apt update
 sudo apt upgrade
 sudo apt install libpam-google-authenticator -y

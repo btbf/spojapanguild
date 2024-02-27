@@ -34,7 +34,7 @@ tmux ls
 
 
 既存のブロック生成ステータス通知サービスを削除する
-```
+``` title="Ubuntu22.04の場合は１行づつ実行してください"
 sudo systemctl disable cnode-blockcheck.service
 sudo rm /etc/systemd/system/cnode-blockcheck.service
 sudo systemctl daemon-reload
@@ -44,7 +44,7 @@ sudo systemctl daemon-reload
 それぞれのタブを全て実行してください。
 
 === "cncli"
-    ```bash
+    ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/service/cnode-cncli-sync.service << EOF 
     # file: /etc/systemd/system/cnode-cncli-sync.service
 
@@ -75,7 +75,7 @@ sudo systemctl daemon-reload
     ```
 
 === "validate"
-    ```bash
+    ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/service/cnode-cncli-validate.service << EOF 
     # file: /etc/systemd/system/cnode-cncli-validate.service
 
@@ -105,7 +105,7 @@ sudo systemctl daemon-reload
     ```
 
 === "leaderlog"
-    ```bash
+    ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/service/cnode-cncli-leaderlog.service << EOF
     # file: /etc/systemd/system/cnode-cncli-leaderlog.service
 
@@ -135,7 +135,7 @@ sudo systemctl daemon-reload
 
 
 === "logmonitor"
-    ```bash
+    ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/service/cnode-logmonitor.service << EOF 
     # file: /etc/systemd/system/cnode-logmonitor.service
 
@@ -166,7 +166,7 @@ sudo systemctl daemon-reload
     ```
 
 === "blocknotify"
-    ```bash
+    ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/service/cnode-blocknotify.service << EOF 
     # file: /etc/systemd/system/cnode-blocknotify.service
 
@@ -198,9 +198,8 @@ sudo systemctl daemon-reload
     ```
 
 サービスファイルをシステムディレクトリへコピーする
-!!! danger "実行時の注意"
-    * コマンドを1行ずつコピーして実行するか、まとめてコピーする場合はターミナルソフト側で「1行送信」で実行してください
-```
+
+``` title="Ubuntu22.04の場合は１行づつ実行してください"
 sudo cp $NODE_HOME/service/cnode-cncli-sync.service /etc/systemd/system/cnode-cncli-sync.service
 sudo cp $NODE_HOME/service/cnode-cncli-validate.service /etc/systemd/system/cnode-cncli-validate.service
 sudo cp $NODE_HOME/service/cnode-cncli-leaderlog.service /etc/systemd/system/cnode-cncli-leaderlog.service
@@ -209,7 +208,7 @@ sudo cp $NODE_HOME/service/cnode-blocknotify.service /etc/systemd/system/cnode-b
 ```
 
 権限を変更する
-```
+``` title="Ubuntu22.04の場合は１行づつ実行してください"
 sudo chmod 644 /etc/systemd/system/cnode-cncli-sync.service
 sudo chmod 644 /etc/systemd/system/cnode-cncli-validate.service
 sudo chmod 644 /etc/systemd/system/cnode-cncli-leaderlog.service
@@ -276,7 +275,7 @@ sed -i .env \
     * `cncli`および`logmonitor`は`cnode-node.service`に紐づいて起動します
     * `validate`、`leaderlog`、`blockNotifi`は`cnode-cncli-sync.service`に紐づいて起動します。
 
-```
+``` title="Ubuntu22.04の場合は１行づつ実行してください"
 sudo systemctl start cnode-cncli-sync.service
 sudo systemctl start cnode-logmonitor.service
 ```

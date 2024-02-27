@@ -306,9 +306,8 @@ git checkout v0.3.10
 ```
 
 設定ファイル作成
-> このボックスはすべてコピーして実行してください
 
-```
+``` title="このボックスはすべてコピーして実行してください"
 cat > libblst.pc << EOF
 prefix=/usr/local
 exec_prefix=\${prefix}
@@ -637,7 +636,7 @@ rm mithril.tar.gz mithril-client
 ```
 mithril-client -V
 ```
-> mithril-client 0.5.17+254d266
+> Mithril Githubの[リリースノート](https://github.com/input-output-hk/mithril/releases/latest)内にある`mithril-client-cli`のバージョンをご確認ください。
 
 
 ### 3-2.スナップショット復元

@@ -30,8 +30,8 @@ status: new
         ```
 
         メタデータファイルを作成する
-        > 全選択コピーしてそのまま実行してください
-        ```
+
+        ``` title="このボックスはすべてコピーして実行してください"
         cat > $NODE_HOME/poolMetaData.json << EOF
         {
             "name": "$name",

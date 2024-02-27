@@ -187,7 +187,7 @@ cd service
 ```
 
 === "cncli"
-    ```bash
+    ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/service/cnode-cncli-sync.service << EOF 
     # file: /etc/systemd/system/cnode-cncli-sync.service
 
@@ -218,7 +218,7 @@ cd service
     ```
 
 === "validate"
-    ```bash
+    ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/service/cnode-cncli-validate.service << EOF 
     # file: /etc/systemd/system/cnode-cncli-validate.service
 
@@ -248,7 +248,7 @@ cd service
     ```
 
 === "leaderlog"
-    ```bash
+    ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/service/cnode-cncli-leaderlog.service << EOF
     # file: /etc/systemd/system/cnode-cncli-leaderlog.service
 
@@ -277,7 +277,7 @@ cd service
     ```
 
 === "logmonitor"
-    ```bash
+    ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/service/cnode-logmonitor.service << EOF 
     # file: /etc/systemd/system/cnode-logmonitor.service
 

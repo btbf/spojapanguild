@@ -218,7 +218,7 @@ BPノードを一旦停止する
 
     起動スクリプトにKES、VRF、運用証明書のパスを追記し更新します。
 
-    ```bash
+    ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/startBlockProducingNode.sh << EOF 
     #!/bin/bash
     DIRECTORY=$NODE_HOME

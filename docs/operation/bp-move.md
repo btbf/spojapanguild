@@ -220,59 +220,7 @@ SJGツールを起動し、「[2] ブロック生成状態チェック」です�
 ### **4-8. ブロック生成ステータス通知設定**
 
 === "旧BPで導入済みの場合"
-    依存環境インストール
-    === "新BP"
-    ```
-    sudo apt install -y python3-watchdog python3-tz python3-dateutil python3-requests build-essential libssl-dev libffi-dev python3-dev python3-pip
-    ```
-    ```
-    pip install discordwebhook python-dotenv slackweb
-    ```
-    パーミッション変更
-    ```
-    chmod +x $NODE_HOME/guild-db/blocklog/block_check.py
-    ```
-    サービスファイル作成
-    ```
-    cat > $NODE_HOME/service/cnode-blockcheck.service << EOF 
-    # file: /etc/systemd/system/cnode-blockcheck.service
-
-    [Unit]
-    Description=Cardano Node - CNCLI blockcheck
-    BindsTo=cnode-cncli-sync.service
-    After=cnode-cncli-sync.service
-
-    [Service]
-    Type=oneshot
-    RemainAfterExit=yes
-    Restart=on-failure
-    RestartSec=20
-    User=$(whoami)
-    WorkingDirectory=$NODE_HOME
-    ExecStart=/usr/bin/tmux new -d -s blockcheck
-    ExecStartPost=/usr/bin/tmux send-keys -t blockcheck 'cd $NODE_HOME/guild-db/blocklog' Enter
-    ExecStartPost=/usr/bin/tmux send-keys -t blockcheck python3 Space block_check.py Enter
-    ExecStop=/usr/bin/tmux kill-session -t blockcheck
-    KillSignal=SIGINT
-    RestartKillSignal=SIGINT
-    SuccessExitStatus=143
-    StandardOutput=syslog
-    StandardError=syslog
-    SyslogIdentifier=cnode-blockcheck
-    TimeoutStopSec=5
-
-    [Install]
-    WantedBy=cnode-cncli-sync.service
-    EOF
-    ```
-    ```
-    sudo cp $NODE_HOME/service/cnode-blockcheck.service /etc/systemd/system/cnode-blockcheck.service
-    sudo chmod 644 /etc/systemd/system/cnode-blockcheck.service
-    ```
-    ```
-    sudo systemctl daemon-reload
-    sudo systemctl enable cnode-blockcheck.service
-    ```
+    [SPO BlockNotify移行マニュアル](./blocknotify-reinstall.md)に沿って移行してください。
 
 === "旧BPで未導入の場合"
     

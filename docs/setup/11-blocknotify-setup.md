@@ -88,6 +88,7 @@ wget https://github.com/btbf/block-notify/archive/refs/tags/${bn_release}.tar.gz
 cd $NODE_HOME/scripts
 tar zxvf ${bn_release}.tar.gz block-notify-${bn_release}/block_notify.py block-notify-${bn_release}/.env block-notify-${bn_release}/i18n/
 mv block-notify-${bn_release} block-notify
+rm ${bn_release}.tar.gz
 cd block-notify
 ```
 
@@ -225,7 +226,7 @@ nano .env
 
 **サービスファイルを設定する**
 === "ブロックプロデューサーノード"
-    ```bash
+    ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/service/cnode-blocknotify.service << EOF 
     # file: /etc/systemd/system/cnode-blocknotify.service
 
@@ -260,7 +261,7 @@ nano .env
     sudo cp $NODE_HOME/service/cnode-blocknotify.service /etc/systemd/system/cnode-blocknotify.service
     ```
 
-    ```
+    ```bash title="Ubuntu22.04の場合は１行づつ実行してください"
     sudo chmod 644 /etc/systemd/system/cnode-blocknotify.service
     sudo systemctl daemon-reload
     sudo systemctl enable cnode-blocknotify.service
@@ -358,6 +359,8 @@ sudo systemctl start cnode-blocknotify.service
 
 ```
 sudo systemctl stop cnode-blocknotify.service
+```
+```
 sudo systemctl disable cnode-blocknotify.service
 sudo rm /etc/systemd/system/cnode-blocknotify.service
 ```
