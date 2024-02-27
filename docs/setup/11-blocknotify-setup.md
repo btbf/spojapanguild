@@ -88,6 +88,7 @@ wget https://github.com/btbf/block-notify/archive/refs/tags/${bn_release}.tar.gz
 cd $NODE_HOME/scripts
 tar zxvf ${bn_release}.tar.gz block-notify-${bn_release}/block_notify.py block-notify-${bn_release}/.env block-notify-${bn_release}/i18n/
 mv block-notify-${bn_release} block-notify
+rm ${bn_release}.tar.gz
 cd block-notify
 ```
 
