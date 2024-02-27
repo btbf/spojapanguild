@@ -39,13 +39,15 @@ echo "BPポートは${b_PORT}です"
 ファイアウォール旧BPポート許可を削除
 
 > 山かっこ<>は不要です
-```bash
+```bash 
 sudo ufw status numbered
+```
+```
 sudo ufw delete <削除したい番号>
 ```
 
 新しいBPポート番号の許可を設定（リレーが２台ある想定） 
-```
+```bash title="Ubuntu22.04の場合は１行づつ実行してください"
 sudo ufw allow from <リレー１> to any port ${b_PORT}
 sudo ufw allow from <リレー２> to any port ${b_PORT}
 sudo ufw reload

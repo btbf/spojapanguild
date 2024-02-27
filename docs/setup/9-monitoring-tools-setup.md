@@ -26,7 +26,7 @@
 prometheusインストール
 
 === "リレーノード1"
-    ```text
+    ```bash
     sudo apt install -y prometheus prometheus-node-exporter
     ```
 
@@ -58,7 +58,7 @@ grafanaインストール
 
 === "リレーノード1"
 
-    ```bash
+    ```bash bash title="Ubuntu22.04の場合は１行づつ実行してください"
     sudo systemctl enable grafana-server.service
     sudo systemctl enable prometheus.service
     sudo systemctl enable prometheus-node-exporter.service
@@ -77,7 +77,8 @@ grafanaインストール
     ```
     
     FW設定でPrometheusメトリクスポートをリレー1のIP限定で開放する
-    ```bash
+
+    ```bash bash title="Ubuntu22.04の場合は１行づつ実行してください"
     sudo ufw allow from <リレーノード1のIP> to any port 12798
     sudo ufw allow from <リレーノード1のIP> to any port 9100
     sudo ufw reload
@@ -259,7 +260,7 @@ prometheus.yml構文チェック
 
 === "リレーノード1"
 
-    ```bash
+    ```bash bash title="Ubuntu22.04の場合は１行づつ実行してください"
     sudo systemctl restart grafana-server.service
     sudo systemctl restart prometheus.service
     sudo systemctl restart prometheus-node-exporter.service

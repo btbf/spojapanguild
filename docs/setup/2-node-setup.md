@@ -5,7 +5,11 @@
     | :---------- | :---------- | :---------- | :---------- |
     | 8.7.3 | 8.17.0.0 | 8.10.7 | 3.8.1.0 | 
 
-    * <font color=red>複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。</font>
+!!! danger "コマンド実行時の注意点"
+    * Ubuntuコマンド初心者の方は、コードボックスに複数行のコマンドがある場合でも、コマンドを1行づつコピーして実行するようにしてください。ただし `cat > xxx << EOF`のボックスについてはコードボックスのコピーボタンを使用してコマンドラインに貼り付けてください。
+    * 複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合、途中のコマンドでエラーが表示されている場合がありますので見落とさないようご注意ください。また、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。
+    * 複数行のsudoコマンドを一度に貼り付けてsudoパスワードを求められた場合、1行目のコマンドしか実行されませんので残りのコマンドを再度実行してください。
+    * Ubuntu22.04の場合、複数行のsudoコマンドを1度に貼り付けると1行目しか実行されませんので、必ず1行ずつ貼り付けて実行してください。
 
 ## **2-1. 依存関係インストール**
 
@@ -109,9 +113,8 @@ git checkout v0.3.10
 ```
 
 2.設定ファイル作成
-> このボックスはすべてコピーして実行してください
 
-```text
+```bash title="このボックスはすべてコピーして実行してください"
 cat > libblst.pc << EOF
 prefix=/usr/local
 exec_prefix=\${prefix}
@@ -128,9 +131,8 @@ EOF
 ```
 
 3.設定ファイルコピー
-> このボックスは1行ずつコピーして実行してください
 
-```bash
+```bash title="Ubuntu22.04の場合は１行づつ実行してください"
 sudo cp libblst.pc /usr/local/lib/pkgconfig/
 sudo cp bindings/blst_aux.h bindings/blst.h bindings/blst.hpp  /usr/local/include/
 sudo cp libblst.a /usr/local/lib
@@ -397,7 +399,7 @@ source $HOME/.bashrc
     ```
 
     起動スクリプトファイルを作成する
-    ```bash
+    ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/startRelayNode1.sh << EOF 
     #!/bin/bash
     DIRECTORY=$NODE_HOME
@@ -423,7 +425,7 @@ source $HOME/.bashrc
     ```
 
     起動スクリプトファイルを作成する
-    ```bash
+    ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/startBlockProducingNode.sh << EOF 
     #!/bin/bash
     DIRECTORY=$NODE_HOME
@@ -463,7 +465,7 @@ source $HOME/.bashrc
     ```
 
 !!! info ""
-    勢いよくログが流れていたら起動成功です  
+    勢いよくログが流れ、ログ内に`Chain extended, new tip: xxxx`のログが流れていたら正常です。
 
 
 一旦ノードを停止します。
@@ -492,7 +494,7 @@ killall -s 2 cardano-node
 
 === "リレーノード"
 
-    ```bash
+    ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/cardano-node.service << EOF 
     # The Cardano node service (part of systemd)
     # file: /etc/systemd/system/cardano-node.service 
@@ -513,6 +515,8 @@ killall -s 2 cardano-node
     LimitNOFILE=32768
     Restart=always
     RestartSec=5
+    StandardOutput=syslog
+    StandardError=syslog
     SyslogIdentifier=cardano-node
 
     [Install]
@@ -522,7 +526,7 @@ killall -s 2 cardano-node
 
 === "ブロックプロデューサーノード"
 
-    ```bash
+    ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/cardano-node.service << EOF 
     # The Cardano node service (part of systemd)
     # file: /etc/systemd/system/cardano-node.service 
@@ -543,6 +547,8 @@ killall -s 2 cardano-node
     LimitNOFILE=32768
     Restart=always
     RestartSec=5
+    StandardOutput=syslog
+    StandardError=syslog
     SyslogIdentifier=cardano-node
 
     [Install]
@@ -562,7 +568,7 @@ sudo chmod 644 /etc/systemd/system/cardano-node.service
 
 次のコマンドを実行して、OS起動時にサービスの自動起動を有効にします。
 
-```text
+```bash title="Ubuntu22.04の場合は１行づつ実行してください"
 sudo systemctl daemon-reload
 sudo systemctl enable cardano-node
 sudo systemctl start cardano-node

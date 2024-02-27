@@ -1,18 +1,18 @@
 # 変更履歴
 
-## 2024/2/26　ver. 13.1.0
+## 2024/02/26　ver. 13.1.0
 !!! note ""
     * [**SPO Block Notify設定**](./setup/11-blocknotify-setup.md)更新
     * [**SPO Block Notify移行マニュアル**](./operation/blocknotify-reinstall.md)追加
     * 軽微な修正
 
-## 2024/1/27　ver. 13.0.1
+## 2024/01/27　ver. 13.0.1
 !!! note ""
     * [**ノードアップデート手順**](./operation/node-update.md)更新
         * cncli.sh 同期エラーの対処法追加
         * 軽微な修正
 
-## 2024/1/26　ver. 13.0.0
+## 2024/01/26　ver. 13.0.0
 !!! note ""
     * [**推奨サーバースペック変更**](./index.md) RAM 16GB→24GB / SSD 200GB→300GB
 
@@ -35,7 +35,7 @@
         * ディスク空き容量とDB容量表示追加
     
 
-## 2024/1/5　ver. 12.9.5
+## 2024/01/05　ver. 12.9.5
 !!! note ""
     * [プール情報(pool.cert)の更新](./operation/cert-update.md) メタデータファイルにnonce値を追加  
     プール情報更新時においてメタデータURLのみの変更で、同一ファイル(ハッシュ値)を使用した場合、SMASHサーバーのキャッシュ読み込みにおいて参照データの整合性が取れず、KoiosAPIでもデータ参照出来ないためメタデータにnonce値を設定し異なるハッシュ値でチェーンに登録する仕様へ変更。

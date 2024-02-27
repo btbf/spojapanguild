@@ -66,7 +66,8 @@ git clone https://github.com/input-output-hk/mithril.git
 ```
 cd mithril
 git fetch --all --prune
-git checkout tags/2403.1
+mithril_release="$(curl -s https://api.github.com/repos/input-output-hk/mithril/releases/latest | jq -r '.tag_name')
+git checkout tags/${mithril_release}
 ```
 
 ビルド
@@ -79,7 +80,7 @@ make build
 ```
 ./mithril-client -V
 ```
-> mithril-client 0.5.17
+> Mithril Githubの[リリースノート](https://github.com/input-output-hk/mithril/releases/latest)内にある`mithril-client-cli`のバージョンをご確認ください。
 
 システムフォルダへコピー
 ```
@@ -90,7 +91,6 @@ sudo mv mithril-client /usr/local/bin/mithril-client
 ```
 mithril-client -V
 ```
-> mithril-client 0.5.17
 
 ## 3.DBブートストラップ
 
@@ -119,7 +119,7 @@ rm -rf $NODE_HOME/db
 ```
 mithril-client snapshot download --download-dir $NODE_HOME latest
 ```
-> スナップショットダウンロード～解凍まで自動的に行われます。1/6～6/6が終了するまで待ちましょう
+> スナップショットダウンロード～解凍まで自動的に行われます。1/5～5/5が終了するまで待ちましょう
 
 tmux作業ウィンドウを終了する
 ```
