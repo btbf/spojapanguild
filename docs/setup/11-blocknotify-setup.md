@@ -96,7 +96,7 @@ cd block-notify
 ```
 sed -i .env \
     -e 's!/opt/cardano/cnode/guild-db!'${NODE_HOME}/guild-db'!' \
-    -e 's!/opt/cardano/cnode/files!'${NODE_HOME}'!' \
+    -e 's!/opt/cardano/cnode/files/!'${NODE_HOME}/${NODE_CONFIG}-'!' \
     -e 's!'\''en'\''!'\''ja'\''!' \
     -e 's!'\''Etc/UTC'\''!'\''Asia/Tokyo'\''!'
 ```
