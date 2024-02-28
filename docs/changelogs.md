@@ -1,5 +1,9 @@
 # 変更履歴
 
+## 2024/02/28　ver. 13.1.1
+!!! note ""
+    * 軽微な修正
+
 ## 2024/02/26　ver. 13.1.0
 !!! note ""
     * [**SPO Block Notify設定**](./setup/11-blocknotify-setup.md)更新

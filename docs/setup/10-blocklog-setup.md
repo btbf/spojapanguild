@@ -335,7 +335,7 @@ sudo systemctl enable cnode-cncli-leaderlog.service
 sudo systemctl enable cnode-logmonitor.service
 ```
 
-### 便利なエイリアス設定
+**便利なエイリアス設定**
 !!! hint "エイリアス設定"
     スクリプトへのパスを通し、エイリアスで起動出来るようにする。
     ```
@@ -343,8 +343,13 @@ sudo systemctl enable cnode-logmonitor.service
     echo alias validate='"journalctl --no-hostname -u cnode-cncli-validate -f"' >> $HOME/.bashrc
     echo alias leaderlog='"journalctl --no-hostname -u cnode-cncli-leaderlog -f"' >> $HOME/.bashrc
     echo alias logmonitor='"journalctl --no-hostname -u cnode-logmonitor -f"' >> $HOME/.bashrc
-    echo alias blocknotify='"journalctl --no-hostname -u cnode-blocknotify -f"' >> $HOME/.bashrc
     ```
+
+    環境変数再読み込み
+    ```
+    source $HOME/.bashrc
+    ```
+
     以下のコマンドを入力して実行すると、サービスファイルログが閲覧できます。  
     単語を入力するだけで、起動状態(ログ)を確認できます。  
     `cnclilog`　`validate`　`leaderlog`　`logmonitor`
