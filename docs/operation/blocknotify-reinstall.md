@@ -269,6 +269,30 @@ sed -i .env \
     -e 's!auto_leader!nextepoch_leader_date!'
 ```
 
+!!! hint "envファイル内容詳細"
+    個別に設定を変更する場合は以下のコマンドで編集してください。
+    ```
+    nano $NODE_HOME/scripts/block-notify/.env
+    ```
+    
+    | 項目      | 使用用途                          |
+    | ----------- | ------------------------------------ |
+    | `guild_db_dir` | guild-dbのパスを入力する |
+    | `shelley_genesis` | shelley_genesisのファイルパスを入力する |
+    | `byron_genesis` | byron_genesisのファイルパスを入力する |
+    | `language` | 通知言語を入力する
+    | `ticker`       | プールティッカー名を入力する  |
+    | `line_notify_token`      | Line Notifyトークンを入力する |
+    | `dc_notify_url`    | DiscordウェブフックURLを入力する |
+    | `slack_notify_url`    | SlackウェブフックURLを入力する |
+    | `teleg_token`    | Telegram APIトークンを入力する |
+    | `teleg_id`    | Telegram ChatIDを入力する |
+    | `b_timezone`    | お住いのタイムゾーンを指定する |
+    | `bNotify`    | 通知先を指定する |
+    | `bNotify_st`    | 通知基準を設定する |
+    | `nextepoch_leader_date`    | 次エポックスケジュール日時の通知有無 |
+
+
 ## 3.サービス起動
 !!! note "サービス起動について"
 
@@ -300,7 +324,7 @@ sudo systemctl start cnode-logmonitor.service
     ```
     以下のコマンドを入力して実行すると、サービスファイルログが閲覧できます。  
     単語を入力するだけで、起動状態(ログ)を確認できます。  
-    `cnclilog`　`validate`　`leaderlog`　`logmonitor`
+    `cnclilog`　`validate`　`leaderlog`　`logmonitor` `blocknotify`
 
 
 他サービスの起動確認
