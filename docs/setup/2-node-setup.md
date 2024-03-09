@@ -15,13 +15,6 @@
 
 ターミナルを起動し、以下のコマンドを入力しましょう！
 
-新しいTMUXセッションを開く
-
-```
-tmux new -s build
-```
-
-
 まずはじめに、パッケージを更新しUbuntuを最新の状態に保ちます。
 
 ```bash
@@ -29,6 +22,12 @@ sudo apt update -y && sudo apt upgrade -y
 ```
 ```bash
 sudo apt install git jq bc automake tmux rsync htop curl build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ wget libncursesw5 libtool autoconf liblmdb-dev -y
+```
+
+新しいTMUXセッションを開く
+
+```
+tmux new -s build
 ```
 
 ### **Libsodiumインストール**
@@ -226,43 +225,6 @@ ghc --version
     GHCバージョン：「8.10.7」であることを確認してください。
 
 
-環境変数を設定しパスを通します。  
-ノード設定ファイルは **$NODE\_HOME**(例：/home/user/cnode) に設定されます。
-
-```bash
-echo PATH="$HOME/.local/bin:$PATH" >> $HOME/.bashrc
-echo export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH" >> $HOME/.bashrc
-echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
-echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
-```
-
-環境変数に接続ネットワークを指定する
-```bash
-echo export NODE_CONFIG=mainnet >> $HOME/.bashrc
-echo export NODE_NETWORK='"--mainnet"' >> $HOME/.bashrc
-echo export CARDANO_NODE_NETWORK_ID=mainnet >> $HOME/.bashrc
-```
-
-??? テストネットの場合はこちら
-    === "Preview(テストネット)"
-        ```
-        echo export NODE_CONFIG=preview >> $HOME/.bashrc
-        echo export NODE_NETWORK='"--testnet-magic 2"' >> $HOME/.bashrc
-        echo export CARDANO_NODE_NETWORK_ID=2 >> $HOME/.bashrc
-        ```
-
-    === "PreProd(テストネット)"
-        ```
-        echo export NODE_CONFIG=preprod >> $HOME/.bashrc
-        echo export NODE_NETWORK='"--testnet-magic 1"' >> $HOME/.bashrc
-        echo export CARDANO_NODE_NETWORK_ID=1 >> $HOME/.bashrc
-        ```
-
-bashrc再読み込み
-```
-source $HOME/.bashrc
-```
-
 ## **2-2. ソースコードからビルド**
 
 !!! info "確認"
@@ -321,11 +283,48 @@ git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7
 git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
   
 
-
 TMUXセッションを閉じる
 
 ```
 exit
+```
+
+
+環境変数を設定しパスを通します。  
+ノード設定ファイルは **$NODE\_HOME**(例：/home/user/cnode) に設定されます。
+
+```bash
+echo PATH="$HOME/.local/bin:$PATH" >> $HOME/.bashrc
+echo export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH" >> $HOME/.bashrc
+echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
+echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
+```
+
+環境変数に接続ネットワークを指定する
+```bash
+echo export NODE_CONFIG=mainnet >> $HOME/.bashrc
+echo export NODE_NETWORK='"--mainnet"' >> $HOME/.bashrc
+echo export CARDANO_NODE_NETWORK_ID=mainnet >> $HOME/.bashrc
+```
+
+??? テストネットの場合はこちら
+    === "Preview(テストネット)"
+        ```
+        echo export NODE_CONFIG=preview >> $HOME/.bashrc
+        echo export NODE_NETWORK='"--testnet-magic 2"' >> $HOME/.bashrc
+        echo export CARDANO_NODE_NETWORK_ID=2 >> $HOME/.bashrc
+        ```
+
+    === "PreProd(テストネット)"
+        ```
+        echo export NODE_CONFIG=preprod >> $HOME/.bashrc
+        echo export NODE_NETWORK='"--testnet-magic 1"' >> $HOME/.bashrc
+        echo export CARDANO_NODE_NETWORK_ID=1 >> $HOME/.bashrc
+        ```
+
+bashrc再読み込み
+```
+source $HOME/.bashrc
 ```
 
 
@@ -647,7 +646,7 @@ sed -i $NODE_HOME/scripts/env \
     -e '1,73s!#CNODE_PORT=6000!CNODE_PORT='${b_PORT}'!' \
     -e '1,73s!#UPDATE_CHECK="Y"!UPDATE_CHECK="N"!' \
     -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/'${NODE_CONFIG}'-config.json"!' \
-    -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node0.socket"!SOCKET="${CNODE_HOME}/db/socket"!'
+    -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node.socket"!SOCKET="${CNODE_HOME}/db/socket"!'
 ```
 
 Guild Liveviewを起動します。
