@@ -321,9 +321,9 @@ rm -rf $NODE_HOME/cardano-wallet-shelley-2020.7.28
         ●誓約金の預け先(誓約として設定したい額)  
 
 === "テストネット"
-    !!! info "テストネット用ADAの請求"
-        [テストネット用口座](https://testnets.cardano.org/en/shelley/tools/faucet/)にあなたの支払い用アドレスをリクエストします。  
-        テストネット用口座は24時間ごとに1000tADAを提供します。
+    !!! info "テストネット用tADAの請求"
+        [テストネット用口座](https://docs.cardano.org/cardano-testnet/tools/faucet/)にあなたの支払い用アドレスをリクエストします。  
+        テストネット用口座は24時間ごとに10000tADAを提供します。
 
     次のコードを実行し。支払いアドレスを表示させます。
 

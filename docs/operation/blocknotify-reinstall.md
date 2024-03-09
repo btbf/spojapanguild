@@ -388,7 +388,7 @@ sudo systemctl start cnode-logmonitor.service
 
         Ctrl+cで閉じます
 
-=== "blockNotifi"
+=== "blockNotify"
 
     !!! info ""
         こちらのサービスはブロック生成ステータスを任意のプラットフォームへ通知します。
