@@ -24,13 +24,13 @@ status: new
 
 ### **1-1.Ubuntu初期設定**
 
-新サーバーで[Ubuntu初期設定](../../setup/1-ubuntu-setup/#0-3)を実施します。  
+新サーバーで[Ubuntu初期設定](../setup/1-ubuntu-setup.md#0-3)を実施します。  
 
 
 ### **1-2.ノードセットアップ**
 
-[依存関係インストール](../../setup/2-node-setup/#2-1-cabalghc) 〜
-[gLiveViewのインストール](../../setup/2-node-setup/#2-7-gliveview)まで実施します。
+[依存関係インストール](../setup/2-node-setup.md#2-1-cabalghc) 〜
+[gLiveViewのインストール](../setup/2-node-setup.md#2-7-gliveview)まで実施します。
   
 ## **2.旧リレー移行処理**
 

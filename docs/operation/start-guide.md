@@ -123,14 +123,14 @@
 
 :material-tooltip-edit-outline: **エポック毎作業**
 
-* [次エポックのブロック生成スケジュールを算出する](./#_11)  
+* 次エポックのブロック生成スケジュール確認 
   (320000スロットを超えてからエポック終了までに)  
 
-* [リレーノードトポロジーファイルの更新](./#_10)
+* リレーノードトポロジーファイルの更新
 
 :material-tooltip-edit-outline: **3か月毎作業**
 
-* [KES更新(1-KESの更新)](./kes-update.md)
+* [KES更新(1-KESの更新)](kes-update.md)
 
 :material-tooltip-edit-outline: **不定期作業**
 
