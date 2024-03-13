@@ -8,7 +8,7 @@ status: new
     * 本まとめは現VPS会社→新VPS会社へと `BPのみ` を移行するまとめです。
     * 実際に行う際には手順をよく読みながら進めてください。
     * ブロック生成予定まで余裕がある時に実施してください。
-    * 旧BPは[3-3.旧BPシャットダウン](./#3-3bp)まで、**起動状態** にしておいてください。
+    * 旧BPは[3-3.旧BPシャットダウン](#3-3bp)まで、**起動状態** にしておいてください。
 
 ## **1.新BPセットアップ**
 
@@ -22,13 +22,13 @@ status: new
 
 ### **1-1.Ubuntu初期設定**
 
-新サーバーで[Ubuntu初期設定](../../setup/1-ubuntu-setup/#0-3)を実施します。  
+新サーバーで[Ubuntu初期設定](../setup/1-ubuntu-setup.md#0-3)を実施します。  
 
 
 ### **1-2.ノードセットアップ**
 
-[依存関係インストール](../../setup/2-node-setup/#2-1-cabalghc) 〜
-[gLiveViewのインストール](../../setup/2-node-setup/#2-7-gliveview)まで実施します。
+[依存関係インストール](../setup/2-node-setup.md#2-1-cabalghc) 〜
+[gLiveViewのインストール](../setup/2-node-setup.md#2-7-gliveview)まで実施します。
 
 
 ## **2.既存リレー作業**
@@ -202,7 +202,7 @@ cardano-cli query protocol-parameters \
 
 ### **4-5. ブロックログ設定**
 
-- [ステークプールブロックログ導入手順](../../setup/10-blocklog-setup/)
+- [ステークプールブロックログ導入手順](../setup/10-blocklog-setup.md)
 
 !!! danger "注意"
     「10-6. 過去のブロック生成実績取得」は実施しないでください。
@@ -210,7 +210,7 @@ cardano-cli query protocol-parameters \
 
 ### **4-6. SJGツール導入**
 
-- [SPO JAPAN GUILD TOOL](../../operation/tool/#spo-japan-guild-tool)
+- [SPO JAPAN GUILD TOOL](../operation/tool.md)
 
 
 ### **4-7. ブロック生成状態チェック**
@@ -220,7 +220,7 @@ SJGツールを起動し、「[2] ブロック生成状態チェック」です�
 ### **4-8. ブロック生成ステータス通知設定**
 
 === "旧BPで導入済みの場合"
-    [SPO BlockNotify移行マニュアル](./blocknotify-reinstall.md)に沿って移行してください。
+    [SPO BlockNotify移行マニュアル](blocknotify-reinstall.md)に沿って移行してください。
 
 === "旧BPで未導入の場合"
     

@@ -92,7 +92,7 @@ sudo ufw reload
     ![](../images/grafana-security/1-5.png)
 
 
-`xxxx.bbb.com`を[[1.ドメイン(サブドメイン)を取得する]](./#1)で取得したドメイン(サブドメイン)に置き換えて実行する
+`xxxx.bbb.com`を[[1.ドメイン(サブドメイン)を取得する]](#1)で取得したドメイン(サブドメイン)に置き換えて実行する
 
 ```
 domain=xxxx.bbb.com
@@ -222,7 +222,7 @@ sudo certbot --nginx
 ## 5.nginx設定変更
 
 1.websocketを有効にする  
-`xxxx.bbb.com`を[[1.ドメイン(サブドメイン)を取得する]](./#1)で取得したドメイン(サブドメイン)に置き換えて実行する
+`xxxx.bbb.com`を[[1.ドメイン(サブドメイン)を取得する]](#1)で取得したドメイン(サブドメイン)に置き換えて実行する
 ```
 domain=xxxx.bbb.com
 ```
