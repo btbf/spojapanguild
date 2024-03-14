@@ -100,7 +100,7 @@ pip3 install watchdog pytz python-dateutil requests discordwebhook slackweb i18n
 bn_release="$(curl -s https://api.github.com/repos/btbf/block-notify/releases/latest | jq -r '.tag_name')"
 wget https://github.com/btbf/block-notify/archive/refs/tags/${bn_release}.tar.gz -P $NODE_HOME/scripts
 cd $NODE_HOME/scripts
-tar zxvf ${bn_release}.tar.gz block-notify-${bn_release}/block_notify.py block-notify-${bn_release}/.env block-notify-${bn_release}/i18n/
+tar zxvf ${bn_release}.tar.gz block-notify-${bn_release}/block_notify.py block-notify-${bn_release}/config.ini block-notify-${bn_release}/i18n/ 
 mv block-notify-${bn_release} block-notify
 rm ${bn_release}.tar.gz
 
@@ -208,7 +208,7 @@ cd block-notify
 sed -i config.ini \
     -e 's!/opt/cardano/cnode!'${NODE_HOME}'!' \
     -e 's!files/!'${NODE_CONFIG}-'!' \
-    -e 's!en!ja!' \
+    -e 's!notify_language = en!notify_language = ja!' \
     -e 's!Etc/UTC!Asia/Tokyo!'
 ```
 
@@ -228,16 +228,16 @@ nano config.ini
     | `notify_timezone`   | Asia/Tokyo<br>[タイムゾーン一覧](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568) | お住いの[タイムゾーン](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568)を指定する |
     | `notify_platform`   | `Line`<br>`Discord`<br>`Slack`<br>`Telegram` | 通知先プラットフォームを指定する<br> (複数指定は無効) |
     | `notify_level`   |全て:`All`<br>Confirm以外:`ExceptCofirm`<br>Missのみ:`OnlyMissed`  | 通知基準を設定する |
-    | `nextepoch_leader_date`   |概要のみ:`SummaryOnly`<br>概要と日付:`SummaryDate` | 次エポックスケジュール日時の通知有無 |
+    | `nextepoch_leader_date`   |概要のみ:`SummaryOnly`<br>概要と日付:`SummaryDate` | 次エポックスケジュール日時の通知有無<br>次エポックスケジュール日付一覧を通知に流したくない場合は`SummaryOnly`を記載してください |
     | `line_notify_token`     |[LINE設定の(8)](#__tabbed_1_1)で発行したトークンID | Line Notifyトークンを入力する |
     | `discord_webhook_url`   |[Discord設定の(7)](#__tabbed_1_2)で発行したウェブフックURL| DiscordウェブフックURLを入力する |
     | `slack_webhook_url`   |[Slack設定の(4)](#__tabbed_1_4)で発行したWebhook URL| SlackウェブフックURLを入力する |
     | `telegram_token`   |[Telegram設定の(5)](#__tabbed_1_3)で発行したAPIトークン | Telegram APIトークンを入力する |
     | `telegram_id`   |[Telegram設定の(9)](#__tabbed_1_3)で表示されたChat id| Telegram ChatIDを入力する |
     | `node_home` |ex.)`/home/usr/cnode`| node_homeディレクトリパスを入力する |
-    | `guild_db_dir` |ex.)`%(node_home)s/guild-db/blocklog/`| guild-dbのパスを入力する |
-    | `shelley_genesis` |ex.)`%(node_home)s/files/shelley-genesis.json`| shelley_genesisのファイルパスを入力する |
-    | `byron_genesis` |ex.)`%(node_home)s/files/byron-genesis.json`| byron_genesisのファイルパスを入力する |
+    | `guild_db_dir` |ex.)`%(node_home)s/guild-db/blocklog/`| guild-dbのパスを入力する<br>`%(node_home)s`は変数のため変更しないでください |
+    | `shelley_genesis` |ex.)`%(node_home)s/files/shelley-genesis.json`| shelley_genesisのファイルパスを入力する<br>`%(node_home)s`は変数のため変更しないでください |
+    | `byron_genesis` |ex.)`%(node_home)s/files/byron-genesis.json`| byron_genesisのファイルパスを入力する<br>`%(node_home)s`は変数のため変更しないでください |
 
 
 
@@ -363,6 +363,11 @@ rm -rf block-notify-${bn_release} ${bn_release}.tar.gz
 SPO BlockNotifyを起動する
 ```
 sudo systemctl start cnode-blocknotify.service
+```
+
+バージョン確認
+```
+python3 $NODE_HOME/scripts/block-notify/block_notify.py version
 ```
 
 ## **11-5.アンインストール手順**
