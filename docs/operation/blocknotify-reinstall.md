@@ -260,7 +260,7 @@
     Block Notifyダウンロード
     <!--bn_release="$(curl -s https://api.github.com/repos/btbf/block-notify/releases/latest | jq -r '.tag_name')"-->
     ```
-    bn_release=2.2.0-pre2
+    bn_release="$(curl -s https://api.github.com/repos/btbf/block-notify/releases/latest | jq -r '.tag_name')"
     wget https://github.com/btbf/block-notify/archive/refs/tags/${bn_release}.tar.gz -P $NODE_HOME/scripts
     ```
 
@@ -529,7 +529,7 @@
     Block Notifyダウンロード
     <!--bn_release="$(curl -s https://api.github.com/repos/btbf/block-notify/releases/latest | jq -r '.tag_name')"-->
     ```
-    bn_release=2.2.0-pre2
+    bn_release="$(curl -s https://api.github.com/repos/btbf/block-notify/releases/latest | jq -r '.tag_name')"
     wget https://github.com/btbf/block-notify/archive/refs/tags/${bn_release}.tar.gz -P $NODE_HOME/scripts
     ```
 
