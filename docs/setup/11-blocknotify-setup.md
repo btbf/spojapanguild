@@ -6,7 +6,7 @@
 
 
 !!! info "概要"
-    最終更新日：2024/2/27  v2.1.3
+    最終更新日：2024/3/14  v2.2.0
 
     * ブロックログで表示されるブロック生成結果を任意のソーシャルアプリへ通知します。   
     ![*](../images/block_notify/image.png)
@@ -27,6 +27,9 @@
 
 ??? info "更新履歴▼"
 
+    * 2.2.0  ・サービス再起動時の強制終了バグを解消
+    　　　　　・プログラム最適化
+    　　　　　・Python3.10以上
     * 2.1.3　・次スケジュールが無い場合のエラー解消
     * 2.1.2　・次エポックスケジュール日付の通知有無対応
     * 2.1.1　・ブロックログサービスファイル対応
@@ -63,22 +66,32 @@
 
 **Python環境をセットアップする**
 
+パッケージを更新する
+```bash
+sudo apt update && sudo apt upgrade -y
+```
+
 pythonバージョンを確認する
 ```bash
 python3 -V
 ```
-> Python 3.8.10以上 
+> Python 3.10以上
 
-パッケージを更新する
-```bash
-sudo apt update -y
-```
+??? "Python 3.9以下の場合こちらのツールでアップデートしてください"
+    pythonUpdate.shをダウンロードして自動アップデートする
+    ```
+    cd
+    wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/pythonUpdate.sh
+    chmod +x pythonUpdate.sh
+    ./pythonUpdate.sh
+    ```
 
+依存関係をインストールする
 ```bash
-sudo apt install -y python3-watchdog python3-tz python3-dateutil python3-requests build-essential libssl-dev libffi-dev python3-dev python3-pip
+sudo apt install -y build-essential libssl-dev libffi-dev python3-dev python3-pip python3-testresources
 ```
 ```bash
-pip install discordwebhook python-dotenv slackweb i18nice
+pip3 install watchdog pytz python-dateutil requests discordwebhook slackweb i18nice
 ```
 
 **実行スクリプトと設定ファイルをダウンロードする**
@@ -87,21 +100,11 @@ pip install discordwebhook python-dotenv slackweb i18nice
 bn_release="$(curl -s https://api.github.com/repos/btbf/block-notify/releases/latest | jq -r '.tag_name')"
 wget https://github.com/btbf/block-notify/archive/refs/tags/${bn_release}.tar.gz -P $NODE_HOME/scripts
 cd $NODE_HOME/scripts
-tar zxvf ${bn_release}.tar.gz block-notify-${bn_release}/block_notify.py block-notify-${bn_release}/.env block-notify-${bn_release}/i18n/
+tar zxvf ${bn_release}.tar.gz block-notify-${bn_release}/block_notify.py block-notify-${bn_release}/config.ini block-notify-${bn_release}/i18n/ 
 mv block-notify-${bn_release} block-notify
 rm ${bn_release}.tar.gz
-cd block-notify
-```
 
-**envファイルをSJG用に書き換える**
 ```
-sed -i .env \
-    -e 's!/opt/cardano/cnode/guild-db!'${NODE_HOME}/guild-db'!' \
-    -e 's!/opt/cardano/cnode/files/!'${NODE_HOME}/${NODE_CONFIG}-'!' \
-    -e 's!'\''en'\''!'\''ja'\''!' \
-    -e 's!'\''Etc/UTC'\''!'\''Asia/Tokyo'\''!'
-```
-
 
 ## **11-2. 通知アプリの設定**
 
@@ -199,30 +202,43 @@ sed -i .env \
 
 ## **11-3. 通知プログラムの設定**
 
-**設定ファイルの編集**
+**設定ファイルをSJG用に書き換える**
+```
+cd block-notify
+sed -i config.ini \
+    -e 's!/opt/cardano/cnode!'${NODE_HOME}'!' \
+    -e 's!files/!'${NODE_CONFIG}-'!' \
+    -e 's!notify_language = en!notify_language = ja!' \
+    -e 's!Etc/UTC!Asia/Tokyo!'
+```
+
+**設定ファイルの編集**  
+以下の設定ファイル内容詳細を参照し、ご自身の環境に合わせた値を設定してください。
+
 ```bash
 cd $NODE_HOME/scripts/block-notify
-nano .env
+nano config.ini
 ```
-> .envは隠しファイルになっているので、`ls -a`コマンドで一覧表示されます。
 
-!!! hint "envファイル内容詳細"
-    | 項目      | 使用用途                          |
-    | ----------- | ------------------------------------ |
-    | `guild_db_dir` | guild-dbのパスを入力する |
-    | `shelley_genesis` | shelley_genesisのファイルパスを入力する |
-    | `byron_genesis` | byron_genesisのファイルパスを入力する |
-    | `language` | 通知言語を入力する
-    | `ticker`       | プールティッカー名を入力する  |
-    | `line_notify_token`      | Line Notifyトークンを入力する |
-    | `dc_notify_url`    | DiscordウェブフックURLを入力する |
-    | `slack_notify_url`    | SlackウェブフックURLを入力する |
-    | `teleg_token`    | Telegram APIトークンを入力する |
-    | `teleg_id`    | Telegram ChatIDを入力する |
-    | `b_timezone`    | お住いのタイムゾーンを指定する |
-    | `bNotify`    | 通知先を指定する |
-    | `bNotify_st`    | 通知基準を設定する |
-    | `nextepoch_leader_date`    | 次エポックスケジュール日時の通知有無 |
+!!! hint "設定ファイル内容詳細"
+    | 項目      | 値      | 使用用途                          |
+    | ----------- |---------| ------------------------------------ |
+    | `pool_ticker`      | ex.) SJG | プールティッカー名を入力する  |
+    | `notify_language` | 英語:`en`<br>日本語:`ja`| 通知言語を入力する |
+    | `notify_timezone`   | Asia/Tokyo<br>[タイムゾーン一覧](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568) | お住いの[タイムゾーン](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568)を指定する |
+    | `notify_platform`   | `Line`<br>`Discord`<br>`Slack`<br>`Telegram` | 通知先プラットフォームを指定する<br> (複数指定は無効) |
+    | `notify_level`   |全て:`All`<br>Confirm以外:`ExceptCofirm`<br>Missのみ:`OnlyMissed`  | 通知基準を設定する |
+    | `nextepoch_leader_date`   |概要のみ:`SummaryOnly`<br>概要と日付:`SummaryDate` | 次エポックスケジュール日時の通知有無<br>次エポックスケジュール日付一覧を通知に流したくない場合は`SummaryOnly`を記載してください |
+    | `line_notify_token`     |[LINE設定の(8)](#__tabbed_1_1)で発行したトークンID | Line Notifyトークンを入力する |
+    | `discord_webhook_url`   |[Discord設定の(7)](#__tabbed_1_2)で発行したウェブフックURL| DiscordウェブフックURLを入力する |
+    | `slack_webhook_url`   |[Slack設定の(4)](#__tabbed_1_4)で発行したWebhook URL| SlackウェブフックURLを入力する |
+    | `telegram_token`   |[Telegram設定の(5)](#__tabbed_1_3)で発行したAPIトークン | Telegram APIトークンを入力する |
+    | `telegram_id`   |[Telegram設定の(9)](#__tabbed_1_3)で表示されたChat id| Telegram ChatIDを入力する |
+    | `node_home` |ex.)`/home/usr/cnode`| node_homeディレクトリパスを入力する |
+    | `guild_db_dir` |ex.)`%(node_home)s/guild-db/blocklog/`| guild-dbのパスを入力する<br>`%(node_home)s`は変数のため変更しないでください |
+    | `shelley_genesis` |ex.)`%(node_home)s/files/shelley-genesis.json`| shelley_genesisのファイルパスを入力する<br>`%(node_home)s`は変数のため変更しないでください |
+    | `byron_genesis` |ex.)`%(node_home)s/files/byron-genesis.json`| byron_genesisのファイルパスを入力する<br>`%(node_home)s`は変数のため変更しないでください |
+
 
 
 **サービスファイルを設定する**
@@ -238,20 +254,13 @@ nano .env
 
     [Service]
     Type=simple
-    RemainAfterExit=yes
-    Restart=on-failure
-    RestartSec=20
     User=$(whoami)
-    WorkingDirectory=${NODE_HOME}/scripts
-    Environment="NODE_HOME=${NODE_HOME}"
-    ExecStart=/bin/bash -c 'cd ${NODE_HOME}/scripts/block-notify/ && python3 -u ./block_notify.py'
-    StandardInput=tty-force
-    SuccessExitStatus=143
+    WorkingDirectory=${NODE_HOME}/scripts/block-notify
+    ExecStart=/bin/bash -c 'cd ${NODE_HOME}/scripts/block-notify/ && python3 -u block_notify.py'
+    Restart=on-failure
     StandardOutput=syslog
     StandardError=syslog
     SyslogIdentifier=cnode-blocknotify
-    TimeoutStopSec=5
-    KillMode=mixed
 
     [Install]
     WantedBy=cnode-cncli-sync.service
@@ -354,6 +363,11 @@ rm -rf block-notify-${bn_release} ${bn_release}.tar.gz
 SPO BlockNotifyを起動する
 ```
 sudo systemctl start cnode-blocknotify.service
+```
+
+バージョン確認
+```
+python3 $NODE_HOME/scripts/block-notify/block_notify.py version
 ```
 
 ## **11-5.アンインストール手順**
