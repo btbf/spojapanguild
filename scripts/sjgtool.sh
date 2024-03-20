@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="3.7.1"
+TOOL_VERSION="3.7.2"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -107,9 +107,18 @@ case ${num} in
         if [ ${efile_check} == "true" ]; then
           echo "■paymentアドレス"
           printf "${FG_YELLOW}$(cat $WALLET_PAY_ADDR_FILENAME)${NC}\n\n"
-          cardano-cli query utxo \
-            --address $(cat $WALLET_PAY_ADDR_FILENAME) \
-            $NETWORK_IDENTIFIER
+
+          # cardano-cli query utxo \
+          #   --address $(cat $WALLET_PAY_ADDR_FILENAME) \
+          #   $NETWORK_IDENTIFIER
+
+          payment_utxo
+
+          cat fullUtxo.out
+          echo 
+          payment_addr_total=$(scale3 $total_balance)
+          printf "ウォレット残高合計:${FG_YELLOW}${payment_addr_total}${NC} ADA\n"
+          echo 
         else
           echo "$WALLET_PAY_ADDR_FILENAMEファイルが見つかりません"
           echo
@@ -468,6 +477,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
 
     mempool_CHK=`cat $CONFIG | jq ".TraceMempool"`
+    p2p_CHK=`cat $CONFIG | jq ".EnableP2P"`
 
     get_pooldata
 
@@ -546,7 +556,6 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     
     rm -rf $NODE_HOME/metaCheck
     
-
     koios_stake_total=`curl -s -X POST "$KOIOS_API/account_info" -H "Accept: application/json" -H "content-type: application/json" -d "{\"_stake_addresses\":[\"$(cat $NODE_HOME/$WALLET_STAKE_ADDR_FILENAME)\"]}" | jq -r '.[].total_balance'`
 
     if [ $active_epoch -gt $current_epoch ] && [ $future_pledge -ne $current_pledge ]; then
@@ -681,10 +690,20 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     fi
 
     echo
-    printf "${FG_MAGENTA}■Peer接続状況${NC}\n"
-    peers_in=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | grep -v "127.0.0.1" | awk -v port=":${CNODE_PORT}" '$3 ~ port {print}' | wc -l)
-    peers_out=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | awk -v port=":(${CNODE_PORT}|${EKG_PORT}|${PROM_PORT})" '$3 !~ port {print}' | wc -l)
     
+    peers_in=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | grep -v "127.0.0.1" | awk -v port=":${CNODE_PORT}" '$3 ~ port {print}' | wc -l)
+    if [ $p2p_CHK = "true" ]; then
+      #ダイナミックP2P
+      peers_out=$(curl -s localhost:12798/metrics | grep outgoingConns | awk '{ print $2 }')
+      p2p_type="ダイナミックP2P(台帳P2P)"
+
+    else
+    #手動P2P
+
+      peers_out=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | awk -v port=":(${CNODE_PORT}|${EKG_PORT}|${PROM_PORT})" '$3 !~ port {print}' | wc -l)
+      p2p_type="マニュアルP2P(トポロジーアップデータ)"
+    fi
+  
     if [[ $peers_in -eq 0 ]]; then
       peer_in_judge=" ${FG_RED}NG${NC} リレーから接続されていません"
     else
@@ -697,6 +716,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       peer_out_judge=" ${FG_GREEN}OK${NC}"
       okCnt=$((${okCnt}+1))
     fi
+    printf "${FG_MAGENTA}■Peer接続状況${NC}(${FG_YELLOW}${p2p_type}${NC})\n"
     printf "　incoming :${FG_YELLOW}$peers_in $peer_in_judge${NC}\n"
     printf "　outgoing :${FG_YELLOW}$peers_out $peer_out_judge${NC}\n"
 
