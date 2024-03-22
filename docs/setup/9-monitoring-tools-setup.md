@@ -131,94 +131,54 @@ prometheus-node-exporterアップデート
 
 リレーノード1にインストールしたPrometheusの設定ファイルを作成します。ここに記載されたサーバーのデータを取得します。
 
-=== "リレーノード1(リレー1台の場合)"
-    !!! warning "注意"
-        targets:の「xxx.xxx.xxx」は、BPのパブリックIP(静的)アドレスに置き換えて下さい
 
-    ```bash
-    cat > $HOME/prometheus.yml << EOF
-    global:
-      scrape_interval:     15s # By default, scrape targets every 15 seconds.
+!!! warning "注意"
+    targets:の「xxx.xxx.xxx」は、BPのパブリックIP(静的)アドレスに置き換えて下さい。  
+    targets:の「bb.xxx.xxx」は、リレー2のパブリックIP(静的)アドレスに置き換えて下さい。
 
-      # Attach these labels to any time series or alerts when communicating with
-      # external systems (federation, remote storage, Alertmanager).
-      external_labels:
-        monitor: 'codelab-monitor'
-    
-    # A scrape configuration containing exactly one endpoint to scrape:
-    # Here it's Prometheus itself.
-    scrape_configs:
-      # The job name is added as a label job=<job_name> to any timeseries scraped from this config.
-      - job_name: 'prometheus'
+```bash
+cat > $HOME/prometheus.yml << EOF
+global:
+  scrape_interval:     15s # By default, scrape targets every 15 seconds.
 
-        static_configs:
-          - targets: ['localhost:9100']
-            labels:
-              alias: 'relaynode1'
-              type:  'system'
-          - targets: ['xxx.xxx.xxx.xxx:9100']
-            labels:
-              alias: 'block-producing-node'
-              type:  'system'
-          - targets: ['xxx.xxx.xxx.xxx:12798']
-            labels:
-              alias: 'block-producing-node'
-              type:  'cardano-node'
-          - targets: ['localhost:12798']
-            labels:
-              alias: 'relaynode1'
-              type:  'cardano-node'
-    EOF
-    ```
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    monitor: 'codelab-monitor'
 
-=== "リレーノード1(リレー2台の場合)"
-    !!! warning "注意"
-        targets:の「xxx.xxx.xxx」は、BPのパブリックIP(静的)アドレスに置き換えて下さい。  
-        targets:の「bb.xxx.xxx」は、リレー2のパブリックIP(静的)アドレスに置き換えて下さい。
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label job=<job_name> to any timeseries scraped from this config.
+  - job_name: 'prometheus'
 
-    ```bash
-    cat > $HOME/prometheus.yml << EOF
-    global:
-      scrape_interval:     15s # By default, scrape targets every 15 seconds.
-
-      # Attach these labels to any time series or alerts when communicating with
-      # external systems (federation, remote storage, Alertmanager).
-      external_labels:
-        monitor: 'codelab-monitor'
-    
-    # A scrape configuration containing exactly one endpoint to scrape:
-    # Here it's Prometheus itself.
-    scrape_configs:
-      # The job name is added as a label job=<job_name> to any timeseries scraped from this config.
-      - job_name: 'prometheus'
-
-        static_configs:
-          - targets: ['localhost:9100']
-            labels:
-              alias: 'relaynode1'
-              type:  'system'
-          - targets: ['bb.xxx.xxx.xxx:9100']
-            labels:
-              alias: 'relaynode2'
-              type:  'system'
-          - targets: ['xx.xxx.xxx.xxx:9100']
-            labels:
-              alias: 'block-producing-node'
-              type:  'system'
-          - targets: ['xxx.xxx.xxx.xxx:12798']
-            labels:
-              alias: 'block-producing-node'
-              type:  'cardano-node'
-          - targets: ['localhost:12798']
-            labels:
-              alias: 'relaynode1'
-              type:  'cardano-node'
-          - targets: ['bb.xxx.xxx.xxx:12798']
-            labels:
-              alias: 'relaynode2'
-              type:  'cardano-node'
-    EOF
-    ```
+    static_configs:
+      - targets: ['localhost:9100']
+        labels:
+          alias: 'relaynode1'
+          type:  'system'
+      - targets: ['bb.xxx.xxx.xxx:9100']
+        labels:
+          alias: 'relaynode2'
+          type:  'system'
+      - targets: ['xx.xxx.xxx.xxx:9100']
+        labels:
+          alias: 'block-producing-node'
+          type:  'system'
+      - targets: ['xxx.xxx.xxx.xxx:12798']
+        labels:
+          alias: 'block-producing-node'
+          type:  'cardano-node'
+      - targets: ['localhost:12798']
+        labels:
+          alias: 'relaynode1'
+          type:  'cardano-node'
+      - targets: ['bb.xxx.xxx.xxx:12798']
+        labels:
+          alias: 'relaynode2'
+          type:  'cardano-node'
+EOF
+```
 
 prometheus.yml構文チェック
 === "リレーノード1"
@@ -312,7 +272,7 @@ sudo systemctl restart prometheus.service
 
 ## **9-3.Grafanaダッシュボードの設定**
 
-1. ローカルPCのブラウザから http://&lt;リレーノード1IPアドレス&gt;:3000 を開きます。
+1. ローカルPCのブラウザから http://リレーノード1IPアドレス:3000 を開きます。
 2. ログイン名・PWは **admin** / **admin**
 3. パスワードを変更します。
 4. 左上の三本線メニューを開き「Connections」→「Data sources」をクリックします。

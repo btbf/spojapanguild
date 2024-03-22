@@ -1,3 +1,6 @@
+---
+status: new
+---
 #　SPO Block Notify移行マニュアル
 
 !!! note "このマニュアルについて"
@@ -514,6 +517,7 @@
     sudo systemctl daemon-reload
     ```
 
+
     ### 2.SPO Block Notify再設定
 
     `.env`バックアップ
@@ -838,6 +842,11 @@
     サービスデーモンを再起動する
     ```
     sudo systemctl daemon-reload
+    ```
+    サービスを起動する
+    ```
+    sudo systemctl start cnode-cncli-sync.service
+    sudo systemctl start cnode-logmonitor.service
     ```
 
     ### 2.SPO Block Notify設定

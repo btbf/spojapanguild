@@ -94,6 +94,7 @@
 | **mainnet-byron-genesis.json**       | Byron設定ファイル  |
 | **mainnet-shelley-genesis.json**       | Shelley設定ファイル |
 | **mainnet-alonzo-genesis.json**      | Alonzo設定ファイル  |
+| **mainnet-conway-genesis.json**      | Conway設定ファイル  |
 | **mainnet-config.json**      | ノード設定ファイル  |
 | **mainnet-topology.json**    | トポロジーファイル |
 
@@ -104,11 +105,11 @@
 | **startRelayNode1.sh**       | リレー用ノード起動スクリプト  | リレー | :arrows_clockwise: |
 | **startBlockProducingNode.sh**       | BP用ノード起動スクリプト | BP | :arrows_clockwise: |
 | **gLiveView.sh**      | ノードGUI用スクリプト  | リレー/BP | :arrows_clockwise: |
-| **topologyUpdater.sh**    | トポロジーフェッチ登録スクリプト | リレー | :arrows_clockwise: |
-| **relay-topology_pull.sh**      | トポロジーファイル生成スクリプト  | リレー | :arrows_clockwise: |
 | **params.json**      | パラメーターファイル  | BP | :arrows_clockwise: |
 | **poolMetaData.json**      | プール情報JSON  | BP | :arrows_clockwise: |
 | **poolMetaDataHash.txt**      | poolMetaData.jsonハッシュ値ファイル  | BP | :arrows_clockwise: |
+| **topologyUpdater.sh**    | トポロジーフェッチ登録スクリプト | リレー | :arrows_clockwise: |
+| **relay-topology_pull.sh**      | トポロジーファイル生成スクリプト  | リレー | :arrows_clockwise: |
 | **fullUtxo.out**    | UTXO出力ファイル | 使用後削除可 | - |
 | **balance.out**    | ウォレット残高出力ファイル | 使用後削除可 | - |
 | **tx.tmp**    | 仮トランザクションファイル | 使用後削除可 | - |
@@ -120,13 +121,14 @@
 :material-tooltip-edit-outline: **日次作業**
 
 * ノード稼働状況チェック(Grafana等)
+* ブロック生成ステータス
 
 :material-tooltip-edit-outline: **エポック毎作業**
 
-* 次エポックのブロック生成スケジュール確認 
+* 次エポックのブロック生成スケジュール確認  
   (320000スロットを超えてからエポック終了までに)  
 
-* リレーノードトポロジーファイルの更新
+* リレーノードトポロジーファイルの更新(隠しリレーのみ)
 
 :material-tooltip-edit-outline: **3か月毎作業**
 
@@ -134,48 +136,10 @@
 
 :material-tooltip-edit-outline: **不定期作業**
 
+* Ubuntuパッケージアップデート
 * ノードアップデート
 * サードパーティ製アプリアップデート
 * サーバー障害対応
 * プール設定変更など
 
-
-### **トポロジーファイルの更新**
-
-!!! note "概要"
-    トポロジーファイルに記載されてるリレーノードは常に最新状態を保つことが望ましいため、1エポックに1回は書き換えることを推奨します。
-
-=== "リレーノード"
-  ```bash
-  cd $NODE_HOME
-  ./relay-topology_pull.sh
-  ```
-
-!!! hint "ヒント"
-    relay-topology_pull.shを実行すると新しいトポロジーファイル\(mainnet-topology.json\)を生成します。
-    新しいトポロジーファイルはノード再起動後に有効になります。
-
-=== "リレーノード"
-  ```bash
-  sudo systemctl reload-or-restart cardano-node
-  ```
-
-
-**リレーノードでgLiveView を確認**
-
-ノードが同期するか確認します。
-
-=== "リレーノード"
-  ```bash
-  cd $NODE_HOME/scripts
-  ./gLiveView.sh
-  ```
-
-### **スケジュール算出**
-
-!!! note "概要"
-    次のスロットリーダースケジュールはエポック終了までにノードを再起動することによって算出され、把握できます。(1.5日前から算出可能)  
-    エポックが切り替わった後でも算出できますが、スケジュールが分からない状態でのノード再起動となり、リスクを伴うため事前に把握することを推奨します。
-
-    * [10-9. スケジュールを算出する](../setup/10-blocklog-setup.md#10-9)へ移動する
 

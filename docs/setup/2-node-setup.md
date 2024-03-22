@@ -3,7 +3,7 @@
 !!! hint "インストールバージョン"
     | Node | CLI | GHC | Cabal |
     | :---------- | :---------- | :---------- | :---------- |
-    | 8.7.3 | 8.17.0.0 | 8.10.7 | 3.8.1.0 | 
+    | 8.9.0 | 8.20.3.0 | 8.10.7 | 3.8.1.0 | 
 
 !!! danger "コマンド実行時の注意点"
     * Ubuntuコマンド初心者の方は、コードボックスに複数行のコマンドがある場合でも、コマンドを1行づつコピーして実行するようにしてください。ただし `cat > xxx << EOF`のボックスについてはコードボックスのコピーボタンを使用してコマンドラインに貼り付けてください。
@@ -74,7 +74,7 @@ git clone https://github.com/bitcoin-core/secp256k1.git
 
 ```
 cd secp256k1/
-git checkout ac83be33
+git checkout acf5c55
 ./autogen.sh
 ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
 make
@@ -82,10 +82,10 @@ make check
 ```
 !!! note "戻り値確認"
     ``` { .yaml .no-copy }
-    Testsuite summary for libsecp256k1 0.1.0-pre
+    Testsuite summary for libsecp256k1 0.3.2
     ============================================================================
-    # TOTAL: 2
-    # PASS:  2
+    # TOTAL: 3
+    # PASS:  3
     # SKIP:  0
     # XFAIL: 0
     # FAIL:  0
@@ -93,7 +93,7 @@ make check
     # ERROR: 0
     ============================================================================
     ```
-    > PASS:2であることを確認する
+    > PASS:3であることを確認する
 
 **インストールコマンドを必ず実行する**
 ```
@@ -107,7 +107,7 @@ sudo make install
 cd $HOME/git
 git clone https://github.com/supranational/blst
 cd blst
-git checkout v0.3.10
+git checkout v0.3.11
 ./build.sh
 ```
 
@@ -123,7 +123,7 @@ includedir=\${prefix}/include
 Name: libblst
 Description: Multilingual BLS12-381 signature library
 URL: https://github.com/supranational/blst
-Version: 0.3.10
+Version: 0.3.11
 Cflags: -I\${includedir}
 Libs: -L\${libdir} -lblst
 EOF
@@ -137,6 +137,13 @@ sudo cp bindings/blst_aux.h bindings/blst.h bindings/blst.hpp  /usr/local/includ
 sudo cp libblst.a /usr/local/lib
 sudo chmod u=rw,go=r /usr/local/{lib/{libblst.a,pkgconfig/libblst.pc},include/{blst.{h,hpp},blst_aux.h}}
 ```
+
+バージョン確認
+```
+cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
+```
+> Version 0.3.11
+
 
 ### **GHCUPインストール**
 インストール変数設定
@@ -228,7 +235,7 @@ ghc --version
 ## **2-2. ソースコードからビルド**
 
 !!! info "確認"
-    バイナリーファイルは必ずソースコードからビルドするようにし、整合性をチェックしてください。IOGは現在ARMアーキテクチャ用のバイナリファイルを提供していません。Raspberry Piを使用してプールを構築する場合は、ARM用コンパイラでコンパイルする必要があります。
+    IOGは現在ARMアーキテクチャ用のバイナリファイルを提供していません。Raspberry Piを使用してプールを構築する場合は、ARM用コンパイラでコンパイルする必要があります。
 
 
 Gitからソースコードをダウンロードし、最新のタグに切り替えます。
@@ -238,7 +245,7 @@ cd $HOME/git
 git clone https://github.com/IntersectMBO/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/8.7.3
+git checkout tags/8.9.0
 ```
 
 Cabalのビルドオプションを構成します。
@@ -252,7 +259,7 @@ cabal configure --with-compiler=ghc-8.10.7
 カルダノノードをビルドします。
 
 ```sh
-cabal build cardano-cli cardano-node
+cabal build all cardano-cli
 ```
 
 !!! info "ヒント"
@@ -276,11 +283,11 @@ cardano-cli version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 8.17.0.0 - linux-x86_64 - ghc-8.10  
-git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
+>cardano-cli 8.20.3.0 - linux-x86_64 - ghc-8.10  
+git rev 0d98405a60d57e1c8e13406d51cce0e34356bd64  
 
->cardano-node 8.7.3 - linux-x86_64 - ghc-8.10  
-git rev a4a8119b59b1fbb9a69c79e1e6900e91292161e7  
+>cardano-node 8.9.0 - linux-x86_64 - ghc-8.10  
+git rev 0d98405a60d57e1c8e13406d51cce0e34356bd64  
   
 
 TMUXセッションを閉じる
@@ -337,7 +344,7 @@ config.json、genesis.json、topology.json
 mkdir $NODE_HOME
 cd $NODE_HOME
 wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/byron-genesis.json -O ${NODE_CONFIG}-byron-genesis.json
-wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/topology-legacy.json -O ${NODE_CONFIG}-topology.json
+wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/topology-non-bootstrap-peers.json -O ${NODE_CONFIG}-topology.json
 wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
 wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
 wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
@@ -350,12 +357,11 @@ wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environment
 
 ```bash
 sed -i ${NODE_CONFIG}-config.json \
-    -e 's!"EnableP2P": true!"EnableP2P": false!' \
+    -e '2i \  "SnapshotInterval": 86400,' \
     -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
     -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
     -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
     -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-    -e "s/TraceMempool\": false/TraceMempool\": true/g" \
     -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
     -e 's!"rpKeepFilesNum": 10!"rpKeepFilesNum": 30!' \
     -e 's!"rpMaxAgeHours": 24!"rpMaxAgeHours": 48!' \
@@ -363,20 +369,6 @@ sed -i ${NODE_CONFIG}-config.json \
     -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
     -e "s/127.0.0.1/0.0.0.0/g"
 ```
-
-??? テストネットの場合はこちら
-    ```bash
-    sed -i ${NODE_CONFIG}-config.json \
-        -e 's!"EnableP2P": true!"EnableP2P": false!' \
-        -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
-        -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
-        -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
-        -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-        -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-        -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "'${NODE_HOME}'/logs/node.json"\n    \],' \
-        -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
-        -e "s/127.0.0.1/0.0.0.0/g"
-    ```
 
 環境変数を追加し、.bashrcファイルを更新します。
 
@@ -389,7 +381,6 @@ source $HOME/.bashrc
 
 起動スクリプトには、ディレクトリ、ポート番号、DBパス、構成ファイルパス、トポロジーファイルパスなど、カルダノノードを実行するために必要な変数が含まれています。
 
-全行をコピーしコマンドラインに送信します。
 
 === "リレーノード"
     リレーノードで使用するポート番号を指定してターミナルで実行する
@@ -464,7 +455,7 @@ source $HOME/.bashrc
     ```
 
 !!! info ""
-    勢いよくログが流れ、ログ内に`Chain extended, new tip: xxxx`のログが流れていたら正常です。
+    ログ内に`Chain extended, new tip: xxxx`のログが流れていたら正常です。
 
 
 一旦ノードを停止します。
@@ -587,6 +578,7 @@ journalctl --unit=cardano-node --follow
     echo alias cnstart='"sudo systemctl start cardano-node"' >> $HOME/.bashrc
     echo alias cnrestart='"sudo systemctl reload-or-restart cardano-node"' >> $HOME/.bashrc
     echo alias cnstop='"sudo systemctl stop cardano-node"' >> $HOME/.bashrc
+    echo alias cnreload='"kill -HUP $(pidof cardano-node)"' >> $HOME/.bashrc
     source $HOME/.bashrc
     ```
 
@@ -595,6 +587,7 @@ journalctl --unit=cardano-node --follow
     cnode ・・・ログ表示
     cnstart ・・・ノード起動
     cnrestart ・・・ノード再起動
+    cnreload ・・・設定再読み込み
     cnstop ・・・ノード停止
     ```
 
@@ -675,17 +668,12 @@ Guild Liveviewを起動します。
     * リレーノードでは基本情報に加え、トポロジー接続状況を確認できます。  
     * BPノードでは基本情報に加え、KES有効期限、ブロック生成状況を確認できます。  
 
-??? hint "CONECTIONSについて▼"
-    ノードにpingを送信する際ICMPpingを使用します。接続先ノードのファイアウォールがICMPトラフィックを受け付ける場合のみ機能します。
-
-
-
 
 !!! warning "重要：ノード同期について"
     0エポックからブロックチェーンデータをダウンロードし同期します。最新エポックまで追いつくまでに1日半～2日かかり、完全に同期するまで次の項目には進めません。
     BPサーバーや2つ目のリレーサーバーでも同じ作業を実施してください。
 
-    <font color=red>＜Mithril-ClientによるDB同期(ベータ版)＞</font>  
+    <font color=red>＜Mithril-ClientによるDB同期＞</font>  
     `Mithril-Client`を使用することで、約2日かかっていた初回のDB同期時間を約30分以内にまで短縮することができます。  
     手順はこちら→[DB同期(Mithril)](../operation/mithril-client.md)
 
@@ -717,19 +705,23 @@ mkdir -p $NODE_HOME
 
 ??? テストネットの場合はこちら
     === "Preview"
-    echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
-    echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
-    echo export NODE_CONFIG=preview >> $HOME/.bashrc
-    echo export NODE_NETWORK='"--testnet-magic 2"' >> $HOME/.bashrc
-    echo export CARDANO_NODE_NETWORK_ID=2 >> $HOME/.bashrc
-    source $HOME/.bashrc
-    mkdir -p $NODE_HOME
+        ```
+        echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
+        echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
+        echo export NODE_CONFIG=preview >> $HOME/.bashrc
+        echo export NODE_NETWORK='"--testnet-magic 2"' >> $HOME/.bashrc
+        echo export CARDANO_NODE_NETWORK_ID=2 >> $HOME/.bashrc
+        source $HOME/.bashrc
+        mkdir -p $NODE_HOME
+        ```
 
     === "PreProd"
-    echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
-    echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
-    echo export NODE_CONFIG=preview >> $HOME/.bashrc
-    echo export NODE_NETWORK='"--testnet-magic 1"' >> $HOME/.bashrc
-    echo export CARDANO_NODE_NETWORK_ID=1 >> $HOME/.bashrc
-    source $HOME/.bashrc
-    mkdir -p $NODE_HOME
+        ```
+        echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
+        echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
+        echo export NODE_CONFIG=preview >> $HOME/.bashrc
+        echo export NODE_NETWORK='"--testnet-magic 1"' >> $HOME/.bashrc
+        echo export CARDANO_NODE_NETWORK_ID=1 >> $HOME/.bashrc
+        source $HOME/.bashrc
+        mkdir -p $NODE_HOME
+        ```

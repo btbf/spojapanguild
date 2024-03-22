@@ -64,10 +64,6 @@ nc -vz <IP> <Port>
 sudo systemctl reload-or-restart cnode-cncli-sync.service
 ```
 
-## **ブロックチェックサービス再起動**
-```
-sudo systemctl reload-or-restart cnode-blockcheck.service
-```
 
 ## **パラメータファイル更新**
 **補足**

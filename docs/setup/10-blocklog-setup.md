@@ -79,25 +79,33 @@ rustup component add clippy rustfmt
 rustup target add x86_64-unknown-linux-musl
 ```
 
-依存関係をインストールし、cncliをビルドします
+依存関係をインストールします
 
 ```bash
 source $HOME/.cargo/env
 sudo apt update -y && sudo apt install -y automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool autoconf musl-tools
 ```
+
+CNCLIをダウンロード・インストール
 ```bash
-cd $HOME/git
-git clone --recurse-submodules https://github.com/cardano-community/cncli
-cd cncli
-git checkout $(curl -s https://api.github.com/repos/cardano-community/cncli/releases/latest | jq -r .tag_name)
-cargo install --path . --force
+cd $HOME
+cncli_release="$(curl -s https://api.github.com/repos/cardano-community/cncli/releases/latest | jq -r '.tag_name' | sed -e "s/^.\{1\}//")"
+```
+```
+curl -sLJ https://github.com/cardano-community/cncli/releases/download/v${cncli_release}/cncli-${cncli_release}-ubuntu22-x86_64-unknown-linux-gnu.tar.gz -o $HOME/cncli-${cncli_release}-x86_64-unknown-linux-gnu.tar.gz
+```
+```
+tar xzvf $HOME/cncli-${cncli_release}-x86_64-unknown-linux-gnu.tar.gz -C $HOME/.cargo/bin/
+```
+```
+rm $HOME/cncli-${cncli_release}-x86_64-unknown-linux-gnu.tar.gz
 ```
 
 CNCLIのバージョンを確認します。
 ```bash
 cncli --version
 ```
-> 6.0.1 が最新バージョンです
+> 6.1.0 が最新バージョンです
 
 ## **10-2. sqlite3インストール**
 
@@ -119,7 +127,7 @@ cd $NODE_HOME/scripts
 wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cncli.sh -O ./cncli.sh
 wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/env -O ./env
 wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/gLiveView.sh -O ./gLiveView.sh
-wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/cntools.library -O ./cntools.library
+wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cntools.library -O ./cntools.library
 wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/blocks.sh -O ./blocks.sh 
 wget wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/logMonitor.sh -q -O ./logMonitor.sh -q -O ./logMonitor.sh
 ```
@@ -421,7 +429,7 @@ cnclilog
 
 
 
-## **10-8. ブロックログを表示する**
+## **10-6. ブロックログを表示する**
 
 このツールでは上記で設定してきたプログラムを組み合わせ、割り当てられたスロットリーダーに対してのブロック生成結果をデータベースに格納し、確認することができます。
 
@@ -473,7 +481,7 @@ echo $LANG
 ```
 
 
-## **10-9. スケジュールを取得する**
+## **10-7. スケジュールを取得する**
 
 !!! hit "ブロック生成スケジュール取得のタイミングについて"
     取得タイミングは、エポックスロットが約302400を過ぎてから次エポックのスケジュールを自動取得します(次エポックの1.5日前)  
@@ -514,26 +522,27 @@ cncli旧バージョンからの更新手順
     １時間以内にブロック生成スケジュールがないことを確認してから、以下を実施してください
 
 
-```bash
-rustup update
-rustup target add x86_64-unknown-linux-musl
-```
+**CNCLIをアップデートする**
 
 ```bash
-sudo apt update -y && sudo apt install -y automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool autoconf musl-tools
+cd $HOME
+cncli_release="$(curl -s https://api.github.com/repos/cardano-community/cncli/releases/latest | jq -r '.tag_name' | sed -e "s/^.\{1\}//")"
+```
+```
+curl -sLJ https://github.com/cardano-community/cncli/releases/download/v${cncli_release}/cncli-${cncli_release}-ubuntu22-x86_64-unknown-linux-gnu.tar.gz -o $HOME/cncli-${cncli_release}-x86_64-unknown-linux-gnu.tar.gz
+```
+```
+tar xzvf $HOME/cncli-${cncli_release}-x86_64-unknown-linux-gnu.tar.gz -C $HOME/.cargo/bin/
+```
+```
+rm $HOME/cncli-${cncli_release}-x86_64-unknown-linux-gnu.tar.gz
 ```
 
-```bash
-cd $HOME/git/cncli
-git fetch --all --prune
-git checkout $(curl -s https://api.github.com/repos/cardano-community/cncli/releases/latest | jq -r .tag_name)
-cargo install --path . --force
-```
-バージョンを確認する
+バージョン確認
 ```
 cncli --version
 ```
-> 6.0.1 が最新バージョンです
+> cncli 6.0.1になったことを確認する 
 
 ノードを再起動する
 ```bash

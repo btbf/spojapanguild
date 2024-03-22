@@ -114,7 +114,7 @@ nav:
       - '5.アドレスの作成': './setup/5-generate-address.md'
       - '6.ステークアドレスの登録': './setup/6-register-stakeaddress.md'
       - '7.ステークプールの登録': './setup/7-register-stakepool.md'
-      - '8.P2Pトポロジー設定': './setup/8.topology-setup.md'
+      - '8.最終調整': './setup/8-final-adjustment.md'
       - '9.監視ツール設定': './setup/9-monitoring-tools-setup.md'
       - '10.ブロックログ設定': './setup/10-blocklog-setup.md'
       - '11.SPO BlockNotify設定': './setup/11-blocknotify-setup.md'
@@ -131,7 +131,8 @@ nav:
         - '2-1.ノードアップデート': './operation/node-update.md'
         - '2-2.DB同期(Mithril)':  './operation/mithril-client.md'
         - '2-3.リレーノード増設': './operation/add-relay.md'
-        - '2-4.ダイナミックP2P設定': './operation/p2p-settings.md'
+        #- '2-4.ダイナミックP2P設定': './operation/p2p-settings.md'
+        - '2-4.手動トポロジー設定': './operation/topology-updater.md'
         - '2-5.BPポート変更': './operation/bpport.md'
       - '3.サーバー管理':
         - '3-1.サーバー間転送設定':

@@ -1,15 +1,27 @@
-# **8.P2Pトポロジー設定**
+# **2-4.手動トポロジー設定**
 
-!!! info "前提条件"
-    **この項目はリレーノードで実施します**  
-    リレーノードが起動しているか確認してください** 
-    ```sh
-    journalctl --unit=cardano-node --follow
-    ```
+!!! danger "注意"
+    現在のリレーノードトポロジー形成は[ダイナミックP2P](../setup/3-relay-bp-setup.md)へ移行しています。
+    この設定はダイナミックP2Pを使用しない隠しリレーのみで実施してください。
 
-!!! info "重要：トポロジーの形成について"
-    2022/01/07時点では手動P2P\(ピア・ツー・ピア\)モードのため、手動でトポロジーを構成する必要があります。この手順をスキップすると生成したブロックがブロックチェーン外で孤立するため、必須の設定項目となります。
+## 事前準備
 
+**ノードをストップする** 
+```
+sudo systemctl stop cardano-node
+```
+
+**手動P2P用のトポロジーファイルをダウンロード**
+```
+cd $NODE_HOME
+wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/topology-legacy.json -O ${NODE_CONFIG}-topology.json
+```
+
+**ダイナミックP2Pを無効にする**
+```
+sed -i ${NODE_CONFIG}-config.json \
+    -e 's!"EnableP2P": true!"EnableP2P": false!'
+```
 
 ## TopologyUpdaterの設定
 
@@ -23,15 +35,15 @@
 !!! hint "topologyUpdater.shについて"
     リレーノード情報(IPアドレスとポート番号、オン/オフライン状態)をトポロジーフェッチリストへ1時間に1回送信することで、世界中のリレーノードに自プールのリレー情報が登録される仕組みです
 
-
   
 ### スクリプトファイルの作成 
   
 !!! warning "注意"
     以下は、リレーノードのパブリックIPとノードポートに合わせる  
-    CNODE_HOSTNAMEの「xxx.xxx.xxx.xx」はリレーのパブリックIP(静的)アドレスに置き換えて下さい
-    ポート番号を6000から変更している場合は修正してください
-    ※26行目の"CHANGE ME"は変更しないでください
+
+    * CNODE_HOSTNAMEの「xxx.xxx.xxx.xx」はリレーのパブリックIP(静的)アドレスまたはDNS名に置き換えて下さい
+    * リレーノードポート番号を6000から変更している場合は修正してください
+    * ※26行目の"CHANGE ME"は変更しないでください
     
 === "リレーノード"
     ```bash title="このボックスはすべてコピーして実行してください"
@@ -191,71 +203,26 @@ shファイルに権限を追加し、relay-topology_pull.shを実行する
 
 === "リレーノード"
     ```bash
-    sudo systemctl reload-or-restart cardano-node
+    sudo systemctl start cardano-node
     ```
 
 
-!!! danger "重要な確認事項"
-    ブロックを生成するには、「Total Tx」が増加していることを確認する必要があります。万一、増加していない場合にはファイアウォールやトポロジーファイルの内容を再確認して下さい。「P2P」数はノードが他ノードと接続している数を表しています。
+### **トポロジーファイル更新方法**
 
+!!! note "概要"
+    トポロジーファイルに記載されてるリレーノードは常に最新状態を保つことが望ましいため、1エポックに1回は書き換えることを推奨します。
 
-**🛠 リレーノード/BPでgLiveView を確認**
+=== "リレーノード"
+  ```bash
+  cd $NODE_HOME
+  ./relay-topology_pull.sh
+  ```
 
-=== "リレーノード/BP"
-```bash
-cd $NODE_HOME/scripts
-./gLiveView.sh
-```
+!!! hint "ヒント"
+    relay-topology_pull.shを実行すると新しいトポロジーファイル\(mainnet-topology.json\)を生成します。
+    新しいトポロジーファイルはノード再起動後に有効になります。
 
-!!! info ""
-    「Total Tx」が増加しているか確認する
-
-![](../images/glive-tx.png)
-
-!!! success "おめでとうございます！"
-    Total Txの増加が確認できれば、ブロックを作成する準備が出来ています。
-
-## **ノード起動最終調整**
-
-### **ブロック生成可能状態チェック**
-
-**SPO JAPAN GUILD TOOLを導入する**
-
-導入手順は**プール構築マニュアル内の[SJG TOOL](../operation/tool.md)**をご参照ください
-
-**TOOLを実行する**
-
-```
-gtool
-```
->[2] ブロック生成状態チェック を選択する
-
-
-### **Tracemempool無効**
-
-!!! danger "重要な最終調整"
-    ノード稼働時の、CPU/メモリ消費を抑えるためノード設定を調整します。
-    この調整はプール運営のパフォーマンスを左右しますので推奨設定となります。
-
-    * トランザクション流入ログをトレース(記録)することで、CPU/メモリ消費を増加させる原因となることがわかっているため、この機能を無効にします。  
-    * <font color=red>この設定を行うと、上記で確認した「Total TX」「Pending Tx」は増加しなくなりますが、設定前に増加が確認できていれば問題ございません</font>
-
-
-=== "リレー/BP"
-    ```bash
-    sed -i $NODE_HOME/${NODE_CONFIG}-config.json \
-        -e "s/TraceMempool\": true/TraceMempool\": false/g"
-    ```
-
-** ノードを再起動する **
-```
-sudo systemctl reload-or-restart cardano-node
-```
-
-ノードログにエラーが出ていないか確認する
-```
-journalctl --unit=cardano-node --follow
-```
-
-!!! success "！重要！"
-    プール運用マニュアル[運用ガイド](./../operation/start-guide.md)を必ず確認し、プール運営について学習してください。
+=== "リレーノード"
+  ```bash
+  sudo systemctl reload-or-restart cardano-node
+  ```

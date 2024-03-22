@@ -27,8 +27,9 @@ status: new
 
 ### **1-2.ノードセットアップ**
 
-[依存関係インストール](../setup/2-node-setup.md#2-1-cabalghc) 〜
+1. [依存関係インストール](../setup/2-node-setup.md#2) 〜
 [gLiveViewのインストール](../setup/2-node-setup.md#2-7-gliveview)まで実施します。
+2. [リレーとBPを接続する](../setup/3-relay-bp-setup.md#3-2)の「BPの場合」を実施します。
 
 
 ## **2.既存リレー作業**
@@ -66,7 +67,7 @@ status: new
 
     トポロジーファイルの再読み込み
     ```
-    kill -SIGHUP $(pidof cardano-node)
+    cnreload
     ```
     > ダイナミックP2P有効時、トポロジーファイル変更による再起動は不要です。
 
@@ -97,7 +98,6 @@ status: new
     | node.cert | ブロック生成に必須 |
     | payment.addr | 残高確認で必要 |
     | stake.addr | 残高確認で必要 |
-    | mainnet-topology.json | トポロジーファイル |
     | poolMetaData.json | pool.cert作成時に必要 |
     | poolMetaDataHash.txt | pool.cert作成時に必要 |
     | startBlockProducingNode.sh | ノード起動スクリプト |
@@ -116,7 +116,7 @@ status: new
     上記の移行ファイルを一つのファイルに圧縮する
     ```
     cd $NODE_HOME
-    tar --exclude "guild-db/cncli/cncli.db" -acvf bp-move.zst guild-db/ vrf.skey vrf.vkey kes.skey kes.vkey node.cert payment.addr stake.addr mainnet-topology.json poolMetaData.json poolMetaDataHash.txt startBlockProducingNode.sh pool.id-bech32 pool.id
+    tar --exclude "guild-db/cncli/cncli.db" -acvf bp-move.zst guild-db/ vrf.skey vrf.vkey kes.skey kes.vkey node.cert payment.addr stake.addr poolMetaData.json poolMetaDataHash.txt startBlockProducingNode.sh pool.id-bech32 pool.id
     ```
 
 旧BPのcnodeにある`bp-move.zst`を新BPのcnodeディレクトリにコピーする
@@ -124,12 +124,6 @@ status: new
 graph LR
     A[旧BP] -->|bp-move.zst| B[新BP];
 ``` 
-
-### **3-3.旧BPシャットダウン**
-```
-sudo shutdown -h now
-```
-
 
 ## **4.新BP再設定**
 
@@ -218,13 +212,32 @@ cardano-cli query protocol-parameters \
 SJGツールを起動し、「[2] ブロック生成状態チェック」ですべての項目がOKになることを確認する
 
 ### **4-8. ブロック生成ステータス通知設定**
+(SPO Block Notify)
 
 === "旧BPで導入済みの場合"
-    [SPO BlockNotify移行マニュアル](blocknotify-reinstall.md)に沿って移行してください。
+
+    1. 新BPで[11-1. 依存プログラムをインストールする](../setup/11-blocknotify-setup.md#11-1)のみを実施する
+    2. 旧BPで設定ファイルを確認する
+    
+    ```
+    cat $NODE_HOME/scripts/block-notify/.env
+    ```
+    または
+    ```
+    cat $NODE_HOME/guild-db/blocklog/.env
+    ```
+    または
+    ```
+    cat $NODE_HOME/scripts/block-notify/config.ini
+    ```
+
+    3. 新BPで[11-3. 通知プログラムの設定](../setup/11-blocknotify-setup.md#11-3)を実施する
+    （config.iniの設定値は旧BPで表示された設定ファイルの内容を参考にする）
+
 
 === "旧BPで未導入の場合"
     
-    [ブロック生成ステータス通知セットアップ](../setup/11-blocknotify-setup.md)から導入してください。
+    [SPO Block Notify設定](../setup/11-blocknotify-setup.md)から導入してください。
 
 
 ## **5. Prometheus設定**
@@ -270,22 +283,30 @@ SJGツールを起動し、「[2] ブロック生成状態チェック」です�
     GrafanaにBPのメトリクス(KESなど)が表示されているか確認する。
 
 ---
-## **6.補足**
-### **Tracemempool無効化**
+## **6.最終作業**
+
+### **6-1.旧BPシャットダウン**
+
+=== "旧BP"
+    ```
+    sudo shutdown -h now
+    ```
+
+### **6-2.Tracemempool無効化**
 
 Txの増加が確認できたらTracemempoolを無効にします。
 
 === "新BP"
-```
-sed -i $NODE_HOME/${NODE_CONFIG}-config.json \
-    -e "s/TraceMempool\": true/TraceMempool\": false/g"
-```
+    ```
+    sed -i $NODE_HOME/${NODE_CONFIG}-config.json \
+        -e "s/TraceMempool\": true/TraceMempool\": false/g"
+    ```
 
 ノード再起動
 ```
 sudo systemctl reload-or-restart cardano-node
 ```
 
-### **Mithril-Signer再セットアップ**
+### **6-3.Mithril-Signer再セットアップ**
 旧サーバーでMithril-Signer-Nodeを実行していた場合は、新サーバーでも再セットアップしてください。不明点がある場合はBTBF SPO LAB.でご質問ください。
 

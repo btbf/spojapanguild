@@ -6,7 +6,7 @@
 ## 2.ノードインストール
 [https://docs.spojapanguild.net/setup/2-node-setup/](https://docs.spojapanguild.net/setup/2-node-setup/)
 
-## 3.リレーサーバーの設定変更
+## 3.リレーサーバートポロジー設定
 [https://docs.spojapanguild.net/setup/3-relay-bp-setup/#3-1](https://docs.spojapanguild.net/setup/3-relay-bp-setup/#3-1)
 
 
@@ -24,52 +24,61 @@
     sudo ufw reload
     ```
 
-    !!! hint "ヒント"
-        自身のBPノードから接続するリレーノードのIPとポート番号を指定します。
-        あらかじめ、**「xxx.xxx.xxx.xxx」はご自身のリレーサーバーパブリックIP(静的)アドレスとポート番号**　に置き換えてからコマンドを実行して下さい。リレー台数分記載します。
-        
-    ```
-    cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF 
+    BPトポロジーファイル変更(ダイナミックP2P)  
+
+    実行前に `+`をクリックして注釈を確認してください。  
+
+    ``` yaml
+    cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
     {
-        "Producers": [
-        {
-            "addr": "aa.xxx.xxx.xxx",
-            "port": 6000,
-            "valency": 1
-        },
-        {
-            "addr": "bb.xxx.xxx.xxx",
-            "port": 6000,
-            "valency": 1
+    "localRoots": [
+        { 
+          "accessPoints": [
+            {
+            "address": "xx.xxx.xx.xxx", #(1)!
+            "port": yyyy #(2)!
+            },
+            {
+            "address": "bb.bbb.bb.bbb", #(3)!
+            "port": aaaa #(4)!
+            }
+          ],
+          "advertise": false,
+          "valency": 2 #(5)!
         }
-        ]
+    ],
+    "publicRoots": [],
+    "useLedgerAfterSlot": -1 #(6)!
     }
     EOF
     ```
-    ```
-    sudo systemctl reload-or-restart cardano-node
-    ```
+    { .annotate }
 
-## 5.P2Pトポロジー設定
-=== "増設リレー"
-    [https://docs.spojapanguild.net/setup/8.topology-setup/](https://docs.spojapanguild.net/setup/8.topology-setup/)
+    1.  リレー1のIPアドレスまたはDNSアドレスに置き換えてください
+    2.  リレー1のポートに置き換えてください
+    3.  リレー2または他リレーのIPアドレスに置き換えてください
+    4.  リレー2または他リレーのポートに置き換えてください
+    5.  固定接続ピアの数を指定してください
+    6.  `-1`を指定することで台帳から接続先を取得しないBPモードになります
 
 
+トポロジーファイルを再読み込みする
+```
+cnreload
+```
 
-## 6.監視ツールセットアップ
 
-=== "増設リレー"
+## 6.Grafanaセットアップ
+
+=== "増設リレーで実施"
     9-1.インストール  
-    「BPまたはリレー2以降」タブと「全サーバー」タブを増設リレーで実施  
-    [https://docs.spojapanguild.net/setup/9-monitoring-tools-setup/#1](https://docs.spojapanguild.net/setup/9-monitoring-tools-setup/#1)
-
-    9-3.ノード設定ファイルの更新  
-    [https://docs.spojapanguild.net/setup/9-monitoring-tools-setup/#3](https://docs.spojapanguild.net/setup/9-monitoring-tools-setup/#3)
+    「BPまたはリレー2以降」タブと「リレーノード/BP」タブを増設リレーで実施  
+    [https://docs.spojapanguild.net/setup/9-monitoring-tools-setup/#9-1](../setup/9-monitoring-tools-setup.md#1)
 
 
-9-2.設定ファイルの作成
-グラファナがインストールされているサーバーで  「リレーノード1(リレー2台の場合)」タブを実施 
-=== "リレーノード1"
-    [https://docs.spojapanguild.net/setup/9-monitoring-tools-setup/#2](https://docs.spojapanguild.net/setup/9-monitoring-tools-setup/#2)
+=== "Grafana導入済みのリレーで実施"
+      9-2.設定ファイルの作成
+      Grafanaがインストールされているサーバーで実施 #9-2
+    [https://docs.spojapanguild.net/setup/9-monitoring-tools-setup/#2](../setup/9-monitoring-tools-setup.md#2)
 
 
