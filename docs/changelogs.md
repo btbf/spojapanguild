@@ -1,4 +1,15 @@
-# 変更履歴setup
+# 変更履歴
+
+## 2024/03/22　ver. 13.2.0
+!!! note ""
+    * cardano-node v8.9.0対応
+    * 依存関係バージョンアップ `secp256k1` `Blst`
+    * 全ノードダイナミックP2P方式へ移行
+    * 最低リレーノード数2以上へ変更
+    * [**ノードアップデート手順**](operation/node-update.md)更新
+    * [**SPO Block Notify v2.2.0**](setup/11-blocknotify-setup.md)リリース
+    * [**SPO Block Notify移行マニュアル**](operation/blocknotify-reinstall.md)更新
+    * 軽微な修正
 
 ## 2024/03/10　ver. 13.1.2
 !!! note ""

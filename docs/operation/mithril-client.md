@@ -66,7 +66,7 @@ git clone https://github.com/input-output-hk/mithril.git
 ```
 cd mithril
 git fetch --all --prune
-mithril_release="$(curl -s https://api.github.com/repos/input-output-hk/mithril/releases/latest | jq -r '.tag_name')
+mithril_release="$(curl -s https://api.github.com/repos/input-output-hk/mithril/releases/latest | jq -r '.tag_name')"
 git checkout tags/${mithril_release}
 ```
 

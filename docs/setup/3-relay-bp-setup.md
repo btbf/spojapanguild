@@ -13,153 +13,198 @@
 !!! abstract "BPとリレーの役割"
 
     * **ブロックプロデューサーノード(BP)**  
-    ブロック生成に必要なキーと証明書 \(node.cert, kes.skey vrf.skey\)を用いて起動します。自身のリレーノードのみに接続します。  
+    ブロック生成用の専用ノードです。ブロック生成に必要なキーと証明書 \(node.cert, kes.skey vrf.skey\)を用いて起動し自身のリレーノードのみに接続します。  
   
     * **リレーノード(リレー)**  
     自身のBPと他のリレーノードとの繋がりを持ち最新スロットを取得しブロック伝播の役割を果たします。  
 
 ![](../images/producer-relay-diagram.png)
 
+## 3-1. 接続タイプ(トポロジー)
+| 接続タイプ | ピア取得元 | 適用推奨ノード | Topologyファイル |
+| :---------- | :---------- | :---------- | :---------- |
+| D-P2P(非ブートストラップピア) | 台帳自動取得 | リレー/BP | [Non bootstrap peers](https://book.world.dev.cardano.org/environments/mainnet/topology-non-bootstrap-peers.json) | 
+| D-P2P(ブートストラップピア) | 台帳自動取得 | リレー(一部) | [bootstrap peers](https://book.world.dev.cardano.org/environments/mainnet/topology.json) | 
+| 非P2P | 手動(TopologyUpdater) | サブリレー | [Legacy non-p2p](https://book.world.dev.cardano.org/environments/mainnet/topology-legacy.json) | 
 
-
-## 3-1. リレーサーバーの設定変更
-
-### 3-1-1. ファイアウォール設定を変更
-
-!!! attention "設定前の注意事項"
-    ご利用のVPSによっては管理画面からFWを設定する場合があります（例AWS系など）  
-    その場合は以下の設定を行わず、VPSマイページ管理画面などから個別に設定してください。
-
-リレーノードで使用する `6000` 番ポートのインバウンド通信を許可する。任意の番号で設定している場合はその番号を許可する。
-
-=== "リレーノード"
-  ```bash
-  sudo ufw allow 6000/tcp
-  ```
-  ```bash
-  sudo ufw reload
-  ```
-
-### 3-1-2. Topologyファイル変更
-
+!!! hint "Topology設定について"
+    * ノードv8.9.0以降全てのノードでD-P2P(非ブートストラップピア)有効を推奨します。
+    * D-P2P(ブートストラップピア)は一部リレーのみで有効にし、数週間かけて段階的に有効にしてください。
+    * 非P2Pは大規模プールのサブリレーで適用可能です。
+    * 以下の手順は、D-P2P(非ブートストラップピア) で構成します。
 
 !!! hint "**topology.json** とは？"
 
     * P2P(ピアツーピア)接続における接続先ノードを記述するファイルです。
-    
     * リレーノードでは、パブリックノード \(IOHKや他のリレーノード\) 及び、自身のブロックプロデューサーノード情報を記述します。
-
     * ブロックプロデューサーノードでは、自身のリレーノード情報のみ記述します。
-
     * **「xxx.xxx.xxx.xxx」はパブリックIP(静的)アドレス**に置き換えて下さい
-
     * ポート番号を変更している場合は修正してください
 
+!!! attention "ファイアウォール設定について"
+    ご利用のVPSによっては管理画面からFWを設定する場合があります（例AWS系など）  
+    その場合は以下の設定を行わず、VPSマイページ管理画面などから個別に設定してください。
 
-=== "リレーノード"
-自身のリレーノードから接続するノードを指定します。  
-「xxx.xxx.xxx.xxx」はBPのパブリックIP(静的)アドレスと[2-4で設定した](../setup/2-node-setup.md#2-4)BPポート番号に置き換えて下さい。
+## 3-2. 各ノード設定変更
 
-```bash title="このボックスはすべてコピーして実行してください"
-cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF 
- {
-    "Producers": [
-      {
-        "addr": "relays-new.cardano-mainnet.iohk.io",
-        "port": 3001,
-        "valency": 2
-      },
-      {
-        "addr": "xxx.xxx.xxx.xxx",
-        "port": xxxxx,
-        "valency": 1
-      }
-    ]
-  }
-EOF
-```
+新トポロジーファイル項目解説
 
+| 項目     | 説明                          |
+| ----------- | ------------------------------------ |
+| `localRoots`       | 常に固定したい接続先を記入 |
+| `accessPoints`       |  接続先グループ |
+| `advertise`    | PeerSharing実装後に使用するフラグ(今は`false`) |
+| `valency`    | 接続数(接続先グループ内に記載した数と一致させる必要があります) |
+| `publicRoots`    | ブートストラップ用バックアップ接続先 |
+| `useLedgerAfterSlot`    | 初期同期の際に台帳Peer検索を有効にするスロット番号 |
 
-リレーノードを再起動する
-```
-sudo systemctl reload-or-restart cardano-node
-```
+**以下、各ノードごとのタブをクリックして実施してください**
 
-## 3-2. BPサーバーの設定変更
+??? danger "リレーノードの場合"
+    リレーファイアウォール設定を変更
 
-### 3-2-1. ファイアウォール設定を変更
+    リレーノードで使用する `6000` 番ポートのインバウンド通信を許可する。任意の番号で設定している場合はその番号を許可する。
 
-!!! tip "BPのセキュリティ"
-    BPサーバーにはプール運営の秘密鍵を保管するため、ファイアウォールでリレーサーバーからの通信のみに限定する必要があります。
-
-BPノードに設定したポート番号を確認する
-```bash
-PORT=`grep "PORT=" $NODE_HOME/startBlockProducingNode.sh`
-b_PORT=${PORT#"PORT="}
-echo "BPポートは${b_PORT}です"
-```
-
-BPノードで使用するポート(上記で表示された番号)の通信を許可する。  
-  
-`<リレーノード1のIP>` の `<>`を除いてIPのみ入力してください。
-
-=== "BP(リレー1台の場合)"
-    ```bash title="Ubuntu22.04の場合は１行づつ実行してください"
-    sudo ufw allow from <リレーノード1のIP> to any port ${b_PORT}
+    ```bash
+    sudo ufw allow 6000/tcp
+    ```
+    ```bash
     sudo ufw reload
     ```
 
-=== "BP(リレー2台の場合)"
+    リレーTopologyファイル変更
+
+    自身のリレーノードから接続を固定するノードを指定します。  
+    「xxx.xxx.xxx.xxx」はBPのパブリックIP(静的)アドレスと[2-4で設定した](../setup/2-node-setup.md#2-4)BPポート番号に置き換えて下さい。
+
+    実行前に `+`をクリックして注釈を確認してください。  
+
+    ``` yaml
+    cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
+    {
+    "localRoots": [
+        { 
+          "accessPoints": [
+            {
+            "address": "xx.xxx.xx.xxx", #(1)!
+            "port": yyyy #(2)!
+            },
+            {
+            "address": "bb.bbb.bb.bbb", #(3)!
+            "port": aaaa #(4)!
+            }
+          ],
+          "advertise": false,
+          "valency": 2
+        }
+    ],
+    "publicRoots": [
+      { 
+        "accessPoints": [
+          {
+          "address": "backbone.cardano-mainnet.iohk.io",
+          "port": 3001
+          },
+          {
+          "address": "backbone.cardano.iog.io",
+          "port": 3001
+          },
+          {
+          "address": "backbone.mainnet.emurgornd.com",
+          "port": 3001
+          }
+        ],
+        "advertise": false
+      }
+    ],
+    "useLedgerAfterSlot": 110332824
+    }
+    EOF
+    ```
+    { .annotate }
+
+    1.  BP1のIPアドレスに置き換えてください
+    2.  BP1のポートに置き換えてください
+    3.  BP2または他リレーのIPアドレスに置き換えてください
+    4.  BP2または他リレーのポートに置き換えてください
+
+??? danger "BPの場合"
+
+    ファイアウォール設定を変更
+
+    !!! tip "BPのセキュリティ"
+        BPサーバーにはプール運営の秘密鍵を保管するため、ファイアウォールでリレーサーバーからの通信のみに限定する必要があります。
+
+    BPノードに設定したポート番号を確認する
+    ```bash
+    PORT=`grep "PORT=" $NODE_HOME/startBlockProducingNode.sh`
+    b_PORT=${PORT#"PORT="}
+    echo "BPポートは${b_PORT}です"
+    ```
+
+    BPノードで使用するポート(上記で表示された番号)の通信を許可する。  
+      
+    `<>`を除いてIPのみ入力してください。
+
     ```bash title="Ubuntu22.04の場合は１行づつ実行してください"
     sudo ufw allow from <リレーノード1のIP> to any port ${b_PORT}
     sudo ufw allow from <リレーノード2のIP> to any port ${b_PORT}
     sudo ufw reload
     ```
-    > 上記はBPノードポートに対し`リレーIPからの通信のみ許可する`という設定になります
+   
+    BP-Topologyファイル変更  
 
-### 3-2-2. Topologyファイル変更
+    実行前に `+`をクリックして注釈を確認してください。  
 
-!!! hint "ヒント"
-    自身のBPノードから接続するリレーノードのIPとポート番号を指定します。
-    あらかじめ、**「xxx.xxx.xxx.xxx」はご自身のリレーサーバーパブリックIP(静的)アドレスとポート番号**　に置き換えてからコマンドを実行して下さい。リレー台数分記載します。
-
-=== "BP(リレー1台の場合)"
-
-    ```bash title="このボックスはすべてコピーして実行してください"
-    cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF 
+    ``` yaml
+    cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
     {
-        "Producers": [
-          {
-            "addr": "xxx.xxx.xxx.xxx",
-            "port": 6000,
-            "valency": 1
-          }
-        ]
-      }
+    "localRoots": [
+        { 
+          "accessPoints": [
+            {
+            "address": "xx.xxx.xx.xxx", #(1)!
+            "port": yyyy #(2)!
+            },
+            {
+            "address": "bb.bbb.bb.bbb", #(3)!
+            "port": aaaa #(4)!
+            }
+          ],
+          "advertise": false,
+          "valency": 2 #(5)!
+        }
+    ],
+    "publicRoots": [],
+    "useLedgerAfterSlot": -1 #(6)!
+    }
     EOF
     ```
+    { .annotate }
 
-=== "BP(リレー2台の場合)"
-    ```bash title="このボックスはすべてコピーして実行してください"
-    cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF 
-    {
-        "Producers": [
-          {
-            "addr": "aa.xxx.xxx.xxx",
-            "port": 6000,
-            "valency": 1
-          },
-          {
-            "addr": "bb.xxx.xxx.xxx",
-            "port": 6000,
-            "valency": 1
-          }
-        ]
-      }
-    EOF
+    1.  リレー1のIPアドレスまたはDNSアドレスに置き換えてください
+    2.  リレー1のポートに置き換えてください
+    3.  リレー2または他リレーのIPアドレスに置き換えてください
+    4.  リレー2または他リレーのポートに置き換えてください
+    5.  固定接続ピアの数を指定してください
+    6.  `-1`を指定することで台帳から接続先を取得しないBPモードになります
+
+**mainnet-topology.json構文チェック**
+```
+cat $NODE_HOME/mainnet-topology.json | jq .
+```
+=== "正常"
+    mainnet-topology.jsonの中身がそのまま表示されます
+
+=== "parse error"
+    json記法に誤りがあるため以下のエラーが表示されます。mainnet-topology.jsonを開いて`{}` `[]` `,`が正しい位置にあるかご確認ください。
+    ```{ .yaml .no-copy }
+    parse error: Expected another key-value pair at line x, column x
     ```
 
-BPノードを再起動する
+
+トポロジーファイルを再読み込みする
 ```
-sudo systemctl reload-or-restart cardano-node
+cnreload
 ```
+> ダイナミックP2Pを有効にしている場合、トポロジーファイル変更によるノード再起動は不要になりました。
