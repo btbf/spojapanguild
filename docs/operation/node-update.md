@@ -625,7 +625,35 @@ sed -i ${NODE_CONFIG}-config.json \
     -e "s/127.0.0.1/0.0.0.0/g"
 ```
 
-### 2-4.トポロジー設定
+### **2-4.BPのみ作業**
+!!! danger "この作業はBPのみで実施してください"
+    
+    **ブロックログ用ライブラリを更新する**
+    ```
+    cd $NODE_HOME/scripts
+    wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cntools.library -O cntools.library
+    ```
+
+    **cncli.shを更新する**
+    ```
+    cd $NODE_HOME/scripts
+    wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cncli.sh -O ./cncli.sh
+    ```
+    ```
+    pool_hex=`cat $NODE_HOME/pool.id`
+    pool_bech32=`cat $NODE_HOME/pool.id-bech32`
+    printf "\nプールID(hex)は \e[32m${pool_hex}\e[m です\n\n"
+    printf "\nプールID(bech32)は \e[32m${pool_bech32}\e[m です\n\n"
+    ```
+    ```
+    sed -i $NODE_HOME/scripts/cncli.sh \
+    -e '1,73s!#POOL_ID=""!POOL_ID="'${pool_hex}'"!' \
+    -e '1,73s!#POOL_ID_BECH32=""!POOL_ID_BECH32="'${pool_bech32}'"!' \
+    -e '1,73s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
+    -e '1,73s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
+    ```
+
+### 2-5.トポロジー設定
 
 新トポロジーファイル項目解説
 
@@ -841,7 +869,8 @@ cnreload
     exit
     ```
 
-### **2-5サーバー再起動**
+
+### **2-6.サーバー再起動**
 
 **作業フォルダリネーム**
 
@@ -915,14 +944,6 @@ sed -i $NODE_HOME/scripts/env \
 crontab -l >crontab.txt
 sed -i '/topologyUpdater.sh/d' crontab.txt
 crontab crontab.txt
-```
-
-### **3-3.BPのみ**
-
-**ブロックログ用ライブラリを更新する**
-```
-cd $NODE_HOME/scripts
-wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cntools.library -O cntools.library
 ```
 
 **サービス起動確認**

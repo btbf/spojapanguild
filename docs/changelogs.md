@@ -1,5 +1,9 @@
 # 変更履歴
 
+## 2024/03/24　ver. 13.2.1
+!!! note ""
+    * [**ノードアップデート手順**](operation/node-update.md)cncli.shアップデートコマンド追加
+
 ## 2024/03/22　ver. 13.2.0
 !!! note ""
     * cardano-node v8.9.0対応
