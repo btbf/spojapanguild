@@ -7,9 +7,9 @@ status: new
 
     **■アップデート対象パターン**
 
-    1. 「旧ブロック生成ステータス通知 v.1.x.x」→「SPO Block Notify v.2.2.0」
-    2. 「SPO Block Notify v.2.1.2/v2.1.3」→「SPO Block Notify v.2.2.0」
-    3. 「旧ブロック生成ステータス通知 未導入」→「SPO Block Notify v.2.2.0」
+    1. 「旧ブロック生成ステータス通知 v.1.x.x」→「SPO Block Notify v.2.2.1」
+    2. 「SPO Block Notify v.2.1.2/v2.1.3」→「SPO Block Notify v.2.2.1」
+    3. 「旧ブロック生成ステータス通知 未導入」→「SPO Block Notify v.2.2.1」
 
     **■対象サーバー**
 
