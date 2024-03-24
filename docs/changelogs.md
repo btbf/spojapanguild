@@ -3,6 +3,7 @@
 ## 2024/03/24　ver. 13.2.1
 !!! note ""
     * [**ノードアップデート手順**](operation/node-update.md)cncli.shアップデートコマンド追加
+    * [**SPO Block Notify v2.2.1**](setup/11-blocknotify-setup.md)リリース
 
 ## 2024/03/22　ver. 13.2.0
 !!! note ""
