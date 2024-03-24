@@ -182,7 +182,7 @@ gLiveViewで新BPが最新ブロックと同期後、リレーと疎通(I/O)が�
     cd $NODE_HOME/scripts
     ./gLiveView.sh
     ```
-    > InとOutにリレーのIPがあることを確認してください。
+    > PeerリストにリレーのIPがあることを確認してください。
 
 ### **4-4. params.json再作成**
 
