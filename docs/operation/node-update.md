@@ -946,7 +946,13 @@ sed -i '/topologyUpdater.sh/d' crontab.txt
 crontab crontab.txt
 ```
 
-**サービス起動確認**
+**relay-topology_pull.sh削除**
+=== "リレーノードのみ"
+```
+rm $NODE_HOME/relay-topology_pull.sh
+```
+
+### **3-3.サービス起動確認**
 
 ??? danger "ブロック生成ステータス通知またはSPO Block Notifyを未導入(更新)していない方"
 
