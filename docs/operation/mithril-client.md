@@ -117,7 +117,7 @@ rm -rf $NODE_HOME/db
 
 最新スナップショットダウンロード及び解凍
 ```
-mithril-client snapshot download --download-dir $NODE_HOME latest
+mithril-client cardano-db download --download-dir $NODE_HOME latest
 ```
 > スナップショットダウンロード～解凍まで自動的に行われます。1/5～5/5が終了するまで待ちましょう
 
@@ -130,7 +130,7 @@ exit
 
     **Cardanoノードをブートストラップできる利用可能なスナップショットを一覧表示**
     ```
-    mithril-client snapshot list
+    mithril-client cardano-db snapshot list
     ```
 
     戻り値
@@ -156,7 +156,7 @@ exit
 
     **スナップショット詳細表示**
     ```
-    mithril-client snapshot show (Digestハッシュ値指定)
+    mithril-client cardano-db snapshot show (Digestハッシュ値指定)
     ```
     戻り値
     ``` { .yaml .no-copy }
