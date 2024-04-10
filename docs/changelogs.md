@@ -1,5 +1,10 @@
 # 変更履歴
 
+## 2024/04/10　ver. 13.2.2
+!!! note ""
+    * mithril-clientコマンド修正
+    * SFTPソフト(FileZilla)インストール手順修正
+
 ## 2024/03/24　ver. 13.2.1
 !!! note ""
     * [**ノードアップデート手順**](operation/node-update.md)cncli.shアップデートコマンド追加

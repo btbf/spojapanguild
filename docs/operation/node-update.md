@@ -857,11 +857,11 @@ cnreload
 
     最新スナップショットDL
     ```
-    mithril-client snapshot download --download-dir $NODE_HOME latest
+    mithril-client cardano-db download --download-dir $NODE_HOME latest
     ```
     > スナップショットダウンロード～解凍まで自動的に行われます。1/5～5/5が終了するまで待ちましょう  
-    > 5/5 - Verifying the snapshotsignature…        
-    Snapshot 'xxxxx' has been unpacked and successfully checked against Mithril multi-signature contained in the certificate.
+    > 5/5 - Verifying the cardano db signature…
+    Cardano db 'xxxxx' has been unpacked and successfully checked against Mithril multi-signature contained in the certificate.
     ('xxxxx'は作業時期によって変わります。下の文字列は無視して大丈夫です)
 
     tmux作業ウィンドウを終了する
