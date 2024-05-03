@@ -4,34 +4,31 @@ status: new
 # **ノードアップデートマニュアル**
 
 !!! info "概要"
-    このガイドは ノードバージョン8.9.0に対応しています。最終更新日：2024年3月22日
+    このガイドは ノードバージョン8.9.2に対応しています。最終更新日：2024年5月3日
 
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 8.9.0 | 8.20.3.0 | 8.10.7 | 3.8.1.0 | 6.1.0 |
+    | 8.9.2 | 8.20.3.0 | 8.10.7 | 3.8.1.0 | 6.1.0 |
 
     * <font color=red>よくお読みになって進めてください</font>
-    * <font color=blue>複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。</font>
+    * <font color=green>複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。</font>
 
 
 !!! hint "主な変更点と新機能"
 
-    **■cardano-node v8.9.0**
+    **■cardano-node v8.9.2**
 
-    * ブロックミントに関するバグの修正
-    * ブートストラップピアの実装
-    * 全てのノードでダイナミックP2P有効
-    * RAM 24GB以上必須
-    * 2リレーノード以上必須
+    * PeerSharing有効化
 
     **■アップデートパターンDB再構築有無**
 
-    | バージョン | DB再構築有無 | 設定ファイル更新有無 |
-    | :---------- | :---------- | :---------- |
-    | 8.1.2→8.9.0 | <font color=red>あり</font><br>[(Mithrilブートストラップをご利用ください)](./#mithrildb) | 更新あり |
-    | 8.7.3→8.9.0 | なし | 更新あり |
+    | バージョン | DB再構築有無 | 設定ファイル更新有無 | トポロジーファイル更新有無 |
+    | :---------- | :---------- | :---------- | :---------- |
+    | 8.1.2→8.9.2 | <font color=red>あり</font><br>[(Mithrilブートストラップをご利用ください)](./#mithrildb) | 更新あり | 更新あり |
+    | 8.7.3→8.9.2 | なし | 更新あり | 更新あり |
+    | 8.9.0→8.9.2 | なし | 更新あり | 更新あり |
 
-    インストール中のノードバージョン確認方法
+    <font color=red>作業前に必ず現在インストール中のノードバージョンを確認してください</font>
     ```
     cardano-node version
     ```
@@ -451,12 +448,12 @@ cncli 6.1.0
     ```
     mkdir $HOME/git/cardano-node2
     cd $HOME/git/cardano-node2
-    wget https://github.com/IntersectMBO/cardano-node/releases/download/8.9.0/cardano-node-8.9.0-linux.tar.gz
+    wget https://github.com/IntersectMBO/cardano-node/releases/download/8.9.2/cardano-node-8.9.2-linux.tar.gz
     ```
 
     解凍する
     ```
-    tar zxvf cardano-node-8.9.0-linux.tar.gz ./bin/cardano-node ./bin/cardano-cli
+    tar zxvf cardano-node-8.9.2-linux.tar.gz ./bin/cardano-node ./bin/cardano-cli
     ```
 
     **バージョン確認**
@@ -467,10 +464,10 @@ cncli 6.1.0
     ```
     以下の戻り値を確認する  
     >cardano-cli 8.20.3.0 - linux-x86_64 - ghc-8.10  
-    git rev 0d98405a60d57e1c8e13406d51cce0e34356bd64  
+    git rev 424983fa186786397f5a99539f51710abf62c37b  
 
-    >cardano-node 8.9.0 - linux-x86_64 - ghc-8.10  
-    git rev 0d98405a60d57e1c8e13406d51cce0e34356bd64  
+    >cardano-node 8.9.2 - linux-x86_64 - ghc-8.10  
+    git rev 424983fa186786397f5a99539f51710abf62c37b
 
 
     **ノードをストップする** 
@@ -522,7 +519,7 @@ cncli 6.1.0
 
     ```
     git fetch --all --recurse-submodules --tags
-    git checkout tags/8.9.0
+    git checkout tags/8.9.2
     cabal configure --with-compiler=ghc-8.10.7
     ```
 
@@ -551,10 +548,10 @@ cncli 6.1.0
 
     以下の戻り値を確認する  
     >cardano-cli 8.20.3.0 - linux-x86_64 - ghc-8.10  
-    git rev 0d98405a60d57e1c8e13406d51cce0e34356bd64  
+    git rev 424983fa186786397f5a99539f51710abf62c37b  
 
-    >cardano-node 8.9.0 - linux-x86_64 - ghc-8.10  
-    git rev 0d98405a60d57e1c8e13406d51cce0e34356bd64 
+    >cardano-node 8.9.2 - linux-x86_64 - ghc-8.10  
+    git rev 424983fa186786397f5a99539f51710abf62c37b 
 
     **ビルド用TMUXセッションを終了する** 
     ```
@@ -585,28 +582,37 @@ cardano-node version
 
 以下の戻り値を確認する  
 >cardano-cli 8.20.3.0 - linux-x86_64 - ghc-8.10  
-git rev 0d98405a60d57e1c8e13406d51cce0e34356bd64  
+git rev 424983fa186786397f5a99539f51710abf62c37b  
 
->cardano-node 8.9.0 - linux-x86_64 - ghc-8.10  
-git rev 0d98405a60d57e1c8e13406d51cce0e34356bd64 
+>cardano-node 8.9.2 - linux-x86_64 - ghc-8.10  
+git rev 424983fa186786397f5a99539f51710abf62c37b
 
 
 ### **2-3.設定ファイルの追加と更新**
 
 既存ファイルバックアップ
 ```
-mkdir $NODE_HOME/backup
+mkdir -p $NODE_HOME/backup
 cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config.json
 cp $NODE_HOME/${NODE_CONFIG}-conway-genesis.json $NODE_HOME/backup/${NODE_CONFIG}-conway-genesis.json
 cp $NODE_HOME/${NODE_CONFIG}-topology.json $NODE_HOME/backup/${NODE_CONFIG}-topology.json
 ```
 
 新ファイルダウンロード
-```
-cd $NODE_HOME
-wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
-wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/config.json -O ${NODE_CONFIG}-config.json
-```
+!!! danger ""
+    <font color=red>BPとリレーで実行するコマンドが異なるので、対象サーバーごとにタブを切り替えてください</font>
+    === "リレーで実行"
+        ```
+        cd $NODE_HOME
+        wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
+        wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/config.json -O ${NODE_CONFIG}-config.json
+        ```
+    === "BPで実行"
+        ```
+        cd $NODE_HOME
+        wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
+        wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/config-bp.json -O ${NODE_CONFIG}-config.json
+        ```
 
 設定ファイルを書き換える
 
@@ -624,46 +630,68 @@ sed -i ${NODE_CONFIG}-config.json \
     -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
     -e "s/127.0.0.1/0.0.0.0/g"
 ```
+!!! danger "注意"
+    ??? danger "8.1.2/8.7.3からアップデートする場合のみ ここを開いて実施"
+        !!! Success "<font color=green>**この緑枠内はリレーのみで実施**</font>"
+              
+            **トポロジーアップデータCron解除**
+            === "リレーノードのみ"
+            ```
+            crontab -l >crontab.txt
+            sed -i '/topologyUpdater.sh/d' crontab.txt
+            crontab crontab.txt
+            ```
 
-### **2-4.BPのみ作業**
-!!! danger "この作業はBPのみで実施してください"
-    
-    **ブロックログ用ライブラリを更新する**
-    ```
-    cd $NODE_HOME/scripts
-    wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cntools.library -O cntools.library
-    ```
+            **relay-topology_pull.sh削除**
+            === "リレーノードのみ"
+            ```
+            rm $NODE_HOME/relay-topology_pull.sh
+            ```
 
-    **cncli.shを更新する**
-    ```
-    cd $NODE_HOME/scripts
-    wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cncli.sh -O ./cncli.sh
-    ```
-    ```
-    pool_hex=`cat $NODE_HOME/pool.id`
-    pool_bech32=`cat $NODE_HOME/pool.id-bech32`
-    printf "\nプールID(hex)は \e[32m${pool_hex}\e[m です\n\n"
-    printf "\nプールID(bech32)は \e[32m${pool_bech32}\e[m です\n\n"
-    ```
-    ```
-    sed -i $NODE_HOME/scripts/cncli.sh \
-    -e '1,73s!#POOL_ID=""!POOL_ID="'${pool_hex}'"!' \
-    -e '1,73s!#POOL_ID_BECH32=""!POOL_ID_BECH32="'${pool_bech32}'"!' \
-    -e '1,73s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
-    -e '1,73s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
-    ```
+        !!! hint "<font color=blue>**この青枠内はBPのみで実施**</font> " 
+        
+            **ブロックログ用ライブラリを更新する**
+            === "BPのみ"
+            ```
+            cd $NODE_HOME/scripts
+            wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cntools.library -O cntools.library
+            ```
 
-### 2-5.トポロジー設定
+            **cncli.shを更新する**
+            === "BPのみ"
+            ```
+            cd $NODE_HOME/scripts
+            wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cncli.sh -O ./cncli.sh
+            ```
+            === "BPのみ"
+            ```
+            pool_hex=`cat $NODE_HOME/pool.id`
+            pool_bech32=`cat $NODE_HOME/pool.id-bech32`
+            printf "\nプールID(hex)は \e[32m${pool_hex}\e[m です\n\n"
+            printf "\nプールID(bech32)は \e[32m${pool_bech32}\e[m です\n\n"
+            ```
+            === "BPのみ"
+            ```
+            sed -i $NODE_HOME/scripts/cncli.sh \
+            -e '1,73s!#POOL_ID=""!POOL_ID="'${pool_hex}'"!' \
+            -e '1,73s!#POOL_ID_BECH32=""!POOL_ID_BECH32="'${pool_bech32}'"!' \
+            -e '1,73s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
+            -e '1,73s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
+            ```
+
+### 2-4.トポロジー設定
 
 新トポロジーファイル項目解説
 
 | 項目     | 説明                          |
 | ----------- | ------------------------------------ |
-| `localRoots`       | 常に固定したい接続先を記入 |
+| `bootstrapPeers`       | Genesis lite bootstrap用ノードを記入する |
+| `localRoots`       | 常にHot接続を固定したい接続先を記入 |
 | `accessPoints`       |  接続先グループ |
-| `advertise`    | PeerSharing実装後に使用するフラグ(今は`false`) |
+| `advertise`    | PeerSharing伝播フラグ |
+| `trustable`    | 信頼ノード設定フラグ |
 | `valency`    | 接続数(接続先グループ内に記載した数と一致させる必要があります) |
-| `publicRoots`    | ブートストラップ用バックアップ接続先 |
+| `publicRoots`    | IOGリレーなどの公開リレー接続先 |
 | `useLedgerAfterSlot`    | 初期同期の際に台帳Peer検索を有効にするスロット番号 |
 
 **以下、各ノードごとのタブをクリックして実施してください**
@@ -673,34 +701,80 @@ sed -i ${NODE_CONFIG}-config.json \
 ??? example "リレーノードトポロジーファイル作成手順"
 
     自身のリレーノードから接続を固定するノードを指定します。(BPやリレーノード)  
-    「xxx.xxx.xxx.xxx」は接続先のパブリックIP(静的)アドレスと接続先ノードポート番号に置き換えて下さい。
-
-    ``` yaml
-    cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
-    {
-    "localRoots": [
-        { 
+    「xxx.xxx.xxx.xxx」は接続先のパブリックIP(静的)アドレスと接続先ノードポート番号に置き換えて下さい。  
+    <font color=red>`bootstrapPeers`はまず１つのリレーで有効にして運用してください</font>  
+    例）リレー１→bootstrapPeers無効  
+    　　リレー２→bootstrapPeers有効  
+    === "リレー１用　bootstrapPeers無効"
+        ``` yaml
+        cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
+        {
+        "bootstrapPeers": null,
+        "localRoots": [
+            {
             "accessPoints": [
-            {
-            "address": "xx.xxx.xx.xxx", #(1)!
-            "port": yyyy #(2)!
-            },
-            {
-            "address": "bb.bbb.bb.bbb", #(3)!
-            "port": aaaa #(4)!
-            }
+                {
+                "address": "BPのIP",#(1)!
+                "port": BPポート #(2)!
+                }
             ],
-            "advertise": false,
-            "valency": 2
-        }
-    ],
-    "publicRoots": [
-        { 
-        "accessPoints": [
-            {
-            "address": "backbone.cardano-mainnet.iohk.io",
-            "port": 3001
+                "advertise": false,#(5)!
+                "trustable": true,
+                "valency": 1
             },
+            {
+            "accessPoints": [
+                {
+                "address": "リレー２IP",#(3)!
+                "port": 6000 #(4)!
+                }
+            ],
+                "advertise": true,
+                "trustable": true,
+                "valency": 1
+            }
+        ],
+        "publicRoots": [
+            {
+            "accessPoints": [
+                {
+                "address": "backbone.cardano-mainnet.iohk.io",
+                "port": 3001
+                },
+                {
+                "address": "backbone.cardano.iog.io",
+                "port": 3001
+                },
+                {
+                "address": "backbone.mainnet.emurgornd.com",
+                "port": 3001
+                },
+                {
+                "address": "backbone.mainnet.cardanofoundation.org",
+                "port": 3001
+                }
+                ],
+            "advertise": false
+            }
+        ],
+        "useLedgerAfterSlot": 110332824
+        }
+        EOF
+        ```
+        { .annotate }
+
+        1.  BPのIPアドレスまたはDNSアドレスに置き換えてください
+        2.  BPのポートに置き換えてください
+        3.  リレー②のIPアドレスまたはDNSアドレスに置き換えてください
+        4.  リレー②のポートに置き換えてください
+        5.  accessPointsにBPを指定する時は必ず`advertise`を`false`にしてください
+
+
+    === "リレー２用　bootstrapPeers有効"
+        ``` yaml
+        cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
+        {
+        "bootstrapPeers": [
             {
             "address": "backbone.cardano.iog.io",
             "port": 3001
@@ -708,58 +782,93 @@ sed -i ${NODE_CONFIG}-config.json \
             {
             "address": "backbone.mainnet.emurgornd.com",
             "port": 3001
+            },
+            {
+            "address": "backbone.mainnet.cardanofoundation.org",
+            "port": 3001
             }
         ],
-        "advertise": false
+        "localRoots": [
+            {
+            "accessPoints": [
+                {
+                "address": "BPのIP",#(1)!
+                "port": 00000 #(2)!
+                }
+            ],
+                "advertise": false,#(5)!
+                "trustable": true,
+                "valency": 1
+            },
+            {
+            "accessPoints": [
+                {
+                "address": "リレー１のIP",#(3)!
+                "port": 6000 #(4)!
+                }
+            ],
+                "advertise": true,
+                "trustable": true,
+                "valency": 1
+            }
+        ],
+        "publicRoots": [
+            {
+            "accessPoints": [],
+            "advertise": false
+            }
+        ],
+        "useLedgerAfterSlot": 110332824
         }
-    ],
-    "useLedgerAfterSlot": 110332824
-    }
-    EOF
-    ```
-    { .annotate }
+        EOF
+        ```
+        { .annotate }
 
-    1.  BP1のIPアドレスに置き換えてください
-    2.  BP1のポートに置き換えてください
-    3.  BP2または他リレーのIPアドレスに置き換えてください
-    4.  BP2または他リレーのポートに置き換えてください
+        1.  BPのIPアドレスまたはDNSアドレスに置き換えてください
+        2.  BPのポートに置き換えてください
+        3.  リレー１のIPアドレスまたはDNSアドレスに置き換えてください
+        4.  リレー２他リレーのポートに置き換えてください
+        5.  accessPointsにBPを指定する時は必ず`advertise`を`false`にしてください
 
 
 ??? example "BPノードトポロジーファイル作成手順"
-
+    <font color=red>BPでは`bootstrapPeers`と`PeerSharing`を無効にします</font>
     ``` yaml
     cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
     {
+    "bootstrapPeers": null,
     "localRoots": [
-        { 
+        {
           "accessPoints": [
             {
-            "address": "xx.xxx.xx.xxx", #(1)!
-            "port": yyyy #(2)!
+            "address": "リレー１のIP",#(1)!
+            "port": 6000 #(2)!
             },
             {
-            "address": "bb.bbb.bb.bbb", #(3)!
-            "port": aaaa #(4)!
+            "address": "リレー２のIP",#(3)!
+            "port": 6000 #(4)!
             }
           ],
-          "advertise": false,
+          "advertise": false,#(8)!
+          "trustable": true,
           "valency": 2 #(5)!
         }
     ],
-    "publicRoots": [], #(6)!
+    "publicRoots": [],#(6)!
     "useLedgerAfterSlot": -1 #(7)!
     }
     EOF
     ```
     { .annotate }
 
-    1.  リレー1のIPアドレスまたはDNSアドレスに置き換えてください
-    2.  リレー1のポートに置き換えてください
-    3.  リレー2または他リレーのIPアドレスに置き換えてください
-    4.  リレー2または他リレーのポートに置き換えてください
+    1.  リレー１のIPアドレスまたはDNSアドレスに置き換えてください
+    2.  リレー１のポートに置き換えてください
+    3.  リレー２のIPアドレスまたはDNSアドレスに置き換えてください
+    4.  リレー２のポートに置き換えてください
     5.  固定接続ピアの数を指定してください
     6.  "publicRoots":を空にしてください
     7.  `-1`を指定することで台帳から接続先を取得しないBPモードになります
+    8. ここでは`advertise`を`false`にしてください
 
 **mainnet-topology.json構文チェック**
 ```
@@ -784,7 +893,7 @@ cnreload
 
 ??? danger "8.1.2からのアップデートの場合はここでDB更新が必要です"
 
-    ### (MithrilクライアントDB更新)
+    #### (MithrilクライアントDB更新)
 
     **インストール**
     ```
@@ -870,7 +979,7 @@ cnreload
     ```
 
 
-### **2-6.サーバー再起動**
+### **2-5.サーバー再起動**
 
 **作業フォルダリネーム**
 
@@ -896,63 +1005,7 @@ journalctl --unit=cardano-node --follow
 
 ## 3. 各種ツール関係更新
 
-### **3-1.全ノード共通**
-
-**環境変数にリロード用エイリアスを作成(更新)する**
-
-```bash title="このボックスはすべてコピーして実行してください"
-kill_alias=$(cat $HOME/.bashrc | grep cnreload)
-if [ -n "$kill_alias" ]; then
-    sed -i 's/alias cnreload="kill -SIGHUP $(pidof cardano-node)"/alias cnreload="kill -HUP $(pidof cardano-node)"/g' $HOME/.bashrc
-else
-    echo alias cnreload='"kill -HUP $(pidof cardano-node)"' >> $HOME/.bashrc
-fi
-source $HOME/.bashrc
-```
-
-
-**gLiveView更新**
-
-更新フラグをYに変更
-```
-sed -i $NODE_HOME/scripts/env \
-    -e 's!UPDATE_CHECK="N"!UPDATE_CHECK="Y"!'
-```
-
-gLiveView起動
-```
-glive
-```
-
-`yes`を入力しアップデートする
-``` { .yaml .no-copy }
-～ do you want to download the latest version? (yes/no): yes
-```
-> `Koios gLiveView v1.29.1`になったことを確認する
-
-更新フラグをNに変更
-```
-sed -i $NODE_HOME/scripts/env \
-    -e 's!UPDATE_CHECK="Y"!UPDATE_CHECK="N"!'
-```
-
-### **3-2.リレーノードのみ**
-
-**トポロジーアップデータCron解除**
-=== "リレーノードのみ"
-```
-crontab -l >crontab.txt
-sed -i '/topologyUpdater.sh/d' crontab.txt
-crontab crontab.txt
-```
-
-**relay-topology_pull.sh削除**
-=== "リレーノードのみ"
-```
-rm $NODE_HOME/relay-topology_pull.sh
-```
-
-### **3-3.サービス起動確認**
+### **3-1.BPサービス起動確認(BPのみ)**
 
 ??? danger "ブロック生成ステータス通知またはSPO Block Notifyを未導入(更新)していない方"
 
@@ -988,128 +1041,172 @@ BPノードが完全に同期した後、サービス起動状態を確認する
     ```
     100% sync'dになるまでお待ち下さい
 
+!!! hint "8.9.0からのアップデートの場合"
+    cardano-cliのバージョンに変更がないためエアギャップへのコピーは不要です。
 
-### **3-4.Grafana更新**
-!!! danger "独自カスタマイズしている方"
-    Grafanaダッシュボードを独自カスタマイズしている方は以下のメトリクス追加を推奨します。
+!!! danger "注意"
 
-    * cardano_node_metrics_connectionManager_incomingConns
-    * cardano_node_metrics_connectionManager_outgoingConns
-    * cardano_node_metrics_peerSelection_hot
-    * cardano_node_metrics_peerSelection_warm
-    * cardano_node_metrics_peerSelection_cold 
+    ??? danger "8.1.2/8.7.3からアップデートする場合のみ ここを開いて実施"
+        ### **3-2.全ノード共通**
 
-既存のダッシュボードを削除する
+        **環境変数にリロード用エイリアスを作成(更新)する**
 
-1. Grafanaを開き左メニューの「Dashboards」から「SJG: Cardano-Node」にチェックを入れてDeleteボタンをクリック
-2. 確認ポップアップに`Delete`を入力しDeleteをクリック
-3. [Grafanaダッシュボード設定](../setup/9-monitoring-tools-setup.md#9-3grafana)の11～15を実施する
+        ```bash title="このボックスはすべてコピーして実行してください"
+        kill_alias=$(cat $HOME/.bashrc | grep cnreload)
+        if [ -n "$kill_alias" ]; then
+            sed -i 's/alias cnreload="kill -SIGHUP $(pidof cardano-node)"/alias cnreload="kill -HUP $(pidof cardano-node)"/g' $HOME/.bashrc
+        else
+            echo alias cnreload='"kill -HUP $(pidof cardano-node)"' >> $HOME/.bashrc
+        fi
+        source $HOME/.bashrc
+        ```
+
+        **gLiveView更新**
+
+        更新フラグをYに変更
+        ```
+        sed -i $NODE_HOME/scripts/env \
+            -e 's!UPDATE_CHECK="N"!UPDATE_CHECK="Y"!'
+        ```
+
+        gLiveView起動
+        ```
+        glive
+        ```
+
+        `yes`を入力しアップデートする
+        ``` { .yaml .no-copy }
+        ～ do you want to download the latest version? (yes/no): yes
+        ```
+        > `Koios gLiveView v1.29.1`になったことを確認する
+
+        更新フラグをNに変更
+        ```
+        sed -i $NODE_HOME/scripts/env \
+            -e 's!UPDATE_CHECK="Y"!UPDATE_CHECK="N"!'
+        ```
+
+        ### **3-3.Grafana更新**
+        !!! danger "独自カスタマイズしている方"
+            Grafanaダッシュボードを独自カスタマイズしている方は以下のメトリクス追加を推奨します。
+
+            * cardano_node_metrics_connectionManager_incomingConns
+            * cardano_node_metrics_connectionManager_outgoingConns
+            * cardano_node_metrics_peerSelection_hot
+            * cardano_node_metrics_peerSelection_warm
+            * cardano_node_metrics_peerSelection_cold 
+
+        既存のダッシュボードを削除する
+
+        1. Grafanaを開き左メニューの「Dashboards」から「SJG: Cardano-Node」にチェックを入れてDeleteボタンをクリック
+        2. 確認ポップアップに`Delete`を入力しDeleteをクリック
+        3. [Grafanaダッシュボード設定](../setup/9-monitoring-tools-setup.md#9-3grafana)の11～15を実施する
 
 
-## **4. エアギャップアップデート**
-!!! hint "SFTP機能ソフト導入"
-    R-loginの転送機能が遅いので、大容量ファイルをダウン・アップロードする場合は、SFTP接続可能なソフトを使用すると効率的です。（FileZilaなど）  
-    ファイル転送に便利な[SFTP機能ソフトの導入手順はこちら](./sftp.md)
+        ## **4. エアギャップアップデート**
+        !!! hint "SFTP機能ソフト導入"
+            R-loginの転送機能が遅いので、大容量ファイルをダウン・アップロードする場合は、SFTP接続可能なソフトを使用すると効率的です。（FileZilaなど）  
+            ファイル転送に便利な[SFTP機能ソフトの導入手順はこちら](./sftp.md)
 
-### **4-1.バイナリファイルコピー**
+        ### **4-1.バイナリファイルコピー**
 
-=== "ビルド済みバイナリをダウンロードした場合"
+        === "ビルド済みバイナリをダウンロードした場合"
 
-    リレーサーバーで以下を実行する
+            リレーサーバーで以下を実行する
 
-    ```bash
-    sudo cp $(find $HOME/git/cardano-node -type f -name "cardano-cli") ~/cardano-cli
-    ```
-
-
-=== "ソースコードからビルドした場合"
-
-    リレーサーバーで以下を実行する
-
-    ```bash
-    sudo cp $(find $HOME/git/cardano-node/dist-newstyle/build -type f -name "cardano-cli") ~/cardano-cli
-    ```
-
-SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し、以下をダウンロードする 
-
-* /home/usr/cardano-cli
-
-をローカルパソコンにダウンロードします  
-(エアギャップUbuntuとの共有フォルダ)
+            ```bash
+            sudo cp $(find $HOME/git/cardano-node -type f -name "cardano-cli") ~/cardano-cli
+            ```
 
 
+        === "ソースコードからビルドした場合"
 
-<BR>
+            リレーサーバーで以下を実行する
 
-**エアギャップマシンにファイルを入れる**  
+            ```bash
+            sudo cp $(find $HOME/git/cardano-node/dist-newstyle/build -type f -name "cardano-cli") ~/cardano-cli
+            ```
 
-=== "エアギャップ"
+        SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し、以下をダウンロードする 
 
-    * $HOME/git/cardano-node2/ に`cardano-cli`を入れる   
-      <font color=red>(cardano-node2が無ければ作成する)</font>
+        * /home/usr/cardano-cli
 
-
-### **4-2.インストール**
-
-エアギャップマシンで以下を実行する
-=== "エアギャップ"
-    cardano-cliをシステムフォルダへコピーする
-    ```bash
-    sudo cp $(find $HOME/git/cardano-node2 -type f -name "cardano-cli") /usr/local/bin/cardano-cli
-    ```
-    <!--
-    `make`がインストールされていることを確認する
-    -->
-    <!--
-    ```
-    apt list make
-    ```
-    以下の戻り値を確認する
-    -->
-    <!--
-    make/focal,now 4.2.1-1.2 amd64 [インストール済み]  
-    make/focal 4.2.1-1.2 i386
-    -->
-    <!--
-    secp256k1をインストールする
-    ```
-    cd $HOME/git/secp256k1/
-    chmod +x autogen.sh
-    ./autogen.sh
-    ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
-    make
-    make check
-    ```
-    -->
-    <!--
-    インストールコマンドを実行する
-    ```
-    sudo make install
-    ```
-    -->
-    <!--
-    環境変数を設定する
-    ```
-    echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
-    echo export NODE_NETWORK="--mainnet" >> $HOME/.bashrc
-    source $HOME/.bashrc
-    ```
-    -->
-
-### **4-3.バージョン確認**
-
-```bash
-cardano-cli version
-```
-
-以下の戻り値を確認する  
->cardano-cli 8.20.3.0 - linux-x86_64 - ghc-8.10  
-git rev 0d98405a60d57e1c8e13406d51cce0e34356bd64  
+        をローカルパソコンにダウンロードします  
+        (エアギャップUbuntuとの共有フォルダ)
 
 
 
-!!! denger "確認"
-    エアギャップではcardano-nodeは使用しないため転送してもしなくてもOKです。
+        <BR>
+
+        **エアギャップマシンにファイルを入れる**  
+
+        === "エアギャップ"
+
+            * $HOME/git/cardano-node2/ に`cardano-cli`を入れる   
+            <font color=red>(cardano-node2が無ければ作成する)</font>
+
+
+        ### **4-2.インストール**
+
+        エアギャップマシンで以下を実行する
+        === "エアギャップ"
+            cardano-cliをシステムフォルダへコピーする
+            ```bash
+            sudo cp $(find $HOME/git/cardano-node2 -type f -name "cardano-cli") /usr/local/bin/cardano-cli
+            ```
+            <!--
+            `make`がインストールされていることを確認する
+            -->
+            <!--
+            ```
+            apt list make
+            ```
+            以下の戻り値を確認する
+            -->
+            <!--
+            make/focal,now 4.2.1-1.2 amd64 [インストール済み]  
+            make/focal 4.2.1-1.2 i386
+            -->
+            <!--
+            secp256k1をインストールする
+            ```
+            cd $HOME/git/secp256k1/
+            chmod +x autogen.sh
+            ./autogen.sh
+            ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
+            make
+            make check
+            ```
+            -->
+            <!--
+            インストールコマンドを実行する
+            ```
+            sudo make install
+            ```
+            -->
+            <!--
+            環境変数を設定する
+            ```
+            echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
+            echo export NODE_NETWORK="--mainnet" >> $HOME/.bashrc
+            source $HOME/.bashrc
+            ```
+            -->
+
+        ### **4-3.バージョン確認**
+
+        ```bash
+        cardano-cli version
+        ```
+
+        以下の戻り値を確認する  
+        >cardano-cli 8.20.3.0 - linux-x86_64 - ghc-8.10  
+        git rev 424983fa186786397f5a99539f51710abf62c37b  
+
+
+
+        !!! denger "確認"
+            エアギャップではcardano-nodeは使用しないため転送してもしなくてもOKです。
 
 
 <!--

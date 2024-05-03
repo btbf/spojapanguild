@@ -108,8 +108,6 @@
 | **params.json**      | パラメーターファイル  | BP | :arrows_clockwise: |
 | **poolMetaData.json**      | プール情報JSON  | BP | :arrows_clockwise: |
 | **poolMetaDataHash.txt**      | poolMetaData.jsonハッシュ値ファイル  | BP | :arrows_clockwise: |
-| **topologyUpdater.sh**    | トポロジーフェッチ登録スクリプト | リレー | :arrows_clockwise: |
-| **relay-topology_pull.sh**      | トポロジーファイル生成スクリプト  | リレー | :arrows_clockwise: |
 | **fullUtxo.out**    | UTXO出力ファイル | 使用後削除可 | - |
 | **balance.out**    | ウォレット残高出力ファイル | 使用後削除可 | - |
 | **tx.tmp**    | 仮トランザクションファイル | 使用後削除可 | - |
@@ -128,7 +126,6 @@
 * 次エポックのブロック生成スケジュール確認  
   (320000スロットを超えてからエポック終了までに)  
 
-* リレーノードトポロジーファイルの更新(隠しリレーのみ)
 
 :material-tooltip-edit-outline: **3か月毎作業**
 

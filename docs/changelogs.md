@@ -1,5 +1,13 @@
 # 変更履歴
 
+## 2024/04/10　ver. 13.3.0
+!!! note ""
+    * cardano-node v8.9.2対応
+    * [**ノードアップデート手順**](operation/node-update.md)更新
+    * [**リレーとBPを接続する**](setup/3-relay-bp-setup.md)にダイナミックP2P解説を追加
+    * 軽微な修正
+
+
 ## 2024/04/10　ver. 13.2.2
 !!! note ""
     * mithril-clientコマンド修正
