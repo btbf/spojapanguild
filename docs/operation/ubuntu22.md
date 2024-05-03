@@ -91,6 +91,39 @@ sudo systemctl stop cardano-node
 sudo systemctl disable cardano-node
 ```
 
+### 1-7.システムアップデート
+```
+sudo apt update -y && sudo apt upgrade -y
+```
+```
+cd /usr/lib/python3/dist-packages/
+sudo cp apt_pkg.cpython-38-x86_64-linux-gnu.so apt_pkg.so
+```
+```
+sudo apt install --reinstall python3-apt
+```
+
+Pythonバージョンを確認する
+```
+python3 -V
+```
+> 3.10以下であればOK
+
+??? danger "戻り値がpython3.12の場合"
+    ```
+    sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 2
+    ```
+    ```
+    python3 -V
+    ```
+    > Python 3.8.10になったことを確認する
+
+
+### 1-8.パッケージインストール
+```
+sudo apt install update-manager-core
+```
+
 ### 1-6.Ubuntuバージョン確認
 
 現在のバージョンを確認する
@@ -106,16 +139,6 @@ cat /etc/os-release | grep "VERSION="
 sudo do-release-upgrade -c | grep "New release"
 ```
 > New release '22.04.x LTS' available.　xの数字はアップグレード時期によって変わります
-
-### 1-7.システムアップデート
-```
-sudo apt full-upgrade -y
-```
-
-### 1-8.パッケージインストール
-```
-sudo apt install update-manager-core
-```
 
 ### 1-9.システムを再起動
 ```

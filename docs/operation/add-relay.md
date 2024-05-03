@@ -31,40 +31,44 @@
     ``` yaml
     cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
     {
+    "bootstrapPeers": null,
     "localRoots": [
-        { 
+        {
           "accessPoints": [
             {
-            "address": "xx.xxx.xx.xxx", #(1)!
-            "port": yyyy #(2)!
+            "address": "リレー１のIP",#(1)!
+            "port": 6000 #(2)!
             },
             {
-            "address": "bb.bbb.bb.bbb", #(3)!
-            "port": aaaa #(4)!
+            "address": "リレー２のIP",#(3)!
+            "port": 6000 #(4)!
             }
           ],
-          "advertise": false,
+          "advertise": false,#(8)!
+          "trustable": true,
           "valency": 2 #(5)!
         }
     ],
-    "publicRoots": [],
-    "useLedgerAfterSlot": -1 #(6)!
+    "publicRoots": [],#(6)!
+    "useLedgerAfterSlot": -1 #(7)!
     }
     EOF
     ```
     { .annotate }
 
-    1.  リレー1のIPアドレスまたはDNSアドレスに置き換えてください
-    2.  リレー1のポートに置き換えてください
-    3.  リレー2または他リレーのIPアドレスに置き換えてください
-    4.  リレー2または他リレーのポートに置き換えてください
+    1.  リレー１のIPアドレスまたはDNSアドレスに置き換えてください
+    2.  リレー１のポートに置き換えてください
+    3.  リレー２のIPアドレスまたはDNSアドレスに置き換えてください
+    4.  リレー２のポートに置き換えてください
     5.  固定接続ピアの数を指定してください
-    6.  `-1`を指定することで台帳から接続先を取得しないBPモードになります
+    6.  "publicRoots":を空にしてください
+    7.  `-1`を指定することで台帳から接続先を取得しないBPモードになります
+    8. ここでは`advertise`を`false`にしてください
 
 
-トポロジーファイルを再読み込みする
+ノードを再起動する
 ```
-cnreload
+cnrestart
 ```
 
 ## 5.プール情報更新

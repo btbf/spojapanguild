@@ -3,7 +3,7 @@
 !!! hint "インストールバージョン"
     | Node | CLI | GHC | Cabal |
     | :---------- | :---------- | :---------- | :---------- |
-    | 8.9.0 | 8.20.3.0 | 8.10.7 | 3.8.1.0 | 
+    | 8.9.2 | 8.20.3.0 | 8.10.7 | 3.8.1.0 | 
 
 !!! danger "コマンド実行時の注意点"
     * Ubuntuコマンド初心者の方は、コードボックスに複数行のコマンドがある場合でも、コマンドを1行づつコピーして実行するようにしてください。ただし `cat > xxx << EOF`のボックスについてはコードボックスのコピーボタンを使用してコマンドラインに貼り付けてください。
@@ -245,7 +245,7 @@ cd $HOME/git
 git clone https://github.com/IntersectMBO/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/8.9.0
+git checkout tags/8.9.2
 ```
 
 Cabalのビルドオプションを構成します。
@@ -284,10 +284,10 @@ cardano-cli version
 
 以下の戻り値を確認する  
 >cardano-cli 8.20.3.0 - linux-x86_64 - ghc-8.10  
-git rev 0d98405a60d57e1c8e13406d51cce0e34356bd64  
+git rev 424983fa186786397f5a99539f51710abf62c37b  
 
->cardano-node 8.9.0 - linux-x86_64 - ghc-8.10  
-git rev 0d98405a60d57e1c8e13406d51cce0e34356bd64  
+>cardano-node 8.9.2 - linux-x86_64 - ghc-8.10  
+git rev 424983fa186786397f5a99539f51710abf62c37b 
   
 
 TMUXセッションを閉じる
@@ -344,12 +344,21 @@ config.json、genesis.json、topology.json
 mkdir $NODE_HOME
 cd $NODE_HOME
 wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/byron-genesis.json -O ${NODE_CONFIG}-byron-genesis.json
-wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/topology-non-bootstrap-peers.json -O ${NODE_CONFIG}-topology.json
+wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/topology.json -O ${NODE_CONFIG}-topology.json
 wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
 wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
 wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
-wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/config.json -O ${NODE_CONFIG}-config.json
 ```
+
+=== "リレーノードで実施"
+    ```
+    wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/config.json -O ${NODE_CONFIG}-config.json
+    ```
+
+=== "ブロックプロデューサーノードで実施"
+    ```
+    wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/config-bp.json -O ${NODE_CONFIG}-config.json
+    ```
 
 以下のコードを実行し **config.json**ファイルを更新します。  
 
@@ -363,6 +372,7 @@ sed -i ${NODE_CONFIG}-config.json \
     -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
     -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
     -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
+    -e 's!"TraceMempool": false!"TraceMempool": true!' \
     -e 's!"rpKeepFilesNum": 10!"rpKeepFilesNum": 30!' \
     -e 's!"rpMaxAgeHours": 24!"rpMaxAgeHours": 48!' \
     -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "'${NODE_HOME}'/logs/node.json"\n    \],' \
@@ -467,17 +477,12 @@ Ctrl+C
 
 先程のスクリプトだけでは、ターミナル画面を閉じるとノードが終了してしまうので、スクリプトをサービスとして登録し、自動起動するように設定しましょう
 
-!!! hint "ステークプールにsystemdを使用するメリット"
+!!! hint "ノード起動にsystemdを使用するメリット"
 
-    1. メンテナンスや停電など、自動的にコンピュータが再起動したときステークプールを自動起動します。
-    2. クラッシュしたステークプールプロセスを自動的に再起動します。
-    3. ステークプールの稼働時間とパフォーマンスをレベルアップさせます。
+    1. メンテナンスや停電など、自動的にサーバーが再起動したときノードを自動起動します。
+    2. クラッシュしたノードプロセスを自動的に再起動します。
+    3. ノードの稼働時間とパフォーマンスを向上させます。
 
-始める前にステークプールが停止しているか確認してください。
-
-```bash
-killall -s 2 cardano-node
-```
 
 以下のコードを実行して、ユニットファイルを作成します。
 
