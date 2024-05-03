@@ -44,7 +44,7 @@ status: new
         pythonUpdate.shをダウンロードして自動アップデートする
         ```
         cd
-        wget https://raw.githubusercontent.com/btbf/spojapanguild/v13.2.x/scripts/pythonUpdate.sh
+        wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/pythonUpdate.sh
         chmod +x pythonUpdate.sh
         ./pythonUpdate.sh
         ```
@@ -459,7 +459,7 @@ status: new
         pythonUpdate.shをダウンロードして自動アップデートする
         ```
         cd
-        wget https://raw.githubusercontent.com/btbf/spojapanguild/v13.2.x/scripts/pythonUpdate.sh
+        wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/pythonUpdate.sh
         chmod +x pythonUpdate.sh
         ./pythonUpdate.sh
         ```
