@@ -24,7 +24,7 @@ status: new
 
     | バージョン | DB再構築有無 | 設定ファイル更新有無 | トポロジーファイル更新有無 |
     | :---------- | :---------- | :---------- | :---------- |
-    | 8.1.2→8.9.2 | <font color=red>あり</font><br>[(Mithrilブートストラップをご利用ください)](./#mithrildb) | 更新あり | 更新あり |
+    | 8.1.2→8.9.2 | <font color=red>あり</font><br>[(Mithrilブートストラップをご利用ください)](./node-update.md#mithrildb) | 更新あり | 更新あり |
     | 8.7.3→8.9.2 | なし | 更新あり | 更新あり |
     | 8.9.0→8.9.2 | なし | 更新あり | 更新あり |
 
@@ -1054,9 +1054,9 @@ BPノードが完全に同期した後、サービス起動状態を確認する
         ```bash title="このボックスはすべてコピーして実行してください"
         kill_alias=$(cat $HOME/.bashrc | grep cnreload)
         if [ -n "$kill_alias" ]; then
-            sed -i 's/alias cnreload="kill -SIGHUP $(pidof cardano-node)"/alias cnreload="kill -HUP $(pidof cardano-node)"/g' $HOME/.bashrc
+            sed -i 's/alias cnreload="kill -SIGHUP $(pidof cardano-node)"/alias cnreload="pkill -HUP cardano-node"/g' $HOME/.bashrc
         else
-            echo alias cnreload='"kill -HUP $(pidof cardano-node)"' >> $HOME/.bashrc
+            echo alias cnreload='"pkill -HUP cardano-node"' >> $HOME/.bashrc
         fi
         source $HOME/.bashrc
         ```

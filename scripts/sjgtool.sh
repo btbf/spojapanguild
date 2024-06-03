@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="3.7.2"
+TOOL_VERSION="3.7.3"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -482,11 +482,11 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     get_pooldata
 
     #メトリクスKES
-    metrics_KES=`curl -s localhost:12798/metrics | grep remainingKES | awk '{ print $2 }'`
-    Expiry_KES=`curl -s localhost:12798/metrics | grep ExpiryKES | awk '{ print $2 }'`
-    Start_KES=`curl -s localhost:12798/metrics | grep StartKES | awk '{ print $2 }'`
-    current_KES=`curl -s localhost:12798/metrics | grep currentKES | awk '{ print $2 }'`
-    current_epoch=`curl -s localhost:12798/metrics | grep epoch_int | awk '{ print $2 }'`
+    metrics_KES=$(curl -s localhost:${PROM_PORT}/metrics | grep remainingKES | awk '{ print $2 }')
+    Expiry_KES=$(curl -s localhost:${PROM_PORT}/metrics | grep ExpiryKES | awk '{ print $2 }')
+    Start_KES=$(curl -s localhost:${PROM_PORT}/metrics | grep StartKES | awk '{ print $2 }')
+    current_KES=$(curl -s localhost:${PROM_PORT}/metrics | grep currentKES | awk '{ print $2 }')
+    current_epoch=$(curl -s localhost:${PROM_PORT}/metrics | grep epoch_int | awk '{ print $2 }')
     
     if [ -z "$metrics_KES" ]; then
       echo "KESメトリクスを取得できませんでした"
@@ -664,7 +664,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     fi
 
     #メトリクスTx数
-    metrics_tx=`curl -s localhost:12798/metrics | grep txsProcessedNum_int | awk '{ print $2 }'`
+    metrics_tx=$(curl -s localhost:${PROM_PORT}/metrics | grep txsProcessedNum_int | awk '{ print $2 }')
     if [ -z $metrics_tx ]; then
       metrics_tx="0"
     fi
@@ -694,7 +694,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     peers_in=$(ss -tnp state established 2>/dev/null | grep "${CNODE_PID}," | grep -v "127.0.0.1" | awk -v port=":${CNODE_PORT}" '$3 ~ port {print}' | wc -l)
     if [ $p2p_CHK = "true" ]; then
       #ダイナミックP2P
-      peers_out=$(curl -s localhost:12798/metrics | grep outgoingConns | awk '{ print $2 }')
+      peers_out=$(curl -s localhost:${PROM_PORT}/metrics | grep outgoingConns | awk '{ print $2 }')
       p2p_type="ダイナミックP2P(台帳P2P)"
 
     else
@@ -745,7 +745,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     chain_cert_counter=`cat $NODE_HOME/pooldata.txt | jq -r ".[].op_cert_counter"`
     local_cert_counter=`cardano-cli text-view decode-cbor --in-file $POOL_OPCERT_FILENAME | grep int | head -1 | cut -d"(" -f2 | cut -d")" -f1`
-    kes_remaining=`curl -s http://localhost:12798/metrics | grep KESPeriods_int | awk '{ print $2 }'`
+    kes_remaining=$(curl -s http://localhost:${PROM_PORT}/metrics | grep KESPeriods_int | awk '{ print $2 }')
     kes_days=`bc <<< "$kes_remaining * 1.5"`
     kes_cborHex=`cat $NODE_HOME/$POOL_HOTKEY_VK_FILENAME | jq '.cborHex' | tr -d '"'`
     cert_cborHex=`cardano-cli text-view decode-cbor --in-file $NODE_HOME/$POOL_OPCERT_FILENAME | awk 'NR==4,NR==6 {print}' | sed 's/ //g' | sed 's/#.*//' | tr -d '\n'`
@@ -818,7 +818,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     clear
 
     #KEStimenig
-    slotNumInt=`curl -s http://localhost:12798/metrics | grep cardano_node_metrics_slotNum_int | awk '{ print $2 }'`
+    slotNumInt=$(curl -s http://localhost:${PROM_PORT}/metrics | grep cardano_node_metrics_slotNum_int | awk '{ print $2 }')
     kesTiming=`echo "scale=6; ${slotNumInt} / 129600" | bc | awk '{printf "%.5f\n", $0}'`
 
     echo '------------------------------------------------------------------------'
@@ -2406,7 +2406,7 @@ clear
 if [[ -n $CNODE_PID ]]; then
   while :
   do
-    slot_check=`curl -s localhost:12798/metrics | grep slotNum_int`
+    slot_check=$(curl -s localhost:${PROM_PORT}/metrics | grep slotNum_int)
     if [ -z "$slot_check" ]; then
         echo "ノードが起動するまでこのままお待ちください"
         sleep 30

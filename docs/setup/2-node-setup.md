@@ -583,7 +583,7 @@ journalctl --unit=cardano-node --follow
     echo alias cnstart='"sudo systemctl start cardano-node"' >> $HOME/.bashrc
     echo alias cnrestart='"sudo systemctl reload-or-restart cardano-node"' >> $HOME/.bashrc
     echo alias cnstop='"sudo systemctl stop cardano-node"' >> $HOME/.bashrc
-    echo alias cnreload='"kill -HUP $(pidof cardano-node)"' >> $HOME/.bashrc
+    echo alias cnreload='"pkill -HUP cardano-node"' >> $HOME/.bashrc
     source $HOME/.bashrc
     ```
 

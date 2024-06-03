@@ -231,7 +231,7 @@ sed -i $NODE_HOME/relay-topology_pull.sh \
 ## **6.トポロジーリロード設定**
 リロード用環境変数を追加
 ```
-echo alias cnreload='"kill -SIGHUP $(pidof cardano-node)"' >> $HOME/.bashrc
+echo alias cnreload='"pkill -HUP cardano-node"' >> $HOME/.bashrc
 source $HOME/.bashrc
 ```
 !!! hint "P2P有効時の新機能"
