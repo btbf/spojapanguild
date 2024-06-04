@@ -80,12 +80,12 @@ cnrestart
 === "増設リレーで実施"
     9-1.インストール  
     「BPまたはリレー2以降」タブと「リレーノード/BP」タブを増設リレーで実施  
-    [https://docs.spojapanguild.net/setup/9-monitoring-tools-setup/#9-1](../setup/9-monitoring-tools-setup.md#1)
+    [https://docs.spojapanguild.net/setup/9-monitoring-tools-setup/#9-1](../setup/9-monitoring-tools-setup.md)
 
 
 === "Grafana導入済みのリレーで実施"
       9-2.設定ファイルの作成
       Grafanaがインストールされているサーバーで実施 #9-2
-    [https://docs.spojapanguild.net/setup/9-monitoring-tools-setup/#2](../setup/9-monitoring-tools-setup.md#2)
+    [https://docs.spojapanguild.net/setup/9-monitoring-tools-setup/#2](../setup/9-monitoring-tools-setup.md)
 
 

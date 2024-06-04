@@ -1,6 +1,18 @@
 # 変更履歴
+## 2024/06/03　ver. 13.3.1
+!!! note ""
+    * [**ノードインストール**](setup/2-node-setup.md) cnreload実行コマンド変更
 
-## 2024/05/3　ver. 13.3.0
+    既存設定値修正コマンド
+    ```
+    sed -i 's/alias cnreload="kill -HUP $(pidof cardano-node)"/alias cnreload="pkill -HUP cardano-node"/g' $HOME/.bashrc
+    source $HOME/.bashrc
+    ```
+    * [**SJG TOOL v3.7.3リリース**](operation/tool.md)  
+    * 軽微な修正
+
+
+## 2024/05/03　ver. 13.3.0
 !!! note ""
     * cardano-node v8.9.2対応
     * [**ノードアップデート手順**](operation/node-update.md)更新
@@ -126,7 +138,7 @@
 
 ## 2023/08/11　ver. 12.8.6
 !!! note ""
-    * [Ubuntu22.04任意アップグレード手順](operation/ubuntu22.md#3-3) BPにおけるCNCLI再ビルド注意書きを追加
+    * [Ubuntu22.04任意アップグレード手順](operation/ubuntu22.md) BPにおけるCNCLI再ビルド注意書きを追加
     * 軽微な修正
 
 ## 2023/07/25　ver. 12.8.5
@@ -147,7 +159,7 @@
 ## 2023/06/27　ver. 12.8.2
 !!! note ""
     * [ノードアップデート手順](operation/node-update.md#2-5) 2-6を2-5へ統合
-    * [Ubuntu22.04任意アップグレード手順](operation/ubuntu22.md#3-3) 「3-3.デーモン再起動自動化」を追加
+    * [Ubuntu22.04任意アップグレード手順](operation/ubuntu22.md#) 「3-3.デーモン再起動自動化」を追加
     * [1.Ubuntu初期設定](setup/1-ubuntu-setup.md#1-2) 「Ubuntu22.04の場合の特別設定」を追加
     * [Grafanaアラート設定](operation/grafana-alert.md) 2-2修正
     * [7.ステークプールの登録](setup/7-register-stakepool.md)メタデータの作成方法を変更
@@ -236,7 +248,7 @@
 !!! note ""
     * Cardano-node1.35.5対応
     * cncli.shアップデート
-    * ブロックログ [スケジュール取得手順](setup/10-blocklog-setup.md#10-9)を変更
+    * ブロックログ [スケジュール取得手順](setup/10-blocklog-setup.md)を変更
     * [貢献者ページ](./contributors.md)を追加
     * 軽微な修正
 
@@ -269,12 +281,12 @@
 !!! note ""
     * Cardano-node1.35.4対応
     * prometheus-node-exporter1.5.0アップデート手順追加  
-        ([9.監視ツールセットアップ](setup/9-monitoring-tools-setup.md)、[ノードアップデート](operation/node-update.md#1-3node-exporter))
+        ([9.監視ツールセットアップ](setup/9-monitoring-tools-setup.md)、[ノードアップデート](operation/node-update.md))
     * [エアギャップマシン作成](setup/air-gap-guid.md) ページ新設。Version7対応
     * [1.Ubuntu初期設定](setup/1-ubuntu-setup.md)ファイアウォール設定の一部を変更  
         (設定が必要な各ページ([3-リレー/BPの接続](setup/3-relay-bp-setup.md)、[9.監視ツールセットアップ](setup/9-monitoring-tools-setup.md))へ移動)
     * リレー2台目以降の設定手順を各ページに追加
-    * [Grafanaダッシュボードテンプレート](setup/9-monitoring-tools-setup.md#4grafana)を更新。  
+    * [Grafanaダッシュボードテンプレート](setup/9-monitoring-tools-setup.md)を更新。  
         (KoiosAPIを利用しティッカー名、プール委任量、委任者数情報表示)
     * [プール運用ガイド](operation/start-guide.md)カテゴリを整理
     * 軽微な修正
@@ -292,7 +304,7 @@
 ## 2022/09/10　ver. 12.3.5
 
 !!! note ""
-    * [9.監視ツールセットアップ](setup/9-monitoring-tools-setup.md#4grafana) (項目9のJSONファイルを変更)
+    * [9.監視ツールセットアップ](setup/9-monitoring-tools-setup.md) (項目9のJSONファイルを変更)
     * [SPO JAPAN GUILD TOOL](operation/tool.md) v3.3.0 リリース
 
 ## 2022/08/28　ver. 12.3.4
@@ -364,7 +376,7 @@
 
 ## 2022/03/11　ver. 11.1
 !!! note ""
-    * [8-P2Pトポロジー設定](setup/8.topology-setup.md) に[ノード起動最終調整](setup/8.topology-setup.md#_4)を追加しました。
+    * [8-P2Pトポロジー設定] に[ノード起動最終調整]を追加しました。
 
 ## 2022/03/07　ver. 11.0
 !!! note ""

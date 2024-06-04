@@ -239,7 +239,9 @@ chmod a-rwx $HOME/cold-keys
 === "ブロックプロデューサノード"
     ```bash
     cd $NODE_HOME
-    curl -s "https://api.koios.rest/api/v0/pool_updates?_pool_bech32=$(cat pool.id-bech32)" | jq '.[0].pool_status,.[0].retiring_epoch'
+    curl -s -X POST -H "content-type: application/json" -d @- "https://api.koios.rest/api/v1/pool_info" << EOS | jq '.[0].pool_status,.[0].retiring_epoch'
+    {"_pool_bech32_ids":["$(cat 'pool.id-bech32')"]}
+    EOS
     ```
 
     ```bash
