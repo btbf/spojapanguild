@@ -6,7 +6,7 @@
 
 
 !!! info "概要"
-    最終更新日：2024/3/24  v2.2.1
+    最終更新日：2024/6/4  v2.2.2
 
     * ブロックログで表示されるブロック生成結果を任意のソーシャルアプリへ通知します。   
     ![*](../images/block_notify/image.png)
@@ -26,6 +26,8 @@
 
 
 ??? info "更新履歴▼"
+    * 2.2.2  ・任意のPrometheusポートを設定可能
+    　　　　　・データベース接続の最適化
     * 2.2.1  ・特定の条件下における無限ループバグを解消
     * 2.2.0  ・サービス再起動時の強制終了バグを解消
     　　　　　・プログラム最適化
@@ -345,6 +347,9 @@ blocknotify
 
 ## **11-4.アップデート手順**
 
+!!! danger "旧バージョンからのアップデート(移行)について"
+    旧ブロック生成通知またはSPO Block Notify2.1.3からアップデートする場合は、[移行マニュアル](../operation/blocknotify-reinstall.md)をご参照ください
+
 SPO BlockNotifyを停止する
 ```
 sudo systemctl stop cnode-blocknotify.service
@@ -359,6 +364,13 @@ tar zxvf ${bn_release}.tar.gz block-notify-${bn_release}/block_notify.py
 cp block-notify-${bn_release}/block_notify.py block-notify/block_notify.py
 rm -rf block-notify-${bn_release} ${bn_release}.tar.gz
 ```
+
+??? "v2.2.0またはv2.2.1からのアップデートの場合はこちらも実施"
+    ```
+    cd $NODE_HOME/scripts/block-notify/
+    sed -i '9a prometheus_port = 12798' config.ini
+    ```
+
 
 SPO BlockNotifyを起動する
 ```
