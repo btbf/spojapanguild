@@ -8,7 +8,7 @@
     sed -i 's/alias cnreload="kill -HUP $(pidof cardano-node)"/alias cnreload="pkill -HUP cardano-node"/g' $HOME/.bashrc
     source $HOME/.bashrc
     ```
-    * [**SJG TOOL v3.7.3リリース**](operation/tool.md)
+    * [**SJG TOOL v3.7.3リリース**](operation/tool.md)  
     * 軽微な修正
 
 
