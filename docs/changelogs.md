@@ -1,4 +1,10 @@
 # 変更履歴
+
+## 2024/06/29　ver. 13.3.2
+!!! note ""
+    * cardano-node v8.9.4対応
+    * [**ノードアップデート手順**](operation/node-update.md)更新
+
 ## 2024/06/03　ver. 13.3.1
 !!! note ""
     * [**ノードインストール**](setup/2-node-setup.md) cnreload実行コマンド変更

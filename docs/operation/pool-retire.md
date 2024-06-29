@@ -56,7 +56,7 @@
     * 最も遅いエポックは 338 \( eMax + 現在のエポック\)
 
     * プールはリタイア指定エポック開始時にリタイア処理されます。  
-    * もし心変わりがある場合は、エポック指定エポック開始前に新しい登録証明書を送信することでリタイア手続きを無効にできます。
+    * もし心変わりがある場合は、エポック指定エポック開始前に[新しい登録証明書](./cert-update.md)を送信することでリタイア手続きを無効にできます。
     * プール登録料500ADAはリタイア処理エポック開始時にstake.addrに入金されます。  
 
 
@@ -292,6 +292,7 @@ chmod a-rwx $HOME/cold-keys
 
 === "エアギャップオフラインマシン"
     ```bash
+    cd $NODE_HOME
     cardano-cli stake-address deregistration-certificate \
         --stake-verification-key-file stake.vkey \
         --out-file stake-dereg.cert
