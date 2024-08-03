@@ -6,7 +6,7 @@
 
 
 !!! info "概要"
-    最終更新日：2024/6/4  v2.2.2
+    最終更新日：2024/7/16  v2.3.0
 
     * ブロックログで表示されるブロック生成結果を任意のソーシャルアプリへ通知します。   
     ![*](../images/block_notify/image.png)
@@ -26,6 +26,8 @@
 
 
 ??? info "更新履歴▼"
+    * 2.3.0  ・通知にブロックサイズを表示
+    　　　　　・スペイン語、フランス語、ポルトガル語を追加
     * 2.2.2  ・任意のPrometheusポートを設定可能
     　　　　　・データベース接続の最適化
     * 2.2.1  ・特定の条件下における無限ループバグを解消
@@ -360,8 +362,9 @@ sudo systemctl stop cnode-blocknotify.service
 bn_release="$(curl -s https://api.github.com/repos/btbf/block-notify/releases/latest | jq -r '.tag_name')"
 wget https://github.com/btbf/block-notify/archive/refs/tags/${bn_release}.tar.gz -P $NODE_HOME/scripts
 cd $NODE_HOME/scripts
-tar zxvf ${bn_release}.tar.gz block-notify-${bn_release}/block_notify.py
+tar zxvf ${bn_release}.tar.gz block-notify-${bn_release}/block_notify.py block-notify-${bn_release}/i18n
 cp block-notify-${bn_release}/block_notify.py block-notify/block_notify.py
+cp -r block-notify-${bn_release}/i18n block-notify/
 rm -rf block-notify-${bn_release} ${bn_release}.tar.gz
 ```
 
