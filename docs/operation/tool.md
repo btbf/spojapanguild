@@ -1,6 +1,6 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2024/6/3 v3.7.3
+最終更新日：2024/8/3 v3.7.4
 
 !!! info "主な機能"
     * payment.addr残高照会
@@ -73,6 +73,9 @@ gtool
     また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
 
 ## 更新履歴
+
+### 3.7.4
+    * ADAハンドル名前解決バグ解消
 
 ### 3.7.3
     * envから任意Prometheusポート取得 `PROM_PORT`
