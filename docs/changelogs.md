@@ -1,5 +1,12 @@
 # 変更履歴
 
+## 2024/08/03　ver. 13.4.0
+!!! note ""
+    * cardano-node v9.1.0対応
+    * [**ノードアップデート手順**](operation/node-update.md)更新
+    * [**SJG TOOL v3.7.4リリース**](operation/tool.md)
+    * 軽微な修正
+
 ## 2024/06/29　ver. 13.3.2
 !!! note ""
     * cardano-node v8.9.4対応
