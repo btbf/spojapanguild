@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="3.7.3"
+TOOL_VERSION="3.7.4"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -2242,7 +2242,7 @@ send_address_CHECK(){
 adahandleConvert(){
   adahandlePolicyID="f0ff48bbb7bbe9d59a40f1ce90e9e9d0ff5002ec48f232b49ca0fb9a"
   assetNameHex=`echo -n "${1}" | xxd -b -ps -c 80 | tr -d '\n'`
-  curl -s -X GET "$KOIOS_API/asset_address_list?_asset_policy=${adahandlePolicyID}&_asset_name=${assetNameHex}" -H "Accept: application/json" | jq -r '.[].payment_address'
+  curl -s -X GET "$KOIOS_API/asset_addresses?_asset_policy=${adahandlePolicyID}&_asset_name=${assetNameHex}" -H "Accept: application/json" | jq -r '.[].payment_address'
 }
 
 #出金前チェック
