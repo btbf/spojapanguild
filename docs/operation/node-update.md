@@ -4,11 +4,11 @@ status: new
 # **ノードアップデートマニュアル**
 
 !!! info "概要"
-    このガイドは ノードバージョン9.1.0に対応しています。最終更新日：2024年8月4日
+    このガイドは ノードバージョン9.1.0に対応しています。最終更新日：2024年8月5日
 
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 9.1.0 | 9.2.1.0 | 8.10.7 | 3.8.1.0 | 6.2.3 |
+    | 9.1.0 | 9.2.1.0 | 8.10.7 | 3.8.1.0 | 6.3.0 |
 
     * <font color=red>よくお読みになって進めてください</font>
     * <font color=green>複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。</font>
@@ -29,6 +29,9 @@ status: new
     | バージョン | DB再構築有無 | 設定ファイル更新有無 | トポロジーファイル更新有無 |
     | :---------- | :---------- | :---------- | :---------- |
     | 8.9.4以下→9.1.0 | あり | 更新あり | 更新あり |
+
+    * <font color=red>ダウンタイムを最小限に抑えるために、Mithrilスナップショットから最新DBを取得しますが、30分～1時間以上のダウンタイムが発生します</font>
+    * <font color=red>作業前にブロック生成スケジュールを確認し余裕のある作業をお願いします</font>
 
 
 <!--### **更新フローチャート**
@@ -393,9 +396,9 @@ CNCLIバージョン確認
 cncli --version
 ```
 > 以下の戻り値ならOK  
-cncli 6.2.3
+cncli 6.3.0
 
-??? danger "cncli v6.2.2以下だった場合(クリックして開く)"
+??? danger "cncli v6.2.3以下だった場合(クリックして開く)"
     
     **CNCLIをアップデートする**
 
@@ -417,7 +420,7 @@ cncli 6.2.3
     ```
     cncli --version
     ```
-    > cncli 6.2.3になったことを確認する  
+    > cncli 6.3.0になったことを確認する  
 
 
 ## **2.ノードアップデート**
@@ -972,105 +975,30 @@ journalctl --unit=cardano-node --follow
 
 ## 3. 依存関係作業
 
-=== "全ノード共通"
+### **3-1.リレー/BP共通**
 
-    ### **3-1.gLiveview更新**
+**gLiveView更新**
+```
+sed -i $NODE_HOME/scripts/env \
+    -e '1,77s!UPDATE_CHECK="N"!UPDATE_CHECK="Y"!'
+```
 
-    更新フラグを切り替える
-    ```
-    sed -i $NODE_HOME/scripts/env \
-        -e '1,77s!UPDATE_CHECK="N"!UPDATE_CHECK="Y"!'
-    ```
-
-    gliveを起動する
-    ```
-    glive
-    ```
-    > env script update(s) detected, do you want to download the latest version? (yes/no): yes
-
-
-    更新フラグを切り替える
-    ```
-    sed -i $NODE_HOME/scripts/env \
-        -e '1,77s!UPDATE_CHECK="Y"!UPDATE_CHECK="N"!'
-    ```
-
-=== "BPのみ"
-    ### **3-2.ブロックログ用ライブラリ更新**
-    ```
-    cd $NODE_HOME/scripts
-    wget https://raw.githubusercontent.com/cardano-community/guild-operators/main/scripts/cnode-helper-scripts/cntools.library -O cntools.library
-    ```
-
-    **cncli.shを更新する**
-    ```
-    cd $NODE_HOME/scripts
-    wget https://raw.githubusercontent.com/cardano-community/guild-operators/main/scripts/cnode-helper-scripts/cncli.sh -O ./cncli.sh
-    ```
-
-    ```
-    pool_hex=`cat $NODE_HOME/pool.id`
-    pool_bech32=`cat $NODE_HOME/pool.id-bech32`
-    printf "\nプールID(hex)は \e[32m${pool_hex}\e[m です\n\n"
-    printf "\nプールID(bech32)は \e[32m${pool_bech32}\e[m です\n\n"
-    ```
-
-    ```
-    sed -i $NODE_HOME/scripts/cncli.sh \
-    -e '1,73s!#POOL_ID=""!POOL_ID="'${pool_hex}'"!' \
-    -e '1,73s!#POOL_ID_BECH32=""!POOL_ID_BECH32="'${pool_bech32}'"!' \
-    -e '1,73s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
-    -e '1,73s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
-    ```
-
-    ブロックログサービスを再起動する
-    ```
-    sudo systemctl restart cnode-cncli-sync.service
-    ```
-
-    ### **3-3.BPサービス確認** 
-
-    ??? danger "ブロック生成ステータス通知またはSPO Block Notifyを未導入(更新)していない方"
-
-        === "未導入の方で今後も導入予定が無い方"
-            [10-4.サービスファイル作成・登録](../setup/10-blocklog-setup.md#10-4)を再実行してください。（エイリアス設定は不要です）
-        
-        === "新規導入または更新する方"
-            [SPO Block Notify移行マニュアル](./blocknotify-reinstall.md)から新規導入または更新を実施してください。
-
-    BPノードが完全に同期した後、サービス起動状態を確認する
-
-    * cnclilog  
-    * leaderlog  
-    * validate  
-    * logmonitor  
-    * blocknotify(SPO Block Notifyを導入している場合)
+**gliveを起動する**
+```
+glive
+```
+> 更新メッセージが表示されたら`yes`を入力して`enter`  
+env script update(s) detected, do you want to download the latest version? (yes/no): yes
 
 
-    ??? failure "cnclilogで`Missing eta_v for block xxxxxx` エラーが出る場合の対処法"
-        cncliを再同期してください
+**更新フラグを切り替える**
+```
+sed -i $NODE_HOME/scripts/env \
+    -e '1,77s!UPDATE_CHECK="Y"!UPDATE_CHECK="N"!'
+```
 
-        ```
-        sudo systemctl stop cnode-cncli-sync.service
-        ```
-        ```
-        rm $NODE_HOME/guild-db/cncli/*
-        ```
-        ```
-        sudo systemctl restart cnode-cncli-sync.service
-        ```
-        ```
-        cnclilog
-        ```
-        100% sync'dになるまでお待ち下さい
-
-
-!!! danger "注意"
-
-    * gLiveView v1.30.0リリース後にライブラリファイル含めて再度アップデート作業が必要になります。
-
-??? danger "8.1.2/8.7.3からアップデートする場合のみ ここを開いて実施"
-    ### **3-2.全ノード共通**
+??? danger "8.1.2/8.7.3からアップデートする場合はこちらも実施必須"
+    **リレー/BP共通**
 
     **環境変数にリロード用エイリアスを作成(更新)する**
 
@@ -1084,7 +1012,7 @@ journalctl --unit=cardano-node --follow
     source $HOME/.bashrc
     ```
 
-    ### **3-3.Grafana更新**
+    **Grafanaダッシュボードパネル更新**
     !!! danger "独自カスタマイズしている方"
         Grafanaダッシュボードを独自カスタマイズしている方は以下のメトリクス追加を推奨します。
 
@@ -1099,6 +1027,76 @@ journalctl --unit=cardano-node --follow
     1. Grafanaを開き左メニューの「Dashboards」から「SJG: Cardano-Node」にチェックを入れてDeleteボタンをクリック
     2. 確認ポップアップに`Delete`を入力しDeleteをクリック
     3. [Grafanaダッシュボード設定](../setup/9-monitoring-tools-setup.md#9-3grafana)の11～15を実施する
+
+### **3-2.BPのみ**
+
+**ライブラリ更新**
+```
+cd $NODE_HOME/scripts
+wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cntools.library -O cntools.library
+```
+
+**cncli.sh更新**
+```
+cd $NODE_HOME/scripts
+wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cncli.sh -O ./cncli.sh
+```
+
+```
+pool_hex=`cat $NODE_HOME/pool.id`
+pool_bech32=`cat $NODE_HOME/pool.id-bech32`
+printf "\nプールID(hex)は \e[32m${pool_hex}\e[m です\n\n"
+printf "\nプールID(bech32)は \e[32m${pool_bech32}\e[m です\n\n"
+```
+
+```
+sed -i $NODE_HOME/scripts/cncli.sh \
+-e '1,73s!#POOL_ID=""!POOL_ID="'${pool_hex}'"!' \
+-e '1,73s!#POOL_ID_BECH32=""!POOL_ID_BECH32="'${pool_bech32}'"!' \
+-e '1,73s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
+-e '1,73s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
+```
+
+**ブロックログサービスを再起動する**
+```
+sudo systemctl restart cnode-cncli-sync.service
+```
+
+### **3-3.BPサービス確認** 
+
+??? danger "ブロック生成ステータス通知またはSPO Block Notifyを未導入(更新)していない方"
+
+    === "未導入の方で今後も導入予定が無い方"
+        [10-4.サービスファイル作成・登録](../setup/10-blocklog-setup.md#10-4)を再実行してください。（エイリアス設定は不要です）
+    
+    === "新規導入または更新する方"
+        [SPO Block Notify移行マニュアル](./blocknotify-reinstall.md)から新規導入または更新を実施してください。
+
+BPノードが完全に同期した後、サービス起動状態を確認する
+
+* cnclilog  
+* leaderlog  
+* validate  
+* logmonitor  
+* blocknotify(SPO Block Notifyを導入している場合)
+
+
+??? failure "cnclilogで`Missing eta_v for block xxxxxx` エラーが出る場合の対処法"
+    cncliを再同期してください
+
+    ```
+    sudo systemctl stop cnode-cncli-sync.service
+    ```
+    ```
+    rm $NODE_HOME/guild-db/cncli/*
+    ```
+    ```
+    sudo systemctl restart cnode-cncli-sync.service
+    ```
+    ```
+    cnclilog
+    ```
+    100% sync'dになるまでお待ち下さい
 
 
 ## **4. エアギャップアップデート**

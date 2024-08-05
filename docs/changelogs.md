@@ -1,6 +1,6 @@
 # 変更履歴
 
-## 2024/08/03　ver. 13.4.0
+## 2024/08/05　ver. 13.4.0
 !!! note ""
     * cardano-node v9.1.0対応
     * [**ノードアップデート手順**](operation/node-update.md)更新
