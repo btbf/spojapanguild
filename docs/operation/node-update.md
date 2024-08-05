@@ -940,8 +940,10 @@ rm -rf $NODE_HOME/db
 mithril-client cardano-db download --download-dir $NODE_HOME latest
 ```
 > スナップショットダウンロード～解凍まで自動的に行われます。1/5～5/5が終了するまで待ちましょう  
-> 5/5 - Verifying the cardano db signature…
-Cardano db 'xxxxx' has been unpacked and successfully checked against Mithril multi-signature contained in the certificate.
+
+DBスナップショットDL/解答完了メッセージ
+> 5/5 - Verifying the cardano db signature…  
+Cardano db 'xxxxx' has been unpacked and successfully checked against Mithril  multi-signature contained in the certificate.  
 ('xxxxx'は作業時期によって変わります。下の文字列は無視して大丈夫です)
 
 tmux作業ウィンドウを終了する
@@ -987,8 +989,13 @@ sed -i $NODE_HOME/scripts/env \
 ```
 glive
 ```
-> 更新メッセージが表示されたら`yes`を入力して`enter`  
-env script update(s) detected, do you want to download the latest version? (yes/no): yes
+
+更新メッセージが表示されたら`yes`を入力して`enter`  
+> env script update(s) detected, do you want to download the latest version? (yes/no): yes
+
+gLiveView.sh更新完了のメッセージが表示されたら再度`enter`  
+> gLiveView.sh update successfully applied!  
+press any key to proceed ..
 
 
 **更新フラグを切り替える**
@@ -996,6 +1003,13 @@ env script update(s) detected, do you want to download the latest version? (yes/
 sed -i $NODE_HOME/scripts/env \
     -e '1,77s!UPDATE_CHECK="Y"!UPDATE_CHECK="N"!'
 ```
+
+**gliveバージョン確認**
+```
+glive
+```
+> Koios gLiveView v1.30.2
+
 
 ??? danger "8.1.2/8.7.3からアップデートする場合はこちらも実施必須"
     **リレー/BP共通**
