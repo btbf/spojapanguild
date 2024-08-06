@@ -1,9 +1,9 @@
 # **2. ノードインストール**
 
 !!! hint "インストールバージョン"
-    | Node | CLI | GHC | Cabal |
-    | :---------- | :---------- | :---------- | :---------- |
-    | 8.9.4 | 8.20.3.0 | 8.10.7 | 3.8.1.0 | 
+    | Node | CLI | GHC | Cabal | CNCLI |
+    | :---------- | :---------- | :---------- | :---------- | :---------- |
+    | 9.1.0 | 9.2.1.0 | 8.10.7 | 3.8.1.0 | 6.3.0 |
 
 !!! danger "コマンド実行時の注意点"
     * Ubuntuコマンド初心者の方は、コードボックスに複数行のコマンドがある場合でも、コマンドを1行づつコピーして実行するようにしてください。ただし `cat > xxx << EOF`のボックスについてはコードボックスのコピーボタンを使用してコマンドラインに貼り付けてください。
@@ -245,7 +245,7 @@ cd $HOME/git
 git clone https://github.com/IntersectMBO/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/8.9.4
+git checkout tags/9.1.0
 ```
 
 Cabalのビルドオプションを構成します。
@@ -269,25 +269,28 @@ cabal build all cardano-cli
 **cardano-cli**ファイルと **cardano-node**ファイルをbinディレクトリにコピーします。
 
 ```bash
-sudo cp $(find $HOME/git/cardano-node/dist-newstyle/build -type f -name "cardano-cli") /usr/local/bin/cardano-cli
+cd $HOME/git/cardano-node
+sudo cp $(./scripts/bin-path.sh cardano-cli) /usr/local/bin/cardano-cli
 ```
+
 ```bash
-sudo cp $(find $HOME/git/cardano-node/dist-newstyle/build -type f -name "cardano-node") /usr/local/bin/cardano-node
+cd $HOME/git/cardano-node
+sudo cp $(./scripts/bin-path.sh cardano-node) /usr/local/bin/cardano-node
 ```
 
 **cardano-cli** と **cardano-node**のバージョンが最新Gitタグバージョンであることを確認してください。
 
-```text
-cardano-node version
+```bash
 cardano-cli version
+cardano-node version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 8.20.3.0 - linux-x86_64 - ghc-8.10  
-git rev 8ac5f75342fe3fec14ee410c4c73fd5e2381bb18  
+>cardano-cli 9.2.1.0 - linux-x86_64 - ghc-8.10  
+git rev 176f99e51155cb3eaa0711db1c3c969d67438958  
 
->cardano-node 8.9.4 - linux-x86_64 - ghc-8.10  
-git rev 8ac5f75342fe3fec14ee410c4c73fd5e2381bb18 
+>cardano-node 9.1.0 - linux-x86_64 - ghc-8.10  
+git rev 176f99e51155cb3eaa0711db1c3c969d67438958  
   
 
 TMUXセッションを閉じる
