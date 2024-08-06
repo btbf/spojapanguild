@@ -134,7 +134,7 @@ build-raw transactionコマンドを実行します。
         ${tx_in} \
         --tx-out $(cat payment.addr)+${total_balance} \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
-        --fee 0 \
+        --fee 200000 \
         --certificate-file pool.dereg \
         --out-file tx.tmp
     ```
@@ -148,11 +148,7 @@ build-raw transactionコマンドを実行します。
     ```bash
     fee=$(cardano-cli transaction calculate-min-fee \
         --tx-body-file tx.tmp \
-        --tx-in-count ${txcnt} \
-        --tx-out-count 1 \
-        $NODE_NETWORK \
         --witness-count 2 \
-        --byron-witness-count 0 \
         --protocol-params-file params.json | awk '{ print $1 }')
     echo fee: $fee
     ```
@@ -357,12 +353,12 @@ chmod a-rwx $HOME/cold-keys
 
 **仮トランザクションファイルを作成**
 === "ブロックプロデューサノード"
-    ```bash  
+    ```bash
     cardano-cli transaction build-raw \
         ${tx_in} \
-        --tx-out $(cat payment.addr)+0 \
+        --tx-out $(cat payment.addr)+$(( ${total_balance} + ${keyDeposit} )) \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
-        --fee 0 \
+        --fee 200000 \
         --certificate stake-dereg.cert \
         --out-file tx.tmp
     ```
@@ -372,11 +368,7 @@ chmod a-rwx $HOME/cold-keys
     ```bash
     fee=$(cardano-cli transaction calculate-min-fee \
         --tx-body-file tx.tmp \
-        --tx-in-count ${txcnt} \
-        --tx-out-count 1 \
-        $NODE_NETWORK \
         --witness-count 2 \
-        --byron-witness-count 0 \
         --protocol-params-file params.json | awk '{ print $1 }')
     echo fee: $fee
     ```
@@ -502,9 +494,9 @@ build-rawトランザクションコマンドを実行します。
     ```bash
     cardano-cli transaction build-raw \
         ${tx_in} \
-        --tx-out ${destinationAddress}+0 \
+        --tx-out ${destinationAddress}+${total_balance} \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
-        --fee 0 \
+        --fee 200000 \
         --out-file tx.tmp
     ```
 
@@ -517,11 +509,7 @@ build-rawトランザクションコマンドを実行します。
     ```bash
     fee=$(cardano-cli transaction calculate-min-fee \
         --tx-body-file tx.tmp \
-        --tx-in-count ${txcnt} \
-        --tx-out-count 1 \
-        $NODE_NETWORK \
         --witness-count 1 \
-        --byron-witness-count 0 \
         --protocol-params-file params.json | awk '{ print $1 }')
     echo fee: $fee
     ```

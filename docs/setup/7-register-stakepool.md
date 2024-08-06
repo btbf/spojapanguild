@@ -379,9 +379,9 @@ cat $NODE_HOME/poolMetaData.json | jq .
     ```bash
     cardano-cli transaction build-raw \
         ${tx_in} \
-        --tx-out $(cat payment.addr)+$(( ${total_balance} - ${poolDeposit}))  \
+        --tx-out $(cat payment.addr)+$(( ${total_balance} - ${poolDeposit})) \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
-        --fee 0 \
+        --fee 200000 \
         --certificate-file pool.cert \
         --certificate-file deleg.cert \
         --out-file tx.tmp
@@ -394,11 +394,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
     ```bash
     fee=$(cardano-cli transaction calculate-min-fee \
         --tx-body-file tx.tmp \
-        --tx-in-count ${txcnt} \
-        --tx-out-count 1 \
-        $NODE_NETWORK \
         --witness-count 3 \
-        --byron-witness-count 0 \
         --protocol-params-file params.json | awk '{ print $1 }')
     echo fee: $fee
     ```

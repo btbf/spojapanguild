@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="3.7.4"
+TOOL_VERSION="3.7.5"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -206,21 +206,17 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               #トランザクションファイル仮作成
               cardano-cli transaction build-raw \
               ${tx_in} \
-              --tx-out $(cat $WALLET_PAY_ADDR_FILENAME)+0 \
-              --tx-out ${destinationAddress}+0 \
+              --tx-out $(cat $WALLET_PAY_ADDR_FILENAME)+${total_balance} \
+              --tx-out ${destinationAddress}+${rewardBalance} \
               --invalid-hereafter $(( ${currentSlot} + 10000)) \
-              --fee 0 \
+              --fee 200000 \
               --withdrawal ${withdrawalString} \
               --out-file tx.tmp
 
               #手数料計算
               fee=$(cardano-cli transaction calculate-min-fee \
                   --tx-body-file tx.tmp \
-                  --tx-in-count ${txcnt} \
-                  --tx-out-count 2 \
-                  $NETWORK_IDENTIFIER \
                   --witness-count 2 \
-                  --byron-witness-count 0 \
                   --protocol-params-file params.json | awk '{ print $1 }')
 
 
@@ -282,24 +278,20 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               payment_utxo
 
               withdrawalString="$(cat $WALLET_STAKE_ADDR_FILENAME)+${rewardBalance}"
-
+              tempRewardAmount=$(( ${total_balance}+${rewardBalance} ))
               #トランザクションファイル仮作成
               cardano-cli transaction build-raw \
               ${tx_in} \
-              --tx-out $(cat $WALLET_PAY_ADDR_FILENAME)+0 \
+              --tx-out $(cat $WALLET_PAY_ADDR_FILENAME)+${tempRewardAmount} \
               --invalid-hereafter $(( ${currentSlot} + 10000)) \
-              --fee 0 \
+              --fee 200000 \
               --withdrawal ${withdrawalString} \
               --out-file tx.tmp
 
               #手数料計算
               fee=$(cardano-cli transaction calculate-min-fee \
                   --tx-body-file tx.tmp \
-                  --tx-in-count ${txcnt} \
-                  --tx-out-count 1 \
-                  $NETWORK_IDENTIFIER \
                   --witness-count 2 \
-                  --byron-witness-count 0 \
                   --protocol-params-file params.json | awk '{ print $1 }')
               
 
@@ -384,24 +376,20 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               payment_utxo
               
               #echo UTXOs: ${txcnt}
-
+              tempBalanceAmont=$(( ${total_balance}-${amountToSend} ))
               #トランザクションファイル仮作成
               cardano-cli transaction build-raw \
                   ${tx_in} \
-                  --tx-out $(cat $WALLET_PAY_ADDR_FILENAME)+0 \
-                  --tx-out ${destinationAddress}+0 \
+                  --tx-out $(cat $WALLET_PAY_ADDR_FILENAME)+${tempBalanceAmont} \
+                  --tx-out ${destinationAddress}+${amountToSend} \
                   --invalid-hereafter $(( ${currentSlot} + 10000)) \
-                  --fee 0 \
+                  --fee 200000 \
                   --out-file tx.tmp
 
               #手数料計算
               fee=$(cardano-cli transaction calculate-min-fee \
               --tx-body-file tx.tmp \
-              --tx-in-count ${txcnt} \
-              --tx-out-count 2 \
-              $NETWORK_IDENTIFIER \
               --witness-count 1 \
-              --byron-witness-count 0 \
               --protocol-params-file params.json | awk '{ print $1 }')
 
 
@@ -422,7 +410,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
                   --out-file tx.raw
               
               #エアギャップ操作メッセージ
-              air_gap
+              air_gap_payment_only
               
               #トランザクション送信
               tx_submit
@@ -1301,17 +1289,14 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       ${tx_in} \
       --tx-out $(cat $NODE_HOME/$WALLET_PAY_ADDR_FILENAME)+${total_balance} \
       --invalid-hereafter $(( ${currentSlot} + 10000)) \
-      --fee 0 \
+      --fee 200000 \
       --metadata-cbor-file $HOME/CatalystVoting/vote-registration.cbor \
       --out-file tx.tmp
 
       #手数料計算
       fee=$(cardano-cli transaction calculate-min-fee \
       --tx-body-file tx.tmp \
-      --tx-in-count ${txcnt} \
-      --tx-out-count 1 \
       --witness-count 1 \
-      $NETWORK_IDENTIFIER \
       --protocol-params-file $NODE_HOME/params.json | awk '{ print $1 }')
       
       txOut=$((${total_balance}-${fee}))
@@ -2038,6 +2023,36 @@ air_gap(){
   echo '  --tx-body-file tx.raw \'
   echo '  --signing-key-file payment.skey \'
   echo '  --signing-key-file stake.skey \'
+  echo "  $NETWORK_IDENTIFIER "'\'
+  echo '  --out-file tx.signed'
+  echo '----------------------------------------'
+  echo
+  echo -e "${FG_YELLOW}3. エアギャップの tx.signed をBPのcnodeディレクトリにコピーしてください${NC}"
+  echo '----------------------------------------'
+  echo ">> [エアギャップ] ⇒ tx.signed ⇒ [BP]"
+  echo '----------------------------------------'
+  echo
+  echo "1～3の操作が終わったらEnterを押してください"
+  read -p "出金をキャンセルする場合はEnterを押して2を入力してください"
+}
+
+air_gap_payment_only(){
+  echo
+  echo
+  echo
+  echo '■Txファイルを作成しました。エアギャップオフラインマシンで以下の操作を実施してください'
+  echo
+  echo -e "${FG_YELLOW}1. BPのtx.raw をエアギャップのcnodeディレクトリにコピーしてください${NC}"
+  echo '----------------------------------------'
+  echo ">> [BP] ⇒ tx.raw ⇒ [エアギャップ]"
+  echo '----------------------------------------'
+  echo
+  echo -e "${FG_YELLOW}2. エアギャップでトランザクションファイルに署名してください${NC}"
+  echo '----------------------------------------'
+  echo 'cd $NODE_HOME'
+  echo 'cardano-cli transaction sign \'
+  echo '  --tx-body-file tx.raw \'
+  echo '  --signing-key-file payment.skey \'
   echo "  $NETWORK_IDENTIFIER "'\'
   echo '  --out-file tx.signed'
   echo '----------------------------------------'
