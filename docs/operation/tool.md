@@ -1,6 +1,6 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2024/8/3 v3.7.4
+最終更新日：2024/8/6 v3.7.5
 
 !!! info "主な機能"
     * payment.addr残高照会
@@ -73,6 +73,9 @@ gtool
     また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
 
 ## 更新履歴
+
+### 3.7.5
+    * 報酬/資金出金のトランザクションが失敗するバグを修正
 
 ### 3.7.4
     * ADAハンドル名前解決バグ解消

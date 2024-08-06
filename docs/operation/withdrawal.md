@@ -53,8 +53,6 @@
     echo destinationAddress: $destinationAddress
     ```
 
-
-
 payment.addrの残高を算出します
 
 === "ブロックプロデューサノード"
@@ -88,19 +86,19 @@ UTXOを算出します
     echo Number of UTXOs: ${txcnt}
 
     withdrawalString="$(cat stake.addr)+${rewardBalance}"
+    tempRewardAmount=$(( ${total_balance}+${rewardBalance} ))
     ```
 
 
 build-raw transactionコマンドを実行します。
 
-
 === "ブロックプロデューサノード"
     ```bash
     cardano-cli transaction build-raw \
         ${tx_in} \
-        --tx-out $(cat payment.addr)+0 \
+        --tx-out $(cat payment.addr)+${tempRewardAmount} \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
-        --fee 0 \
+        --fee 200000 \
         --withdrawal ${withdrawalString} \
         --out-file tx.tmp
     ```
@@ -114,11 +112,7 @@ build-raw transactionコマンドを実行します。
     ```bash
     fee=$(cardano-cli transaction calculate-min-fee \
         --tx-body-file tx.tmp \
-        --tx-in-count ${txcnt} \
-        --tx-out-count 1 \
-        $NODE_NETWORK \
         --witness-count 2 \
-        --byron-witness-count 0 \
         --protocol-params-file params.json | awk '{ print $1 }')
     echo fee: $fee
     ```
@@ -282,10 +276,10 @@ build-raw transactionコマンドを実行します。
     ```bash
     cardano-cli transaction build-raw \
         ${tx_in} \
-        --tx-out $(cat payment.addr)+0 \
-        --tx-out ${destinationAddress}+0 \
+        --tx-out $(cat payment.addr)+${total_balance} \
+        --tx-out ${destinationAddress}+${rewardBalance} \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
-        --fee 0 \
+        --fee 200000 \
         --withdrawal ${withdrawalString} \
         --out-file tx.tmp
     ```
@@ -299,11 +293,7 @@ build-raw transactionコマンドを実行します。
     ```bash
     fee=$(cardano-cli transaction calculate-min-fee \
         --tx-body-file tx.tmp \
-        --tx-in-count ${txcnt} \
-        --tx-out-count 2 \
-        $NODE_NETWORK \
         --witness-count 2 \
-        --byron-witness-count 0 \
         --protocol-params-file params.json | awk '{ print $1 }')
     echo fee: $fee
     ```
@@ -474,6 +464,8 @@ UTXOを算出します
     txcnt=$(cat balance.out | wc -l)
     echo Total ADA balance: ${total_balance}
     echo Number of UTXOs: ${txcnt}
+
+    tempBalanceAmont=$(( ${total_balance}-${amountToSend} ))
     ```
 
 build-rawトランザクションコマンドを実行します。
@@ -482,10 +474,10 @@ build-rawトランザクションコマンドを実行します。
     ```bash
     cardano-cli transaction build-raw \
         ${tx_in} \
-        --tx-out $(cat payment.addr)+0 \
-        --tx-out ${destinationAddress}+0 \
+        --tx-out $(cat payment.addr)+${tempBalanceAmont} \
+        --tx-out ${destinationAddress}+${amountToSend} \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
-        --fee 0 \
+        --fee 200000 \
         --out-file tx.tmp
     ```
 
@@ -495,11 +487,7 @@ build-rawトランザクションコマンドを実行します。
     ```bash
     fee=$(cardano-cli transaction calculate-min-fee \
         --tx-body-file tx.tmp \
-        --tx-in-count ${txcnt} \
-        --tx-out-count 2 \
-        $NODE_NETWORK \
         --witness-count 1 \
-        --byron-witness-count 0 \
         --protocol-params-file params.json | awk '{ print $1 }')
     echo fee: $fee
     ```

@@ -77,9 +77,9 @@ keyDepositの値を出力します。
     ```bash
     cardano-cli transaction build-raw \
         ${tx_in} \
-        --tx-out $(cat payment.addr)+0 \
+        --tx-out $(cat payment.addr)+$(( ${total_balance} - ${keyDeposit} )) \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
-        --fee 0 \
+        --fee 200000 \
         --out-file tx.tmp \
         --certificate stake.cert
     ```
@@ -90,11 +90,7 @@ keyDepositの値を出力します。
     ```bash
     fee=$(cardano-cli transaction calculate-min-fee \
         --tx-body-file tx.tmp \
-        --tx-in-count ${txcnt} \
-        --tx-out-count 1 \
-        $NODE_NETWORK \
         --witness-count 2 \
-        --byron-witness-count 0 \
         --protocol-params-file params.json | awk '{ print $1 }')
     echo fee: $fee
     ```
