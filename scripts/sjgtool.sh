@@ -1755,8 +1755,12 @@ choose_proposal(){
         download_anchorhash=$(b2sum -l 256 ${governance_dir}/${governance_id_tx}.json | awk '{ print $1 }')
 
         if [[ "$expiresAfter" -gt "$current_epoch" ]]; then
-          if [[ "$onchain_anchorhash" == "$download_anchorhash" ]]; then
-            if [ "$voter_type" == "DRep" ] || { [ "$voter_type" == "SPO" ] && [[ " ${spo_available_type[@]} " =~ " $proposal_type " ]]; }; then
+          if [[ "$onchain_anchorhash" != "$download_anchorhash" ]]; then
+            printf "\n${FG_RED}データハッシュとオンチェーンハッシュ値が異なります${NC}\n"
+            printf "最新の提案内容をご確認の上投票してください\n\n"
+            echo
+          fi
+          if [ "$voter_type" == "DRep" ] || { [ "$voter_type" == "SPO" ] && [[ " ${spo_available_type[@]} " =~ " $proposal_type " ]]; }; then
             local anchor_data=$(cat ${governance_dir}/${governance_id_tx}.json)
             local anchor_title=$(echo $anchor_data | jq .body.title | tr -d '"')
             local anchor_abstract=$(echo $anchor_data | jq .body.abstract | tr -d '"')
@@ -1766,23 +1770,19 @@ choose_proposal(){
 
             echo "------------------------------------------------------------------------------------"
             printf "%13s ${FG_GREEN}%-80s${NC}\n" "ID(Bech32):" "$governance_id_bech32"
-            printf "%13s ${FG_GREEN}%-80s${NC}\n\n" "ID(txId) :" "$governance_id_tx"
+            printf "%13s ${FG_GREEN}%-80s${NC}\n\n" "ID(txId):" "$governance_id_tx"
             printf "%15s %-s\n" "提案:" "$anchor_title"
             printf "%13s ${FG_CYAN}%-s${NC}\n\n" "" "$anchor_title_jp"
             printf "%15s %-s\n" "概要:" "$anchor_abstract"
             printf "%13s ${FG_CYAN}%-s${NC}\n\n" "" "$anchor_abstract_jp"
             printf "%17s ${FG_GREEN}%-s${NC}\n\n" "提案種別:" "$proposal_type"
-            printf "%13s ${FG_YELLOW}%-s${NC}\n" "anchorHash:" "$download_anchorhash"
-            printf "%13s ${FG_GREEN}%-s${NC}\n\n" "OnchainHash:" "OK"
+            printf "%13s ${FG_YELLOW}%-s${NC}\n" "Data-Hash:" "$download_anchorhash"
+            printf "%13s ${FG_YELLOW}%-s${NC}\n\n" "Onchain-Hash:" "$onchain_anchorhash"
             printf "%18s ${FG_GREEN}%-5s${NC} %11s ${FG_YELLOW}%-5s${NC} %11s %-5s\n" "開始エポック:" "$proposedIn" "終了エポック:" "$expiresAfter" "保証金:" "${proposal_deposit} ADA"
             echo "------------------------------------------------------------------------------------"
-
             break
-            else
-              printf "\n${FG_YELLOW}${proposal_type}${NC}の提案が選択されました\n${FG_RED}SPOはこの提案には投票できません${NC}\n"
-            fi
           else
-            printf "\n${FG_RED}データハッシュとオンチェーンハッシュ値が異なります${NC}\n"
+            printf "\n${FG_YELLOW}${proposal_type}${NC}の提案が選択されました\n${FG_RED}SPOはこの提案には投票できません${NC}\n"
           fi
         else
           printf "\n${FG_RED}有効期限切れの提案書です${NC}\n"
