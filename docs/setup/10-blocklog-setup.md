@@ -129,7 +129,7 @@ wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/
 wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/gLiveView.sh -O ./gLiveView.sh
 wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cntools.library -O ./cntools.library
 wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/blocks.sh -O ./blocks.sh 
-wget wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/logMonitor.sh -q -O ./logMonitor.sh -q -O ./logMonitor.sh
+wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/logMonitor.sh -q -O ./logMonitor.sh
 ```
 
 **パーミッションを設定する**
