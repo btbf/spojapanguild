@@ -1731,7 +1731,7 @@ choose_proposal(){
         governance_id_tx=$governance_id_hex
       fi
       vote_proposal=
-      vote_proposal=$(cardano-cli conway conway query gov-state ${NODE_NETWORK} | jq -r --arg govActionId ${governance_id_tx} '.proposals | to_entries[] | select(.value.actionId.txId | contains($govActionId)) | .value')
+      vote_proposal=$(cardano-cli conway query gov-state ${NODE_NETWORK} | jq -r --arg govActionId ${governance_id_tx} '.proposals | to_entries[] | select(.value.actionId.txId | contains($govActionId)) | .value')
       
       if [[ -n "$vote_proposal" ]]; then
         #echo $vote_proposal | jq .
@@ -1883,7 +1883,7 @@ echo
 printf "%15s ${FG_GREEN}%-s${NC}\n" "アクションID:" "$governance_id_tx"
 printf "%15s ${FG_GREEN}%-s${NC}\n" "投票:" "$vote_value_flag"
 echo
-cardano-cli conway conway governance vote create \
+cardano-cli conway governance vote create \
 --${vote_value_flag} \
 --governance-action-tx-id $governance_id_tx \
 --governance-action-index "0" \
@@ -1893,7 +1893,7 @@ ${coldkey_flag} \
 echo "投票ファイルを作成しました"
 sleep 2
 
-cardano-cli conway conway transaction build-raw \\
+cardano-cli conway transaction build-raw \\
 $tx_in \\
 --tx-out \$(cat \$NODE_HOME/payment.addr)+${total_balance}  \\
 --vote-file \$NODE_HOME/governance/${voter_type}_voted_$governance_id_tx \\
@@ -1909,7 +1909,7 @@ echo Tx手数料: \$fee Lovelace
 sleep 2
 txOut=\$((${total_balance}-\${fee}))
 
-cardano-cli conway conway transaction build-raw \\
+cardano-cli conway transaction build-raw \\
 $tx_in \\
 --tx-out \$(cat \$NODE_HOME/payment.addr)+\${txOut} \\
 --vote-file $NODE_HOME/governance/${voter_type}_voted_$governance_id_tx \\
@@ -1919,7 +1919,7 @@ $tx_in \\
 
 echo "Txファイルを作成しました"
 sleep 2
-cardano-cli conway conway transaction sign \\
+cardano-cli conway transaction sign \\
 --tx-body-file \$NODE_HOME/governance/vote-tx.raw \\
 ${signingkey_flag} \\
 --signing-key-file \$NODE_HOME/payment.skey \\
