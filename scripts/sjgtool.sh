@@ -29,7 +29,7 @@ myExit() {
 
 main () {
 clear
-update
+#update
 bech32_install
 #getEraIdentifier
 if [ $? == 1 ]; then
@@ -1872,7 +1872,8 @@ echo "エアギャップ用投票ファイル作成スクリプトを作成し�
 current_Slot
 payment_utxo
 sleep 2
-cat > $NODE_HOME/governance/create_votetx_script << EOF
+
+cat > $NODE_HOME/create_votetx_script << EOF
 #!/bin/bash
 voter_type=$voter_type
 mkdir -p \$NODE_HOME/governance
@@ -1946,24 +1947,24 @@ echo "エアギャップ用投票ファイル作成スクリプトを作成し�
 echo
 sleep 3
 echo
-echo -e "${FG_YELLOW} 1. BPの${NC} ${FG_GREEN}$NODE_HOME/governance/create_votetx_script${NC} を ${FG_YELLOW}エアギャップの${NC}${FG_WHITE}~/cnode/governance/${NC}にコピーしてください${NC}"
+echo -e "${FG_YELLOW} 1. BPの $NODE_HOMEにある${NC}${FG_GREEN}create_votetx_script${NC} と ${FG_GREEN}params.json{NC} を ${FG_YELLOW}エアギャップの${NC}${FG_WHITE}~/cnode/${NC}にコピーしてください${NC}"
 echo '---------------------------------------------------------------'
-echo ">> [BP] ⇒ create_votetx_script ⇒ [エアギャップ]"
+echo ">> [BP] ⇒ create_votetx_script / params.json ⇒ [エアギャップ]"
 echo '---------------------------------------------------------------'
 echo
 read -p "上記の操作が終わったらEnterを押してください"
 echo
 echo -e "${FG_YELLOW} 2. エアギャップで以下コマンドを実行し、ハッシュ値が一致しているか確認してください${NC}"
 echo '---------------------------------------------------------------'
-echo "sha256sum \$NODE_HOME/governance/create_votetx_script"
+echo "sha256sum \$NODE_HOME/create_votetx_script"
 echo '---------------------------------------------------------------'
-echo -e "ハッシュ値: ${FG_GREEN}$(sha256sum $NODE_HOME/governance/create_votetx_script | awk '{ print $1 }' )${NC}"
+echo -e "ハッシュ値: ${FG_GREEN}$(sha256sum $NODE_HOME/create_votetx_script | awk '{ print $1 }' )${NC}"
 echo
 read -p "上記の操作が終わったらEnterを押してください"
 echo
 echo -e "${FG_YELLOW} 3. エアギャップで以下のコマンドを実行し投票用Txファイルを作成してください${NC}"
 echo '---------------------------------------------------------------'
-echo "source \$NODE_HOME/governance/create_votetx_script"
+echo "source \$NODE_HOME/create_votetx_script"
 echo '---------------------------------------------------------------'
 echo
 read -p "エアギャップでの操作が終わったらEnterを押してください"
@@ -1972,7 +1973,7 @@ echo
 echo "ガバナンスアクションへの投票トランザクションを送信しますか？"
 tx_submit ${NODE_HOME}/governance vote-tx.signed
 
-rm $NODE_HOME/governance/create_votetx_script
+rm $NODE_HOME/create_votetx_script
   
 }
 
