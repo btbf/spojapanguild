@@ -151,7 +151,7 @@ EOF
     転送用ファイルを作成する
     ```
     cd $NODE_HOME
-    cardano-cli query protocol-parameters \
+    cardano-cli conway query protocol-parameters \
         --mainnet \
         --out-file params-test.json
     ```

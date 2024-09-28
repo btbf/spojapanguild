@@ -72,7 +72,7 @@ sudo systemctl reload-or-restart cnode-cncli-sync.service
 cd $NODE_HOME
 date=`date +\%Y\%m\%d`
 mv params.json params-$date.json
-cardano-cli query protocol-parameters \
+cardano-cli conway query protocol-parameters \
     --mainnet \
     --out-file params.json
 ```

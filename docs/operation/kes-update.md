@@ -52,7 +52,7 @@
 
     KESファイル新規作成
     ```bash
-    cardano-cli node key-gen-KES \
+    cardano-cli conway node key-gen-KES \
         --verification-key-file $NODE_HOME/kes.vkey \
         --signing-key-file $NODE_HOME/kes.skey
     ```
@@ -89,7 +89,7 @@ sha256sum kes.vkey
 ## **4.オンチェーンカウンター取得**
 === "ブロックプロデューサーノード"
     ```
-    kesperiodinfo=$(cardano-cli query kes-period-info $NODE_NETWORK --op-cert-file $NODE_HOME/node.cert --out-file kesperiod.json)
+    kesperiodinfo=$(cardano-cli conway query kes-period-info $NODE_NETWORK --op-cert-file $NODE_HOME/node.cert --out-file kesperiod.json)
     lastBlockCnt=`cat kesperiod.json | jq -r '.qKesNodeStateOperationalCertificateNumber'`
 
     if expr "$lastBlockCnt" : "[0-9]*$" >&/dev/null; then
@@ -121,7 +121,7 @@ sha256sum kes.vkey
 
     ```
     chmod u+rwx $HOME/cold-keys
-    cardano-cli node new-counter \
+    cardano-cli conway node new-counter \
       --cold-verification-key-file $HOME/cold-keys/node.vkey \
       --counter-value $cnt_No \
       --operational-certificate-issue-counter-file $HOME/cold-keys/node.counter
@@ -129,7 +129,7 @@ sha256sum kes.vkey
 
     カウンター番号が正しく生成されているか確認する
     ```
-    cardano-cli text-view decode-cbor \
+    cardano-cli conway text-view decode-cbor \
      --in-file  $HOME/cold-keys/node.counter \
       | grep int | head -1 | cut -d"(" -f2 | cut -d")" -f1
     ```
@@ -140,7 +140,7 @@ sha256sum kes.vkey
 === "ブロックプロデューサーノード"
     ```bash
     cd $NODE_HOME
-    slotNo=$(cardano-cli query tip $NODE_NETWORK | jq -r '.slot')
+    slotNo=$(cardano-cli conway query tip $NODE_NETWORK | jq -r '.slot')
     slotsPerKESPeriod=$(cat $NODE_HOME/${NODE_CONFIG}-shelley-genesis.json | jq -r '.slotsPerKESPeriod')
     kesPeriod=$((${slotNo} / ${slotsPerKESPeriod}))
     startKesPeriod=${kesPeriod}
@@ -166,7 +166,7 @@ echo "入力した数字は$kesです"
 
 ```
 chmod u+rwx $HOME/cold-keys
-cardano-cli node issue-op-cert \
+cardano-cli conway node issue-op-cert \
     --kes-verification-key-file $NODE_HOME/kes.vkey \
     --cold-signing-key-file $HOME/cold-keys/node.skey \
     --operational-certificate-issue-counter $HOME/cold-keys/node.counter \

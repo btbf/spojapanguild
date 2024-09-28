@@ -59,7 +59,7 @@
 !!! caution "設定の前提条件"
     以下の項目を実施する前にリレー/BPノードが最新ブロックと同期しているか確認してください。
     ```
-    cardano-cli query tip --mainnet | grep syncProgress
+    cardano-cli conway query tip --mainnet | grep syncProgress
     ```
 
     戻り値確認

@@ -10,7 +10,7 @@
 === "ブロックプロデューサーノード" 
     ```bash
     cd $NODE_HOME
-    cardano-cli query protocol-parameters \
+    cardano-cli conway query protocol-parameters \
         $NODE_NETWORK \
         --out-file params.json
     ```
@@ -27,7 +27,7 @@
 
 ```bash
 cd $NODE_HOME
-cardano-cli address key-gen \
+cardano-cli conway address key-gen \
     --verification-key-file payment.vkey \
     --signing-key-file payment.skey
 ```
@@ -36,7 +36,7 @@ cardano-cli address key-gen \
 === "エアギャップオフラインマシン"
 
 ```bash
-cardano-cli stake-address key-gen \
+cardano-cli conway stake-address key-gen \
     --verification-key-file stake.vkey \
     --signing-key-file stake.skey
 ```
@@ -46,7 +46,7 @@ cardano-cli stake-address key-gen \
 === "エアギャップオフラインマシン"
 
 ```bash
-cardano-cli stake-address build \
+cardano-cli conway stake-address build \
     --stake-verification-key-file stake.vkey \
     --out-file stake.addr \
     $NODE_NETWORK
@@ -56,7 +56,7 @@ cardano-cli stake-address build \
 === "エアギャップオフラインマシン"
 
 ```bash
-cardano-cli address build \
+cardano-cli conway address build \
     --payment-verification-key-file payment.vkey \
     --stake-verification-key-file stake.vkey \
     --out-file payment.addr \
@@ -343,7 +343,7 @@ rm -rf $NODE_HOME/cardano-wallet-shelley-2020.7.28
 === "ブロックプロデューサーノード"
 
     ```bash
-    cardano-cli query utxo \
+    cardano-cli conway query utxo \
         --address $(cat payment.addr) \
         $NODE_NETWORK
     ```

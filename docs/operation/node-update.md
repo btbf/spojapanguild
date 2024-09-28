@@ -979,7 +979,7 @@ sudo journalctl --unit=cardano-node --follow | grep -e 'Progress:' -e 'Chain ext
 **gLiveView更新**
 ```
 sed -i $NODE_HOME/scripts/env \
-    -e '1,77s!UPDATE_CHECK="N"!UPDATE_CHECK="Y"!'
+    -e '1,40s!UPDATE_CHECK="N"!UPDATE_CHECK="Y"!'
 ```
 
 **gliveを起動する**
@@ -998,7 +998,7 @@ press any key to proceed ..
 **更新フラグを切り替える**
 ```
 sed -i $NODE_HOME/scripts/env \
-    -e '1,77s!UPDATE_CHECK="Y"!UPDATE_CHECK="N"!'
+    -e '1,40s!UPDATE_CHECK="Y"!UPDATE_CHECK="N"!'
 ```
 
 **gliveバージョン確認**
@@ -1062,10 +1062,10 @@ printf "\nプールID(bech32)は \e[32m${pool_bech32}\e[m です\n\n"
 
 ```
 sed -i $NODE_HOME/scripts/cncli.sh \
--e '1,73s!#POOL_ID=""!POOL_ID="'${pool_hex}'"!' \
--e '1,73s!#POOL_ID_BECH32=""!POOL_ID_BECH32="'${pool_bech32}'"!' \
--e '1,73s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
--e '1,73s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
+-e '1,30s!#POOL_ID=""!POOL_ID="'${pool_hex}'"!' \
+-e '1,30s!#POOL_ID_BECH32=""!POOL_ID_BECH32="'${pool_bech32}'"!' \
+-e '1,30s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
+-e '1,30s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
 ```
 
 **ブロックログサービスを再起動する**

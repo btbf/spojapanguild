@@ -144,7 +144,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "ブロックプロデューサーノード"
     ```bash
     cd $NODE_HOME
-    cardano-cli stake-pool metadata-hash --pool-metadata-file poolMetaData.json > poolMetaDataHash.txt
+    cardano-cli conway stake-pool metadata-hash --pool-metadata-file poolMetaData.json > poolMetaDataHash.txt
     ```
 
 
@@ -255,7 +255,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
   
     ```bash
     cd $NODE_HOME
-    cardano-cli stake-pool registration-certificate \
+    cardano-cli conway stake-pool registration-certificate \
         --cold-verification-key-file $HOME/cold-keys/node.vkey \
         --vrf-verification-key-file vrf.vkey \
         --pool-pledge 100000000 \
@@ -283,7 +283,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 
     ```bash
     cd $NODE_HOME
-    cardano-cli stake-pool registration-certificate \
+    cardano-cli conway stake-pool registration-certificate \
         --cold-verification-key-file $HOME/cold-keys/node.vkey \
         --vrf-verification-key-file vrf.vkey \
         --pool-pledge 100000000 \
@@ -307,7 +307,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "エアギャップマシン"
 
     ```bash
-    cardano-cli stake-address delegation-certificate \
+    cardano-cli conway stake-address delegation-certificate \
         --stake-verification-key-file stake.vkey \
         --cold-verification-key-file $HOME/cold-keys/node.vkey \
         --out-file deleg.cert
@@ -326,7 +326,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "ブロックプロデューサーノード"
     ```bash
     cd $NODE_HOME
-    currentSlot=$(cardano-cli query tip $NODE_NETWORK | jq -r '.slot')
+    currentSlot=$(cardano-cli conway query tip $NODE_NETWORK | jq -r '.slot')
     echo Current Slot: $currentSlot
     ```
 
@@ -334,7 +334,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 
 === "ブロックプロデューサーノード"
     ```bash
-    cardano-cli query utxo \
+    cardano-cli conway query utxo \
         --address $(cat payment.addr) \
         $NODE_NETWORK > fullUtxo.out
 
@@ -377,7 +377,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "ブロックプロデューサーノード"
 
     ```bash
-    cardano-cli transaction build-raw \
+    cardano-cli conway transaction build-raw \
         ${tx_in} \
         --tx-out $(cat payment.addr)+$(( ${total_balance} - ${poolDeposit})) \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
@@ -392,7 +392,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "ブロックプロデューサーノード"
 
     ```bash
-    fee=$(cardano-cli transaction calculate-min-fee \
+    fee=$(cardano-cli conway transaction calculate-min-fee \
         --tx-body-file tx.tmp \
         --witness-count 3 \
         --protocol-params-file params.json | awk '{ print $1 }')
@@ -414,7 +414,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "ブロックプロデューサーノード"
 
     ```bash
-    cardano-cli transaction build-raw \
+    cardano-cli conway transaction build-raw \
         ${tx_in} \
         --tx-out $(cat payment.addr)+${txOut} \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
@@ -436,7 +436,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "エアギャップマシン"
     ```bash
     cd $NODE_HOME
-    cardano-cli transaction sign \
+    cardano-cli conway transaction sign \
         --tx-body-file tx.raw \
         --signing-key-file payment.skey \
         --signing-key-file $HOME/cold-keys/node.skey \
@@ -455,7 +455,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 
 === "ブロックプロデューサーノード"
     ```bash
-    cardano-cli transaction submit \
+    cardano-cli conway transaction submit \
         --tx-file tx.signed \
         $NODE_NETWORK
     ```
@@ -468,8 +468,8 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "エアギャップマシン"
     ```bash
     chmod u+rwx $HOME/cold-keys
-    cardano-cli stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format bech32 --out-file pool.id-bech32
-    cardano-cli stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format hex --out-file pool.id
+    cardano-cli conway stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format bech32 --out-file pool.id-bech32
+    cardano-cli conway stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format hex --out-file pool.id
     chmod a-rwx $HOME/cold-keys
     ```
 
