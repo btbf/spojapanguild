@@ -1913,7 +1913,7 @@ txOut=\$((${total_balance}-\${fee}))
 cardano-cli conway transaction build-raw \\
 $tx_in \\
 --tx-out \$(cat \$NODE_HOME/payment.addr)+\${txOut} \\
---vote-file $NODE_HOME/governance/${voter_type}_voted_$governance_id_tx \\
+--vote-file \$NODE_HOME/governance/${voter_type}_voted_$governance_id_tx \\
 --invalid-hereafter \$(( ${currentSlot} + 10000)) \\
 --fee \${fee} \\
 --out-file \$NODE_HOME/governance/vote-tx.raw
@@ -1947,7 +1947,7 @@ echo "エアギャップ用投票ファイル作成スクリプトを作成し�
 echo
 sleep 3
 echo
-echo -e "${FG_YELLOW} 1. BPの $NODE_HOMEにある${NC}${FG_GREEN}create_votetx_script${NC} と ${FG_GREEN}params.json{NC} を ${FG_YELLOW}エアギャップの${NC}${FG_WHITE}~/cnode/${NC}にコピーしてください${NC}"
+echo -e "${FG_YELLOW} 1. BPの $NODE_HOMEにある${NC}${FG_GREEN}create_votetx_script${NC} と ${FG_GREEN}params.json${NC} を ${FG_YELLOW}エアギャップの${NC}${FG_WHITE}~/cnode/${NC}にコピーしてください${NC}"
 echo '---------------------------------------------------------------'
 echo ">> [BP] ⇒ create_votetx_script / params.json ⇒ [エアギャップ]"
 echo '---------------------------------------------------------------'
@@ -1956,7 +1956,7 @@ read -p "上記の操作が終わったらEnterを押してください"
 echo
 echo -e "${FG_YELLOW} 2. エアギャップで以下コマンドを実行し、ハッシュ値が一致しているか確認してください${NC}"
 echo '---------------------------------------------------------------'
-echo "sha256sum \$NODE_HOME/create_votetx_script"
+echo "sha256sum \$NODE_HOME/create_votetx_script | awk '{ print $1 }'"
 echo '---------------------------------------------------------------'
 echo -e "ハッシュ値: ${FG_GREEN}$(sha256sum $NODE_HOME/create_votetx_script | awk '{ print $1 }' )${NC}"
 echo
