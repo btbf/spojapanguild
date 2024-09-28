@@ -29,7 +29,7 @@ myExit() {
 
 main () {
 clear
-#update
+update
 bech32_install
 #getEraIdentifier
 if [ $? == 1 ]; then
