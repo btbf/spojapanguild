@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="3.7.5"
+TOOL_VERSION="3.8.0"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -30,6 +30,7 @@ myExit() {
 main () {
 clear
 update
+bech32_install
 #getEraIdentifier
 if [ $? == 1 ]; then
   cd $NODE_HOME/scripts
@@ -52,7 +53,7 @@ fi
 
 #プロトコルパラメータファイル作成
 cd $NODE_HOME
-cardano-cli query protocol-parameters \
+cardano-cli conway query protocol-parameters \
   $NETWORK_IDENTIFIER \
   --out-file params.json
 
@@ -73,8 +74,8 @@ echo '
  [3] KES更新
  [4] envUpdateフラグ切替
  ---------------------------------
- [5] Catalyst有権者登録
- [6] gLiveView アップデート(1.28.x)
+ [5] カタリスト有権者登録
+ [6] ガバナンス(登録・投票)
  ---------------------------------
  [q] 終了
 '
@@ -108,7 +109,7 @@ case ${num} in
           echo "■paymentアドレス"
           printf "${FG_YELLOW}$(cat $WALLET_PAY_ADDR_FILENAME)${NC}\n\n"
 
-          # cardano-cli query utxo \
+          # cardano-cli conway query utxo \
           #   --address $(cat $WALLET_PAY_ADDR_FILENAME) \
           #   $NETWORK_IDENTIFIER
 
@@ -137,7 +138,7 @@ case ${num} in
         if [ ${efile_check} == "true" ]; then
           echo "■stakeアドレス"
           printf "${FG_YELLOW}$(cat $WALLET_STAKE_ADDR_FILENAME)${NC}\n\n"
-          pool_reward=$(cardano-cli query stake-address-info --address $(cat $WALLET_STAKE_ADDR_FILENAME) $NETWORK_IDENTIFIER | jq .[].rewardAccountBalance)
+          pool_reward=$(cardano-cli conway query stake-address-info --address $(cat $WALLET_STAKE_ADDR_FILENAME) $NETWORK_IDENTIFIER | jq .[].rewardAccountBalance)
           #pool_reward=`cat $PARENT/stake_json.txt | grep rewardAccountBalance | awk '{ print $2 }'`
           #echo $pool_reward
           pool_reward_Amount=`scale1 $pool_reward`
@@ -204,7 +205,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               withdrawalString="$(cat $WALLET_STAKE_ADDR_FILENAME)+${rewardBalance}"
 
               #トランザクションファイル仮作成
-              cardano-cli transaction build-raw \
+              cardano-cli conway transaction build-raw \
               ${tx_in} \
               --tx-out $(cat $WALLET_PAY_ADDR_FILENAME)+${total_balance} \
               --tx-out ${destinationAddress}+${rewardBalance} \
@@ -214,7 +215,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               --out-file tx.tmp
 
               #手数料計算
-              fee=$(cardano-cli transaction calculate-min-fee \
+              fee=$(cardano-cli conway transaction calculate-min-fee \
                   --tx-body-file tx.tmp \
                   --witness-count 2 \
                   --protocol-params-file params.json | awk '{ print $1 }')
@@ -228,7 +229,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
 
               #最終トランザクションファイル作成
-              cardano-cli transaction build-raw \
+              cardano-cli conway transaction build-raw \
               ${tx_in} \
               --tx-out $(cat $WALLET_PAY_ADDR_FILENAME)+${txOut} \
               --tx-out ${destinationAddress}+${rewardBalance} \
@@ -241,7 +242,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               air_gap
               
               #トランザクション送信
-              tx_submit
+              tx_submit ${NODE_HOME} tx.signed
             else
               echo "$WALLET_STAKE_ADDR_FILENAMEファイルが見つかりません"
               echo
@@ -280,7 +281,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               withdrawalString="$(cat $WALLET_STAKE_ADDR_FILENAME)+${rewardBalance}"
               tempRewardAmount=$(( ${total_balance}+${rewardBalance} ))
               #トランザクションファイル仮作成
-              cardano-cli transaction build-raw \
+              cardano-cli conway transaction build-raw \
               ${tx_in} \
               --tx-out $(cat $WALLET_PAY_ADDR_FILENAME)+${tempRewardAmount} \
               --invalid-hereafter $(( ${currentSlot} + 10000)) \
@@ -289,7 +290,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               --out-file tx.tmp
 
               #手数料計算
-              fee=$(cardano-cli transaction calculate-min-fee \
+              fee=$(cardano-cli conway transaction calculate-min-fee \
                   --tx-body-file tx.tmp \
                   --witness-count 2 \
                   --protocol-params-file params.json | awk '{ print $1 }')
@@ -302,7 +303,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               tx_Check $destinationAddress ${rewardBalance} $fee ${txOut}
 
               #最終トランザクションファイル作成
-              cardano-cli transaction build-raw \
+              cardano-cli conway transaction build-raw \
                 ${tx_in} \
                 --tx-out $(cat $WALLET_PAY_ADDR_FILENAME)+${txOut} \
                 --invalid-hereafter $(( ${currentSlot} + 10000)) \
@@ -314,7 +315,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               air_gap
               
               #トランザクション送信
-              tx_submit
+              tx_submit ${NODE_HOME} tx.signed
 
             else
               echo "$WALLET_STAKE_ADDR_FILENAMEまたは$WALLET_PAY_ADDR_FILENAMEファイルが見つかりません"
@@ -378,7 +379,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               #echo UTXOs: ${txcnt}
               tempBalanceAmont=$(( ${total_balance}-${amountToSend} ))
               #トランザクションファイル仮作成
-              cardano-cli transaction build-raw \
+              cardano-cli conway transaction build-raw \
                   ${tx_in} \
                   --tx-out $(cat $WALLET_PAY_ADDR_FILENAME)+${tempBalanceAmont} \
                   --tx-out ${destinationAddress}+${amountToSend} \
@@ -387,7 +388,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
                   --out-file tx.tmp
 
               #手数料計算
-              fee=$(cardano-cli transaction calculate-min-fee \
+              fee=$(cardano-cli conway transaction calculate-min-fee \
               --tx-body-file tx.tmp \
               --witness-count 1 \
               --protocol-params-file params.json | awk '{ print $1 }')
@@ -401,7 +402,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               #printf "$rows" "出金後残高:" "`scale1 ${txOut}` ADA"
 
               #最終トランザクションファイル作成
-              cardano-cli transaction build-raw \
+              cardano-cli conway transaction build-raw \
                   ${tx_in} \
                   --tx-out $(cat $WALLET_PAY_ADDR_FILENAME)+${txOut} \
                   --tx-out ${destinationAddress}+${amountToSend} \
@@ -413,7 +414,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               air_gap_payment_only
               
               #トランザクション送信
-              tx_submit
+              tx_submit ${NODE_HOME} tx.signed
             else
               echo "$WALLET_PAY_ADDR_FILENAMEファイルが見つかりません"
               echo
@@ -498,8 +499,8 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     pledge_scale=`scale1 $pledge`
 
     active_epoch=`cat $NODE_HOME/pooldata.txt | jq -r ".[].active_epoch_no"`
-    future_pledge=`cardano-cli query pool-params --stake-pool-id $(cat $NODE_HOME/pool.id-bech32) | jq .[].futurePoolParams.pledge`
-    current_pledge=`cardano-cli query pool-params --stake-pool-id $(cat $NODE_HOME/pool.id-bech32) | jq .[].poolParams.pledge`
+    future_pledge=`cardano-cli conway query pool-params --stake-pool-id $(cat $NODE_HOME/pool.id-bech32) | jq .[].futurePoolParams.pledge`
+    current_pledge=`cardano-cli conway query pool-params --stake-pool-id $(cat $NODE_HOME/pool.id-bech32) | jq .[].poolParams.pledge`
 
   
     printf "ノード起動タイプ:BP ${FG_GREEN}OK${NC}　ネットワーク:${FG_YELLOW}$NETWORK_NAME${NC}\n"
@@ -527,7 +528,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       echo "プール運用マニュアルの「プール情報更新」で再登録してください"
       echo
     else
-      metaFileHash=`cardano-cli stake-pool metadata-hash --pool-metadata-file $NODE_HOME/metaCheck/poolMetaData.json`
+      metaFileHash=`cardano-cli conway stake-pool metadata-hash --pool-metadata-file $NODE_HOME/metaCheck/poolMetaData.json`
       if [ $metaChainHash == $metaFileHash ]; then
         printf "${FG_GREEN}OK${NC}\n"
         printf "チェーン登録ハッシュ：${FG_YELLOW}$metaChainHash${NC}\n"
@@ -634,7 +635,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     
 
     #ノードから同期済みブロック取得
-    currentblock=$(cardano-cli query tip $NETWORK_IDENTIFIER | jq -r '.block')
+    currentblock=$(cardano-cli conway query tip $NETWORK_IDENTIFIER | jq -r '.block')
     
 
     block_diff=$koios_blockNo-$currentblock
@@ -713,8 +714,8 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     #ローカルVRFファイル検証
     mkdir $NODE_HOME/vrf_check
     cp $NODE_HOME/$POOL_VRF_SK_FILENAME $NODE_HOME/vrf_check/
-    cardano-cli key verification-key --signing-key-file $NODE_HOME/vrf_check/$POOL_VRF_SK_FILENAME --verification-key-file $NODE_HOME/vrf_check/vrf.vkey
-    cardano-cli node key-hash-VRF --verification-key-file $NODE_HOME/vrf_check/vrf.vkey --out-file $NODE_HOME/vrf_check/vkeyhash.txt
+    cardano-cli conway key verification-key --signing-key-file $NODE_HOME/vrf_check/$POOL_VRF_SK_FILENAME --verification-key-file $NODE_HOME/vrf_check/vrf.vkey
+    cardano-cli conway node key-hash-VRF --verification-key-file $NODE_HOME/vrf_check/vrf.vkey --out-file $NODE_HOME/vrf_check/vkeyhash.txt
     local_vrf_hash=$(cat $NODE_HOME/vrf_check/vkeyhash.txt)
     
     if [ $chain_Vrf_hash == $local_vrf_hash ]; then
@@ -732,11 +733,11 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     rm -rf $NODE_HOME/vrf_check
 
     chain_cert_counter=`cat $NODE_HOME/pooldata.txt | jq -r ".[].op_cert_counter"`
-    local_cert_counter=`cardano-cli text-view decode-cbor --in-file $POOL_OPCERT_FILENAME | grep int | head -1 | cut -d"(" -f2 | cut -d")" -f1`
+    local_cert_counter=`cardano-cli conway text-view decode-cbor --in-file $POOL_OPCERT_FILENAME | grep int | head -1 | cut -d"(" -f2 | cut -d")" -f1`
     kes_remaining=$(curl -s http://localhost:${PROM_PORT}/metrics | grep KESPeriods_int | awk '{ print $2 }')
     kes_days=`bc <<< "$kes_remaining * 1.5"`
     kes_cborHex=`cat $NODE_HOME/$POOL_HOTKEY_VK_FILENAME | jq '.cborHex' | tr -d '"'`
-    cert_cborHex=`cardano-cli text-view decode-cbor --in-file $NODE_HOME/$POOL_OPCERT_FILENAME | awk 'NR==4,NR==6 {print}' | sed 's/ //g' | sed 's/#.*//' | tr -d '\n'`
+    cert_cborHex=`cardano-cli conway text-view decode-cbor --in-file $NODE_HOME/$POOL_OPCERT_FILENAME | awk 'NR==4,NR==6 {print}' | sed 's/ //g' | sed 's/#.*//' | tr -d '\n'`
 
     #証明書判定
     if [ $kes_cborHex == $cert_cborHex ]; then
@@ -861,12 +862,12 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     sleep 2
 
     #最新ブロックカウンター番号チェック
-    kesperiodinfo=$(cardano-cli query kes-period-info ${NETWORK_IDENTIFIER} --op-cert-file $NODE_HOME/$POOL_OPCERT_FILENAME --out-file $NODE_HOME/kesperiod.json)
+    kesperiodinfo=$(cardano-cli conway query kes-period-info ${NETWORK_IDENTIFIER} --op-cert-file $NODE_HOME/$POOL_OPCERT_FILENAME --out-file $NODE_HOME/kesperiod.json)
     lastBlockCnt=`cat kesperiod.json | jq -r '.qKesNodeStateOperationalCertificateNumber'`
     rm $NODE_HOME/kesperiod.json
   
     #現在のKESPeriod算出
-    slotNo=$(cardano-cli query tip ${NETWORK_IDENTIFIER} | jq -r '.slot')
+    slotNo=$(cardano-cli conway query tip ${NETWORK_IDENTIFIER} | jq -r '.slot')
     slotsPerKESPeriod=$(cat $NODE_HOME/${NODE_CONFIG}-shelley-genesis.json | jq -r '.slotsPerKESPeriod')
     kesPeriod=$((${slotNo} / ${slotsPerKESPeriod}))
     startKesPeriod=${kesPeriod}
@@ -887,6 +888,37 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     cp $NODE_HOME/$POOL_OPCERT_FILENAME $kesfolder/$date-$POOL_OPCERT_FILENAME
     printf "$NODE_HOME/$POOL_OPCERT_FILENAME を $kesfolder/$date-$POOL_OPCERT_FILENAMEへコピーしました\n\n"
 
+    # チェックするディレクトリを指定
+    # 特定のファイル名に含まれる文字列を指定（3種類）
+    oldKessKey="${POOL_HOTKEY_SK_FILENAME}"
+    oldKesvKey="${POOL_HOTKEY_VK_FILENAME}"
+    oldNodecertKey="${POOL_OPCERT_FILENAME}"
+
+    # 関数: 古いファイルを削除する
+    KesCleanupFiles() {
+      local pattern=${1}
+      local dir=${2}
+      
+      # 該当するファイルをリストアップ
+      local file_list=$(ls -1t ${dir} | grep ${pattern})
+      
+      # 該当するファイル数を取得
+      local file_count=$(echo "${file_list}" | wc -l)
+      
+      # ファイルが5つ以上ある場合
+      if [ "$file_count" -ge 5 ]; then
+        # 古いファイルをリストアップし、5番目のファイル以降を削除
+        echo "$file_list" | tail -n +6 | while read -r file; do
+          rm "$dir/$file"
+        done
+      fi
+    }
+
+    # 古いバックアップファイル削除
+    KesCleanupFiles "$oldKessKey" "$kesfolder"
+    KesCleanupFiles "$oldKesvKey" "$kesfolder"
+    KesCleanupFiles "$oldNodecertKey" "$kesfolder"
+
     kesVkey256=`sha256sum $POOL_HOTKEY_VK_FILENAME | awk '{ print $1 }'`
     kesSkey256=`sha256sum $POOL_HOTKEY_SK_FILENAME | awk '{ print $1 }'`
 
@@ -900,7 +932,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     #printf "$NODE_HOME/$POOL_OPCERT_FILENAME を削除しました\n\n"
 
     printf "${FG_MAGENTA}■新しいKESファイルの作成...${NC}\n"
-    cardano-cli node key-gen-KES \
+    cardano-cli conway node key-gen-KES \
     --verification-key-file $NODE_HOME/$POOL_HOTKEY_VK_FILENAME \
     --signing-key-file $NODE_HOME/$POOL_HOTKEY_SK_FILENAME
     sleep 5
@@ -961,7 +993,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     echo -e "${FG_YELLOW}3. カウンターファイル生成${NC} (生成カウンター ${FG_YELLOW}$counterValue${NC} )"
     echo '----------------------------------------'
     echo "chmod u+rwx $COLDKEYS_DIR"
-    echo 'cardano-cli node new-counter \'
+    echo 'cardano-cli conway node new-counter \'
     echo "  --cold-verification-key-file $COLDKEYS_DIR/$POOL_COLDKEY_VK_FILENAME"' \'
     echo '  --counter-value '$counterValue' \'
     echo "  --operational-certificate-issue-counter-file $COLDKEYS_DIR/$POOL_OPCERT_COUNTER_FILENAME"
@@ -970,7 +1002,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     echo
     echo -e "${FG_YELLOW}4. カウンター番号確認${NC}"
     echo '----------------------------------------'
-    echo 'cardano-cli text-view decode-cbor \'
+    echo 'cardano-cli conway text-view decode-cbor \'
     echo " --in-file  $COLDKEYS_DIR/$POOL_OPCERT_COUNTER_FILENAME"' \'
     echo ' | grep int | head -1 | cut -d"(" -f2 | cut -d")" -f1'
     echo '----------------------------------------'
@@ -988,7 +1020,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     echo -e "${FG_YELLOW}5. $POOL_OPCERT_FILENAMEファイルを作成する${NC}"
     echo '----------------------------------------'
     echo 'cd $NODE_HOME'
-    echo 'cardano-cli node issue-op-cert \'
+    echo 'cardano-cli conway node issue-op-cert \'
     echo "  --kes-verification-key-file $POOL_HOTKEY_VK_FILENAME "'\'
     echo "  --cold-signing-key-file $COLDKEYS_DIR/$POOL_COLDKEY_SK_FILENAME"' \'
     echo "  --operational-certificate-issue-counter $COLDKEYS_DIR/$POOL_OPCERT_COUNTER_FILENAME"' \'
@@ -1285,7 +1317,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
 
       echo -e "\nWallet残高 :$(scale1 ${total_balance}) ADA\n"
       #トランザクションファイル仮作成
-      cardano-cli transaction build-raw \
+      cardano-cli conway transaction build-raw \
       ${tx_in} \
       --tx-out $(cat $NODE_HOME/$WALLET_PAY_ADDR_FILENAME)+${total_balance} \
       --invalid-hereafter $(( ${currentSlot} + 10000)) \
@@ -1294,14 +1326,14 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       --out-file tx.tmp
 
       #手数料計算
-      fee=$(cardano-cli transaction calculate-min-fee \
+      fee=$(cardano-cli conway transaction calculate-min-fee \
       --tx-body-file tx.tmp \
       --witness-count 1 \
       --protocol-params-file $NODE_HOME/params.json | awk '{ print $1 }')
       
       txOut=$((${total_balance}-${fee}))
 
-      cardano-cli transaction build-raw \
+      cardano-cli conway transaction build-raw \
       ${tx_in} \
       --tx-out $(cat $NODE_HOME/$WALLET_PAY_ADDR_FILENAME)+${txOut} \
       --invalid-hereafter $(( ${currentSlot} + 10000)) \
@@ -1323,7 +1355,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       echo -e "${FG_YELLOW}2. エアギャップでトランザクションファイルに署名してください${NC}"
       echo '----------------------------------------'
       echo 'cd $NODE_HOME'
-      echo 'cardano-cli transaction sign \'
+      echo 'cardano-cli conway transaction sign \'
       echo '  --tx-body-file tx.raw \'
       echo '  --signing-key-file payment.skey \'
       echo "  $NETWORK_IDENTIFIER "'\'
@@ -1339,7 +1371,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       read -p "トランザクション送信をキャンセルする場合はEnterを押して2を入力してください"
 
       #トランザクション送信
-      tx_submit
+      tx_submit ${NODE_HOME} tx.signed
 
       echo $tx_id > $HOME/CatalystVoting/txhash.log
 
@@ -1463,479 +1495,63 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
 
   6)
     clear
-
+    governance_dir=$NODE_HOME/governance
+    mkdir -p $governance_dir
     echo "------------------------------------------------------------"
-    echo -e ">> gLiveView 1.27.x → 1.28.x アップデート"
+    echo -e ">> ガバナンス(登録・投票)"
     echo "------------------------------------------------------------"
+    echo -e "
+[1] SPO投票
+${FG_DGRAY}[2] DRep投票(近日実装)${NC}
+-------------------
+${FG_DGRAY}[3] DRep委任(近日実装)
+[4] DRep登録(近日実装)
+[5] DRepリタイア(近日実装)${NC}
+------------------
+[b] 戻る 
+"
+    read -n 1 -p "メニュー番号を入力してください : >" governance
+    case ${governance} in
+      1)
+        clear
+        echo '------------------------------------------------------------------------'
+        echo -e "${FG_MAGENTA}ガバナンスアクション-SPO投票${NC}"
+        echo
+        echo -e "投票には投票対象のガバナンスアクションIDが必要です"
+        echo -e "https://cardanoscan.io/govActions"
+        echo -e "https://gov.tools/governance_actions"
+        echo
+        printf "${FG_YELLOW}SPOが投票可能なガバンスアクション${NC}\n"
+        echo -e "1.No-confidence(不信任案)"
+        echo -e "2.New Committee(委員会更新)"
+        echo -e "3.Hard-fork(ハードフォーク)"
+        echo -e "4.Info Action(情報)"
+        echo
+        echo -e "${FG_YELLOW}投票にはTx手数料がかかります${NC}(手数料はpayment.addrから引き落とされます)"
+        echo '------------------------------------------------------------------------'
+        echo
 
-    current_glive_ver="$(cat $NODE_HOME/scripts/gLiveView.sh | grep "GLV_VERSION=")"
-    current_glive_ver=${current_glive_ver#GLV_VERSION=v}
+        #提案書呼び出し
+        choose_proposal SPO
+        #投票
+        proposal_vote
 
-    update_glive() {
-      clear
-      cd $NODE_HOME/scripts
-      printf "既存ファイルをバックアップ...\n\n"
-      cp cncli.sh cncli.sh-1.27
-      echo "$NODE_HOME/scripts/cncli.sh-1.27"
-      cp env env-1.27
-      echo "$NODE_HOME/scripts/env-1.27"
-      cp gLiveView.sh gLiveView.sh-1.27
-      echo "$NODE_HOME/scripts/gLiveView.sh-1.27"
-      cp cntools.library cntools.library-1.27
-      echo "$NODE_HOME/scripts/cntools.library-1.27"
-      echo
-
-      wget -q https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cncli.sh -O ./cncli.sh
-      wget -q https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/env -O ./env
-      wget -q https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/gLiveView.sh -O ./gLiveView.sh
-      wget -q https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cntools.library -O cntools.library
-      printf "${FG_GREEN}依存ファイルを更新しました${NC}\n\n"
-
-      PORT=`grep "PORT=" $NODE_HOME/startBlockProducingNode.sh`
-      b_PORT=${PORT#"PORT="}
-
-      sed -i $NODE_HOME/scripts/env \
-        -e '1,73s!#CNODEBIN="${HOME}/.local/bin/cardano-node"!CNODEBIN="/usr/local/bin/cardano-node"!' \
-        -e '1,73s!#CCLI="${HOME}/.local/bin/cardano-cli"!CCLI="/usr/local/bin/cardano-cli"!' \
-        -e '1,73s!#CNCLI="${HOME}/.local/bin/cncli"!CNCLI="${HOME}/.cargo/bin/cncli"!' \
-        -e '1,73s!#CNODE_HOME="/opt/cardano/cnode"!CNODE_HOME='${NODE_HOME}'!' \
-        -e '1,73s!#CNODE_PORT=6000!CNODE_PORT='${b_PORT}'!' \
-        -e '1,73s!#UPDATE_CHECK="Y"!UPDATE_CHECK="N"!' \
-        -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/'${NODE_CONFIG}'-config.json"!' \
-        -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node0.socket"!SOCKET="${CNODE_HOME}/db/socket"!' \
-        -e '1,73s!#BLOCKLOG_TZ="UTC"!BLOCKLOG_TZ="Asia/Tokyo"!' \
-        -e '1,73s!#POOL_NAME=""!POOL_DIR="${CNODE_HOME}"!' \
-        -e '1,73s!#WALLET_PAY_ADDR_FILENAME="payment.addr"!WALLET_PAY_ADDR_FILENAME="payment.addr"!' \
-        -e '1,73s!#WALLET_STAKE_ADDR_FILENAME="reward.addr"!WALLET_STAKE_ADDR_FILENAME="stake.addr"!' \
-        -e '1,73s!#POOL_HOTKEY_VK_FILENAME="hot.vkey"!POOL_HOTKEY_VK_FILENAME="kes.vkey"!' \
-        -e '1,73s!#POOL_HOTKEY_SK_FILENAME="hot.skey"!POOL_HOTKEY_SK_FILENAME="kes.skey"!' \
-        -e '1,73s!#POOL_COLDKEY_VK_FILENAME="cold.vkey"!POOL_COLDKEY_VK_FILENAME="node.vkey"!' \
-        -e '1,73s!#POOL_COLDKEY_SK_FILENAME="cold.skey"!POOL_COLDKEY_SK_FILENAME="node.skey"!' \
-        -e '1,73s!#POOL_OPCERT_COUNTER_FILENAME="cold.counter"!POOL_OPCERT_COUNTER_FILENAME="node.counter"!' \
-        -e '1,73s!#POOL_OPCERT_FILENAME="op.cert"!POOL_OPCERT_FILENAME="node.cert"!' \
-        -e '1,73s!#POOL_VRF_SK_FILENAME="vrf.skey"!POOL_VRF_SK_FILENAME="vrf.skey"!'
-      
-      printf "${FG_YELLOW}envファイルのユーザー変数を変更しました${NC}\n"
-
-      sed -i $NODE_HOME/scripts/cncli.sh \
-        -e '1,73s!#POOL_ID=""!POOL_ID="'$(cat $NODE_HOME/$POOL_ID_FILENAME)'"!' \
-        -e '1,73s!#POOL_ID_BECH32=""!POOL_ID_BECH32="'$(cat $NODE_HOME/$POOL_ID_FILENAME-bech32)'"!' \
-        -e '1,73s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
-        -e '1,73s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
-      
-      printf "${FG_YELLOW}cncli.shのユーザー変数を変更しました${NC}\n\n"
-      
-      api_key=$(cat $NODE_HOME/scripts/cncli.sh-1.27 | grep "^PT_API_KEY=" | awk '{ sub(" .*$",""); print $0; }')
-      pt_ticker=$(cat $NODE_HOME/scripts/cncli.sh-1.27 | grep "^POOL_TICKER=" | awk '{ sub(" .*$",""); print $0; }')
-
-      if [[ -n $api_key || -n $pt_ticker ]]; then
-
-        api_key=${api_key#PT_API_KEY=}
-        pt_ticker=${pt_ticker#POOL_TICKER=}
-
-        sed -i $NODE_HOME/scripts/cncli.sh \
-          -e '1,73s!#PT_API_KEY=""!PT_API_KEY='${api_key}'!' \
-          -e '1,73s!#POOL_TICKER=""!POOL_TICKER='${pt_ticker}'!'
-        
-        printf "${FG_YELLOW}cncli.shにPOOL-TOOl API-KEYを追記しました${NC}\n"
-        
-      fi
-
-    }
-    
-    printf "現在のバージョン: ${FG_YELLOW}$current_glive_ver${NC}\n"
-
-    if [ ${current_glive_ver::-2} != "1.28" ]; then
-      echo "アップデートを開始しますか？"
-      echo
-      echo "[1]開始する [2]キャンセル"
-      yes_no
-      echo
-      update_glive
-      printf "gLiveViewを起動してください\n\n"
-    else
-      library_file_check=$(cat $NODE_HOME/scripts/cntools.library | grep 'getPoolID()')
-      if [ -n "$library_file_check" ]; then
-        echo "cntools.libraryがアップデートされていません"
-      else
-        echo "すでにアップデート済みです"
         select_rtn
-      fi
-    fi
-  
-  select_rtn
-  ;;
-
-  # 6)
-  # clear
-
-  # efile_check=`filecheck "$NODE_HOME/$WALLET_PAY_ADDR_FILENAME"`
-
-  # if [ ${efile_check} == "false" ]; then
-  #   echo "${WALLET_PAY_ADDR_FILENAME}ファイルが見つかりません"
-  #   echo
-  #   echo "${NODE_HOME}に${WALLET_PAY_ADDR_FILENAME}をコピーするか"
-  #   echo "envファイルのWALLET_PAY_ADDR_FILENAME変数の指定値をご確認ください"
-  #   select_rtn
-  # fi
-
-  # idfile_check=`filecheck "$NODE_HOME/stakepoolid_hex.txt"`
-  # if [ $idfile_check == "false" ]; then
-  #   echo "stakepoolid_hex.txtが見つかりません"
-  #   echo "エアギャップで作成し、$NODE_HOMEにコピーしてください"
-  #   echo
-  #   echo "エアギャップ stakepoolid_hex.txt作成コマンド"
-  #   echo '---------------------------------------------------------------'
-  #   echo "chmod u+rwx $COLDKEYS_DIR"
-  #   echo 'cardano-cli stake-pool id \'
-  #   echo    "--cold-verification-key-file $COLDKEYS_DIR/$POOL_COLDKEY_VK_FILENAME"' \'
-  #   echo    '--output-format hex > $NODE_HOME/stakepoolid_hex.txt'
-  #   echo "chmod a-rwx $COLDKEYS_DIR"
-  #   echo '---------------------------------------------------------------'
-  #   select_rtn
-  # fi
-
-  # poll_dir=$HOME/git/spo-poll
-  # cli_version="$(cardano-cli version | head -1 | cut -d' ' -f2)"
-  # #cli_version="1.35.5"
-  # cli_version_check="${cli_version:0:1}"
-  # echo "------------------------------------------------------------"
-  # echo -e ">> SPO投票(CIP-0094) | cardano-cli: ${FG_YELLOW}${cli_version}${NC}"
-  # echo "------------------------------------------------------------"
-
-  
-  # if [ $cli_version_check -lt 8 ]; then
-  #   cli_path="$poll_dir/cardano-cli"
-  #   if [ ! -d $poll_dir ]; then
-  #     mkdir $poll_dir
-  #     echo -e "作業ディレクトリ ${FG_GREEN}$poll_dir${NC} を作成しました"
-  #     cd $poll_dir
-  #     wget -q https://github.com/btbf/spojapanguild/raw/d7cd9792ab4cb532b74a8cd1bf30de3c1c03b8a6/scripts/spo-poll/cardano-cli.gz
-  #     echo -e "投票用cli(8.0.0-untested)をダウンロードしました\n"
-  #     gzip -d cardano-cli.gz
-  #     chmod 755 ./cardano-cli
-  #     echo -e "投票用CLIパスは ${FG_GREEN}${cli_path}${NC} です"
-  #     $cli_path version
-  #   fi
-  # else
-  #     if [ ! -d $poll_dir ]; then
-  #       mkdir $poll_dir
-  #       echo -e "作業ディレクトリ ${FG_GREEN}$poll_dir${NC} を作成しました"
-  #     fi
-  #     cli_path=$(which cardano-cli)
-  # fi
-
-
-  # echo -e "\n投票用CLIパス:${FG_GREEN}$(which $cli_path)${NC} | バージョン:${FG_GREEN}$($cli_path version | head -1 | cut -d' ' -f2)${NC}"
-  # echo
-  # echo -e "この手順は途中でも中断できます\n"
-
-  # cd $poll_dir
-
-  # read -p "投票トランザクションハッシュを入力してください > " txHash
-  
-  # tx=$(curl -sX POST "$KOIOS_API/tx_metadata" -H "accept: application/json" -H "content-type: application/json"  -d "{\"_tx_hashes\":[\"${txHash}\"]}")
-  
-  # question_str_length=""
-  # option_str=()
-
-  # transrate_jp(){
-  #     transrate="MDgxNGQ0YzItZjg3Yi0wY2Q4LTk0ZWUtYzQxMTBlM2Y4ZTVkOmZ4"
-  #     dapk=$(echo $transrate | base64 -d)
-  #     question_str_jp_response=$(curl -sX POST "https://api-free.deepl.com/v2/translate" -H "Authorization: DeepL-Auth-Key $dapk" -d "text=$1" -d "target_lang=JA")
-  #     question_str_jp_text=$(echo $question_str_jp_response | jq -r ".translations[0].text")
-  #     echo $question_str_jp_text
-  # }
-
-
-  # if [[ -n $(echo $tx | grep tx_hash) ]]; then
-  #   txMeta=$(echo $tx | jq -r .[0].metadata)
-  #   if [[ $(echo $txMeta | grep '{ "94":' ) ]]; then
-  #     echo -e "\nCIP-0094投票を表示します"
-
-  #     #質問抽出
-  #     question_str_length=$(echo $txMeta | jq -r ".\"94\".\"0\" | length")
-  #     for (( str_cnt=0; str_cnt<${question_str_length}; str_cnt++ ))
-  #     do 
-  #       question_str+=$(echo $txMeta | jq -r ".\"94\".\"0\"[${str_cnt}]")
-  #     done
-      
-  #     question_str_jp=$(transrate_jp "$question_str")
-
-  #     echo -e "\n質問：${FG_GREEN}$question_str${NC}"
-  #     echo -e "翻訳：${FG_YELLOW}$question_str_jp${NC}\n"
-
-  #     #選択肢抽出
-  #     options_str_length=$(echo $txMeta | jq -r ".\"94\".\"1\" | length")
-  #     for (( str_cnt=0; str_cnt<${options_str_length}; str_cnt++ ))
-  #     do
-  #       options_entry_length=$(echo $txMeta | jq -r ".\"94\".\"1\"[${str_cnt}] | length")
-  #       for (( str_cnt2=0; str_cnt2<${options_entry_length}; str_cnt2++ ))
-  #       do
-  #         option_str[${str_cnt}]+=$(echo $txMeta | jq -r ".\"94\".\"1\"[${str_cnt}][${str_cnt2}]")
-  #         option_str_jp=$(transrate_jp "${option_str[${str_cnt}]}")
-  #         echo -e [${str_cnt}]:${FG_GREEN}${option_str[${str_cnt}]}${NC} : ${FG_YELLOW}$option_str_jp${NC}
-  #       done
-  #     done
-
-  #     echo
-  #     while :
-  #     do
-  #       read -n 1 -p "どの選択肢に投票しますか？カッコ内の番号を入力してください > " poll_num
-  #       if [ -n "$poll_num" ] && [[ $poll_num -lt $options_str_length ]]; then
-  #         echo -e "\n\nあなたが入力した項目は [${poll_num}]:${FG_YELLOW}${option_str[${poll_num}]}${NC} です\n"
-  #         echo -e "投票データに簡易メッセージを添付しますか？\n"
-  #         echo '[1] 添付する　[2] 添付しない'
-  #         while :
-  #         do
-  #           read -n 1 retun_msg
-  #           if [ "$retun_msg" == "1" ] || [ "$retun_msg" == "2" ]; then
-  #             case ${retun_msg} in
-  #               1)
-  #                 echo -e "\n------------------------------------------------------------------------\n"
-  #                 echo -e "　＊1行(メッセージ)64byteまで入力可能(日本語文字の場合は約22文字(UTF-8:3byte計算))\n"
-  #                 echo -e "　＊メッセージは複数行挿入可能。 | で区切ってください\n"
-  #                 echo -e "　＊例）${FG_YELLOW}この投票はダミーですよろしくお願いします。|私は別の案を提案します${NC}\n"
-  #                 echo -e "------------------------------------------------------------------------\n"
-                  
-  #                 wget -q https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/spo-poll/msg-metadata.json -O $poll_dir/msg-metadata.json
-  #                 msg_metadata=$(cat $poll_dir/msg-metadata.json)
-                  
-  #                 ##メタデータに簡易メッセージを添付します
-  #                 ## 参考元：https://github.com/gitmachtl/scripts/blob/master/cardano/testnet/13b_sendSpoPoll.sh
-
-  #                 while :
-  #                 do
-  #                   read -p "添付メッセージを入力してください > " input_message
-
-  #                   if [ -n "$input_message" ]; then
-  #                     IFS='|' read -ra message_arr <<< "${input_message}"
-  #                     for (( tmpCnt3=0; tmpCnt3<${#message_arr[@]}; tmpCnt3++ ))
-  #                     do
-  #                       tmpMessage=${message_arr[tmpCnt3]}
-  #                       if [[ $(byteLength "${tmpMessage}") -le 64 ]]; then
-  #                         msg_metadata=$(jq ".\"674\".map[0].v.list += [ {\"string\": \"${tmpMessage}\"} ]" <<< $msg_metadata);
-  #                         echo
-  #                       else
-  #                         echo -e "\n${FG_RED}メッセージエラー:\"${tmpMessage}\"は64バイトを超えています。入力された文字は $(byteLength "${tmpMessage}") バイトです${NC}"
-  #                         echo -e "最初からもう一度やり直してください。\n"
-  #                         exit
-  #                       fi
-  #                     done
-
-  #                     #最終msg-metadata.json作成
-  #                     echo $msg_metadata | jq . > $poll_dir/msg-metadata.json
-  #                     message_flg=0
-  #                     break
-  #                   else
-  #                     printf "\n${FG_YELLOW}メッセージが未入力です。再度入力してください${NC}\n"
-  #                   fi
-  #                 done
-  #               ;;
-  #               2) 
-  #                 message_flg=1
-  #                 break
-  #             esac
-  #             break
-  #           elif [ "$retun_msg" == '' ]; then
-  #             printf "\n${FG_YELLOW}入力記号が不正です。再度入力してください${NC}\n"
-  #           else
-  #             printf "\n${FG_YELLOW}入力記号が不正です。再度入力してください${NC}\n"
-  #           fi
-  #         done
-  #       break
-  #       else
-  #         echo -e "\n\n${FG_YELLOW}入力された番号は無効です。再度入力してください${NC}\n"
-  #       fi
-  #     done
-
-  #     #投票データ作成
-  #     txCBOR=$(curl -s GET "https://raw.githubusercontent.com/cardano-foundation/CIP-0094-polls/main/networks/${NODE_CONFIG}/${txHash}/poll.json")
-  #     echo "$txCBOR" > $poll_dir/poll_${txHash}-CBOR.json
-      
-  #     #cliバージョン振り分け
-  #     #if [ $cli_version_check -lt 8 ]; then
-  #     ${cli_path} governance answer-poll --poll-file $poll_dir/poll_${txHash}-CBOR.json --answer ${poll_num} > $poll_dir/poll_${txHash}-poll-answer.json
-  #     #else
-  #     #  ${cli_path} governance answer-poll --poll-file $poll_dir/poll_${txHash}-CBOR.json --answer ${poll_num} --out-file $poll_dir/poll_${txHash}-poll-answer.json 2> /dev/null
-  #     #fi
-
-  #     if [[ $message_flg -eq 0 ]]; then
-  #       tmp_message=$(cat $poll_dir/msg-metadata.json)
-  #       tmp_poll_metadata=$(cat ${poll_dir}/poll_${txHash}-poll-answer.json | jq ". |= .+${tmp_message}")
-  #       echo $tmp_poll_metadata | jq . > ${poll_dir}/poll_${txHash}-poll-answer.json
-  #     else
-  #       tmp_poll_metadata=$(cat ${poll_dir}/poll_${txHash}-poll-answer.json | jq .)
-  #     fi
-
-  #     echo -e "\n投票メタデータを作成しました！"
-  #     echo -e "${FG_DGRAY}${tmp_poll_metadata}${NC}\n"
-  #     echo -e "${FG_GREEN}$poll_dir/poll_${txHash}-poll-answer.json${NC}\n"
-  #     sleep 2
-
-  #     while :
-  #       do
-  #         read -n 1 -p "投票Txデータを作成してよろしいですか？ y/n > " create_tx_data
-  #         if [ "$create_tx_data" == "y" ] || [ "$create_tx_data" == "n" ]; then
-  #           case ${create_tx_data} in
-  #             y) 
-  #               #echo $create_poll_data
-  #               break
-  #               ;;
-  #             n) 
-  #               #echo $create_poll_data
-  #               echo -e "\n\nSPO JAPAN GUILD TOOL Closed!" 
-  #               echo "投票を最初からやり直してください"
-  #               echo
-  #               exit ;;
-  #           esac
-  #           break
-  #         elif [ "${create_tx_data}" == '' ]; then
-  #           printf "\n${FG_YELLOW}入力記号が不正です。再度入力してください${NC}\n"
-  #         else
-  #           printf "\n${FG_YELLOW}入力記号が不正です。再度入力してください${NC}\n"
-  #         fi
-  #       done
-      
-
-  #     echo -e "\nTxデータを作成します..."
-  #     sleep 2
-  #     clear
-
-  #     #ウォレット残高とUTXO参照
-  #     payment_utxo
-  #     #echo ${tx_in}
-
-  #     echo -e "\nWallet残高 :$(scale1 ${total_balance}) ADA\n"
-  #     cardano-cli transaction build \
-  #       ${tx_in} \
-  #       --change-address $(cat $WALLET_PAY_ADDR_FILENAME) \
-  #       --metadata-json-file $poll_dir/poll_${txHash}-poll-answer.json \
-  #       --json-metadata-detailed-schema \
-  #       --required-signer-hash $(cat $NODE_HOME/stakepoolid_hex.txt) \
-  #       $NETWORK_IDENTIFIER \
-  #       --out-file $NODE_HOME/poll-answer.tx > /dev/null
-
-  #     #Txサイズチェック
-  #     protocolParametersJSON=$(cat $NODE_HOME/params.json)
-  #     maxTxSize=$(jq -r .maxTxSize <<< ${protocolParametersJSON})
-      
-  #     tx_cborHex=$(cat $NODE_HOME/poll-answer.tx | jq -r .cborHex)
-  #     txSize=$(( ${#tx_cborHex} / 2 ))
-
-  #     if [[ ${txSize} -le ${maxTxSize} ]]; then
-  #       echo  -e "${FG_GREEN}トランザクションサイズ: ${txSize} バイト (最大: ${maxTxSize})${NC}\n"
-  #     else
-  #       echo -e "${FG_RED}トランザクションサイズがオーバーしています: ${txSize} バイト (最大: ${maxTxSize})${NC}\n"
-  #       echo -e"最初からもう一度やり直してください。\n"
-  #       exit
-  #     fi
-
-  #     echo "$NODE_HOME/poll-answer.txファイルを作成しました"
-  #     echo
-  #     echo -e "1. BPの${FG_GREEN}poll-answer.tx${NC} をエアギャップのcnodeディレクトリにコピーしてください"
-  #     echo '----------------------------------------'
-  #     echo ">> [BP] ⇒ poll-answer.tx ⇒ [エアギャップ]"
-  #     echo '----------------------------------------'
-  #     echo
-  #     echo "エアギャップオフラインマシンで以下の操作を実施してください"
-  #     echo
-  #     echo -e "${FG_YELLOW}2. エアギャップでトランザクションファイルに署名してください${NC}"
-  #     echo '----------------------------------------'
-  #     echo 'cd $NODE_HOME'
-  #     echo 'chmod u+rwx $HOME/cold-keys'
-  #     echo 'cardano-cli transaction sign \'
-  #     echo '  --tx-body-file poll-answer.tx \'
-  #     echo '  --signing-key-file $HOME/cold-keys/node.skey \'
-  #     echo '  --signing-key-file payment.skey \'
-  #     echo "  $NETWORK_IDENTIFIER "'\'
-  #     echo '  --out-file poll-answer-tx.signed'
-  #     echo 'chmod a-rwx $HOME/cold-keys'
-  #     echo '----------------------------------------'
-  #     echo
-  #     echo -e "3. エアギャップの ${FG_GREEN}poll-answer-tx.signed${NC} をBPのcnodeディレクトリにコピーしてください"
-  #     echo '----------------------------------------'
-  #     echo ">> [エアギャップ] ⇒ poll-answer-tx.signed' ⇒ [BP]"
-  #     echo '----------------------------------------'
-  #     echo
-  #     echo "1～3の操作が終わったらEnterを押してください"
-  #     read -p "投票送信確認。キャンセルする場合はEnterを押して2を入力してください"
-
-  #     signe_file=`filecheck "$NODE_HOME/poll-answer-tx.signed"`
-
-  #     if [ ${signe_file} == "false" ]; then
-  #       echo -e "\n${FG_RED}$NODE_HOMEディレクトリにpoll-answer-tx.signedファイルが見つかりません${NC}"
-  #       echo -e "${FG_RED}投票を最初からやり直してください${NC}\n"
-  #       exit
-  #     fi
-
-  #     #cardano-cli transaction view --tx-file $NODE_HOME/poll-answer-tx.signed
-      
-  #     echo
-  #     echo '[1] 投票Txを送信する　[2] キャンセル'
-  #     echo
-  #     while :
-  #       do
-  #         read -n 1 retun_cmd
-  #         if [ "$retun_cmd" == "1" ] || [ "$retun_cmd" == "2" ]; then
-  #           case ${retun_cmd} in
-  #             1) 
-  #               tx_id=`cardano-cli transaction txid --tx-file $NODE_HOME/poll-answer.tx`
-  #               tx_result=`cardano-cli transaction submit --tx-file $NODE_HOME/poll-answer-tx.signed $NETWORK_IDENTIFIER`
-  #               echo
-  #               if [[ $tx_result == "Transaction"* ]]; then
-  #                 echo '----------------------------------------'
-  #                 echo 'Tx送信結果'
-  #                 echo '----------------------------------------'
-  #                 echo $tx_result
-  #                 echo
-  #                 echo 'トランザクションURL'
-  #                 if [ ${NETWORK_NAME} == 'Mainnet' ]; then
-  #                   echo "https://cardanoscan.io/transaction/$tx_id"
-  #                 elif [ ${NETWORK_NAME} == 'PreProd' ]; then
-  #                   echo "https://preprod.cardanoscan.io/transaction/$tx_id"
-  #                 elif [ ${NETWORK_NAME} == 'Preview' ]; then
-  #                   echo "https://preview.cardanoscan.io/transaction/$tx_id"
-  #                 else
-  #                   echo "TxID:$tx_id"
-  #                 fi
-                  
-  #                 printf "\n${FG_GREEN}Tx送信に成功しました${NC}\n"
-
-  #               else
-  #                 echo '----------------------------------------'
-  #                 echo 'Tx送信結果'
-  #                 echo '----------------------------------------'
-  #                 echo $tx_result
-  #                 echo
-  #                 printf "${FG_RED}Tx送信に失敗しました${NC}\n"
-  #               fi
-  #               ;;
-  #             2) 
-  #               echo
-  #               echo "送信をキャンセルしました"
-  #               exit
-  #               echo
-  #           esac
-  #           break
-  #         elif [ "$retun_cmd" == '' ]; then
-  #           printf "入力記号が不正です。再度入力してください\n"
-  #         else
-  #           printf "入力記号が不正です。再度入力してください\n"
-  #         fi 
-  #     done
-
-
-	#     #echo ""
-  #     #echo "Metadata for your answer TX is ready in $poll_dir/poll_${txHash}-poll-answer.json"
-  #   else
-  #     echo -e "\n${FG_YELLOW}指定のトランザクションにはcip-0094投票データがありません${NC}\n"
-  #   fi
-  # else
-  #   echo -e "\n${FG_RED}TxIDが無効です${NC}\n"
-  # fi
-
-  # ;;
+        ;;
+      # 2)
+      #   select_rtn
+      #   ;;
+      # 3)
+      #   select_rtn
+      #   ;;
+      b)
+        main ;;
+      *)
+        echo '番号が不正です'
+        select_rtn
+        ;;
+    esac
+    ;;
 
   q)
     clear
@@ -2019,7 +1635,7 @@ air_gap(){
   echo -e "${FG_YELLOW}2. エアギャップでトランザクションファイルに署名してください${NC}"
   echo '----------------------------------------'
   echo 'cd $NODE_HOME'
-  echo 'cardano-cli transaction sign \'
+  echo 'cardano-cli conway transaction sign \'
   echo '  --tx-body-file tx.raw \'
   echo '  --signing-key-file payment.skey \'
   echo '  --signing-key-file stake.skey \'
@@ -2050,7 +1666,7 @@ air_gap_payment_only(){
   echo -e "${FG_YELLOW}2. エアギャップでトランザクションファイルに署名してください${NC}"
   echo '----------------------------------------'
   echo 'cd $NODE_HOME'
-  echo 'cardano-cli transaction sign \'
+  echo 'cardano-cli conway transaction sign \'
   echo '  --tx-body-file tx.raw \'
   echo '  --signing-key-file payment.skey \'
   echo "  $NETWORK_IDENTIFIER "'\'
@@ -2076,6 +1692,290 @@ filecheck(){
   echo $file_CHK
 }
 
+ transrate_jp(){
+      local translate="MDgxNGQ0YzItZjg3Yi0wY2Q4LTk0ZWUtYzQxMTBlM2Y4ZTVkOmZ4"
+      local dapk=$(echo $translate | base64 -d)
+      local question_str_jp_response=$(curl -sX POST "https://api-free.deepl.com/v2/translate" -H "Authorization: DeepL-Auth-Key $dapk" -d "text=$1" -d "target_lang=JA")
+      question_str_jp_text=$(echo $question_str_jp_response | jq -r ".translations[0].text")
+      echo $question_str_jp_text
+  }
+
+################################################
+## 処理関数 
+################################################
+
+choose_proposal(){
+  voter_type=$1
+  current_epoch=$(curl -s localhost:${PROM_PORT}/metrics | grep epoch_int | awk '{ print $2 }')
+  printf "現在のエポック：${FG_YELLOW}${current_epoch}${NC}\n"
+  while :
+  do
+    echo
+    echo "投票するガバナンスアクションIDを入力してください"
+    read -p "GovアクションID(bech32/HEX/TxID) : > " governance_id
+    echo
+    echo "ガバナンスアクション情報呼び出し..."
+    if [[ ${#governance_id} -ge 64 ]]; then
+      if [[ "$governance_id" == gov_action* ]]; then
+        governance_id_bech32=$governance_id
+        governance_id_hex=$(/usr/local/bin/bech32 <<< $governance_id)
+      else
+        governance_id_hex=$governance_id
+      fi
+      if [[ ${#governance_id_hex} -eq 66 ]]; then
+        governance_id_hex="${governance_id_hex:0:-2}00"
+        governance_id_bech32=$(/usr/local/bin/bech32 gov_action <<< $governance_id_hex)
+        governance_id_tx="${governance_id_hex%00}"
+      else
+        governance_id_bech32=$(/usr/local/bin/bech32 gov_action <<< "${governance_id_hex}00")
+        governance_id_tx=$governance_id_hex
+      fi
+      vote_proposal=
+      vote_proposal=$(cardano-cli conway conway query gov-state ${NODE_NETWORK} | jq -r --arg govActionId ${governance_id_tx} '.proposals | to_entries[] | select(.value.actionId.txId | contains($govActionId)) | .value')
+      
+      if [[ -n "$vote_proposal" ]]; then
+        #echo $vote_proposal | jq .
+
+        local spo_available_type=("NoConfidence" "NewCommittee" "HardForkInitiation" "InfoAction")
+        local expiresAfter=$(echo $vote_proposal | jq .expiresAfter)
+        local proposedIn=$(echo $vote_proposal | jq .proposedIn)
+        local deposit=$(echo $vote_proposal | jq .proposalProcedure.deposit)
+        local proposal_deposit=$(scale1 $deposit)
+        local onchain_anchorhash=$(echo $vote_proposal | jq .proposalProcedure.anchor.dataHash | tr -d '"')
+        local anchor_url=$(echo $vote_proposal | jq .proposalProcedure.anchor.url | tr -d '"')
+        local proposal_type=$(echo $vote_proposal | jq .proposalProcedure.govAction.tag | tr -d '"')
+        spo_voters=$(echo $vote_proposal | jq .stakePoolVotes)
+
+        if [[ "$anchor_url" == ipfs* ]]; then
+          anchor_url=$(echo ${anchor_url} | sed 's|ipfs://|https://ipfs.io/ipfs/|')
+        fi
+        #anchorダウンロード
+        wget -q $anchor_url -O ${governance_dir}/${governance_id_tx}.json
+        #データ整合性
+        download_anchorhash=$(b2sum -l 256 ${governance_dir}/${governance_id_tx}.json | awk '{ print $1 }')
+
+        if [[ "$expiresAfter" -gt "$current_epoch" ]]; then
+          if [[ "$onchain_anchorhash" == "$download_anchorhash" ]]; then
+            if [ "$voter_type" == "DRep" ] || { [ "$voter_type" == "SPO" ] && [[ " ${spo_available_type[@]} " =~ " $proposal_type " ]]; }; then
+            local anchor_data=$(cat ${governance_dir}/${governance_id_tx}.json)
+            local anchor_title=$(echo $anchor_data | jq .body.title | tr -d '"')
+            local anchor_abstract=$(echo $anchor_data | jq .body.abstract | tr -d '"')
+            #local anchor_rationale=$(echo $anchor_data | jq .body.rationale | tr -d '"')
+            local anchor_title_jp=$(transrate_jp "$anchor_title")
+            local anchor_abstract_jp=$(transrate_jp "$anchor_abstract")
+
+            echo "------------------------------------------------------------------------------------"
+            printf "%13s ${FG_GREEN}%-80s${NC}\n" "ID(Bech32):" "$governance_id_bech32"
+            printf "%13s ${FG_GREEN}%-80s${NC}\n\n" "ID(txId) :" "$governance_id_tx"
+            printf "%15s %-s\n" "提案:" "$anchor_title"
+            printf "%13s ${FG_CYAN}%-s${NC}\n\n" "" "$anchor_title_jp"
+            printf "%15s %-s\n" "概要:" "$anchor_abstract"
+            printf "%13s ${FG_CYAN}%-s${NC}\n\n" "" "$anchor_abstract_jp"
+            printf "%17s ${FG_GREEN}%-s${NC}\n\n" "提案種別:" "$proposal_type"
+            printf "%13s ${FG_YELLOW}%-s${NC}\n" "anchorHash:" "$download_anchorhash"
+            printf "%13s ${FG_GREEN}%-s${NC}\n\n" "OnchainHash:" "OK"
+            printf "%18s ${FG_GREEN}%-5s${NC} %11s ${FG_YELLOW}%-5s${NC} %11s %-5s\n" "開始エポック:" "$proposedIn" "終了エポック:" "$expiresAfter" "保証金:" "${proposal_deposit} ADA"
+            echo "------------------------------------------------------------------------------------"
+
+            break
+            else
+              printf "\n${FG_YELLOW}${proposal_type}${NC}の提案が選択されました\n${FG_RED}SPOはこの提案には投票できません${NC}\n"
+            fi
+          else
+            printf "\n${FG_RED}データハッシュとオンチェーンハッシュ値が異なります${NC}\n"
+          fi
+        else
+          printf "\n${FG_RED}有効期限切れの提案書です${NC}\n"
+        fi
+      else
+        echo
+        printf "\n${FG_RED}オンチェーンにガバナンスIDが見つかりません。正しいガバナンスIDを入力してください${NC}\n"
+      fi
+    else
+      printf "\n${FG_RED}64文字以上で指定してください${NC}\n"
+    fi
+  done
+}
+
+proposal_vote(){
+  get_pooldata
+  poolid=$(cat $NODE_HOME/pool.id)
+  poolname=$(cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_json.name")
+  # echo $poolid
+  # echo $spo_voters
+  echo
+  check_vote=$(echo "$spo_voters" | jq -r --arg k "$poolid" '.[$k]')
+  if [ "$check_vote" != "null" ]; then
+    printf "${FG_MAGENTA}この提案には既に投票済みです${NC}: $check_vote\n\n"
+    printf "${FG_YELLOW}この提案に再投票しますか？再投票した場合、最新の投票が反映されます。${NC}\n"
+    echo "[1] 投票する　[2] キャンセル"
+    #YESNO関数
+    yes_no
+  else
+    printf "${FG_YELLOW}このガバナンスアクション提案に投票しますか？${NC}\n\n"
+    echo "[1] 投票する　[2] キャンセル"
+    #YESNO関数
+    yes_no
+  fi
+  echo
+  #echo $governance_id_tx
+
+  printf "[1] 賛成(Yes)\n[2] 反対(No)\n[3] 棄権(Abstain)\n\n"
+
+  local vote_no=("1" "2" "3")
+  while :
+  do
+    read -n 1 -p "投票回答番号を入力してください : >" vote_answer
+    if [[ " ${vote_no[@]} " =~ " $vote_answer " ]]; then
+      case ${vote_answer} in
+        1) 
+          choose_answer="賛成(Yes)"
+          vote_value_flag="yes"
+        ;;
+        2)
+          choose_answer="反対(No)"
+          vote_value_flag="no"
+        ;;
+        3) 
+          choose_answer="棄権(Abstain)"
+          vote_value_flag="abstain"
+        ;;
+      esac
+      break
+    else
+      printf "入力番号が不正です。再度入力してください\n"
+    fi
+  done
+  echo
+  echo
+  printf "%14s ${FG_GREEN}%-s${NC}\n" "投票区分:" "$voter_type"
+  printf "%13s ${FG_GREEN}%-s${NC}\n" "投票者:" "$poolname"
+  printf "%12s ${FG_GREEN}%-s${NC}\n" "回答:" "$choose_answer"
+  echo
+  echo "この回答で投票ファイルを作成しますか？"
+  echo
+  echo "[1] 作成する　[2] キャンセル"
+  #YESNO関数
+  yes_no
+  clear
+  #投票ファイル作成
+  if [[ "$voter_type" == "SPO" ]]; then
+    coldkey_flag="--cold-verification-key-file $COLDKEYS_DIR/$POOL_COLDKEY_VK_FILENAME"
+    signingkey_flag="--signing-key-file $COLDKEYS_DIR/$POOL_COLDKEY_SK_FILENAME"
+  else
+    coldkey_flag="--drep-verification-key-file \$NODE_HOME/drep.vkey"
+    signingkey_flag="--signing-key-file \$NODE_HOME/drep.skey"
+  fi
+
+#ウォレット未使用UTXO算出
+echo "エアギャップ用投票ファイル作成スクリプトを作成します..."
+current_Slot
+payment_utxo
+sleep 2
+cat > $NODE_HOME/governance/create_votetx_script << EOF
+#!/bin/bash
+voter_type=$voter_type
+mkdir -p \$NODE_HOME/governance
+if [[ "\$voter_type" == "SPO" ]]; then
+  chmod u+rwx $COLDKEYS_DIR
+fi
+echo
+printf "%15s ${FG_GREEN}%-s${NC}\n" "アクションID:" "$governance_id_tx"
+printf "%15s ${FG_GREEN}%-s${NC}\n" "投票:" "$vote_value_flag"
+echo
+cardano-cli conway conway governance vote create \
+--${vote_value_flag} \
+--governance-action-tx-id $governance_id_tx \
+--governance-action-index "0" \
+${coldkey_flag} \
+--out-file \$NODE_HOME/governance/${voter_type}_voted_${governance_id_tx}
+
+echo "投票ファイルを作成しました"
+sleep 2
+
+cardano-cli conway conway transaction build-raw \\
+$tx_in \\
+--tx-out \$(cat \$NODE_HOME/payment.addr)+${total_balance}  \\
+--vote-file \$NODE_HOME/governance/${voter_type}_voted_$governance_id_tx \\
+--invalid-hereafter \$(( ${currentSlot} + 10000)) \\
+--fee 200000 \\
+--out-file \$NODE_HOME/governance/vote-tx.tmp
+
+fee=\$(cardano-cli conway transaction calculate-min-fee \\
+--tx-body-file \$NODE_HOME/governance/vote-tx.tmp \\
+--witness-count 2 \\
+--protocol-params-file \$NODE_HOME/params.json | awk '{ print \$1 }')
+echo Tx手数料: \$fee Lovelace
+sleep 2
+txOut=\$((${total_balance}-\${fee}))
+
+cardano-cli conway conway transaction build-raw \\
+$tx_in \\
+--tx-out \$(cat \$NODE_HOME/payment.addr)+\${txOut} \\
+--vote-file $NODE_HOME/governance/${voter_type}_voted_$governance_id_tx \\
+--invalid-hereafter \$(( ${currentSlot} + 10000)) \\
+--fee \${fee} \\
+--out-file \$NODE_HOME/governance/vote-tx.raw
+
+echo "Txファイルを作成しました"
+sleep 2
+cardano-cli conway conway transaction sign \\
+--tx-body-file \$NODE_HOME/governance/vote-tx.raw \\
+${signingkey_flag} \\
+--signing-key-file \$NODE_HOME/payment.skey \\
+--out-file \$NODE_HOME/governance/vote-tx.signed
+
+echo "Tx署名ファイルを作成しました(\$NODE_HOME/governance/vote-tx.signed)"
+sleep 2
+echo
+echo
+if [[ "\$voter_type" == "SPO" ]]; then
+  chmod a-rwx $COLDKEYS_DIR
+fi
+
+echo -e "4. エアギャップの ~/cnode/governance/にある \e[33mvote-tx.signed\e[0m を \e[33mBPの\e[0m\e[97m~/cnode/governance/\e[0mにコピーしてください\e[0m"
+echo '---------------------------------------------------------------'
+echo ">> [エアギャップ] ⇒ vote-tx.signed ⇒ [BP]"
+echo '---------------------------------------------------------------'
+
+echo "BPに戻ってTxを送信してください"
+echo
+EOF
+
+echo "エアギャップ用投票ファイル作成スクリプトを作成しました"
+echo
+sleep 3
+echo
+echo -e "${FG_YELLOW} 1. BPの${NC} ${FG_GREEN}$NODE_HOME/governance/create_votetx_script${NC} を ${FG_YELLOW}エアギャップの${NC}${FG_WHITE}~/cnode/governance/${NC}にコピーしてください${NC}"
+echo '---------------------------------------------------------------'
+echo ">> [BP] ⇒ create_votetx_script ⇒ [エアギャップ]"
+echo '---------------------------------------------------------------'
+echo
+read -p "上記の操作が終わったらEnterを押してください"
+echo
+echo -e "${FG_YELLOW} 2. エアギャップで以下コマンドを実行し、ハッシュ値が一致しているか確認してください${NC}"
+echo '---------------------------------------------------------------'
+echo "sha256sum \$NODE_HOME/governance/create_votetx_script"
+echo '---------------------------------------------------------------'
+echo -e "ハッシュ値: ${FG_GREEN}$(sha256sum $NODE_HOME/governance/create_votetx_script | awk '{ print $1 }' )${NC}"
+echo
+read -p "上記の操作が終わったらEnterを押してください"
+echo
+echo -e "${FG_YELLOW} 3. エアギャップで以下のコマンドを実行し投票用Txファイルを作成してください${NC}"
+echo '---------------------------------------------------------------'
+echo "source \$NODE_HOME/governance/create_votetx_script"
+echo '---------------------------------------------------------------'
+echo
+read -p "エアギャップでの操作が終わったらEnterを押してください"
+echo
+
+echo "ガバナンスアクションへの投票トランザクションを送信しますか？"
+tx_submit ${NODE_HOME}/governance vote-tx.signed
+
+rm $NODE_HOME/governance/create_votetx_script
+  
+}
+
 ############################################
 # 出金フロー関数
 ############################################
@@ -2083,7 +1983,7 @@ filecheck(){
 #stake.addr残高確認
 reward_Balance(){
   cd $NODE_HOME
-    rewardBalance=$(cardano-cli query stake-address-info \
+    rewardBalance=$(cardano-cli conway query stake-address-info \
         $NETWORK_IDENTIFIER \
         --address $(cat $WALLET_STAKE_ADDR_FILENAME) | jq -r ".[0].rewardAccountBalance")
     echo "プール報酬: `scale1 $rewardBalance` ADA"
@@ -2099,14 +1999,14 @@ reward_Balance(){
 
 #現在のスロット
 current_Slot(){
-  currentSlot=$(cardano-cli query tip $NETWORK_IDENTIFIER | jq -r '.slot')
+  currentSlot=$(cardano-cli conway query tip $NETWORK_IDENTIFIER | jq -r '.slot')
   #echo Current Slot: $currentSlot
 }
 
 #payment.addrUTXO算出
 payment_utxo(){
   cd $NODE_HOME
-  cardano-cli query utxo \
+  cardano-cli conway query utxo \
     --address $(cat $WALLET_PAY_ADDR_FILENAME) \
     $NETWORK_IDENTIFIER > fullUtxo.out
 
@@ -2137,8 +2037,8 @@ tx_submit(){
       if [ "$retun_cmd" == "1" ] || [ "$retun_cmd" == "2" ]; then
         case ${retun_cmd} in
           1) 
-            tx_id=`cardano-cli transaction txid --tx-body-file tx.raw`
-            tx_result=`cardano-cli transaction submit --tx-file tx.signed $NETWORK_IDENTIFIER`
+            tx_id=$(cardano-cli conway transaction txid --tx-body-file ${1}/${2})
+            tx_result=$(cardano-cli conway transaction submit --tx-file ${1}/${2} ${NETWORK_IDENTIFIER})
             echo
             if [[ $tx_result == "Transaction"* ]]; then
               echo '----------------------------------------'
@@ -2296,7 +2196,7 @@ poolfileCheck(){
     echo "エアギャップ $POOL_ID_BECH32_FILENAME作成コマンド"
     echo '---------------------------------------------------------------'
     echo "chmod u+rwx $COLDKEYS_DIR"
-    echo 'cardano-cli stake-pool id \'
+    echo 'cardano-cli conway stake-pool id \'
     echo    "--cold-verification-key-file $COLDKEYS_DIR/$POOL_COLDKEY_VK_FILENAME"' \'
     echo    "--output-format bech32 > \$NODE_HOME/$POOL_ID_BECH32_FILENAME"
     echo "chmod a-rwx $COLDKEYS_DIR"
@@ -2327,7 +2227,7 @@ get_pooldata(){
 yes_no(){
   while :
       do
-        read -n 1 kesnum
+        read -s -n 1 kesnum
         if [ "$kesnum" == "1" ] || [ "$kesnum" == "2" ]; then
           case ${kesnum} in
             1) break ;;
@@ -2366,6 +2266,36 @@ update(){
     rm $NODE_HOME/scripts/sjgtool.sh.tmp
     clear
     return 2
+  fi
+}
+
+bech32_install(){
+  if [ -d $HOME/git/bech32 ]; then
+   rm -rf $HOME/git/bech32
+  fi
+
+  check_bech32=$(which bech32)
+  version_bech32="1.1.7"
+  install_bech32=$(bech32 -v 2> /dev/null)
+  if [ -z "$check_bech32" ] || [ "$install_bech32" != "$version_bech32" ]; then
+    echo "依存関係のbech32をインストールします"
+    cd $HOME/git
+    wget -q https://github.com/IntersectMBO/bech32/archive/refs/tags/v$version_bech32.tar.gz
+    tar -xf v$version_bech32.tar.gz
+    mv bech32-$version_bech32 bech32
+    rm "v$version_bech32.tar.gz"
+    echo "ダウンロード完了"
+    echo "ビルド中..."
+    cd bech32
+    cabal update
+    cabal build bech32
+    echo "/usr/local/binにインストールします"
+    sudo cp $(find $HOME/git/bech32/dist-newstyle/build -type f -name "bech32") /usr/local/bin/bech32
+    echo
+    versin_bech32=$(/usr/local/bin/bech32 -v 2> /dev/null)
+    printf "インストール完了 (bech32 version:${FG_YELLOW}$versin_bech32${NC})\n"
+    sleep 3
+    clear
   fi
 }
 
