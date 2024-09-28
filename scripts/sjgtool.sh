@@ -1956,7 +1956,7 @@ read -p "上記の操作が終わったらEnterを押してください"
 echo
 echo -e "${FG_YELLOW} 2. エアギャップで以下コマンドを実行し、ハッシュ値が一致しているか確認してください${NC}"
 echo '---------------------------------------------------------------'
-echo "sha256sum \$NODE_HOME/create_votetx_script | awk '{ print $1 }'"
+echo "sha256sum \$NODE_HOME/create_votetx_script | awk '{ print \$1 }'"
 echo '---------------------------------------------------------------'
 echo -e "ハッシュ値: ${FG_GREEN}$(sha256sum $NODE_HOME/create_votetx_script | awk '{ print $1 }' )${NC}"
 echo
