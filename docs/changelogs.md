@@ -1,5 +1,10 @@
 # 変更履歴
 
+## 2024/09/28　ver. 13.4.3
+!!! note ""
+    * `cardano-cli conway`対応
+    * [**SJG TOOL v3.8.0リリース**](operation/tool.md) SPO投票実装
+
 ## 2024/09/03　ver. 13.4.2
 !!! note ""
     * cardano-node v9.1.1対応
