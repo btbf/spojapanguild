@@ -1747,7 +1747,7 @@ choose_proposal(){
         spo_voters=$(echo $vote_proposal | jq .stakePoolVotes)
 
         if [[ "$anchor_url" == ipfs* ]]; then
-          anchor_url=$(echo ${anchor_url} | sed 's|ipfs://|https://4everland.io/ipfs/|')
+          anchor_url=$(echo ${anchor_url} | sed 's|ipfs://|https://ipfs.io/ipfs/|')
         fi
         #anchorダウンロード
         wget -q $anchor_url -O ${governance_dir}/${governance_id_tx}.json
