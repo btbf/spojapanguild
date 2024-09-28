@@ -102,7 +102,7 @@ ${cli_path} governance answer-poll --poll-file $HOME/git/spo-poll/poll_${txHash}
     ウォレット残高確認
     ```
     cd $NODE_HOME
-    cardano-cli query utxo \
+    cardano-cli conway query utxo \
         --address $(cat payment.addr) \
         $NODE_NETWORK > fullUtxo.out
 
@@ -132,7 +132,7 @@ ${cli_path} governance answer-poll --poll-file $HOME/git/spo-poll/poll_${txHash}
     投票用トランザクションファイルを作成する
     ```
     cd $NODE_HOME
-    cardano-cli transaction build \
+    cardano-cli conway transaction build \
         $NODE_NETWORK \
         ${tx_in} \
         --change-address $(cat payment.addr) \
@@ -155,7 +155,7 @@ ${cli_path} governance answer-poll --poll-file $HOME/git/spo-poll/poll_${txHash}
     ```
     cd $NODE_HOME
     chmod u+rwx $HOME/cold-keys
-    cardano-cli transaction sign \
+    cardano-cli conway transaction sign \
         --tx-body-file poll-answer.tx \
         --signing-key-file $HOME/cold-keys/node.skey \
         --signing-key-file payment.skey \
@@ -174,8 +174,8 @@ ${cli_path} governance answer-poll --poll-file $HOME/git/spo-poll/poll_${txHash}
 BPでトランザクションを送信します
 === "ブロックプロデューサーノード"
     ```
-    submit_txHash=$(cardano-cli transaction txid --tx-file $NODE_HOME/poll-answer.tx)
-    cardano-cli transaction submit --tx-file $NODE_HOME/poll-answer-tx.signed $NODE_NETWORK
+    submit_txHash=$(cardano-cli conway transaction txid --tx-file $NODE_HOME/poll-answer.tx)
+    cardano-cli conway transaction submit --tx-file $NODE_HOME/poll-answer-tx.signed $NODE_NETWORK
     ```
 
 数分後にトランザクションメタデータを確認する

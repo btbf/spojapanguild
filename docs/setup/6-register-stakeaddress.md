@@ -8,7 +8,7 @@
 
     ```bash
     cd $NODE_HOME
-    cardano-cli stake-address registration-certificate \
+    cardano-cli conway stake-address registration-certificate \
         --stake-verification-key-file stake.vkey \
         --out-file stake.cert
     ```
@@ -26,7 +26,7 @@
 === "ブロックプロデューサーノード"
     ```bash
     cd $NODE_HOME
-    currentSlot=$(cardano-cli query tip $NODE_NETWORK | jq -r '.slot')
+    currentSlot=$(cardano-cli conway query tip $NODE_NETWORK | jq -r '.slot')
     echo Current Slot: $currentSlot
     ```
 
@@ -34,7 +34,7 @@ payment.addrの残高を出力します。
 
 === "ブロックプロデューサーノード"
     ```bash
-    cardano-cli query utxo \
+    cardano-cli conway query utxo \
         --address $(cat payment.addr) \
         $NODE_NETWORK > fullUtxo.out
 
@@ -75,7 +75,7 @@ keyDepositの値を出力します。
 === "ブロックプロデューサーノード"
 
     ```bash
-    cardano-cli transaction build-raw \
+    cardano-cli conway transaction build-raw \
         ${tx_in} \
         --tx-out $(cat payment.addr)+$(( ${total_balance} - ${keyDeposit} )) \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
@@ -88,7 +88,7 @@ keyDepositの値を出力します。
 === "ブロックプロデューサーノード"
 
     ```bash
-    fee=$(cardano-cli transaction calculate-min-fee \
+    fee=$(cardano-cli conway transaction calculate-min-fee \
         --tx-body-file tx.tmp \
         --witness-count 2 \
         --protocol-params-file params.json | awk '{ print $1 }')
@@ -109,7 +109,7 @@ keyDepositの値を出力します。
 === "ブロックプロデューサーノード"
 
     ```bash
-    cardano-cli transaction build-raw \
+    cardano-cli conway transaction build-raw \
         ${tx_in} \
         --tx-out $(cat payment.addr)+${txOut} \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
@@ -131,7 +131,7 @@ paymentとstakeの秘密鍵でトランザクションファイルに署名し�
 
     ```bash
     cd $NODE_HOME
-    cardano-cli transaction sign \
+    cardano-cli conway transaction sign \
         --tx-body-file tx.raw \
         --signing-key-file payment.skey \
         --signing-key-file stake.skey \
@@ -151,7 +151,7 @@ paymentとstakeの秘密鍵でトランザクションファイルに署名し�
 
 === "ブロックプロデューサーノード"
     ```bash
-    cardano-cli transaction submit \
+    cardano-cli conway transaction submit \
         --tx-file tx.signed \
         $NODE_NETWORK
     ```

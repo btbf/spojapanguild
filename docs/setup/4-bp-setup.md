@@ -3,7 +3,7 @@
 !!! info "事前確認"
     以下の項目を実施する前にBPノードが起動しているか確認してください。
     ```
-    cardano-cli query tip --mainnet | grep syncProgress
+    cardano-cli conway query tip --mainnet | grep syncProgress
     ```
     
     戻り値確認
@@ -26,7 +26,7 @@
 === "ブロックプロデューサーノード"
     ```bash
     cd $NODE_HOME
-    cardano-cli node key-gen-KES \
+    cardano-cli conway node key-gen-KES \
         --verification-key-file kes.vkey \
         --signing-key-file kes.skey
     ```
@@ -48,7 +48,7 @@
 
     ```bash
     cd $HOME/cold-keys
-    cardano-cli node key-gen \
+    cardano-cli conway node key-gen \
         --cold-verification-key-file node.vkey \
         --cold-signing-key-file node.skey \
         --operational-certificate-issue-counter node.counter
@@ -78,7 +78,7 @@
     ```
     同期済みslotNoを算出します。
     ```bash
-    slotNo=$(cardano-cli query tip $NODE_NETWORK | jq -r '.slot')
+    slotNo=$(cardano-cli conway query tip $NODE_NETWORK | jq -r '.slot')
     echo slotNo: ${slotNo}
     ```
 
@@ -141,7 +141,7 @@ BPとエアギャップで`kes.vkey`ファイルハッシュを比較する
     ```
 
     ```
-    cardano-cli node issue-op-cert \
+    cardano-cli conway node issue-op-cert \
         --kes-verification-key-file kes.vkey \
         --cold-signing-key-file $HOME/cold-keys/node.skey \
         --operational-certificate-issue-counter $HOME/cold-keys/node.counter \
@@ -185,7 +185,7 @@ BPとエアギャップで`kes.vkey`ファイルハッシュを比較する
 
     ```bash
     cd $NODE_HOME
-    cardano-cli node key-gen-VRF \
+    cardano-cli conway node key-gen-VRF \
         --verification-key-file vrf.vkey \
         --signing-key-file vrf.skey
     ```

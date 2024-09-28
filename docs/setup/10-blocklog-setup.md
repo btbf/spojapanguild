@@ -180,10 +180,10 @@ printf "\nプールID(bech32)は \e[32m${pool_bech32}\e[m です\n\n"
 cncli.shファイルを修正します。以下のコマンドをすべてコピーして実行してください
 ```
 sed -i $NODE_HOME/scripts/cncli.sh \
--e '1,73s!#POOL_ID=""!POOL_ID="'${pool_hex}'"!' \
--e '1,73s!#POOL_ID_BECH32=""!POOL_ID_BECH32="'${pool_bech32}'"!' \
--e '1,73s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
--e '1,73s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
+-e '1,30s!#POOL_ID=""!POOL_ID="'${pool_hex}'"!' \
+-e '1,30s!#POOL_ID_BECH32=""!POOL_ID_BECH32="'${pool_bech32}'"!' \
+-e '1,30s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
+-e '1,30s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
 ```
 
 ## **10-4. サービスファイル作成・登録**

@@ -189,7 +189,7 @@ gLiveViewで新BPが最新ブロックと同期後、リレーと疎通(I/O)が�
 === "新BP"
 ```
 cd $NODE_HOME
-cardano-cli query protocol-parameters \
+cardano-cli conway query protocol-parameters \
     --mainnet \
     --out-file params.json
 ```

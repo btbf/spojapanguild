@@ -67,7 +67,7 @@
     ```bash
     cd $NODE_HOME
     chmod u+rwx $HOME/cold-keys
-    cardano-cli stake-pool deregistration-certificate \
+    cardano-cli conway stake-pool deregistration-certificate \
     --cold-verification-key-file $HOME/cold-keys/node.vkey \
     --epoch *** \
     --out-file pool.dereg
@@ -88,7 +88,7 @@ payment.addrの残高を参照します
 === "ブロックプロデューサノード"
     ```bash
     cd $NODE_HOME
-    cardano-cli query utxo \
+    cardano-cli conway query utxo \
         --address $(cat payment.addr) \
         $NODE_NETWORK > fullUtxo.out
 
@@ -121,7 +121,7 @@ UTXOを算出します
 
 === "ブロックプロデューサノード"
     ```bash
-    currentSlot=$(cardano-cli query tip $NODE_NETWORK | jq -r '.slot')
+    currentSlot=$(cardano-cli conway query tip $NODE_NETWORK | jq -r '.slot')
     echo Current Slot: $currentSlot
     ```
 
@@ -130,7 +130,7 @@ build-raw transactionコマンドを実行します。
 
 === "ブロックプロデューサノード"
     ```bash
-    cardano-cli transaction build-raw \
+    cardano-cli conway transaction build-raw \
         ${tx_in} \
         --tx-out $(cat payment.addr)+${total_balance} \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
@@ -146,7 +146,7 @@ build-raw transactionコマンドを実行します。
 
 === "ブロックプロデューサノード"
     ```bash
-    fee=$(cardano-cli transaction calculate-min-fee \
+    fee=$(cardano-cli conway transaction calculate-min-fee \
         --tx-body-file tx.tmp \
         --witness-count 2 \
         --protocol-params-file params.json | awk '{ print $1 }')
@@ -171,7 +171,7 @@ build-raw transactionコマンドを実行します。
 
 === "ブロックプロデューサノード"
     ```bash
-    cardano-cli transaction build-raw \
+    cardano-cli conway transaction build-raw \
         ${tx_in} \
         --tx-out $(cat payment.addr)+${txOut} \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
@@ -193,7 +193,7 @@ build-raw transactionコマンドを実行します。
 
 === "エアギャップオフラインマシン"
     ```bash
-    cardano-cli transaction sign \
+    cardano-cli conway transaction sign \
         --tx-body-file tx.raw \
         --signing-key-file payment.skey \
         --signing-key-file $HOME/cold-keys/node.skey \
@@ -223,7 +223,7 @@ chmod a-rwx $HOME/cold-keys
 
 === "ブロックプロデューサノード"
     ```bash
-    cardano-cli transaction submit \
+    cardano-cli conway transaction submit \
         --tx-file tx.signed \
         $NODE_NETWORK
     ```
@@ -263,7 +263,7 @@ chmod a-rwx $HOME/cold-keys
 === "ブロックプロデューサノード"
     ```bash
     cd $NODE_HOME
-    cardano-cli query stake-address-info \
+    cardano-cli conway query stake-address-info \
     --address $(cat stake.addr) \
     $NODE_NETWORK
     ```
@@ -289,7 +289,7 @@ chmod a-rwx $HOME/cold-keys
 === "エアギャップオフラインマシン"
     ```bash
     cd $NODE_HOME
-    cardano-cli stake-address deregistration-certificate \
+    cardano-cli conway stake-address deregistration-certificate \
         --stake-verification-key-file stake.vkey \
         --out-file stake-dereg.cert
     ```
@@ -317,14 +317,14 @@ chmod a-rwx $HOME/cold-keys
 === "ブロックプロデューサノード"
     ```bash
     cd $NODE_HOME
-    currentSlot=$(cardano-cli query tip $NODE_NETWORK | jq -r '.slot')
+    currentSlot=$(cardano-cli conway query tip $NODE_NETWORK | jq -r '.slot')
     echo Current Slot: $currentSlot
     ```
 
 **payment.addr残高を参照**
 === "ブロックプロデューサノード"
     ```bash
-    cardano-cli query utxo \
+    cardano-cli conway query utxo \
         --address $(cat payment.addr) \
         $NODE_NETWORK > fullUtxo.out
 
@@ -354,7 +354,7 @@ chmod a-rwx $HOME/cold-keys
 **仮トランザクションファイルを作成**
 === "ブロックプロデューサノード"
     ```bash
-    cardano-cli transaction build-raw \
+    cardano-cli conway transaction build-raw \
         ${tx_in} \
         --tx-out $(cat payment.addr)+$(( ${total_balance} + ${keyDeposit} )) \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
@@ -366,7 +366,7 @@ chmod a-rwx $HOME/cold-keys
 **最低料金を計算します**
 === "ブロックプロデューサノード"
     ```bash
-    fee=$(cardano-cli transaction calculate-min-fee \
+    fee=$(cardano-cli conway transaction calculate-min-fee \
         --tx-body-file tx.tmp \
         --witness-count 2 \
         --protocol-params-file params.json | awk '{ print $1 }')
@@ -384,7 +384,7 @@ chmod a-rwx $HOME/cold-keys
 
 === "ブロックプロデューサノード"
     ```bash
-    cardano-cli transaction build-raw \
+    cardano-cli conway transaction build-raw \
         ${tx_in} \
         --tx-out $(cat payment.addr)+${txOut} \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
@@ -405,7 +405,7 @@ chmod a-rwx $HOME/cold-keys
 === "エアギャップオフラインマシン"
     ```bash
     cd $NODE_HOME
-    cardano-cli transaction sign \
+    cardano-cli conway transaction sign \
         --tx-body-file tx.raw \
         --signing-key-file payment.skey \
         --signing-key-file stake.skey \
@@ -422,7 +422,7 @@ chmod a-rwx $HOME/cold-keys
     ```
 === "ブロックプロデューサノード"
     ```bash
-    cardano-cli transaction submit \
+    cardano-cli conway transaction submit \
         --tx-file tx.signed \
         $NODE_NETWORK
     ```
@@ -435,7 +435,7 @@ chmod a-rwx $HOME/cold-keys
 === "ブロックプロデューサーノード"
     ```bash
     cd $NODE_HOME
-    currentSlot=$(cardano-cli query tip $NODE_NETWORK | jq -r '.slot')
+    currentSlot=$(cardano-cli conway query tip $NODE_NETWORK | jq -r '.slot')
     echo Current Slot: $currentSlot
     ```
 
@@ -456,7 +456,7 @@ payment.addrの残高を参照します。
 
 === "ブロックプロデューサーノード"
     ```bash
-    cardano-cli query utxo \
+    cardano-cli conway query utxo \
         --address $(cat payment.addr) \
         $NODE_NETWORK > fullUtxo.out
 
@@ -492,7 +492,7 @@ build-rawトランザクションコマンドを実行します。
 
 === "ブロックプロデューサーノード"
     ```bash
-    cardano-cli transaction build-raw \
+    cardano-cli conway transaction build-raw \
         ${tx_in} \
         --tx-out ${destinationAddress}+${total_balance} \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
@@ -507,7 +507,7 @@ build-rawトランザクションコマンドを実行します。
 
 === "ブロックプロデューサーノード"
     ```bash
-    fee=$(cardano-cli transaction calculate-min-fee \
+    fee=$(cardano-cli conway transaction calculate-min-fee \
         --tx-body-file tx.tmp \
         --witness-count 1 \
         --protocol-params-file params.json | awk '{ print $1 }')
@@ -538,7 +538,7 @@ build-rawトランザクションコマンドを実行します。
 
 === "ブロックプロデューサーノード"
     ```bash
-    cardano-cli transaction build-raw \
+    cardano-cli conway transaction build-raw \
         ${tx_in} \
         --tx-out ${destinationAddress}+${amountToSend} \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
@@ -563,7 +563,7 @@ build-rawトランザクションコマンドを実行します。
 === "エアギャップオフラインマシン"
     ```bash
     cd $NODE_HOME
-    cardano-cli transaction sign \
+    cardano-cli conway transaction sign \
         --tx-body-file tx.raw \
         --signing-key-file payment.skey \
         $NODE_NETWORK \
@@ -589,7 +589,7 @@ build-rawトランザクションコマンドを実行します。
 
 === "ブロックプロデューサーノード"
     ```bash
-    cardano-cli transaction submit \
+    cardano-cli conway transaction submit \
         --tx-file tx.signed \
         $NODE_NETWORK
     ```
@@ -602,7 +602,7 @@ build-rawトランザクションコマンドを実行します。
 === "ブロックプロデューサーノード"
     ```bash
     cd $NODE_HOME
-    cardano-cli query utxo \
+    cardano-cli conway query utxo \
         --address $(cat payment.addr) \
         $NODE_NETWORK
     ```
