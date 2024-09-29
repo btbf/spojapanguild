@@ -28,7 +28,7 @@
 
         メタデータファイルを作成する
 
-        ``` title="このボックスはすべてコピーして実行してください"
+        ```bash title="このボックスはすべてコピーして実行してください"
         cat > $NODE_HOME/poolMetaData.json << EOF
         {
             "name": "$name",

@@ -197,7 +197,7 @@ cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
 
         設定ファイル作成
 
-        ``` title="このボックスはすべてコピーして実行してください"
+        ```bash title="このボックスはすべてコピーして実行してください"
         cat > libblst.pc << EOF
         prefix=/usr/local
         exec_prefix=\${prefix}
