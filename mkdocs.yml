@@ -125,8 +125,7 @@ nav:
         - '1-1.KESの更新': './operation/kes-update.md'
         - '1-2.プール情報更新': './operation/cert-update.md'
         - '1-3.資金引き出し': './operation/withdrawal.md'
-        - '1-4.カタリスト有権者登録': './operation/catalyst-voting.md'
-        - '1-5.プール廃止処理': './operation/pool-retire.md'
+        - '1-4.プール廃止処理': './operation/pool-retire.md'
       - '2.ノード管理':
         - '2-1.ノードアップデート': './operation/node-update.md'
         - '2-2.DB同期(Mithril)':  './operation/mithril-client.md'
@@ -145,13 +144,16 @@ nav:
       - '4.ツール設定':
         - '4-1.SJGツール導入設定': './operation/tool.md'
         - '4-2.SFTPソフト設定': './operation/sftp.md'
-        - '4-3.SPO投票': './operation/spo-poll.md'
-        - '4-4.Grafana追加設定':
+        #- '4-3.SPO投票': './operation/spo-poll.md'
+        - '4-3.Grafana追加設定':
           - 'Grafanaセキュリティ強化': './operation/grafana-security.md'
           - 'Grafanaアラート設定': './operation/grafana-alert.md'
           - 'Grafanaリポジトリ変更': './operation/grafana-repo.md'
         - '4-5.SPOBlockNotify移行手順': './operation/blocknotify-reinstall.md'
-      - '5.Linuxコマンド集': './operation/command.md'
+      - '5.ガバナンス':
+          - 'ガバナンスアクションSPO投票': './operation/gov-spo-vote.md'
+          - 'カタリスト有権者登録': './operation/catalyst-voting.md'
+      - '6.Linuxコマンド集': './operation/command.md'
     - 'SJGラーニング': ./learning.md
     - 'よくある質問':
       - '運用編':

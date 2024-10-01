@@ -4,11 +4,11 @@ status: new
 # **ノードアップデートマニュアル**
 
 !!! info "概要"
-    このガイドは ノードバージョン9.1.1に対応しています。最終更新日：2024年9月3日
+    このガイドは ノードバージョン9.2.1に対応しています。最終更新日：2024年10月1日
 
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 9.1.1 | 9.2.1.0 | 8.10.7 | 3.8.1.0 | 6.3.0 |
+    | 9.2.1 | 9.4.1.0 | 8.10.7 | 3.8.1.0 | 6.3.0 |
 
     * <font color=red>よくお読みになって進めてください</font>
     * <font color=green>複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。</font>
@@ -16,17 +16,20 @@ status: new
 
 !!! hint "主な変更点と新機能"
 
-    **■cardano-node v9.1.1**
+    **■cardano-node v9.2.0/v9.2.1**
 
-    * Changハードフォーク後のノード再起動時にジェネシスブロックからのリプレイ処理が入る不具合を修正。
+    * ガバナンス関連コマンドの改良
+    * CLIクエリのバグ修正
+    * PlutusV3バグ修正
+    * 証明書検証のパフォーマンス向上
 
 
     **■アップデートパターンDB再構築有無**
 
     | バージョン | DB再構築有無 | 設定ファイル更新有無 | トポロジーファイル更新有無 |
     | :---------- | :---------- | :---------- | :---------- |
-    | 8.9.4以下→9.1.1 | あり | 更新あり | 更新あり |
-    | 9.0.0以上→9.1.1 | なし | 更新なし | 更新なし |
+    | 8.9.4以下→9.2.1 | あり | 更新あり | 更新あり |
+    | 9.0.0以上→9.2.1 | なし | 更新なし | 更新なし |
 
     * <font color=red>作業前にブロック生成スケジュールを確認し余裕のある作業をお願いします</font>
 
@@ -197,7 +200,7 @@ cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
 
         設定ファイル作成
 
-        ``` title="このボックスはすべてコピーして実行してください"
+        ```bash title="このボックスはすべてコピーして実行してください"
         cat > libblst.pc << EOF
         prefix=/usr/local
         exec_prefix=\${prefix}
@@ -449,12 +452,12 @@ cncli 6.3.0
     ```
     mkdir $HOME/git/cardano-node2
     cd $HOME/git/cardano-node2
-    wget https://github.com/IntersectMBO/cardano-node/releases/download/9.1.1/cardano-node-9.1.1-linux.tar.gz
+    wget https://github.com/IntersectMBO/cardano-node/releases/download/9.2.1/cardano-node-9.2.1-linux.tar.gz
     ```
 
     解凍する
     ```
-    tar zxvf cardano-node-9.1.1-linux.tar.gz ./bin/cardano-node ./bin/cardano-cli
+    tar zxvf cardano-node-9.2.1-linux.tar.gz ./bin/cardano-node ./bin/cardano-cli
     ```
 
     **バージョン確認**
@@ -464,11 +467,11 @@ cncli 6.3.0
     $(find $HOME/git/cardano-node2 -type f -name "cardano-node") version  
     ```
     以下の戻り値を確認する  
-    >cardano-cli 9.2.1.0 - linux-x86_64 - ghc-8.10  
-    git rev efd560070aaf042d1eb4680ae37fc607c7742319 
+    >cardano-cli 9.4.1.0 - linux-x86_64 - ghc-8.10  
+    git rev 5d3da8ac771ee5ed424d6c78473c11deabb7a1f3 
 
-    >cardano-node 9.1.1 - linux-x86_64 - ghc-8.10  
-    git rev efd560070aaf042d1eb4680ae37fc607c7742319
+    >cardano-node 9.2.1 - linux-x86_64 - ghc-8.10  
+    git rev 5d3da8ac771ee5ed424d6c78473c11deabb7a1f3
 
 
     **ノードをストップする** 
@@ -526,7 +529,7 @@ cncli 6.3.0
 
     ```
     git fetch --all --recurse-submodules --tags
-    git checkout tags/9.1.1
+    git checkout tags/9.2.1
     cabal configure --with-compiler=ghc-8.10.7
     ```
 
@@ -548,11 +551,11 @@ cncli 6.3.0
     ```
 
     以下の戻り値を確認する  
-    >cardano-cli 9.2.1.0 - linux-x86_64 - ghc-8.10  
-    git rev efd560070aaf042d1eb4680ae37fc607c7742319 
+    >cardano-cli 9.4.1.0 - linux-x86_64 - ghc-8.10  
+    git rev 5d3da8ac771ee5ed424d6c78473c11deabb7a1f3 
 
-    >cardano-node 9.1.1 - linux-x86_64 - ghc-8.10  
-    git rev efd560070aaf042d1eb4680ae37fc607c7742319 
+    >cardano-node 9.2.1 - linux-x86_64 - ghc-8.10  
+    git rev 5d3da8ac771ee5ed424d6c78473c11deabb7a1f3 
 
     **ビルド用TMUXセッションを終了する** 
     ```
@@ -584,11 +587,11 @@ cardano-node version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 9.2.1.0 - linux-x86_64 - ghc-8.10  
-git rev efd560070aaf042d1eb4680ae37fc607c7742319 
+>cardano-cli 9.4.1.0 - linux-x86_64 - ghc-8.10  
+git rev 5d3da8ac771ee5ed424d6c78473c11deabb7a1f3 
 
->cardano-node 9.1.1 - linux-x86_64 - ghc-8.10  
-git rev efd560070aaf042d1eb4680ae37fc607c7742319 
+>cardano-node 9.2.1 - linux-x86_64 - ghc-8.10  
+git rev 5d3da8ac771ee5ed424d6c78473c11deabb7a1f3 
 
 
 ??? danger "ノードバージョン8.12.1以下からバージョンアップする場合はこちらも実施"
@@ -1005,7 +1008,7 @@ sed -i $NODE_HOME/scripts/env \
 ```
 glive
 ```
-> Koios gLiveView v1.30.2
+> Koios gLiveView v1.30.3
 
 
 ??? danger "8.1.2/8.7.3からアップデートする場合はこちらも実施必須"
@@ -1109,112 +1112,112 @@ BPノードが完全に同期した後、サービス起動状態を確認する
     ```
     100% sync'dになるまでお待ち下さい
 
-??? danger "ノードバージョン8.12.1以下からバージョンアップする場合はこちらも実施"
-    ## **4. エアギャップアップデート**
-    !!! hint "SFTP機能ソフト導入"
-        R-loginの転送機能が遅いので、大容量ファイルをダウン・アップロードする場合は、SFTP接続可能なソフトを使用すると効率的です。（FileZilaなど）  
-        ファイル転送に便利な[SFTP機能ソフトの導入手順はこちら](./sftp.md)
 
-    ### **4-1.バイナリファイルコピー**
+## **4. エアギャップアップデート**
+!!! hint "SFTP機能ソフト導入"
+    R-loginの転送機能が遅いので、大容量ファイルをダウン・アップロードする場合は、SFTP接続可能なソフトを使用すると効率的です。（FileZilaなど）  
+    ファイル転送に便利な[SFTP機能ソフトの導入手順はこちら](./sftp.md)
 
-    === "ビルド済みバイナリをダウンロードした場合"
+### **4-1.バイナリファイルコピー**
 
-        リレーサーバーで以下を実行する
+=== "ビルド済みバイナリをダウンロードした場合"
 
-        ```bash
-        sudo cp $(find $HOME/git/cardano-node -type f -name "cardano-cli") ~/cardano-cli
-        ```
-
-
-    === "ソースコードからビルドした場合"
-
-        リレーサーバーで以下を実行する
-
-        ```bash
-        cd $HOME/git/cardano-node
-        sudo cp $(./scripts/bin-path.sh cardano-cli) ~/cardano-cli
-        ```
-
-    SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し、以下をダウンロードする 
-
-    * /home/usr/cardano-cli
-
-    をローカルパソコンにダウンロードします  
-    (エアギャップUbuntuとの共有フォルダ)
-
-
-
-    <BR>
-
-    **エアギャップマシンにファイルを入れる**  
-
-    === "エアギャップ"
-
-        * $HOME/git/cardano-node2/ に`cardano-cli`を入れる   
-        <font color=red>(cardano-node2が無ければ作成する)</font>
-
-
-    ### **4-2.インストール**
-
-    エアギャップマシンで以下を実行する
-    === "エアギャップ"
-        cardano-cliをシステムフォルダへコピーする
-        ```bash
-        sudo cp $(find $HOME/git/cardano-node2 -type f -name "cardano-cli") /usr/local/bin/cardano-cli
-        ```
-        <!--
-        `make`がインストールされていることを確認する
-        -->
-        <!--
-        ```
-        apt list make
-        ```
-        以下の戻り値を確認する
-        -->
-        <!--
-        make/focal,now 4.2.1-1.2 amd64 [インストール済み]  
-        make/focal 4.2.1-1.2 i386
-        -->
-        <!--
-        secp256k1をインストールする
-        ```
-        cd $HOME/git/secp256k1/
-        chmod +x autogen.sh
-        ./autogen.sh
-        ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
-        make
-        make check
-        ```
-        -->
-        <!--
-        インストールコマンドを実行する
-        ```
-        sudo make install
-        ```
-        -->
-        <!--
-        環境変数を設定する
-        ```
-        echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
-        echo export NODE_NETWORK="--mainnet" >> $HOME/.bashrc
-        source $HOME/.bashrc
-        ```
-        -->
-
-    ### **4-3.バージョン確認**
+    リレーサーバーで以下を実行する
 
     ```bash
-    cardano-cli version
+    sudo cp $(find $HOME/git/cardano-node -type f -name "cardano-cli") ~/cardano-cli
     ```
 
-    以下の戻り値を確認する  
-    >cardano-cli 9.2.1.0 - linux-x86_64 - ghc-8.10  
-    git rev efd560070aaf042d1eb4680ae37fc607c7742319   
+
+=== "ソースコードからビルドした場合"
+
+    リレーサーバーで以下を実行する
+
+    ```bash
+    cd $HOME/git/cardano-node
+    sudo cp $(./scripts/bin-path.sh cardano-cli) ~/cardano-cli
+    ```
+
+SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し、以下をダウンロードする 
+
+* /home/usr/cardano-cli
+
+をローカルパソコンにダウンロードします  
+(エアギャップUbuntuとの共有フォルダ)
 
 
 
-    !!! danger "確認"
-        エアギャップではcardano-nodeは使用しないため転送してもしなくてもOKです。
+<BR>
+
+**エアギャップマシンにファイルを入れる**  
+
+=== "エアギャップ"
+
+    * $HOME/git/cardano-node2/ に`cardano-cli`を入れる   
+    <font color=red>(cardano-node2が無ければ作成する)</font>
+
+
+### **4-2.インストール**
+
+エアギャップマシンで以下を実行する
+=== "エアギャップ"
+    cardano-cliをシステムフォルダへコピーする
+    ```bash
+    sudo cp $(find $HOME/git/cardano-node2 -type f -name "cardano-cli") /usr/local/bin/cardano-cli
+    ```
+    <!--
+    `make`がインストールされていることを確認する
+    -->
+    <!--
+    ```
+    apt list make
+    ```
+    以下の戻り値を確認する
+    -->
+    <!--
+    make/focal,now 4.2.1-1.2 amd64 [インストール済み]  
+    make/focal 4.2.1-1.2 i386
+    -->
+    <!--
+    secp256k1をインストールする
+    ```
+    cd $HOME/git/secp256k1/
+    chmod +x autogen.sh
+    ./autogen.sh
+    ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
+    make
+    make check
+    ```
+    -->
+    <!--
+    インストールコマンドを実行する
+    ```
+    sudo make install
+    ```
+    -->
+    <!--
+    環境変数を設定する
+    ```
+    echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
+    echo export NODE_NETWORK="--mainnet" >> $HOME/.bashrc
+    source $HOME/.bashrc
+    ```
+    -->
+
+### **4-3.バージョン確認**
+
+```bash
+cardano-cli version
+```
+
+以下の戻り値を確認する  
+>cardano-cli 9.4.1.0 - linux-x86_64 - ghc-8.10  
+git rev 5d3da8ac771ee5ed424d6c78473c11deabb7a1f3   
+
+
+
+!!! danger "確認"
+    エアギャップではcardano-nodeは使用しないため転送してもしなくてもOKです。
 
 
 <!--

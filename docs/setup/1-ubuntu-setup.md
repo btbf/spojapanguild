@@ -323,7 +323,7 @@ sudo apt install chrony
 
 /etc/chrony/chrony.conf を更新します。
 
-``` title="このボックスはすべてコピーして実行してください"
+```bash title="このボックスはすべてコピーして実行してください"
 cat > $HOME/chrony.conf << EOF
 pool time.google.com       iburst minpoll 2 maxpoll 2 maxsources 3 maxdelay 0.3
 pool time.facebook.com     iburst minpoll 2 maxpoll 2 maxsources 3 maxdelay 0.3
