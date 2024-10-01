@@ -1005,7 +1005,7 @@ sed -i $NODE_HOME/scripts/env \
 ```
 glive
 ```
-> Koios gLiveView v1.30.2
+> Koios gLiveView v1.30.3
 
 
 ??? danger "8.1.2/8.7.3からアップデートする場合はこちらも実施必須"
@@ -1109,112 +1109,112 @@ BPノードが完全に同期した後、サービス起動状態を確認する
     ```
     100% sync'dになるまでお待ち下さい
 
-??? danger "ノードバージョン8.12.1以下からバージョンアップする場合はこちらも実施"
-    ## **4. エアギャップアップデート**
-    !!! hint "SFTP機能ソフト導入"
-        R-loginの転送機能が遅いので、大容量ファイルをダウン・アップロードする場合は、SFTP接続可能なソフトを使用すると効率的です。（FileZilaなど）  
-        ファイル転送に便利な[SFTP機能ソフトの導入手順はこちら](./sftp.md)
 
-    ### **4-1.バイナリファイルコピー**
+## **4. エアギャップアップデート**
+!!! hint "SFTP機能ソフト導入"
+    R-loginの転送機能が遅いので、大容量ファイルをダウン・アップロードする場合は、SFTP接続可能なソフトを使用すると効率的です。（FileZilaなど）  
+    ファイル転送に便利な[SFTP機能ソフトの導入手順はこちら](./sftp.md)
 
-    === "ビルド済みバイナリをダウンロードした場合"
+### **4-1.バイナリファイルコピー**
 
-        リレーサーバーで以下を実行する
+=== "ビルド済みバイナリをダウンロードした場合"
 
-        ```bash
-        sudo cp $(find $HOME/git/cardano-node -type f -name "cardano-cli") ~/cardano-cli
-        ```
-
-
-    === "ソースコードからビルドした場合"
-
-        リレーサーバーで以下を実行する
-
-        ```bash
-        cd $HOME/git/cardano-node
-        sudo cp $(./scripts/bin-path.sh cardano-cli) ~/cardano-cli
-        ```
-
-    SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し、以下をダウンロードする 
-
-    * /home/usr/cardano-cli
-
-    をローカルパソコンにダウンロードします  
-    (エアギャップUbuntuとの共有フォルダ)
-
-
-
-    <BR>
-
-    **エアギャップマシンにファイルを入れる**  
-
-    === "エアギャップ"
-
-        * $HOME/git/cardano-node2/ に`cardano-cli`を入れる   
-        <font color=red>(cardano-node2が無ければ作成する)</font>
-
-
-    ### **4-2.インストール**
-
-    エアギャップマシンで以下を実行する
-    === "エアギャップ"
-        cardano-cliをシステムフォルダへコピーする
-        ```bash
-        sudo cp $(find $HOME/git/cardano-node2 -type f -name "cardano-cli") /usr/local/bin/cardano-cli
-        ```
-        <!--
-        `make`がインストールされていることを確認する
-        -->
-        <!--
-        ```
-        apt list make
-        ```
-        以下の戻り値を確認する
-        -->
-        <!--
-        make/focal,now 4.2.1-1.2 amd64 [インストール済み]  
-        make/focal 4.2.1-1.2 i386
-        -->
-        <!--
-        secp256k1をインストールする
-        ```
-        cd $HOME/git/secp256k1/
-        chmod +x autogen.sh
-        ./autogen.sh
-        ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
-        make
-        make check
-        ```
-        -->
-        <!--
-        インストールコマンドを実行する
-        ```
-        sudo make install
-        ```
-        -->
-        <!--
-        環境変数を設定する
-        ```
-        echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
-        echo export NODE_NETWORK="--mainnet" >> $HOME/.bashrc
-        source $HOME/.bashrc
-        ```
-        -->
-
-    ### **4-3.バージョン確認**
+    リレーサーバーで以下を実行する
 
     ```bash
-    cardano-cli version
+    sudo cp $(find $HOME/git/cardano-node -type f -name "cardano-cli") ~/cardano-cli
     ```
 
-    以下の戻り値を確認する  
-    >cardano-cli 9.4.1.0 - linux-x86_64 - ghc-8.10  
-    git rev 5d3da8ac771ee5ed424d6c78473c11deabb7a1f3   
+
+=== "ソースコードからビルドした場合"
+
+    リレーサーバーで以下を実行する
+
+    ```bash
+    cd $HOME/git/cardano-node
+    sudo cp $(./scripts/bin-path.sh cardano-cli) ~/cardano-cli
+    ```
+
+SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し、以下をダウンロードする 
+
+* /home/usr/cardano-cli
+
+をローカルパソコンにダウンロードします  
+(エアギャップUbuntuとの共有フォルダ)
 
 
 
-    !!! danger "確認"
-        エアギャップではcardano-nodeは使用しないため転送してもしなくてもOKです。
+<BR>
+
+**エアギャップマシンにファイルを入れる**  
+
+=== "エアギャップ"
+
+    * $HOME/git/cardano-node2/ に`cardano-cli`を入れる   
+    <font color=red>(cardano-node2が無ければ作成する)</font>
+
+
+### **4-2.インストール**
+
+エアギャップマシンで以下を実行する
+=== "エアギャップ"
+    cardano-cliをシステムフォルダへコピーする
+    ```bash
+    sudo cp $(find $HOME/git/cardano-node2 -type f -name "cardano-cli") /usr/local/bin/cardano-cli
+    ```
+    <!--
+    `make`がインストールされていることを確認する
+    -->
+    <!--
+    ```
+    apt list make
+    ```
+    以下の戻り値を確認する
+    -->
+    <!--
+    make/focal,now 4.2.1-1.2 amd64 [インストール済み]  
+    make/focal 4.2.1-1.2 i386
+    -->
+    <!--
+    secp256k1をインストールする
+    ```
+    cd $HOME/git/secp256k1/
+    chmod +x autogen.sh
+    ./autogen.sh
+    ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
+    make
+    make check
+    ```
+    -->
+    <!--
+    インストールコマンドを実行する
+    ```
+    sudo make install
+    ```
+    -->
+    <!--
+    環境変数を設定する
+    ```
+    echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
+    echo export NODE_NETWORK="--mainnet" >> $HOME/.bashrc
+    source $HOME/.bashrc
+    ```
+    -->
+
+### **4-3.バージョン確認**
+
+```bash
+cardano-cli version
+```
+
+以下の戻り値を確認する  
+>cardano-cli 9.4.1.0 - linux-x86_64 - ghc-8.10  
+git rev 5d3da8ac771ee5ed424d6c78473c11deabb7a1f3   
+
+
+
+!!! danger "確認"
+    エアギャップではcardano-nodeは使用しないため転送してもしなくてもOKです。
 
 
 <!--
