@@ -307,7 +307,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "エアギャップマシン"
 
     ```bash
-    cardano-cli conway stake-address delegation-certificate \
+    cardano-cli conway stake-address stake-delegation-certificate \
         --stake-verification-key-file stake.vkey \
         --cold-verification-key-file $HOME/cold-keys/node.vkey \
         --out-file deleg.cert
