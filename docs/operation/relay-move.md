@@ -98,6 +98,13 @@ status: new
         ```
         sudo systemctl enable prometheus-node-exporter.service
         ```
+
+        FW設定でPrometheusメトリクスポートをリレー1のIP限定で開放する
+        ```bash title="Ubuntu22.04の場合は１行づつ実行してください"
+        sudo ufw allow from <リレーノード1のIP> to any port 12798
+        sudo ufw allow from <リレーノード1のIP> to any port 9100
+        sudo ufw reload
+        ```
         
         ノード再起動
         ```
