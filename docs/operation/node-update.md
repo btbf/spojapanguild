@@ -4,11 +4,11 @@ status: new
 # **ノードアップデートマニュアル**
 
 !!! info "概要"
-    このガイドは ノードバージョン9.2.1に対応しています。最終更新日：2024年10月1日
+    このガイドは ノードバージョン10.1.3に対応しています。最終更新日：2024年12月5日
 
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 9.2.1 | 9.4.1.0 | 8.10.7 | 3.8.1.0 | 6.3.0 |
+    | 10.1.3 | 10.1.1.0 | 8.10.7 | 3.8.1.0 | 6.5.1 |
 
     * <font color=red>よくお読みになって進めてください</font>
     * <font color=green>複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。</font>
@@ -16,20 +16,12 @@ status: new
 
 !!! hint "主な変更点と新機能"
 
-    **■cardano-node v9.2.0/v9.2.1**
-
-    * ガバナンス関連コマンドの改良
-    * CLIクエリのバグ修正
-    * PlutusV3バグ修正
-    * 証明書検証のパフォーマンス向上
-
-
     **■アップデートパターンDB再構築有無**
 
     | バージョン | DB再構築有無 | 設定ファイル更新有無 | トポロジーファイル更新有無 |
     | :---------- | :---------- | :---------- | :---------- |
-    | 8.9.4以下→9.2.1 | あり | 更新あり | 更新あり |
-    | 9.0.0以上→9.2.1 | なし | 更新なし | 更新なし |
+    | 8.12.2以下→10.1.3 | あり | 更新あり | 更新あり |
+    | 9.0.0~9.2.1→10.1.3 | あり | 更新なし | 更新なし |
 
     * <font color=red>作業前にブロック生成スケジュールを確認し余裕のある作業をお願いします</font>
 
@@ -396,9 +388,9 @@ CNCLIバージョン確認
 cncli --version
 ```
 > 以下の戻り値ならOK  
-cncli 6.3.0
+cncli 6.5.1
 
-??? danger "cncli v6.2.3以下だった場合(クリックして開く)"
+??? danger "cncli v6.5.0以下だった場合(クリックして開く)"
     
     **CNCLIをアップデートする**
 
@@ -407,20 +399,20 @@ cncli 6.3.0
     cncli_release="$(curl -s https://api.github.com/repos/cardano-community/cncli/releases/latest | jq -r '.tag_name' | sed -e "s/^.\{1\}//")"
     ```
     ```
-    curl -sLJ https://github.com/cardano-community/cncli/releases/download/v${cncli_release}/cncli-${cncli_release}-ubuntu22-x86_64-unknown-linux-gnu.tar.gz -o $HOME/cncli-${cncli_release}-x86_64-unknown-linux-gnu.tar.gz
+    curl -sLJ https://github.com/cardano-community/cncli/releases/download/v${cncli_release}/cncli-${cncli_release}-ubuntu22-x86_64-unknown-linux-musl.tar.gz -o $HOME/cncli-${cncli_release}-x86_64-unknown-linux-musl.tar.gz
     ```
     ```
-    tar xzvf $HOME/cncli-${cncli_release}-x86_64-unknown-linux-gnu.tar.gz -C $HOME/.cargo/bin/
+    tar xzvf $HOME/cncli-${cncli_release}-x86_64-unknown-linux-musl.tar.gz -C $HOME/.cargo/bin/
     ```
     ```
-    rm $HOME/cncli-${cncli_release}-x86_64-unknown-linux-gnu.tar.gz
+    rm $HOME/cncli-${cncli_release}-x86_64-unknown-linux-musl.tar.gz
     ```
 
     バージョン確認
     ```
     cncli --version
     ```
-    > cncli 6.3.0になったことを確認する  
+    > cncli v6.5.1になったことを確認する  
 
 
 ## **2.ノードアップデート**
@@ -452,12 +444,12 @@ cncli 6.3.0
     ```
     mkdir $HOME/git/cardano-node2
     cd $HOME/git/cardano-node2
-    wget https://github.com/IntersectMBO/cardano-node/releases/download/9.2.1/cardano-node-9.2.1-linux.tar.gz
+    wget https://github.com/IntersectMBO/cardano-node/releases/download/10.1.3/cardano-node-10.1.3-linux.tar.gz
     ```
 
     解凍する
     ```
-    tar zxvf cardano-node-9.2.1-linux.tar.gz ./bin/cardano-node ./bin/cardano-cli
+    tar zxvf cardano-node-10.1.3-linux.tar.gz ./bin/cardano-node ./bin/cardano-cli
     ```
 
     **バージョン確認**
@@ -467,11 +459,11 @@ cncli 6.3.0
     $(find $HOME/git/cardano-node2 -type f -name "cardano-node") version  
     ```
     以下の戻り値を確認する  
-    >cardano-cli 9.4.1.0 - linux-x86_64 - ghc-8.10  
-    git rev 5d3da8ac771ee5ed424d6c78473c11deabb7a1f3 
+    >cardano-cli 10.1.1.0 - linux-x86_64 - ghc-8.10  
+    git rev 36871ba0cd3e86a5dbcfd6878cdb7168bb4e56a1 
 
-    >cardano-node 9.2.1 - linux-x86_64 - ghc-8.10  
-    git rev 5d3da8ac771ee5ed424d6c78473c11deabb7a1f3
+    >cardano-node 10.1.3 - linux-x86_64 - ghc-8.10  
+    git rev 36871ba0cd3e86a5dbcfd6878cdb7168bb4e56a1
 
 
     **ノードをストップする** 
@@ -529,7 +521,7 @@ cncli 6.3.0
 
     ```
     git fetch --all --recurse-submodules --tags
-    git checkout tags/9.2.1
+    git checkout tags/10.1.3
     cabal configure --with-compiler=ghc-8.10.7
     ```
 
@@ -551,11 +543,11 @@ cncli 6.3.0
     ```
 
     以下の戻り値を確認する  
-    >cardano-cli 9.4.1.0 - linux-x86_64 - ghc-8.10  
-    git rev 5d3da8ac771ee5ed424d6c78473c11deabb7a1f3 
+    >cardano-cli 10.1.1.0 - linux-x86_64 - ghc-8.10  
+    git rev 36871ba0cd3e86a5dbcfd6878cdb7168bb4e56a1 
 
-    >cardano-node 9.2.1 - linux-x86_64 - ghc-8.10  
-    git rev 5d3da8ac771ee5ed424d6c78473c11deabb7a1f3 
+    >cardano-node 10.1.3 - linux-x86_64 - ghc-8.10  
+    git rev 36871ba0cd3e86a5dbcfd6878cdb7168bb4e56a1 
 
     **ビルド用TMUXセッションを終了する** 
     ```
@@ -587,11 +579,11 @@ cardano-node version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 9.4.1.0 - linux-x86_64 - ghc-8.10  
-git rev 5d3da8ac771ee5ed424d6c78473c11deabb7a1f3 
+>cardano-cli 10.1.1.0 - linux-x86_64 - ghc-8.10  
+git rev 36871ba0cd3e86a5dbcfd6878cdb7168bb4e56a1 
 
->cardano-node 9.2.1 - linux-x86_64 - ghc-8.10  
-git rev 5d3da8ac771ee5ed424d6c78473c11deabb7a1f3 
+>cardano-node 10.1.3 - linux-x86_64 - ghc-8.10  
+git rev 36871ba0cd3e86a5dbcfd6878cdb7168bb4e56a1 
 
 
 ??? danger "ノードバージョン8.12.1以下からバージョンアップする場合はこちらも実施"
@@ -864,92 +856,92 @@ git rev 5d3da8ac771ee5ed424d6c78473c11deabb7a1f3
     > ダイナミックP2Pを有効にしている場合、トポロジーファイル変更によるノード再起動は不要になりました。
 
 
-    **DB更新**
+**DB更新**
 
-    **Mithirlインストール**
-    ```
-    cd $HOME/git
-    mithril_release="$(curl -s https://api.github.com/repos/input-output-hk/mithril/releases/latest | jq -r '.tag_name')"
-    wget https://github.com/input-output-hk/mithril/releases/download/${mithril_release}/mithril-${mithril_release}-linux-x64.tar.gz -O mithril.tar.gz
-    ```
+**Mithirlインストール**
+```
+cd $HOME/git
+mithril_release="$(curl -s https://api.github.com/repos/input-output-hk/mithril/releases/latest | jq -r '.tag_name')"
+wget https://github.com/input-output-hk/mithril/releases/download/${mithril_release}/mithril-${mithril_release}-linux-x64.tar.gz -O mithril.tar.gz
+```
 
-    設定
-    ```
-    tar zxvf mithril.tar.gz mithril-client
-    sudo cp mithril-client /usr/local/bin/mithril-client
-    ```
-    パーミッション設定
-    ```
-    sudo chmod +x /usr/local/bin/mithril-client
-    ```
+設定
+```
+tar zxvf mithril.tar.gz mithril-client
+sudo cp mithril-client /usr/local/bin/mithril-client
+```
+パーミッション設定
+```
+sudo chmod +x /usr/local/bin/mithril-client
+```
 
-    DLファイル削除
-    ```
-    rm mithril.tar.gz mithril-client
-    ```
+DLファイル削除
+```
+rm mithril.tar.gz mithril-client
+```
 
-    バージョン確認
-    ```
-    mithril-client -V
-    ```
-    > Mithril Githubの[リリースノート](https://github.com/input-output-hk/mithril/releases/latest)内にある`mithril-client-cli`のバージョンをご確認ください。
+バージョン確認
+```
+mithril-client -V
+```
+> Mithril Githubの[リリースノート](https://github.com/input-output-hk/mithril/releases/latest)内にある`mithril-client-cli`のバージョンをご確認ください。
 
 
-    スナップショット復元
+スナップショット復元
 
-    作業用TMUX起動
-    ```
-    tmux new -s mithril
-    ```
+作業用TMUX起動
+```
+tmux new -s mithril
+```
 
-    変数セット
-    ```
-    export NETWORK=mainnet
-    export AGGREGATOR_ENDPOINT=https://aggregator.release-mainnet.api.mithril.network/aggregator
-    export GENESIS_VERIFICATION_KEY=$(wget -q -O - https://raw.githubusercontent.com/input-output-hk/mithril/main/mithril-infra/configuration/release-mainnet/genesis.vkey)
-    export SNAPSHOT_DIGEST=latest
-    ```
+変数セット
+```
+export NETWORK=mainnet
+export AGGREGATOR_ENDPOINT=https://aggregator.release-mainnet.api.mithril.network/aggregator
+export GENESIS_VERIFICATION_KEY=$(wget -q -O - https://raw.githubusercontent.com/input-output-hk/mithril/main/mithril-infra/configuration/release-mainnet/genesis.vkey)
+export SNAPSHOT_DIGEST=latest
+```
 
-    ??? 旧DBをバックアップしたい方はこちら
-        !!! danger "空き容量に関しての注意事項"
-            DBをバックアップする場合、サーバーディスクの空き容量をご確認ください。
-            安定稼働のためには250GB以上の空き容量が必要です。
-            ```
-            df -h /usr | awk '{print $4}'
-            ```
-            <strong><font color=red>Availが250GB以上あることを確認してください。</font></strong>
-
-        dbをリネームする
+??? 旧DBをバックアップしたい方はこちら
+    !!! danger "空き容量に関しての注意事項"
+        DBをバックアップする場合、サーバーディスクの空き容量をご確認ください。
+        安定稼働のためには250GB以上の空き容量が必要です。
         ```
-        mv $NODE_HOME/db/ $NODE_HOME/backup/db8-1-2/
+        df -h /usr | awk '{print $4}'
+        ```
+        <strong><font color=red>Availが250GB以上あることを確認してください。</font></strong>
+
+    dbをリネームする
+    ```
+    mv $NODE_HOME/db/ $NODE_HOME/backup/db9/
+    ```
+
+    ??? danger "ノードバージョンアップ後の作業"
+        稼働に問題がないことが確認でき次第削除することをお勧めします。
+        ```
+        rm -rf $NODE_HOME/backup/db9/
         ```
 
-        ??? danger "ノードバージョンアップ後の作業"
-            稼働に問題がないことが確認でき次第削除することをお勧めします。
-            ```
-            rm -rf $NODE_HOME/backup/db8-1-2/
-            ```
+既存DB削除
+```
+rm -rf $NODE_HOME/db
+```
 
-    既存DB削除
-    ```
-    rm -rf $NODE_HOME/db
-    ```
+最新スナップショットDL
+```
+mithril-client cardano-db download --download-dir $NODE_HOME latest
+```
+> スナップショットダウンロード～解凍まで自動的に行われます。1/5～5/5が終了するまで待ちましょう  
 
-    最新スナップショットDL
-    ```
-    mithril-client cardano-db download --download-dir $NODE_HOME latest
-    ```
-    > スナップショットダウンロード～解凍まで自動的に行われます。1/5～5/5が終了するまで待ちましょう  
+DBスナップショットDL/解答完了メッセージ
+> 5/5 - Verifying the cardano db signature…  
+Cardano db 'xxxxx' has been unpacked and successfully checked against Mithril  multi-signature contained in the certificate.  
+('xxxxx'は作業時期によって変わります。下の文字列は無視して大丈夫です)
 
-    DBスナップショットDL/解答完了メッセージ
-    > 5/5 - Verifying the cardano db signature…  
-    Cardano db 'xxxxx' has been unpacked and successfully checked against Mithril  multi-signature contained in the certificate.  
-    ('xxxxx'は作業時期によって変わります。下の文字列は無視して大丈夫です)
-
-    tmux作業ウィンドウを終了する
-    ```
-    exit
-    ```
+tmux作業ウィンドウを終了する
+```
+exit
+```
 
 ### **2-3.サーバー再起動**
 
@@ -1008,7 +1000,7 @@ sed -i $NODE_HOME/scripts/env \
 ```
 glive
 ```
-> Koios gLiveView v1.30.3
+> Koios gLiveView v1.30.4
 
 
 ??? danger "8.1.2/8.7.3からアップデートする場合はこちらも実施必須"
@@ -1211,8 +1203,8 @@ cardano-cli version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 9.4.1.0 - linux-x86_64 - ghc-8.10  
-git rev 5d3da8ac771ee5ed424d6c78473c11deabb7a1f3   
+>cardano-cli 10.1.1.0 - linux-x86_64 - ghc-8.10  
+git rev 36871ba0cd3e86a5dbcfd6878cdb7168bb4e56a1   
 
 
 

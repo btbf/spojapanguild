@@ -104,159 +104,67 @@
 
         実行前に `+`をクリックして注釈を確認してください。  
 
-        <font color=red>`bootstrapPeers`はまず１つのリレーで有効にして運用してください</font>  
-        例）リレー１→bootstrapPeers無効  
-        　　リレー２→bootstrapPeers有効  
-
-    === "リレー１用　bootstrapPeers無効"
-        ``` yaml
-        cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
+    ``` yaml
+    cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
+    {
+    "bootstrapPeers": [
         {
-        "bootstrapPeers": null,
-        "localRoots": [
-            {
-            "accessPoints": [
-                {
-                "address": "BPのIP",#(1)!
-                "port": BPポート #(2)!
-                }
-            ],
-                "advertise": false,#(5)!
-                "trustable": true,
-                "valency": 1
-            },
-            {
-            "accessPoints": [
-                {
-                "address": "リレー２IP",#(3)!
-                "port": 6000 #(4)!
-                }
-            ],
-                "advertise": true,
-                "trustable": true,
-                "valency": 1
-            }
-        ],
-        "publicRoots": [
-            {
-            "accessPoints": [
-                {
-                "address": "backbone.cardano-mainnet.iohk.io",
-                "port": 3001
-                },
-                {
-                "address": "backbone.cardano.iog.io",
-                "port": 3001
-                },
-                {
-                "address": "backbone.mainnet.emurgornd.com",
-                "port": 3001
-                },
-                {
-                "address": "backbone.mainnet.cardanofoundation.org",
-                "port": 3001
-                }
-                ],
-            "advertise": false
-            }
-        ],
-        "useLedgerAfterSlot": 110332824
-        }
-        EOF
-        ```
-        { .annotate }
-
-        1.  BPのIPアドレスまたはDNSアドレスに置き換えてください
-        2.  BPのポートに置き換えてください
-        3.  リレー②のIPアドレスまたはDNSアドレスに置き換えてください
-        4.  リレー②のポートに置き換えてください
-        5.  accessPointsにBPを指定する時は必ず`advertise`を`false`にしてください
-
-
-    === "リレー２用　bootstrapPeers有効"
-        ``` yaml
-        cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
+        "address": "backbone.cardano.iog.io",
+        "port": 3001
+        },
         {
-        "bootstrapPeers": [
-            {
-            "address": "backbone.cardano.iog.io",
-            "port": 3001
-            },
-            {
-            "address": "backbone.mainnet.emurgornd.com",
-            "port": 3001
-            },
-            {
-            "address": "backbone.mainnet.cardanofoundation.org",
-            "port": 3001
-            }
-        ],
-        "localRoots": [
-            {
-            "accessPoints": [
-                {
-                "address": "BPのIP",#(1)!
-                "port": 00000 #(2)!
-                }
-            ],
-                "advertise": false,#(5)!
-                "trustable": true,
-                "valency": 1
-            },
-            {
-            "accessPoints": [
-                {
-                "address": "リレー１のIP",#(3)!
-                "port": 6000 #(4)!
-                }
-            ],
-                "advertise": true,
-                "trustable": true,
-                "valency": 1
-            }
-        ],
-        "publicRoots": [
-            {
-            "accessPoints": [],
-            "advertise": false
-            }
-        ],
-        "useLedgerAfterSlot": 110332824
+        "address": "backbone.mainnet.emurgornd.com",
+        "port": 3001
+        },
+        {
+        "address": "backbone.mainnet.cardanofoundation.org",
+        "port": 3001
         }
-        EOF
-        ```
-        { .annotate }
+    ],
+    "localRoots": [
+        {
+        "accessPoints": [
+            {
+            "address": "BPのIP",#(1)!
+            "port": 00000 #(2)!
+            }
+        ],
+            "advertise": false,#(5)!
+            "trustable": true,
+            "valency": 1
+        },
+        {
+        "accessPoints": [
+            {
+            "address": "リレー１のIP",#(3)!
+            "port": 6000 #(4)!
+            }
+        ],
+            "advertise": true,
+            "trustable": true,
+            "valency": 1
+        }
+    ],
+    "publicRoots": [
+        {
+        "accessPoints": [],
+        "advertise": false
+        }
+    ],
+    "useLedgerAfterSlot": 128908821
+    }
+    EOF
+    ```
+    { .annotate }
 
-        1.  BPのIPアドレスまたはDNSアドレスに置き換えてください
-        2.  BPのポートに置き換えてください
-        3.  リレー１のIPアドレスまたはDNSアドレスに置き換えてください
-        4.  リレー１のポートに置き換えてください
-        5.  accessPointsにBPを指定する時は必ず`advertise`を`false`にしてください
+    1.  BPのIPアドレスまたはDNSアドレスに置き換えてください
+    2.  BPのポートに置き換えてください
+    3.  リレー１のIPアドレスまたはDNSアドレスに置き換えてください
+    4.  リレー１のポートに置き換えてください
+    5.  accessPointsにBPを指定する時は必ず`advertise`を`false`にしてください
 
 ??? danger "BPの場合"
 
-    ファイアウォール設定を変更
-
-    !!! tip "BPのセキュリティ"
-        BPサーバーにはプール運営の秘密鍵を保管するため、ファイアウォールでBPノードポートを閉じるかリレーサーバーからの通信のみに限定する必要があります。
-
-    BPノードに設定したポート番号を確認する
-    ```bash
-    PORT=`grep "PORT=" $NODE_HOME/startBlockProducingNode.sh`
-    b_PORT=${PORT#"PORT="}
-    echo "BPポートは${b_PORT}です"
-    ```
-
-    BPノードで使用するポート(上記で表示された番号)の通信を許可する。  
-      
-    `<>`を除いてIPのみ入力してください。
-
-    ```bash title="Ubuntu22.04の場合は１行づつ実行してください"
-    sudo ufw allow from <リレーノード1のIP> to any port ${b_PORT}
-    sudo ufw allow from <リレーノード2のIP> to any port ${b_PORT}
-    sudo ufw reload
-    ```
-   
     BP-Topologyファイル変更  
 
     実行前に `+`をクリックして注釈を確認してください。  
