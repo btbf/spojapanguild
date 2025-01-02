@@ -1,5 +1,7 @@
 # リレーノード増設マニュアル
 
+まずは、増設リレーサーバーで1~3を実施してください。  
+
 ## 1.Ubuntu初期設定
 [https://docs.spojapanguild.net/setup/1-ubuntu-setup/](https://docs.spojapanguild.net/setup/1-ubuntu-setup/)
 
@@ -10,21 +12,8 @@
 [https://docs.spojapanguild.net/setup/3-relay-bp-setup/#3-1](https://docs.spojapanguild.net/setup/3-relay-bp-setup/#3-1)
 
 
-## 4.BPのFWと設定ファイル変更
+## 4.BPとリレー1のトポロジー変更
 === "ブロックプロデューサー"
-    ```
-    PORT=`grep "PORT=" $NODE_HOME/startBlockProducingNode.sh`
-    b_PORT=${PORT#"PORT="}
-    echo "BPポートは${b_PORT}です"
-    ```
-
-    `<増設リレーノードのIP>` の `<>`を除いてIPのみ入力してください。
-    ```
-    sudo ufw allow from <増設リレーノードのIP> to any port ${b_PORT}
-    sudo ufw reload
-    ```
-
-    BPトポロジーファイル変更(ダイナミックP2P)  
 
     実行前に `+`をクリックして注釈を確認してください。  
 
@@ -65,6 +54,68 @@
     7.  `-1`を指定することで台帳から接続先を取得しないBPモードになります
     8. ここでは`advertise`を`false`にしてください
 
+=== "リレーノード1"
+
+    実行前に `+`をクリックして注釈を確認してください。  
+
+    ``` yaml
+    cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
+    {
+    "bootstrapPeers": [
+        {
+        "address": "backbone.cardano.iog.io",
+        "port": 3001
+        },
+        {
+        "address": "backbone.mainnet.emurgornd.com",
+        "port": 3001
+        },
+        {
+        "address": "backbone.mainnet.cardanofoundation.org",
+        "port": 3001
+        }
+    ],
+    "localRoots": [
+        {
+        "accessPoints": [
+            {
+            "address": "BPのIP",#(1)!
+            "port": 00000 #(2)!
+            }
+        ],
+            "advertise": false,#(5)!
+            "trustable": true,
+            "valency": 1
+        },
+        {
+        "accessPoints": [
+            {
+            "address": "リレー2のIP",#(3)!
+            "port": 6000 #(4)!
+            }
+        ],
+            "advertise": true,
+            "trustable": true,
+            "valency": 1
+        }
+    ],
+    "publicRoots": [
+        {
+        "accessPoints": [],
+        "advertise": false
+        }
+    ],
+    "useLedgerAfterSlot": 128908821
+    }
+    EOF
+    ```
+    { .annotate }
+
+    1.  BPのIPアドレスまたはDNSアドレスに置き換えてください
+    2.  BPのポートに置き換えてください
+    3.  リレー2のIPアドレスまたはDNSアドレスに置き換えてください
+    4.  リレー2のポートに置き換えてください
+    5.  accessPointsにBPを指定する時は必ず`advertise`を`false`にしてください
 
 ノードを再起動する
 ```
