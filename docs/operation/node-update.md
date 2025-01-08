@@ -4,11 +4,11 @@ status: new
 # **ノードアップデートマニュアル**
 
 !!! info "概要"
-    このガイドは ノードバージョン10.1.3に対応しています。最終更新日：2024年12月5日
+    このガイドは ノードバージョン10.1.4に対応しています。最終更新日：2025年1月8日
 
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 10.1.3 | 10.1.1.0 | 8.10.7 | 3.8.1.0 | 6.5.1 |
+    | 10.1.4 | 10.1.1.0 | 8.10.7 | 3.8.1.0 | 6.5.1 |
 
     * <font color=red>よくお読みになって進めてください</font>
     * <font color=green>複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。</font>
@@ -20,11 +20,12 @@ status: new
 
     | バージョン | DB再構築有無 | 設定ファイル更新有無 | トポロジーファイル更新有無 |
     | :---------- | :---------- | :---------- | :---------- |
-    | 8.12.2以下→10.1.3 | あり | 更新あり | 更新あり |
-    | 9.0.0~9.2.1→10.1.3 | あり | 更新なし | 更新なし |
+    | 8.12.2以下→10.1.4 | あり | 更新あり | 更新あり |
+    | 9.0.0~9.2.1→10.1.4 | あり | 更新なし | 更新なし |
+    | 10.1.3→10.1.4 | なし | 更新なし | 更新なし |
 
+    * **10.1.3から10.1.4へのアップグレードは1-1、2-1、2-2、2-4のみ実施してください**
     * <font color=red>作業前にブロック生成スケジュールを確認し余裕のある作業をお願いします</font>
-
 
 <!--### **更新フローチャート**
 更新フローチャートは、画像をクリックすると別ウィンドウで開きます。
@@ -444,12 +445,12 @@ cncli 6.5.1
     ```
     mkdir $HOME/git/cardano-node2
     cd $HOME/git/cardano-node2
-    wget https://github.com/IntersectMBO/cardano-node/releases/download/10.1.3/cardano-node-10.1.3-linux.tar.gz
+    wget https://github.com/IntersectMBO/cardano-node/releases/download/10.1.4/cardano-node-10.1.4-linux.tar.gz
     ```
 
     解凍する
     ```
-    tar zxvf cardano-node-10.1.3-linux.tar.gz ./bin/cardano-node ./bin/cardano-cli
+    tar zxvf cardano-node-10.1.4-linux.tar.gz ./bin/cardano-node ./bin/cardano-cli
     ```
 
     **バージョン確認**
@@ -460,10 +461,10 @@ cncli 6.5.1
     ```
     以下の戻り値を確認する  
     >cardano-cli 10.1.1.0 - linux-x86_64 - ghc-8.10  
-    git rev 36871ba0cd3e86a5dbcfd6878cdb7168bb4e56a1 
+    git rev 1f63dbf2ab39e0b32bf6901dc203866d3e37de08 
 
-    >cardano-node 10.1.3 - linux-x86_64 - ghc-8.10  
-    git rev 36871ba0cd3e86a5dbcfd6878cdb7168bb4e56a1
+    >cardano-node 10.1.4 - linux-x86_64 - ghc-8.10  
+    git rev 1f63dbf2ab39e0b32bf6901dc203866d3e37de08
 
 
     **ノードをストップする** 
@@ -521,7 +522,7 @@ cncli 6.5.1
 
     ```
     git fetch --all --recurse-submodules --tags
-    git checkout tags/10.1.3
+    git checkout tags/10.1.4
     cabal configure --with-compiler=ghc-8.10.7
     ```
 
@@ -544,10 +545,10 @@ cncli 6.5.1
 
     以下の戻り値を確認する  
     >cardano-cli 10.1.1.0 - linux-x86_64 - ghc-8.10  
-    git rev 36871ba0cd3e86a5dbcfd6878cdb7168bb4e56a1 
+    git rev 1f63dbf2ab39e0b32bf6901dc203866d3e37de08 
 
-    >cardano-node 10.1.3 - linux-x86_64 - ghc-8.10  
-    git rev 36871ba0cd3e86a5dbcfd6878cdb7168bb4e56a1 
+    >cardano-node 10.1.4 - linux-x86_64 - ghc-8.10  
+    git rev 1f63dbf2ab39e0b32bf6901dc203866d3e37de08 
 
     **ビルド用TMUXセッションを終了する** 
     ```
@@ -580,10 +581,10 @@ cardano-node version
 
 以下の戻り値を確認する  
 >cardano-cli 10.1.1.0 - linux-x86_64 - ghc-8.10  
-git rev 36871ba0cd3e86a5dbcfd6878cdb7168bb4e56a1 
+git rev 1f63dbf2ab39e0b32bf6901dc203866d3e37de08 
 
->cardano-node 10.1.3 - linux-x86_64 - ghc-8.10  
-git rev 36871ba0cd3e86a5dbcfd6878cdb7168bb4e56a1 
+>cardano-node 10.1.4 - linux-x86_64 - ghc-8.10  
+git rev 1f63dbf2ab39e0b32bf6901dc203866d3e37de08 
 
 
 ??? danger "ノードバージョン8.12.1以下からバージョンアップする場合はこちらも実施"
@@ -856,7 +857,7 @@ git rev 36871ba0cd3e86a5dbcfd6878cdb7168bb4e56a1
     > ダイナミックP2Pを有効にしている場合、トポロジーファイル変更によるノード再起動は不要になりました。
 
 
-**DB更新**
+### **2-3.DB更新**
 
 **Mithirlインストール**
 ```
@@ -943,7 +944,7 @@ tmux作業ウィンドウを終了する
 exit
 ```
 
-### **2-3.サーバー再起動**
+### **2-4.サーバー再起動**
 
 **作業フォルダリネーム**
 
@@ -1204,7 +1205,7 @@ cardano-cli version
 
 以下の戻り値を確認する  
 >cardano-cli 10.1.1.0 - linux-x86_64 - ghc-8.10  
-git rev 36871ba0cd3e86a5dbcfd6878cdb7168bb4e56a1   
+git rev 1f63dbf2ab39e0b32bf6901dc203866d3e37de08   
 
 
 
