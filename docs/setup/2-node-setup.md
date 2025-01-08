@@ -3,7 +3,7 @@
 !!! hint "インストールバージョン"
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 10.1.3 | 10.1.1.0 | 8.10.7 | 3.8.1.0 | 6.5.1 |
+    | 10.1.4 | 10.1.1.0 | 8.10.7 | 3.8.1.0 | 6.5.1 |
 
 !!! danger "コマンド実行時の注意点"
     * Ubuntuコマンド初心者の方は、コードボックスに複数行のコマンドがある場合でも、コマンドを1行づつコピーして実行するようにしてください。ただし `cat > xxx << EOF`のボックスについてはコードボックスのコピーボタンを使用してコマンドラインに貼り付けてください。
@@ -245,7 +245,7 @@ cd $HOME/git
 git clone https://github.com/IntersectMBO/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/10.1.3
+git checkout tags/10.1.4
 ```
 
 Cabalのビルドオプションを構成します。
@@ -287,10 +287,10 @@ cardano-node version
 
 以下の戻り値を確認する  
 >cardano-cli 10.1.1.0 - linux-x86_64 - ghc-8.10  
-git rev 36871ba0cd3e86a5dbcfd6878cdb7168bb4e56a1 
+git rev 1f63dbf2ab39e0b32bf6901dc203866d3e37de08 
 
->cardano-node 10.1.3 - linux-x86_64 - ghc-8.10  
-git rev 36871ba0cd3e86a5dbcfd6878cdb7168bb4e56a1  
+>cardano-node 10.1.4 - linux-x86_64 - ghc-8.10  
+git rev 1f63dbf2ab39e0b32bf6901dc203866d3e37de08  
   
 
 TMUXセッションを閉じる
