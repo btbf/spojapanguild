@@ -1749,7 +1749,7 @@ choose_proposal(){
         #データ整合性
         download_anchorhash=$(b2sum -l 256 ${governance_dir}/${governance_id_tx}.json | awk '{ print $1 }')
 
-        if [[ "$expiresAfter" -gt "$current_epoch" ]]; then
+        if [[ "$expiresAfter" -ge "$current_epoch" ]]; then
           if [[ "$onchain_anchorhash" != "$download_anchorhash" ]]; then
             printf "\n${FG_RED}データハッシュとオンチェーンハッシュ値が異なります${NC}\n"
             printf "最新の提案内容をご確認の上投票してください\n\n"
