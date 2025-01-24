@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="3.8.1"
+TOOL_VERSION="3.8.2"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
