@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="3.8.2"
+TOOL_VERSION="3.9.0"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -1500,9 +1500,10 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
     echo "------------------------------------------------------------"
     echo -e ">> ガバナンス(投票・委任)"
     echo "------------------------------------------------------------"
+    check_drep_delegate
     echo -e "
 [1] SPO投票
-${FG_DGRAY}[2] DRepへの委任(近日実装)${NC}
+[2] DRep委任
 [b] 戻る 
 "
     read -n 1 -p "メニュー番号を入力してください : >" governance
@@ -1533,9 +1534,9 @@ ${FG_DGRAY}[2] DRepへの委任(近日実装)${NC}
 
         select_rtn
         ;;
-      # 2)
-      #   select_rtn
-      #   ;;
+      2)
+        drep_delegate
+        ;;
       # 3)
       #   select_rtn
       #   ;;
@@ -1698,6 +1699,239 @@ filecheck(){
 ################################################
 ## 処理関数 
 ################################################
+
+check_drep_name(){
+  drep_ids="{\""_drep_ids"\":[\""$(echo $1)"\"]}"
+  drep_data=$(curl -s -X POST "$KOIOS_API/drep_metadata" \
+  -H "accept: application/json"\
+  -H "content-type: application/json" \
+  -d $drep_ids | jq '.[] | {hex: .hex, givenName: .meta_json.body.givenName}')
+  drep_hex=$(echo $drep_data | jq .hex)
+  drep_name=$(echo $drep_data | jq .givenName)
+  if [[ $drep_name == *"@value"* ]]; then
+    drep_name=$(echo $drep_name | jq .[])
+  fi
+}
+
+check_drep_delegate(){
+  echo "プールステークアドレスDRep委任状況"
+  stake_address="{\""_stake_addresses"\":[\""$(cat $NODE_HOME/$WALLET_STAKE_ADDR_FILENAME)"\"]}"
+
+  #API ステークアカウント情報取得
+  status_drep_delegate=$(curl -s -X POST "$KOIOS_API/account_info" \
+    -H "Accept: application/json" \
+    -H "Content-Type: application/json" \
+    -d $stake_address | jq -r .[].delegated_drep)
+
+  case ${status_drep_delegate} in
+    null )
+      printf "${FG_RED}未委任${NC}\n"
+    ;;
+    drep_always_abstain )
+      printf "${FG_YELLOW}自動棄権${NC}\n"
+    ;;
+    drep_always_no_confidence )
+      printf "${FG_YELLOW}自動不信任${NC}\n"
+    ;;
+    drep1* )
+      check_drep_name $status_drep_delegate
+      printf "DRepID:${FG_GREEN}$status_drep_delegate${NC}\n"
+      printf "DRep名:${FG_GREEN}$drep_name${NC}\n"
+    ;;
+
+  esac
+  echo "----------------------------------------------------------"
+}
+
+drep_delegate(){
+  clear
+  echo '----------------------------------------'
+  echo ">> DRep委任"
+  echo '----------------------------------------'
+  echo -e "
+  [1] DRep指定
+  [2] 自動棄権
+  [3] 自動不信任
+  [c] キャンセル
+  "
+    read -n 1 -p "メニュー番号を入力してください : >" governance
+    case ${governance} in
+    1 )
+      clear
+      while :
+      do
+        echo
+        echo "委任先のDRepIDを入力してください"
+        read -p "DRep ID(drep1...) : > " drep_id
+        echo
+        echo "DRep情報呼び出し..."
+        check_drep_name $drep_id
+        if [[ -n $drep_name ]]; then
+          echo
+          printf "$drep_id\n"
+          printf "${FG_GREEN}$drep_name${NC}\n"
+          echo
+          read -n 1 -p "こちらのDRepに委任しますか？(y/n) >" drep_delegate
+          case $drep_delegate in
+          "y" )
+            delegate_value="--drep-key-hash $drep_hex"
+            break
+          ;;
+          "n" )
+            printf "\n${FG_RED}委任先DRepIDを再入力してください${NC}\n"
+            continue
+          ;;
+          * )
+            printf '\n入力記号が不正です\n'
+            continue
+          ;;
+          esac
+        else
+          printf "${FG_RED}DRepが見つかりませんでした。正しいDRepIDを入力してください${NC}\n"
+        fi
+      done
+    ;;
+
+    2 )
+      delegate_value="--always-abstain"
+      echo
+      echo
+      echo "自動棄権を選択しました"
+      echo
+    ;;
+
+    3 )
+      delegate_value="--always-no-confidence"
+      echo
+      echo
+      echo "自動不信任を選択しました"
+      echo
+    ;;
+
+    c )
+      select_rtn
+    ;;
+
+    *)
+    echo '番号が不正です'
+    main
+    ;;
+    esac
+
+echo
+echo
+echo "エアギャップ用委任証明書ファイル作成スクリプトを作成します..."
+current_Slot
+payment_utxo
+sleep 2
+
+cat > $NODE_HOME/create_drep_Delegate_script << EOF
+#!/bin/bash
+mkdir -p \$NODE_HOME/governance
+echo
+
+delegate_value=$delegate_value
+
+case $delegate_value in
+--drep-key-hash*)
+  printf "%14s ${FG_GREEN}%-s${NC}\n" "DRepID:" "$drep_id"
+  printf "%15s ${FG_GREEN}%-s${NC}\n" "DRep名:" ${drep_name}
+;;
+--always-abstain)
+  printf "%14s ${FG_GREEN}%-s${NC}\n" "委任タイプ:" "自動棄権"
+;;
+--always-no-confidence)
+  printf "%14s ${FG_GREEN}%-s${NC}\n" "委任タイプ:" "自動不信任"
+;;
+esac
+echo
+cardano-cli conway stake-address vote-delegation-certificate \
+  --stake-verification-key-file \$NODE_HOME/$WALLET_STAKE_VK_FILENAME \
+  $delegate_value \
+  --out-file \$NODE_HOME/governance/drep-deleg.cert
+
+echo "委任証明書ファイルを作成しました"
+sleep 2
+
+cardano-cli conway transaction build-raw \\
+$tx_in \\
+--tx-out \$(cat \$NODE_HOME/payment.addr)+${total_balance}  \\
+--invalid-hereafter \$(( ${currentSlot} + 10000)) \\
+--fee 200000 \\
+--certificate-file \$NODE_HOME/governance/drep-deleg.cert \\
+--out-file \$NODE_HOME/governance/drep-tx.tmp
+
+fee=\$(cardano-cli conway transaction calculate-min-fee \\
+--tx-body-file \$NODE_HOME/governance/drep-tx.tmp \\
+--witness-count 2 \\
+--protocol-params-file \$NODE_HOME/params.json | awk '{ print \$1 }')
+echo Tx手数料: \$fee Lovelace
+sleep 2
+txOut=\$((${total_balance}-\${fee}))
+
+cardano-cli conway transaction build-raw \\
+$tx_in \\
+--tx-out \$(cat \$NODE_HOME/payment.addr)+\${txOut} \\
+--invalid-hereafter \$(( ${currentSlot} + 10000)) \\
+--fee \${fee} \\
+--certificate-file \$NODE_HOME/governance/drep-deleg.cert \\
+--out-file \$NODE_HOME/governance/drep-tx.raw
+
+echo "Txファイルを作成しました"
+sleep 2
+cardano-cli conway transaction sign \\
+--tx-body-file \$NODE_HOME/governance/drep-tx.raw \\
+--signing-key-file \$NODE_HOME/$WALLET_STAKE_SK_FILENAME \\
+--signing-key-file \$NODE_HOME/$WALLET_PAY_SK_FILENAME \\
+--out-file \$NODE_HOME/governance/drep-tx.signed
+
+echo "Tx署名ファイルを作成しました(\$NODE_HOME/governance/drep-tx.signed)"
+sleep 2
+echo
+echo
+
+echo -e "4. エアギャップの ~/cnode/governance/にある \e[33mdrep-tx.signed\e[0m を \e[33mBPの\e[0m\e[97m~/cnode/governance/\e[0mにコピーしてください\e[0m"
+echo '---------------------------------------------------------------'
+echo ">> [エアギャップ] ⇒ drep-tx.signed ⇒ [BP]"
+echo '---------------------------------------------------------------'
+
+echo "BPに戻ってTxを送信してください"
+echo
+EOF
+
+echo "エアギャップ用委任証明書ファイル作成スクリプトを作成しました"
+echo
+sleep 3
+echo
+echo -e "${FG_YELLOW} 1. BPの $NODE_HOMEにある${NC}${FG_GREEN}create_drep_Delegate_script${NC} と ${FG_GREEN}params.json${NC} を ${FG_YELLOW}エアギャップの${NC}${FG_WHITE}~/cnode/${NC}にコピーしてください${NC}"
+echo '---------------------------------------------------------------'
+echo ">> [BP] ⇒ create_drep_Delegate_script / params.json ⇒ [エアギャップ]"
+echo '---------------------------------------------------------------'
+echo
+read -p "上記の操作が終わったらEnterを押してください"
+echo
+echo -e "${FG_YELLOW} 2. エアギャップで以下コマンドを実行し、ハッシュ値が一致しているか確認してください${NC}"
+echo '---------------------------------------------------------------'
+echo "sha256sum \$NODE_HOME/create_drep_Delegate_script | awk '{ print \$1 }'"
+echo '---------------------------------------------------------------'
+echo -e "ハッシュ値: ${FG_GREEN}$(sha256sum $NODE_HOME/create_drep_Delegate_script | awk '{ print $1 }' )${NC}"
+echo
+read -p "上記の操作が終わったらEnterを押してください"
+echo
+echo -e "${FG_YELLOW} 3. エアギャップで以下のコマンドを実行し投票用Txファイルを作成してください${NC}"
+echo '---------------------------------------------------------------'
+echo "source \$NODE_HOME/create_drep_Delegate_script"
+echo '---------------------------------------------------------------'
+echo
+read -p "エアギャップでの操作が終わったらEnterを押してください"
+echo
+
+echo "ガバナンスアクションへの投票トランザクションを送信しますか？"
+tx_submit ${NODE_HOME}/governance drep-tx.signed
+
+rm $NODE_HOME/create_drep_Delegate_script
+
+}
 
 choose_proposal(){
   voter_type=$1
