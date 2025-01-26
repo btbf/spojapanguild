@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="3.9.0"
+TOOL_VERSION="3.9.1"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -1830,12 +1830,12 @@ cat > $NODE_HOME/create_drep_Delegate_script << EOF
 mkdir -p \$NODE_HOME/governance
 echo
 
-delegate_value=$delegate_value
+delegate_value=$(echo $delegate_value  | awk '{print $1}')
 
-case $delegate_value in
---drep-key-hash*)
-  printf "%14s ${FG_GREEN}%-s${NC}\n" "DRepID:" "$drep_id"
-  printf "%15s ${FG_GREEN}%-s${NC}\n" "DRep名:" ${drep_name}
+case \$delegate_value in
+--drep-key-hash)
+  printf "%14s ${FG_GREEN}%-s${NC}\n" "DRepID:" "${drep_id}"
+  printf "%15s ${FG_GREEN}%-s${NC}\n" "DRep名:" "${drep_name}"
 ;;
 --always-abstain)
   printf "%14s ${FG_GREEN}%-s${NC}\n" "委任タイプ:" "自動棄権"
