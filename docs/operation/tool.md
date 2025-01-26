@@ -1,6 +1,6 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2025/1/25 v3.9.0
+最終更新日：2025/1/26 v3.9.1
 
 !!! info "主な機能"
     * payment.addr残高照会
@@ -68,6 +68,9 @@ gtool
     また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
 
 ## 更新履歴
+
+### 3.9.1
+    * ステークアドレスDRep委任機能バグ修正
 
 ### 3.9.0
     * ステークアドレスDRep委任機能実装
