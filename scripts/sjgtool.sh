@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="3.9.1"
+TOOL_VERSION="3.9.2"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -30,14 +30,13 @@ myExit() {
 main () {
 clear
 update
-bech32_install
-#getEraIdentifier
 if [ $? == 1 ]; then
   cd $NODE_HOME/scripts
   $0 "$@" "-u"
   myExit 0
 fi
 
+bech32_install
 #echo $NETWORK_IDENTIFIER
 #echo $NETWORK_NAME
 #echo $KOIOS_API
