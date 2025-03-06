@@ -1,12 +1,7 @@
 # **SPO Block Notify設定**
 
-!!! danger "お知らせ"
-    ブロック生成ステータス通知が「SPO Block Notify」に生まれ変わりました！
-    
-
-
 !!! info "概要"
-    最終更新日：2024/7/16  v2.3.0
+    最終更新日：2025/3/6  v2.5.0
 
     * ブロックログで表示されるブロック生成結果を任意のソーシャルアプリへ通知します。   
     ![*](../images/block_notify/image.png)
@@ -24,8 +19,13 @@
 
     * 設定は任意です。(設定しなくてもブロック生成に影響はありません)
 
+    * <font color=red>各サービスのAPIを利用するため送信データが各サービスのサーバーに流れます。その点を十分に理解しご活用ください。</font>
+
+    * エポックのスケジュール通知はオン/オフ設定可能です
+
 
 ??? info "更新履歴▼"
+    * 2.5.0  ・LINE Messaging API対応
     * 2.3.0  ・通知にブロックサイズを表示
     　　　　　・スペイン語、フランス語、ポルトガル語を追加
     * 2.2.2  ・任意のPrometheusポートを設定可能
@@ -115,28 +115,81 @@ rm ${bn_release}.tar.gz
 通知させたいアプリのタブをクリックし設定を確認してください。
 
 === "LINE"
-    * **1.LINEグループを作成する**  
-    ![*](../images/block_notify/2-1-1-1.png)
+    !!! danger "お知らせ"
+        2025年3月末をもってLINE Notifyサービス終了に伴い、LINE Messaging APIに対応しました。
+        無料版においては、月の送信上限が200通までとなっております。  
+        (複数人で運用する場合は「送信数×人数」でカウントされますのでご注意ください)
+        <br>
+        <font color=red>新しいAPIはLINE公式アカウントを通じて配信されるため、設定を間違えるとセキュリティ漏洩のリスクがあります。複数人で運用する場合はご注意ください</font>  
 
-    * **2.「Line Notify」を追加する**  
-    ![*](../images/block_notify/2-1-1-2.png)
+    * **1.LINEビジネスIDを作成する**  
+    LINE Bussiness ID [https://manager.line.biz/](https://manager.line.biz/) にアクセスし、お持ちのLINEアカウントでログインするか新規でBussinessIDを作成してください
+    ![*](../images/block_notify/line-message-api0.jpg)
 
-    * **3.任意のグループ名を設定し「作成」をクリックする**
-    ![*](../images/block_notify/2-1-1-3.png)
+    * **2.LINE公式アカウントを作成する**  
+    ![*](../images/block_notify/line-message-api1.jpg)  
+    ![*](../images/block_notify/line-message-api2.jpg)  
+    
+    !!! info ""
+        アカウント名：任意の名前  
+        運用目的：その他  
+        主な使い方：メッセージ配信用  
 
-    * **4.[LINE Notifyマイページ](https://notify-bot.line.me/my/)にアクセスする**  
+    ![*](../images/block_notify/line-message-api3.jpg)  
+    LINEヤフー for Bussinessを友だち追加のチェックを外す
+    ![*](../images/block_notify/line-message-api4.jpg)  
+    <br>
+    LINE Official Account Managerへをクリックする
+    ![*](../images/block_notify/line-message-api5.jpg)  
     
-    * **5.トークンを発行するをクリックします**  
-    ![*](../images/block_notify/2-1-1.jpg)
+    * **3.Messaging APIの設定**  
+    <br>
+    **右上の「設定を」クリックする**  
+    ![*](../images/block_notify/line-message-api6.jpg)  
+    <br>
+    **プロフィール画像を編集するとプールアイコンを設定できます**  
+    ![*](../images/block_notify/line-message-api6-1.jpg)  
+    <br>
+    **左メニューの「Messaging API」をクリックし、「Messaging APIを利用する」をクリックする**  
+    ![*](../images/block_notify/line-message-api7.jpg)  
+    <br>
+    **「プロバイダーを作成」欄に「notify」と入力し、「同意する」をクリック**  
+    ![*](../images/block_notify/line-message-api8.jpg)  
+    <br>
+    **空欄のまま「OK」をクリックする**  
+    ![*](../images/block_notify/line-message-api9.jpg)  
     
-    * **6.トークン名「ブロック生成通知」(任意)を入力し、3で作成したグループ名を選択する**  
-    ![*](../images/block_notify/2-1-2.png)
-    
-    * **7.「発行する」をクリックする**
-    
-    * **8.表示されたトークンをコピーし、一旦メモ帳などに貼り付ける**    
-    （発行されたトークンを閉じると2度と確認できませんのでご注意ください）  
-    ![*](../images/block_notify/2-1-3.jpg)
+    * **4.LINE Developers設定**  
+    <br>
+    ![*](../images/block_notify/line-message-api10.jpg)  
+    <br>
+    **コンソールにログインする**  
+    ![*](../images/block_notify/line-message-api11.jpg)  
+    <br>
+    **プロバイダーから先ほど作成した「notify」をクリックする**  
+    ![*](../images/block_notify/line-message-api12.jpg)  
+    <br>
+    **2で作成したLINE公式アカウントをクリックする**  
+    ![*](../images/block_notify/line-message-api13.jpg)  
+    <br>
+    **「Messaging API」タブをクリックする**  
+    ![*](../images/block_notify/line-message-api14.jpg)  
+    <br>
+    **ページ下部の「チャンネルアクセストークン(長期)」で「実行」をクリックする**  
+    ![*](../images/block_notify/line-message-api15.jpg)  
+    <br>
+    **発行されたトークンを控える**  
+    （発行されたトークンはいつでも確認することができます）  
+    `line_notify_token`の値として使用します  
+    ![*](../images/block_notify/line-message-api16.jpg)  
+    <br>
+    **上部に戻り「チャンネル基本設定」をクリックする**  
+    ![*](../images/block_notify/line-message-api17.jpg)  
+    <br>
+    **「あなたのユーザーID」を控える**  
+    `line_user_id`の値として使用します  
+    ![*](../images/block_notify/line-message-api18.jpg)  
+
 
 === "Discord"
 
@@ -233,7 +286,8 @@ nano config.ini
     | `notify_platform`   | `Line`<br>`Discord`<br>`Slack`<br>`Telegram` | 通知先プラットフォームを指定する<br> (複数指定は無効) |
     | `notify_level`   |全て:`All`<br>Confirm以外:`ExceptCofirm`<br>Missのみ:`OnlyMissed`  | 通知基準を設定する |
     | `nextepoch_leader_date`   |概要のみ:`SummaryOnly`<br>概要と日付:`SummaryDate` | 次エポックスケジュール日時の通知有無<br>次エポックスケジュール日付一覧を通知に流したくない場合は`SummaryOnly`を記載してください |
-    | `line_notify_token`     |[LINE設定の(8)](#__tabbed_1_1)で発行したトークンID | Line Notifyトークンを入力する |
+    | `line_notify_token`     |[LINE設定](#__tabbed_1_1)で発行したチャンネルアクセストークン | Line通知用のトークンを入力する |
+    | `line_user_id`     |[LINE設定](#__tabbed_1_1)で発行したユーザーID | Line通知用のユーザーIDを入力する |
     | `discord_webhook_url`   |[Discord設定の(7)](#__tabbed_1_2)で発行したウェブフックURL| DiscordウェブフックURLを入力する |
     | `slack_webhook_url`   |[Slack設定の(4)](#__tabbed_1_4)で発行したWebhook URL| SlackウェブフックURLを入力する |
     | `telegram_token`   |[Telegram設定の(5)](#__tabbed_1_3)で発行したAPIトークン | Telegram APIトークンを入力する |
@@ -349,9 +403,6 @@ blocknotify
 
 ## **11-4.アップデート手順**
 
-!!! danger "旧バージョンからのアップデート(移行)について"
-    旧ブロック生成通知またはSPO Block Notify2.1.3からアップデートする場合は、[移行マニュアル](../operation/blocknotify-reinstall.md)をご参照ください
-
 SPO BlockNotifyを停止する
 ```
 sudo systemctl stop cnode-blocknotify.service
@@ -368,12 +419,21 @@ cp -r block-notify-${bn_release}/i18n block-notify/
 rm -rf block-notify-${bn_release} ${bn_release}.tar.gz
 ```
 
-??? "v2.2.0またはv2.2.1からのアップデートの場合はこちらも実施"
+!!! info "v2.4.1以下からv2.5.0へアップデートの場合は以下も実施"
     ```
     cd $NODE_HOME/scripts/block-notify/
-    sed -i '9a prometheus_port = 12798' config.ini
+    sed -i '13a line_user_id = ' config.ini
     ```
 
+!!! danger "LINE通知を使用している方へ"
+    2025年3月末をもってLINE Notifyサービス終了に伴い、LINE Messaging APIに対応しました。
+    無料版においては、月の送信上限が200通までとなっております。  
+    (複数人で運用する場合は「送信数×人数」でカウントされますのでご注意ください)  
+    <br>
+    <font color=red>新しいAPIはLINE公式アカウントを通じて配信されるため、設定を間違えるとセキュリティ漏洩のリスクがあります。複数人で運用する場合はご注意ください</font>  
+    <br>
+    上記の点を踏まえ、他の通知システム(Discord/Telegram/Slack)へ移行するか新しい[LINE通知の設定](#__tabbed_1_1)を実施してください。（流れで11-3まで実施しないでください）  
+    LINE公式アカウント発行後、`config.ini`の`line_notify_token`と`line_user_id`を発行した値に書き換えてください。
 
 SPO BlockNotifyを起動する
 ```
