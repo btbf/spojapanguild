@@ -2251,14 +2251,19 @@ tx_submit(){
       if [ "$retun_cmd" == "1" ] || [ "$retun_cmd" == "2" ]; then
         case ${retun_cmd} in
           1) 
-            tx_result=$(cardano-cli conway transaction submit --tx-file ${1}/${2} ${NETWORK_IDENTIFIER})
-            echo $tx_result
             echo
             echo '----------------------------------------'
             echo 'Tx送信結果'
             echo '----------------------------------------'
+            tx_result=$(cardano-cli conway transaction submit --tx-file ${1}/${2} ${NETWORK_IDENTIFIER})
             if [[ -n $tx_result ]]; then
-              tx_id=$(echo $tx_result | jq .txhash | sed 's/"//g')
+              if dpkg --compare-versions "$node_version" ge "10.2.1"; then
+                tx_id=$(echo $tx_result | jq .txhash | sed 's/"//g')
+              else
+                tx_id=$(cardano-cli conway transaction txid --tx-body-file ${1}/${2})
+                echo $tx_result
+              fi
+              echo 'TxID:' $tx_id
               echo
               echo 'トランザクションURL'
               if [ ${NETWORK_NAME} == 'Mainnet' ]; then
