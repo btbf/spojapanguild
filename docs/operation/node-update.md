@@ -3,18 +3,14 @@ status: new
 ---
 # **ノードアップデートマニュアル**
 
-!!! info "概要"
-    このガイドは ノードバージョン10.2.1に対応しています。最終更新日：2025年2月28日
+このガイドは ノードバージョン10.2.1に対応しています。  
+最終更新日：2025年3月26日　　
+
+!!! info "バージョン対応表"
 
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
     | 10.2.1 | 10.4.0.0 | 9.10.1 | 3.12.1 | 6.5.1 |
-
-    * <font color=red>よくお読みになって進めてください</font>
-    * <font color=green>複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。</font>
-
-
-!!! hint "主な変更点と新機能"
 
     **■アップデートパターンDB再構築有無**
 
@@ -24,6 +20,35 @@ status: new
     | 10.1.4→10.2.1 | なし | 更新なし | 更新なし |
 
     * <font color=red>作業前にブロック生成スケジュールを確認し余裕のある作業をお願いします</font>
+
+    * <font color=red>よくお読みになって進めてください</font>
+    * <font color=green>複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。</font>
+
+
+??? danger "主な変更点と新機能および検証結果"
+
+    !!! tip "cardano-node v10.2.1"
+        * トポロジーファイルにLedegerピアスナップショットパスが追加
+        * ローカルルートピアグループ設定に`diffusionMode`を追加
+        * 新トレーシングシステムをデフォルトで有効化。旧システムを利用する場合はcongifファイルに`"UseTraceDispatcher": false`を追加する
+    
+    !!! tip "cardano-cli v10.4.0.0"
+        * `cardano-cli conway transaction sign`の実行結果にTxIDを返す
+
+    !!! 検証結果
+        ■検証環境
+        Ubuntu22.04 / PreProd-Testnet / cardano-node 10.2.1 / cardano-cli 10.4.0.0 / SJG-TOOL 3.9.3  
+
+        | 検証項目 | 結果 |
+        | :---------- | :---------- |
+        | ブロック生成 | ✅ |
+        | リソース異常 | ✅ |
+        | 報酬出金 | ✅ |
+        | ウォレット送金 | ✅ |
+        | KES更新 | ✅ |
+        | ガバナンス投票 | ✅ |
+
+
 
 <!--### **更新フローチャート**
 更新フローチャートは、画像をクリックすると別ウィンドウで開きます。
@@ -933,9 +958,22 @@ sudo reboot
 
 SSH接続してノード同期状況を確認する
 ```
-sudo journalctl --unit=cardano-node --follow | grep -e 'Progress:' -e 'Chain extended, new tip:'
+sudo journalctl --unit=cardano-node --follow
 ```
-> 戻り値に`Chain extended, new tip: xxxxxxxx at slot xxxxxx`の表示があれば同期完了。無ければエラーになっている。
+
+!!! tip "ノードログメッセージ確認"
+
+    以下のメッセージがログに含まれている場合に同期状況を判断できます。
+
+    | メッセージ | ステータス |
+    | :---------- | :---------- |
+    | `Chain extended, new tip: xxxxxxxx at slot xxxxxx`| チェーン同期成功 |
+    | `GenesisReadFileError`| ジェネシスファイルエラー |
+    | `InvalidYaml` | 設定ファイルエラー |
+    | `Invalid option` | 起動オプションエラー |
+    | `Invalid argument` | 起動コマンドエラー |
+    | `Address in use` | ノード起動ポートが競合しています |
+ 
 
 
 ## 3. 依存関係作業
