@@ -27,9 +27,9 @@ status: new
 ??? danger "主な変更点と新機能および検証結果"
 
     !!! tip "cardano-node v10.2.1"
-        * トポロジーファイルにLedegerピアスナップショットパスが追加
+        * トポロジーファイルにLedgerピアスナップショットパスが追加
         * ローカルルートピアグループ設定に`diffusionMode`を追加
-        * 新トレーシングシステムをデフォルトで有効化。旧システムを利用する場合はcongifファイルに`"UseTraceDispatcher": false`を追加する
+        * 新トレーシングシステムをデフォルトで有効化。旧システムを利用する場合はconfigファイルに`"UseTraceDispatcher": false`を追加する
     
     !!! tip "cardano-cli v10.4.0.0"
         * `cardano-cli conway transaction sign`の実行結果にTxIDを返す
@@ -40,8 +40,9 @@ status: new
 
         | 検証項目 | 結果 |
         | :---------- | :---------- |
+        | ソースコートビルド | ✅ |
         | ブロック生成 | ✅ |
-        | リソース異常 | ✅ |
+        | リソース監視 | ✅ |
         | 報酬出金 | ✅ |
         | ウォレット送金 | ✅ |
         | KES更新 | ✅ |
