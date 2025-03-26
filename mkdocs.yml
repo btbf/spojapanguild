@@ -125,26 +125,24 @@ nav:
         - '1-1.KESの更新': './operation/kes-update.md'
         - '1-2.プール情報更新': './operation/cert-update.md'
         - '1-3.資金引き出し': './operation/withdrawal.md'
-        - '1-4.プール廃止処理': './operation/pool-retire.md'
+        - '1-4.Calidusキー発行': './operation/calidus.md'
+        - '1-5.プール廃止処理': './operation/pool-retire.md'
       - '2.ノード管理':
         - '2-1.ノードアップデート': './operation/node-update.md'
         - '2-2.DB同期(Mithril)':  './operation/mithril-client.md'
         - '2-3.リレーノード増設': './operation/add-relay.md'
-        #- '2-4.ダイナミックP2P設定': './operation/p2p-settings.md'
-        - '2-4.手動トポロジー設定': './operation/topology-updater.md'
-        - '2-5.BPポート変更': './operation/bpport.md'
+        - '2-4.BPポート変更': './operation/bpport.md'
       - '3.サーバー管理':
-        - '3-1.サーバー間転送設定':
-          - '事前設定': './operation/rsync-ssh.md'
-          - 'ファイル転送手順': './operation/transfer.md'
-        - '3-2.Ubuntu22.04移行': './operation/ubuntu22.md'
-        - '3-3.サーバー引越し':
+        # - '3-1.サーバー間転送設定':
+        #   - '事前設定': './operation/rsync-ssh.md'
+        #   - 'ファイル転送手順': './operation/transfer.md'
+        - '3-1.Ubuntu22.04移行': './operation/ubuntu22.md'
+        - '3-2.サーバー引越し':
           - 'リレーサーバー': './operation/relay-move.md'
           - 'BPサーバー': './operation/bp-move.md'
       - '4.ツール設定':
         - '4-1.SJGツール導入設定': './operation/tool.md'
         - '4-2.SFTPソフト設定': './operation/sftp.md'
-        #- '4-3.SPO投票': './operation/spo-poll.md'
         - '4-3.Grafana追加設定':
           - 'Grafanaセキュリティ強化': './operation/grafana-security.md'
           - 'Grafanaアラート設定': './operation/grafana-alert.md'

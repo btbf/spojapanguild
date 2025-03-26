@@ -1,5 +1,13 @@
 # 変更履歴
 
+## 2025/03/26　ver. 13.6.0
+!!! note ""
+    * cardano-node v10.2.1対応
+    * [**ノードアップデート手順**](operation/node-update.md)更新
+    * [**Calidus Pool Keys発行マニュアル**](operation/calidus.md)追加
+    * [**SJG TOOL v3.9.3リリース**](operation/tool.md)
+    * 軽微な修正
+
 ## 2025/01/08　ver. 13.5.2
 !!! note ""
     * cardano-node v10.1.4対応
