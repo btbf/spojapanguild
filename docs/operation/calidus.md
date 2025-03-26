@@ -285,6 +285,6 @@ UTXOを算出します
 
 ## **6.オンチェーン確認**
 ```
-curl -s "https://api.koios.rest/api/beta/pool_calidus_keys?pool_id_bech32=eq.$(cat $NODE_HOME/pool.id-bech32)" | jq .
+curl -s "https://api.koios.rest/api/v1/pool_calidus_keys?pool_id_bech32=eq.$(cat $NODE_HOME/pool.id-bech32)" | jq .
 ```
 > 戻り値に、`"pool_status": "registered"`の項目があれば登録成功
