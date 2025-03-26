@@ -1,6 +1,6 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2025/1/26 v3.9.1
+最終更新日：2025/3/20 v3.9.3
 
 !!! info "主な機能"
     * payment.addr残高照会
@@ -68,6 +68,10 @@ gtool
     また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
 
 ## 更新履歴
+
+### 3.9.3
+    * cardano-node 10.2.1対応
+    * Tx送信後のチェーン検証導入
 
 ### 3.9.2
     * バージョンアップ不具合修正
