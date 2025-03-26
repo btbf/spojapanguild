@@ -3,7 +3,7 @@
 !!! hint "インストールバージョン"
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 10.1.4 | 10.1.1.0 | 8.10.7 | 3.8.1.0 | 6.5.1 |
+    | 10.2.1 | 10.4.0.0 | 9.10.1 | 3.12.1 | 6.5.1 |
 
 !!! danger "コマンド実行時の注意点"
     * Ubuntuコマンド初心者の方は、コードボックスに複数行のコマンドがある場合でも、コマンドを1行づつコピーして実行するようにしてください。ただし `cat > xxx << EOF`のボックスについてはコードボックスのコピーボタンを使用してコマンドラインに貼り付けてください。
@@ -208,15 +208,15 @@ cabalインストール
 ```bash
 source ~/.bashrc
 ghcup upgrade
-ghcup install cabal 3.8.1.0
-ghcup set cabal 3.8.1.0
+ghcup install cabal 3.12.1.0
+ghcup set cabal 3.12.1.0
 ```
 
 GHCインストール
 
 ```bash
-ghcup install ghc 8.10.7
-ghcup set ghc 8.10.7
+ghcup install ghc 9.10.1
+ghcup set ghc 9.10.1
 ```
 
 バージョン確認
@@ -228,8 +228,8 @@ ghc --version
 ```
 
 !!! check "チェック"
-    Cabalバージョン：「3.8.1.0」  
-    GHCバージョン：「8.10.7」であることを確認してください。
+    Cabalバージョン：「3.12.1.0」  
+    GHCバージョン：「9.10.1」であることを確認してください。
 
 
 ## **2-2. ソースコードからビルド**
@@ -245,7 +245,7 @@ cd $HOME/git
 git clone https://github.com/IntersectMBO/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/10.1.4
+git checkout tags/10.2.1
 ```
 
 Cabalのビルドオプションを構成します。
@@ -253,7 +253,7 @@ Cabalのビルドオプションを構成します。
 ```bash
 cabal clean
 cabal update
-cabal configure --with-compiler=ghc-8.10.7
+cabal configure --with-compiler=ghc-9.10.1
 ```
 
 カルダノノードをビルドします。
@@ -286,11 +286,11 @@ cardano-node version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 10.1.1.0 - linux-x86_64 - ghc-8.10  
-git rev 1f63dbf2ab39e0b32bf6901dc203866d3e37de08 
+>cardano-cli 10.4.0.0 - linux-x86_64 - ghc-8.10  
+git rev 52b708f37cd3dc92a188717deae2a6a60117f696  
 
->cardano-node 10.1.4 - linux-x86_64 - ghc-8.10  
-git rev 1f63dbf2ab39e0b32bf6901dc203866d3e37de08  
+>cardano-node 10.2.1 - linux-x86_64 - ghc-8.10  
+git rev 52b708f37cd3dc92a188717deae2a6a60117f696  
   
 
 TMUXセッションを閉じる

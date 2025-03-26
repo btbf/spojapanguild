@@ -291,6 +291,7 @@ chmod a-rwx $HOME/cold-keys
     cd $NODE_HOME
     cardano-cli conway stake-address deregistration-certificate \
         --stake-verification-key-file stake.vkey \
+        --key-reg-deposit-amt 2000000 \
         --out-file stake-dereg.cert
     ```
 

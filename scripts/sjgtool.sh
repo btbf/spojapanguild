@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="3.9.2"
+TOOL_VERSION="3.9.3"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -1373,20 +1373,6 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       tx_submit ${NODE_HOME} tx.signed
 
       echo $tx_id > $HOME/CatalystVoting/txhash.log
-
-      #トランザクション確認
-      printf "\n${FG_YELLOW}Tx承認を確認しています。このまましばらくお待ち下さい...${NC}\n\n"
-      while :
-        do
-        koios_tx_status=`curl -s -X POST "$KOIOS_API/tx_status" -H "Accept: application/json" -H "content-type: application/json" -d "{\"_tx_hashes\":[\"$tx_id\"]}" | jq -r '.[].num_confirmations'`
-        if [ $koios_tx_status != "null" ] && [ $koios_tx_status -gt 1 ]; then
-          printf "確認済みブロック:$koios_tx_status ${FG_GREEN}Txが承認されました${NC}\n\n"
-          sleep 3s
-          break
-        else
-          sleep 30s
-        fi
-      done
     }
     
     create_qrcode(){
@@ -1484,12 +1470,11 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       create_qrcode
     elif [ $txlog_file_check == "true" ] && [ $qrcode_file_check == "true" ]; then
       printf " 有権者登録済です\n\n"
-      select_rtn
     else
       printf " 有権者登録済です\n\n"
-      select_rtn
     fi
     
+    select_rtn
   ;;
 
   6)
@@ -1535,6 +1520,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
         ;;
       2)
         drep_delegate
+        select_rtn
         ;;
       # 3)
       #   select_rtn
@@ -1925,7 +1911,7 @@ echo
 read -p "エアギャップでの操作が終わったらEnterを押してください"
 echo
 
-echo "ガバナンスアクションへの投票トランザクションを送信しますか？"
+echo "DRep委任トランザクションを送信しますか？"
 tx_submit ${NODE_HOME}/governance drep-tx.signed
 
 rm $NODE_HOME/create_drep_Delegate_script
@@ -2202,7 +2188,6 @@ echo "ガバナンスアクションへの投票トランザクションを送�
 tx_submit ${NODE_HOME}/governance vote-tx.signed
 
 rm $NODE_HOME/create_votetx_script
-  
 }
 
 ############################################
@@ -2266,14 +2251,19 @@ tx_submit(){
       if [ "$retun_cmd" == "1" ] || [ "$retun_cmd" == "2" ]; then
         case ${retun_cmd} in
           1) 
-            tx_id=$(cardano-cli conway transaction txid --tx-body-file ${1}/${2})
-            tx_result=$(cardano-cli conway transaction submit --tx-file ${1}/${2} ${NETWORK_IDENTIFIER})
             echo
-            if [[ $tx_result == "Transaction"* ]]; then
-              echo '----------------------------------------'
-              echo 'Tx送信結果'
-              echo '----------------------------------------'
-              echo $tx_result
+            echo '----------------------------------------'
+            echo 'Tx送信結果'
+            echo '----------------------------------------'
+            tx_result=$(cardano-cli conway transaction submit --tx-file ${1}/${2} ${NETWORK_IDENTIFIER})
+            if [[ -n $tx_result ]]; then
+              if dpkg --compare-versions "$node_version" ge "10.2.1"; then
+                tx_id=$(echo $tx_result | jq .txhash | sed 's/"//g')
+              else
+                tx_id=$(cardano-cli conway transaction txid --tx-body-file ${1}/${2})
+                echo $tx_result
+              fi
+              echo 'TxID:' $tx_id
               echo
               echo 'トランザクションURL'
               if [ ${NETWORK_NAME} == 'Mainnet' ]; then
@@ -2285,13 +2275,23 @@ tx_submit(){
               else
                 echo "TxID:$tx_id"
               fi
-              
-              printf "\n${FG_GREEN}Tx送信に成功しました${NC}\n"
+              printf "\n${FG_GREEN}Txを送信しました。${NC}\n"
 
+              #トランザクション確認
+              printf "${FG_YELLOW}Tx承認を確認しています。このまましばらくお待ち下さい...${NC}\n\n"
+              while :
+                do
+                koios_tx_status=$(curl -s -X POST "$KOIOS_API/tx_status" -H "Accept: application/json" -H "content-type: application/json" -d "{\"_tx_hashes\":[\"$tx_id\"]}" | jq -r '.[].num_confirmations')
+                if [ $koios_tx_status != "null" ] && [ $koios_tx_status -gt 1 ]; then
+                  printf "確認済みブロック:$koios_tx_status${NC}\n"
+                  printf "${FG_GREEN}Txが承認されました${NC}\n\n"
+                  sleep 3s
+                  break
+                else
+                  sleep 10s
+                fi
+              done
             else
-              echo '----------------------------------------'
-              echo 'Tx送信結果'
-              echo '----------------------------------------'
               echo $tx_result
               echo
               printf "${FG_RED}Tx送信に失敗しました${NC}\n"
