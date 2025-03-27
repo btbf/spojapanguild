@@ -1,0 +1,3719 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="SPO JAPAN GUILD監修のステークプール構築ガイド。私たちは日本におけるステークプール構築を促進しカルダノ分散化に貢献してまいります。">
+      
+      
+      
+        <link rel="canonical" href="https://docs.spojapanguild.net/setup/air-gap-guid/">
+      
+      
+        <link rel="prev" href="../..">
+      
+      
+        <link rel="next" href="../1-ubuntu-setup/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.9+insiders-4.53.16">
+    
+    
+      
+        <title>エアギャップマシン作成 - SPO JAPAN GUILD DOCS</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ade31302.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+JP:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Noto Sans JP";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-R9C48XMXE5"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-R9C48XMXE5",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-R9C48XMXE5",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>if("undefined"!=typeof __md_analytics){var consent=__md_get("__consent");consent&&consent.analytics&&__md_analytics()}</script>
+  
+
+    
+    
+  
+  
+    
+  
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="SPO JAPAN GUILD DOCS - エアギャップマシン作成" />
+  <meta property="og:description" content="SPO JAPAN GUILD監修のステークプール構築ガイド。私たちは日本におけるステークプール構築を促進しカルダノ分散化に貢献してまいります。" />
+  <meta property="og:url" content="https://docs.spojapanguild.net/setup/air-gap-guid/" />
+  <meta property="og:image" content="https://docs.spojapanguild.net/images/ogp-image.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SPO JAPAN GUILD DOCS - エアギャップマシン作成" />
+  <meta name="twitter:description" content="SPO JAPAN GUILD監修のステークプール構築ガイド。私たちは日本におけるステークプール構築を促進しカルダノ分散化に貢献してまいります。" />
+  <meta name="twitter:image" content="https://docs.spojapanguild.net/images/sjg-docs-card.png" />
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href="../.." title="SPO JAPAN GUILD DOCS" class="md-header__button md-logo" aria-label="SPO JAPAN GUILD DOCS" data-md-component="logo">
+      
+  <img src="../../images/logo-white.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SPO JAPAN GUILD DOCS
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              エアギャップマシン作成
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="cyan" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="共有" aria-label="共有" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/btbf/spojapanguild" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    btbf/spojapanguild
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="タブ" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../.." class="md-tabs__link">
+          
+  
+  HOME
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../1-ubuntu-setup/" class="md-tabs__link">
+          
+  
+  プール構築マニュアル
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../operation/start-guide/" class="md-tabs__link">
+          
+  
+  プール運用マニュアル
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../learning/" class="md-tabs__link">
+        
+  
+    
+  
+  SJGラーニング
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../faq/node/" class="md-tabs__link">
+          
+  
+  よくある質問
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="SPO JAPAN GUILD DOCS" class="md-nav__button md-logo" aria-label="SPO JAPAN GUILD DOCS" data-md-component="logo">
+      
+  <img src="../../images/logo-white.png" alt="logo">
+
+    </a>
+    SPO JAPAN GUILD DOCS
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/btbf/spojapanguild" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    btbf/spojapanguild
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    
+  
+    HOME
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    HOME
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    スタートガイド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    
+  
+    エアギャップマシン作成
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    エアギャップマシン作成
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Windowsの場合
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Windowsの場合">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        インストール要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-os-ubuntu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1- OS Ubuntuの入手
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-virtualbox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2- VirtualBoxのダウンロード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-virtualbox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3- VirtualBoxのインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-virtualbox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4- VirtualBoxの仮想マシンの作成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-virtualbox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5- VirtualBoxの仮想マシンの環境設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-ubuntu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6- Ubuntuのインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-guest-additions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7- Guest Additionsのインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-swap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8- Swapファイルの作成
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Macの場合
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Macの場合">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        インストール要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-ubuntu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1- Ubuntuイメージファイルのダウンロード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-virtualbox_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2- VirtualBoxのダウンロード/インストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-virtualbox_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3- VirtualBoxで仮想マシンを作成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4- 仮想マシンの仕様設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-ubuntu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5- 仮想マシンにUbuntuをインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-guest-additions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6- Guest Additionsのインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-swap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6- Swapファイルの作成
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="補足">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        本番運用で使用する際の注意点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#guiguest-additions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GUI操作でGuest Additionsがインストールできなかった場合
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1-ubuntu-setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    プール構築マニュアル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/start-guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    プール運用マニュアル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    SJGラーニング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/node/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    よくある質問
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelogs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    更新履歴
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    貢献者
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../99-donation-credit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    寄付とクレジット
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    
+  
+    プール構築マニュアル
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    プール構築マニュアル
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1-ubuntu-setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    プール構築マニュアル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2-node-setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    2.ノードインストール
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../3-relay-bp-setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    3.リレー/BPの接続
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../4-bp-setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    4.BP用キー作成
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../5-generate-address/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    5.アドレスの作成
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../6-register-stakeaddress/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    6.ステークアドレスの登録
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../7-register-stakepool/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    7.ステークプールの登録
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../8-final-adjustment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    8.最終調整
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../9-monitoring-tools-setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    9.監視ツール設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-blocklog-setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    10.ブロックログ設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-blocknotify-setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    11.SPO BlockNotify設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../99-donation-credit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    寄付とクレジット
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    
+  
+    プール運用マニュアル
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    プール運用マニュアル
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/start-guide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    プール運用マニュアル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    
+  
+    1.プールオペレーション
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    1.プールオペレーション
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/kes-update/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    1-1.KESの更新
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/cert-update/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    1-2.プール情報更新
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/withdrawal/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    1-3.資金引き出し
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/calidus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    1-4.Calidusキー発行
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/pool-retire/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    1-5.プール廃止処理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    
+  
+    2.ノード管理
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    2.ノード管理
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/node-update/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    2-1.ノードアップデート
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--new"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/mithril-client/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    2-2.DB同期(Mithril)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/add-relay/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    2-3.リレーノード増設
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/bpport/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    2-4.BPポート変更
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    
+  
+    3.サーバー管理
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    3.サーバー管理
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/ubuntu22/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    3-1.Ubuntu22.04移行
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4_2" id="__nav_3_4_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    
+  
+    3-2.サーバー引越し
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    3-2.サーバー引越し
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/relay-move/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    リレーサーバー
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--new"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/bp-move/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    BPサーバー
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--new"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    
+  
+    4.ツール設定
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    4.ツール設定
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/tool/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    4-1.SJGツール導入設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/sftp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    4-2.SFTPソフト設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5_3" id="__nav_3_5_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    
+  
+    4-3.Grafana追加設定
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    4-3.Grafana追加設定
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/grafana-security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Grafanaセキュリティ強化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/grafana-alert/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Grafanaアラート設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/grafana-repo/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Grafanaリポジトリ変更
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/blocknotify-reinstall/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    4-5.SPOBlockNotify移行手順
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--new"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    
+  
+    5.ガバナンス
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    5.ガバナンス
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/gov-spo-vote/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    ガバナンスアクションSPO投票
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/catalyst-voting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    カタリスト有権者登録
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/command/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    6.Linuxコマンド集
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    SJGラーニング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    
+  
+    よくある質問
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    よくある質問
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    
+  
+    運用編
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    運用編
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/node/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    よくある質問
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/blocklog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    ブロックログ関連
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/monitoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    ノード監視関連
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Windowsの場合
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Windowsの場合">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        インストール要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-os-ubuntu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1- OS Ubuntuの入手
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-virtualbox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2- VirtualBoxのダウンロード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-virtualbox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3- VirtualBoxのインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-virtualbox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4- VirtualBoxの仮想マシンの作成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-virtualbox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5- VirtualBoxの仮想マシンの環境設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-ubuntu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6- Ubuntuのインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-guest-additions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7- Guest Additionsのインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-swap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8- Swapファイルの作成
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Macの場合
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Macの場合">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        インストール要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-ubuntu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1- Ubuntuイメージファイルのダウンロード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-virtualbox_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2- VirtualBoxのダウンロード/インストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-virtualbox_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3- VirtualBoxで仮想マシンを作成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4- 仮想マシンの仕様設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-ubuntu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5- 仮想マシンにUbuntuをインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-guest-additions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6- Guest Additionsのインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-swap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6- Swapファイルの作成
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="補足">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        本番運用で使用する際の注意点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#guiguest-additions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GUI操作でGuest Additionsがインストールできなかった場合
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="_1"><strong>エアギャップマシンの作成</strong><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<div class="admonition summary">
+<p class="admonition-title">エアギャップマシンとは？</p>
+<p>プール運営で使用するウォレットの秘密鍵やプール運営の秘密鍵をオフライン上で管理し、エアギャップオフラインマシンでCLIを起動しトランザクションファイルに署名する作業に使用します。</p>
+<ul>
+<li>ウォレットの秘密鍵やプール運営の秘密鍵をプール運営のオンラインマシン上に保管すると、ハッキングなどの際に資金盗難のリスクがあります。</li>
+</ul>
+</div>
+<h2 id="windows">Windowsの場合<a class="headerlink" href="#windows" title="Permanent link">&para;</a></h2>
+<div class="admonition hint">
+<p class="admonition-title">貢献者</p>
+<p><a href="https://adapools.org/pool/ec736597797c68044b8fccd4e895929c0a842f2e9e0a9e221b0a3026">[SA8] SMAN8</a> さんに導入手順を作成頂きました。ありがとうございます！</p>
+</div>
+<h3 id="_2">インストール要件<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p><strong>環境</strong></p>
+<ul>
+<li>Windows11 Home</li>
+<li>実装RAM 8.00 GB</li>
+</ul>
+<p><strong>ダウンロード/インストール</strong></p>
+<ul>
+<li>Ubuntu Desktop 20.04.x LTS  </li>
+<li>VirtualBox-7.0.4  </li>
+</ul>
+<hr />
+<h3 id="1-os-ubuntu"><strong>1- OS Ubuntuの入手</strong><a class="headerlink" href="#1-os-ubuntu" title="Permanent link">&para;</a></h3>
+<p>1-1.下の画像の赤い四角のところをタップしてダウンロードします。</p>
+<ul>
+<li><a href="https://releases.ubuntu.com/20.04/">Ubuntu20.04.4 LTSの入手</a></li>
+</ul>
+<p><img alt="2-1" src="https://user-images.githubusercontent.com/80440848/184349563-06b3ad6d-5295-4225-bd7f-6cc880e3d174.png" /></p>
+<p>1-2.ダウンロードしたubuntu-20.04.4-desktop-amd64を作成したフォルダ(ここではTest_CNodeというフォルダ)に移動しておく。</p>
+<p><img alt="4-Ubuntu_download" src="https://user-images.githubusercontent.com/80440848/184369093-df29585b-bb75-44c4-a3e6-fb411046b7da.PNG" /></p>
+<h3 id="2-virtualbox"><strong>2- VirtualBoxのダウンロード</strong><a class="headerlink" href="#2-virtualbox" title="Permanent link">&para;</a></h3>
+<p>2-1. VirtualBoxのダウンロードサイトにアクセスし、<code>Windows hosts</code>をタップしダウンロードする。</p>
+<ul>
+<li><a href="https://www.virtualbox.org/wiki/Downloads">VirtualBoxの入手</a></li>
+</ul>
+<h3 id="3-virtualbox"><strong>3- VirtualBoxのインストール</strong><a class="headerlink" href="#3-virtualbox" title="Permanent link">&para;</a></h3>
+<p>3-1.ダウンロードしたvirtualbox6.1.36のインストーラをダブルクリックで起動する。</p>
+<table>
+<thead>
+<tr>
+<th>ファイル名</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VirtualBox-7.0.4-154605-Win.exe</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="1virtualbox" src="../../images/win/VirtualBoxubuntu-1.jpg" /></p>
+<p>3-2.ダウンロードが完了したら、左下の赤い四角のインストーラーをタップして起動する。</p>
+<p><img alt="2 virtualbox_setup" src="https://user-images.githubusercontent.com/80440848/184338728-9a1a783f-6ee5-4c8e-a5b2-9ccec5e1dbf0.PNG" /></p>
+<p>3-3.この画面になったら、<code>Next&gt;</code>をタップ。</p>
+<p><img alt="3 virtualbox_setup" src="../../images/win/VirtualBoxubuntu-3.jpg" /></p>
+<p>3-4.続けてそのまま<code>Next&gt;</code>をタップし、画像の順番に進み最後に<code>Install</code>をクリックする。</p>
+<p><img alt="7 virtualbox_setup" src="../../images/win/VirtualBoxubuntu-4.jpg" /></p>
+<p>3-5.Windowsセキュリティが作動し、デバイスのソフトウェアをインストールしますか？と聞かれたら<code>インストール(I)</code>をタップし、下の画像の赤い四角で囲まれた<code>Finish</code>をタップする。</p>
+<p><img alt="10 virtualbox_setup" src="../../images/win/VirtualBoxubuntu-5.jpg" /></p>
+<p>3-6.VirtualBoxの管理画面が立ち上がり、インストールが完了しました。</p>
+<p><img alt="15" src="../../images/win/VirtualBoxubuntu-6.jpg" /></p>
+<h3 id="4-virtualbox"><strong>4- VirtualBoxの仮想マシンの作成</strong><a class="headerlink" href="#4-virtualbox" title="Permanent link">&para;</a></h3>
+<p>4-1.マシンを作成する為に下の画像の赤い四角の<code>新規(N)</code>をクリックする。</p>
+<p><img alt="16" src="../../images/win/VirtualBoxubuntu-7.jpg" /></p>
+<p>4-2.マシン設定<br />
+名前・・・任意の仮想マシン名<br />
+ISO Imagae・・・1でダウンロードしたUbuntu-ISOファイルを指定する<br />
+「Skip Unattended Installation」にチェックして「次へ」をクリック。</p>
+<p><img alt="VirtualMashine-1" src="../../images/win/VirtualBoxubuntu-8.jpg" /></p>
+<p>4-3.メインメモリを<code>4096MB</code>、Processorosを<code>2</code>に設定し「次へ」をクリック</p>
+<p><img alt="VirtualMashine-2" src="../../images/win/VirtualBoxubuntu-9.jpg" /></p>
+<p>4-4.DiskSizeを<code>50.00GB</code>に設定し「次へ」をクリック</p>
+<p><img alt="VirtualMashine-3" src="../../images/win/VirtualBoxubuntu-10.jpg" /></p>
+<p>4-5.バーチャルマシン作成概要の確認。「完了」をクリック</p>
+<p><img alt="VirtualMashine-4" src="../../images/win/VirtualBoxubuntu-11.jpg" /></p>
+<h3 id="5-virtualbox"><strong>5- VirtualBoxの仮想マシンの環境設定</strong><a class="headerlink" href="#5-virtualbox" title="Permanent link">&para;</a></h3>
+<p>5-1.使用する仮想マシン(ここではAirGap)を選択し、「設定」アイコンをクリックする</p>
+<p><img alt="Setting_Mashine-1" src="../../images/win/VirtualBoxubuntu-12.jpg" /></p>
+<p><strong>一般</strong>
+5-2.「一般」→「高度」タブからクリップボードの共有とドラッグ&amp;ドロップを「双方向」に変更してOKをクリック</p>
+<p><img alt="Setting_Mashine-2" src="../../images/win/VirtualBoxubuntu-13.jpg" /></p>
+<p><strong>システム</strong>
+5-3.「システム」→「マザーボード」タブの「フロッピー」のチェックを<code>外す</code>。チップセットを<code>ICH9</code>に変更してOKをクリック</p>
+<p><img alt="Setting_Mashine-3" src="../../images/win/VirtualBoxubuntu-14.jpg" /></p>
+<p><strong>共有フォルダ設定</strong></p>
+<p>5-4.WindowsとUbuntu間の共有フォルダ(Share)を作成する(ドキュメントフォルダなどの任意の場所)</p>
+<p><img alt="Setting_Mashine-4" src="../../images/win/VirtualBoxubuntu-15.jpg" /></p>
+<p>5-5.共有フォルダーから新規追加アイコンをクリック  </p>
+<ul>
+<li>「フォルダーのパス」に5-4で作成したフォルダを指定する  </li>
+<li>マウントポイントに<code>/media/share_win</code>を入力する  </li>
+<li>「自動マウント」にチェックする</li>
+</ul>
+<p><img alt="Setting_Mashine-4" src="../../images/win/VirtualBoxubuntu-16.jpg" /></p>
+<h3 id="6-ubuntu"><strong>6- Ubuntuのインストール</strong><a class="headerlink" href="#6-ubuntu" title="Permanent link">&para;</a></h3>
+<p>6-1.<code>起動</code>をクリック。</p>
+<p><img alt="install_ubuntu-1" src="../../images/win/VirtualBoxubuntu-17.jpg" /></p>
+<p>6-2.下の画像のようにディスクが起動し始めます。</p>
+<p><img alt="install_ubuntu-3" src="https://user-images.githubusercontent.com/80440848/184519354-4a60ea8e-267c-4cda-952b-5fce4de835aa.png" /></p>
+<p>6-3.左の枠の中から<code>日本語</code>を選択し<code>Ubuntuをインストール</code>をクリックします。</p>
+<p><img alt="install_ubuntu-4" src="../../images/win/VirtualBoxubuntu-18.jpg" /></p>
+<p>6-5.日本語キーボードの方は、両方とも「Japanese」を選択し、設定が完了したら「続ける」をクリックします。</p>
+<blockquote>
+<p>USキーボードの方は「キーボードレイアウト」→「キーボードレイアウトの検出」をクリックして設定してください。
+※ 画面が見切れている場合の対処法：Alt＋F7を押すとマウスでウィンドウを移動できます)</p>
+</blockquote>
+<p><img alt="install_ubuntu-5" src="https://user-images.githubusercontent.com/80440848/184519500-d4cd960c-2773-4ffc-9845-9f32c7806190.png" /></p>
+<p>6-6.下の画像の状態のまま、<code>続ける</code>をクリック</p>
+<p><img alt="install_ubuntu-6" src="https://user-images.githubusercontent.com/80440848/184528936-4809b68b-75e9-413d-9ce8-f84efb28a45e.png" /></p>
+<p>6-7.下の画像の状態のまま、<code>インストール</code>をクリック。</p>
+<p><img alt="install_ubuntu-7" src="https://user-images.githubusercontent.com/80440848/184528995-44737e97-0bcd-4c64-9571-d3a20782a4b6.png" /></p>
+<p>6-8.<code>続ける</code>をクリック。</p>
+<p><img alt="install_ubuntu-8" src="https://user-images.githubusercontent.com/80440848/184529041-e35ff5d2-d244-45fd-965d-ae73e7c3f156.png" /></p>
+<p>6-9.お住まいの地域をクリックし、<code>続ける</code>をクリック。</p>
+<p><img alt="install_ubuntu-9" src="https://user-images.githubusercontent.com/80440848/184529073-b356baeb-6a27-4602-bca4-3afaf92a3631.png" /></p>
+<p>6-10.<code>あなたの名前</code>はマシン名を入れると、その下の<code>コンピューターの名前</code>、<code>ユーザー名の入力</code>にも自動で入力されます。そして、パスワードをご自身で決めて入力を済ませて下さい。終わりましたら、<code>続ける</code>をタップ。</p>
+<p><img alt="install_ubuntu-10" src="../../images/win/VirtualBoxubuntu-19.jpg" /></p>
+<p>6-11.Ubuntuのインストールが始まりました。しばらくお待ちください。</p>
+<p><img alt="install_ubuntu-11" src="https://user-images.githubusercontent.com/80440848/184529318-1eb3cfd5-ab0d-4fbf-bedd-9749a714baa0.png" /></p>
+<p>6-12.インストール完了後、再起動を行って下さい</p>
+<p><img alt="install_ubuntu-12" src="../../images/win/VirtualBoxubuntu-20.jpg" /></p>
+<p>6-13.ログインします</p>
+<p><img alt="install_ubuntu-13" src="../../images/win/VirtualBoxubuntu-21.jpg" /></p>
+<p>6-14.オンラインアカウントの接続は、右上の<code>スキップ(S)</code>をクリック。</p>
+<p><img alt="install_ubuntu-14" src="../../images/win/VirtualBoxubuntu-22.jpg" /></p>
+<p>6-15.<code>次へ</code>をタップします。</p>
+<p><img alt="install_ubuntu-15" src="../../images/win/VirtualBoxubuntu-23.jpg" /></p>
+<p>6-16.そのまま、<code>次へ（N)</code>をタップ。</p>
+<p><img alt="install_ubuntu-16" src="https://user-images.githubusercontent.com/80440848/184529565-da681e94-671b-4f50-9e54-2ab38b18ff75.png" /></p>
+<p>6-17.<code>いいえ、送信しません</code>を選択し、右上の<code>次へ(N)</code>をタップします。</p>
+<p><img alt="install_ubuntu-17" src="https://user-images.githubusercontent.com/80440848/184529605-d90d782a-f16f-4844-b41e-d9801ab9b61f.png" /></p>
+<p>6-18.インストールが終わりました。<code>完了</code>をクリック。</p>
+<p><img alt="install_ubuntu-18" src="../../images/win/VirtualBoxubuntu-24.jpg" /></p>
+<p>6-19.新バージョンは「アップグレードしない」をクリックします</p>
+<p><img alt="install_ubuntu20" src="../../images/win/VirtualBoxubuntu-25.jpg" /></p>
+<p>6-20.<code>OK</code>をクリック。</p>
+<p><img alt="install_ubuntu21" src="../../images/win/VirtualBoxubuntu-26.jpg" /></p>
+<p>6-21.<code>この操作を今すぐ実行</code>をクリック。</p>
+<p><img alt="install_ubuntu21" src="../../images/win/VirtualBoxubuntu-27.jpg" /></p>
+<p>6-22.<code>インストール</code>をクリック。</p>
+<p><img alt="install_ubuntu21" src="../../images/win/VirtualBoxubuntu-28.jpg" /></p>
+<p>6-23.<code>インストール</code>をクリック。</p>
+<p><img alt="install_ubuntu21" src="../../images/win/VirtualBoxubuntu-29.jpg" /></p>
+<p>6-23.インストール完了後<code>全体に適用する</code>をクリックし閉じる</p>
+<p><img alt="install_ubuntu21" src="../../images/win/VirtualBoxubuntu-30.jpg" /></p>
+<h3 id="7-guest-additions"><strong>7- Guest Additionsのインストール</strong><a class="headerlink" href="#7-guest-additions" title="Permanent link">&para;</a></h3>
+<p>アプリ一覧からターミナル(端末)を起動し以下コマンドを手動入力する。
+<div class="highlight"><pre><span></span><code>sudo apt update -y
+sudo apt upgrade -y
+sudo apt install gcc make perl -y
+</code></pre></div></p>
+<blockquote>
+<p>まだコピーアンドペーストが利用できないため、タイプミスに留意してください。</p>
+</blockquote>
+<p>7-1.ホストメイン画面上部の「Devices」タブから「Insert Guest Additions CD image...」⇒<code>OK</code>をクリックします。</p>
+<p><img alt="共有フォルダ_5" src="https://user-images.githubusercontent.com/80440848/184529831-1af5010c-3969-47c6-8dd4-5efa5e23d87c.PNG" /></p>
+<p>7-2.以下のメッセージが表示されたら<code>実行</code>をクリックした後、パスワードを入力します。</p>
+<p><img alt="共有フォルダ_6" src="../../images/win/VirtualBoxubuntu-31.jpg" /></p>
+<p>7-3処理完了のメッセージが表示されましたら<code>Enter</code>キーをタップします。</p>
+<p><img alt="共有フォルダ_7" src="https://user-images.githubusercontent.com/80440848/184530144-5c95c10c-4197-4316-96e5-1b6cd8f78e4b.PNG" /></p>
+<p>7-4.ターミナル(端末)を起動しユーザーをグループ化するコマンドを実行。</p>
+<p><div class="highlight"><pre><span></span><code>sudo adduser $USER vboxsf
+</code></pre></div>
+<img alt="共有フォルダ_6" src="../../images/win/VirtualBoxubuntu-32.jpg" /></p>
+<p>7-5.フォルダに<code>shere_win</code>が表示されていれば、5の「共有フォルダ」で設定したローカルPCのフォルダと同期します。</p>
+<p><img alt="共有フォルダ_6" src="../../images/win/VirtualBoxubuntu-33.jpg" /></p>
+<p>7-6.コピー＆ペーストできるかホストPCでコマンドを<code>コピー</code>してゲストOSの端末で右クリックして<code>貼り付け</code>してみる。問題なければ、これで終了です。お疲れ様でした！</p>
+<p><img alt="コピ＆ペイスト-7" src="https://user-images.githubusercontent.com/80440848/184537933-f3f645ed-1afe-48aa-9a0e-0cafb257a333.png" /></p>
+<p>7-7.「表示」→「Auto-resize　Guest　Display」にチェックが入っている事を確認します。</p>
+<p><img alt="共有フォルダ_6" src="../../images/win/VirtualBoxubuntu-34.jpg" /></p>
+<hr />
+<p>上記手順を行なっても、「共有フォルダが表示されない」「共有フォルダ化されていない」場合は、一度VBox_GAs_6.1.36をアンマウントしてから再度挿入し、再起動すると共有フォルダは完了します。それでもダメなら<a href="#guiguest-additions">GUI操作でGuest Additionsがインストールできなかった場合</a>を試してください。</p>
+<h3 id="8-swap">8- Swapファイルの作成<a class="headerlink" href="#8-swap" title="Permanent link">&para;</a></h3>
+<p>8-1. 既存Swapファイルを削除<br />
+<div class="highlight"><pre><span></span><code><span class="go">sudo swapoff /swapfile</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">sudo rm /swapfile</span>
+</code></pre></div></p>
+<hr />
+<p>8-2. 新規Swapファイルを作成<br />
+<div class="highlight"><pre><span></span><code><span class="go">cd $HOME</span>
+<span class="go">sudo fallocate -l 6G /swapfile</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">sudo chmod 600 /swapfile</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">sudo mkswap /swapfile</span>
+<span class="go">sudo swapon /swapfile</span>
+<span class="go">sudo swapon --show</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">sudo cp /etc/fstab /etc/fstab.bak</span>
+<span class="go">echo &#39;/swapfile none swap sw 0 0&#39; | sudo tee -a /etc/fstab</span>
+<span class="go">echo &#39;vm.swappiness=10&#39; | sudo tee -a /etc/sysctl.conf</span>
+<span class="go">echo &#39;vm.vfs_cache_pressure=50&#39; | sudo tee -a /etc/sysctl.conf</span>
+<span class="go">cat /proc/sys/vm/vfs_cache_pressure</span>
+<span class="go">cat /proc/sys/vm/swappiness</span>
+</code></pre></div></p>
+<h2 id="mac">Macの場合<a class="headerlink" href="#mac" title="Permanent link">&para;</a></h2>
+<div class="admonition hint">
+<p class="admonition-title">貢献者</p>
+<p><a href="https://jp.cexplorer.io/pool/pool1jsxk3ymqv2gdc6mhqk52544g2aun4zhq5wgx6n32l5s3jlne70n">[AKYO] AKYO</a> Akyoさんに導入手順を作成頂きました。ありがとうございます！</p>
+</div>
+<h3 id="_3">インストール要件<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p><strong>環境</strong>
+- macOS Ventura version13.0</p>
+<p><strong>ダウンロード/インストール</strong>
+- VirtualBox バージョン 7.0.4
+- Ubuntu Desktop 20.04.5 LTS (Focal Fossa)</p>
+<hr />
+<h3 id="1-ubuntu">1- Ubuntuイメージファイルのダウンロード<a class="headerlink" href="#1-ubuntu" title="Permanent link">&para;</a></h3>
+<p>1-1. 以下のリンク先からISOイメージファイルをダウンロードします。</p>
+<ul>
+<li><a href="https://releases.ubuntu.com/20.04/">Ubuntuを入手する</a>
+※ ダウンロード完了まで少しかかるのでしばらくお待ちください</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ファイル名</th>
+<th style="text-align: left;">ubuntu-20.04.5-desktop-amd64.iso</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><img alt="UbuntuInstall-1" src="https://user-images.githubusercontent.com/80967103/203985883-cd707677-fdf5-44a5-9571-1f32197d7292.png" /></p>
+<hr />
+<h3 id="2-virtualbox_1">2- VirtualBoxのダウンロード/インストール<a class="headerlink" href="#2-virtualbox_1" title="Permanent link">&para;</a></h3>
+<p>2-1. 以下のリンク先からVirtualBoxをインストールします。</p>
+<ul>
+<li><a href="https://www.virtualbox.org/wiki/Downloads">VirtualBoxを入手する</a></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ファイル名</th>
+<th style="text-align: left;">VirtualBox-7.0.4-154605-OSX.dmg</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><img alt="VirtualBoxInstall-1" src="https://user-images.githubusercontent.com/80967103/199987719-48886644-846b-4748-95a7-65d6d12cf08c.png" /></p>
+<hr />
+<p>2-2. ダウンロードしたファイルをクリックし、インストールウィザードに従ってインストールします。
+完了したら「閉じる」をクリックして終了します。</p>
+<blockquote>
+<p>macOS BigSur 以降では、インストールしたカーネル拡張をロードできるようにするために再起動が必要です。</p>
+</blockquote>
+<p><img alt="VirtualBoxInstall-2" src="https://user-images.githubusercontent.com/80967103/200001693-d02d64e2-a17c-4a35-ab42-3239b6e85ade.png" /></p>
+<hr />
+<h3 id="3-virtualbox_1">3- VirtualBoxで仮想マシンを作成<a class="headerlink" href="#3-virtualbox_1" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>VirtualBoxのアイコンをクリックし、起動します。</p>
+</blockquote>
+<p>3-1. VirtualBoxが起動したら「新規」をクリックします。</p>
+<p><img alt="UbuntuVMCreate-1" src="https://user-images.githubusercontent.com/80967103/199995540-8812988e-ae05-4f52-b40c-b1ac255cd6ef.png" /></p>
+<hr />
+<p>3-2. 以下の項目を設定し、「続き」をクリックします。</p>
+<blockquote>
+<p>※ 名前はお好みで入力してください。
+ISO Imageは、「その他」を選択し、ダウンロードしたUbuntu-20.04.5のISOイメージファイルを選択します。<br />
+タイプ、バージョンについては上記を選択すればデフォルトで設定されます。  <br />
+<code>Skip Unattended Installation</code>にチェック</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">名前</th>
+<th style="text-align: left;">airGap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Folder</td>
+<td style="text-align: left;">デフォルトでOK</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="UbuntuVMCreate-2" src="https://user-images.githubusercontent.com/80967103/200000228-a7333064-a9a7-43dd-bc24-91292d2af32a.png" /></p>
+<hr />
+<p>3-3. 仮想マシンに割当てるメモリサイズは「<code>4096</code>MB」、Processorsは「<code>2</code>」を選択し「次へ」をクリックします。</p>
+<p><img alt="UbuntuVMCreate-3" src="https://user-images.githubusercontent.com/80967103/200007711-1919c2b1-ca3a-4710-8f95-09506a444881.png" /></p>
+<hr />
+<p>3-4. Virtual Hard diskは「<code>50</code>GB」を入力し、「次へ」をクリックします。</p>
+<p><img alt="UbuntuVMCreate-7" src="https://user-images.githubusercontent.com/80967103/200004570-a7831dd0-971a-4a85-b442-386e9510321f.png" /></p>
+<p>3-5. 概要を確認して「完了」をクリックします。</p>
+<p><img alt="UbuntuVMCreate-7" src="https://user-images.githubusercontent.com/80967103/200163806-ebee3d0f-5caa-4b54-b07c-6569e9b8059f.png" /></p>
+<hr />
+<h3 id="4-">4- 仮想マシンの仕様設定<a class="headerlink" href="#4-" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>「完了」をクリックしたら「Oracle VM VirtualBox マネージャー」画面に遷移するので設定毎に「設定」をクリックしてください。</p>
+</blockquote>
+<p><strong>一般</strong></p>
+<p>4-1. 「設定」→「一般」→「高度」タブから、以下の設定を「双方向」にし、「OK」をクリックします。</p>
+<p><img alt="UbuntuSpecSettings-2" src="https://user-images.githubusercontent.com/80967103/200102482-958c0ece-9c96-40e7-854c-84eeb172fe39.png" /></p>
+<hr />
+<p><strong>システム</strong></p>
+<p>4-2. 「マザーボード」タブを以下の設定にし、「OK」をクリックします。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">マザーボード</th>
+<th style="text-align: left;"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">起動順序</td>
+<td style="text-align: left;">「フロッピー」のチェックマークを外す</td>
+</tr>
+<tr>
+<td style="text-align: left;">チップセット</td>
+<td style="text-align: left;">ICH9</td>
+</tr>
+<tr>
+<td style="text-align: left;">ポインティングデバイス</td>
+<td style="text-align: left;">PS/2マウス</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="UbuntuSpecSettings-3" src="https://user-images.githubusercontent.com/80967103/200104121-58558676-f637-494d-897c-f5c6f7e2f905.png" /></p>
+<hr />
+<p><strong>ディスプレイ</strong></p>
+<p>4-3. 「スクリーン」タブから以下の設定にし、「OK」をクリックします。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ビデオメモリー</th>
+<th style="text-align: left;">128MB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">表示倍率</td>
+<td style="text-align: left;">200%</td>
+</tr>
+<tr>
+<td style="text-align: left;">グラフィックスコントローラー</td>
+<td style="text-align: left;">VMSVGA</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="UbuntuSpecSettings-4" src="https://user-images.githubusercontent.com/80967103/200104321-b1805130-d1b9-4e7e-9883-ef9ca583b41c.png" /></p>
+<hr />
+<p><strong>共有フォルダー</strong></p>
+<p>4-4. ホスト側で共有させたいフォルダを事前に作成しておきます。
+- 例）「airGap」フォルダを作成後、配下に「share」フォルダを作成。</p>
+<p><code>Mac Terminal</code>
+<div class="highlight"><pre><span></span><code><span class="go">mkdir -p $HOME/airGap/share</span>
+</code></pre></div></p>
+<hr />
+<p>4-5. 共有フォルダを指定します。</p>
+<p><img alt="UbuntuSpecSettings-6" src="https://user-images.githubusercontent.com/80967103/200105091-1ab57c12-26b9-4f1e-92fd-e989ae76a3e1.png" /></p>
+<hr />
+<h3 id="5-ubuntu">5- 仮想マシンにUbuntuをインストール<a class="headerlink" href="#5-ubuntu" title="Permanent link">&para;</a></h3>
+<p>5-1. 仮想マシンを起動します。</p>
+<p><img alt="BootVirtualMachine-1" src="https://user-images.githubusercontent.com/80967103/200105774-017a584c-24ca-471b-8ce3-2c6bce299301.png" /></p>
+<blockquote>
+<p>PCから権限許可を求められたら「セキュリティとプライバシー」にて必要な権限を許可し、VirtualBoxを再起動します。</p>
+</blockquote>
+<hr />
+<p>5-2. 読み込み終了後、言語は「日本語」にし、「Install Ubuntu」をクリックします。</p>
+<p><img alt="BootVirtualMachine-2" src="https://user-images.githubusercontent.com/80967103/200107225-fab3855e-ffe1-4291-9337-2d2dd908ba18.png" /></p>
+<hr />
+<p>5-3. キーボード設定では、日本語キーボードの方は、両方とも「Japanese」を選択し、設定が完了したら「続ける」をクリックします。  </p>
+<blockquote>
+<p>USキーボードの方は「キーボードレイアウト」→「キーボードレイアウトの検出」をクリックして設定してください。<br />
+※ 画面が見切れていた場合の対処法：Alt＋F7で移動できます)</p>
+</blockquote>
+<hr />
+<p>5-4. 「アップデートと他のソフトウェア」の設定では、以下のように設定し、「続ける」をクリックします。</p>
+<p><img alt="BootVirtualMachine-3" src="https://user-images.githubusercontent.com/80967103/203983361-de583135-1f98-4578-819e-98ceef0ba661.png" /></p>
+<hr />
+<p>5-5. 「インストールの種類」の設定では「ディスクを削除してUbuntuをインストール」を選択し、「インストール」をクリックします。</p>
+<p><img alt="BootVirtualMachine-4" src="https://user-images.githubusercontent.com/80967103/159128589-0b0373ac-a342-45d6-b22c-0f14122a5f3d.png" /></p>
+<hr />
+<p>5-6. 「ディスクに変更を書き込みますか?」の設定では「続ける」をクリックします。</p>
+<p><img alt="BootVirtualMachine-5" src="https://user-images.githubusercontent.com/80967103/159128650-7cbc6a86-5fce-465b-b980-95d3f17f7e3e.png" /></p>
+<hr />
+<p>5-7. タイムゾーンの設定は、「Tokyo」を選択し、「続ける」をクリックします。</p>
+<p><img alt="BootVirtualMachine-6" src="https://user-images.githubusercontent.com/80967103/159128953-10f8e1d9-cd04-401e-905c-3b27cbdf89e6.png" /></p>
+<hr />
+<p>5-8. 必要な情報を入力し、「続ける」をクリックします。</p>
+<blockquote>
+<p>※ 画像は一例ですのでお好みで設定してください。</p>
+</blockquote>
+<p><img alt="BootVirtualMachine-7" src="https://user-images.githubusercontent.com/80967103/200107672-1be7368a-aa1f-4590-9a36-cf3ad914aa04.png" /></p>
+<hr />
+<p>5-9. インストール開始。</p>
+<p><img alt="BootVirtualMachine-8" src="https://user-images.githubusercontent.com/80967103/159129325-84554dfb-4062-4c90-ab26-baa3422c2fd5.png" /></p>
+<hr />
+<p>5-10. インストール完了後、VMの再起動を求められるので「今すぐ再起動する」をクリックし、Enterキーを押下します。</p>
+<p><img alt="BootVirtualMachine-9" src="https://user-images.githubusercontent.com/80967103/200108019-76aad33a-f170-4538-94fc-e7aabafeb8d8.png" /></p>
+<hr />
+<p>5-11. 再起動後、ユーザー名をクリックし、パスワードを入力してログインします。</p>
+<hr />
+<p>5-12. 「オンラインアカウントへの接続」の設定では右上の「スキップ」をクリックします。</p>
+<p><img alt="BootVirtualMachine-10" src="https://user-images.githubusercontent.com/80967103/200108172-78dbeb3e-3c06-4c51-84e6-e9ea906f80e1.png" /></p>
+<hr />
+<p>5-13. 「Livepatch」の設定では右上の「次へ」をクリックします。</p>
+<p><img alt="BootVirtualMachine-11" src="https://user-images.githubusercontent.com/80967103/200108232-edb1f8e4-ae79-4c8b-8245-df9349df33ca.png" /></p>
+<hr />
+<p>5-14. 「Ubuntuの改善を支援する」の設定では、「いいえ、送信しません」を選択後、右上の「次へ」をクリックします。</p>
+<p><img alt="BootVirtualMachine-12" src="https://user-images.githubusercontent.com/80967103/200108403-e4ce931d-4fac-43da-aca3-5bbadc4947b3.png" /></p>
+<hr />
+<p>5-15. 「プライバシー」の設定では右上の「次へ」をクリックします。</p>
+<p><img alt="BootVirtualMachine-13" src="https://user-images.githubusercontent.com/80967103/200108468-8109b5b6-1b2e-407e-936d-19703d0f7525.png" /></p>
+<hr />
+<p>5-16. 「準備完了」と表示されたら右上の「完了」をクリックします。</p>
+<p><img alt="BootVirtualMachine-14" src="https://user-images.githubusercontent.com/80967103/200108519-0226b6db-95b1-48c0-9bed-b9f746c3c310.png" /></p>
+<hr />
+<p>5-17. 「ソフトウェアの更新」を求められたら「アップグレードしない」をクリックし、その後「OK」をクリックします。</p>
+<p><img alt="BootVirtualMachine-14" src="https://user-images.githubusercontent.com/80967103/203997822-2d823615-395b-49e4-be07-aa36fa2153a3.png" /></p>
+<hr />
+<p>5-18. 「アップデート情報→不完全な言語サポート」が表示されたら「この操作を今すぐ実行する」→「インストール」をクリック後、認証を求められるのでパスワードを入力し、「システム全体に適用」をクリックします。</p>
+<p><img alt="BootVirtualMachine-14" src="https://user-images.githubusercontent.com/80967103/204000214-49e1af9b-780f-4cea-a90d-6dfc33c00f75.png" /></p>
+<hr />
+<h3 id="6-guest-additions">6- Guest Additionsのインストール<a class="headerlink" href="#6-guest-additions" title="Permanent link">&para;</a></h3>
+<p>6-1. ターミナルを開いて以下を実行します。</p>
+<blockquote>
+<p>Guest Additionsがインストールされていない状態なのでホストからゲストにコピーアンドペーストできません。タイプミスに留意してください。<br />
+また以下の手順を行なっても、共有フォルダがGUIで表示されない、共有フォルダ化されていない場合は、一度VBox_GAs_6.1.36をアンマウントしてから再度挿入し、再起動すると共有フォルダは完了します。<br />
+それでもダメなら<a href="#guiguest-additions"><code>GUI操作でGuest Additionsがインストールできなかった場合</code></a>を試してください。
+<div class="highlight"><pre><span></span><code><span class="go">sudo apt update -y</span>
+<span class="go">sudo apt upgrade -y</span>
+<span class="go">sudo apt install gcc make perl -y</span>
+</code></pre></div></p>
+</blockquote>
+<hr />
+<p>6-2. ホストメイン画面上部の「Devices」タブから「Insert Guest Additions CD image...」→「OK」をクリックします。</p>
+<hr />
+<p>6-3. 以下のメッセージが表示されたら「実行」をクリックした後、パスワードを入力します。</p>
+<p><img alt="BootVirtualMachine-15" src="https://user-images.githubusercontent.com/80967103/200109416-73ade24b-33bf-4a74-aa6a-2f032254f8cd.png" /></p>
+<hr />
+<p>6-4. 処理完了のメッセージが表示されたらEnterキーを押下します。</p>
+<blockquote>
+<p>画面が点滅した場合は、リサイズが行われているのでそのまま少し待っていると点滅しなくなるはずです。</p>
+</blockquote>
+<p><img alt="BootVirtualMachine-16" src="https://user-images.githubusercontent.com/80967103/159153823-eb6c79b5-a6d7-46e7-9ae9-a392ed33de8e.png" /></p>
+<hr />
+<p>6-5. ユーザーを<code>vboxsf</code>グループに追加して再起動します。
+<div class="highlight"><pre><span></span><code><span class="go">sudo adduser $USER vboxsf</span>
+<span class="go">sudo reboot</span>
+</code></pre></div></p>
+<hr />
+<p>6-6. 「View」→「Auto-resize　Guest　Display」にチェックが入っている事を確認します。  </p>
+<blockquote>
+<p>確認後、右クリック→「取り出す」をクリックします。</p>
+</blockquote>
+<p><img alt="BootVirtualMachine-18" src="https://user-images.githubusercontent.com/80967103/200109672-4e4d6dde-23d9-408d-96ff-a9ab28c2039f.png" /></p>
+<hr />
+<p>6-7. テストファイル作成<br />
+ターミナルを開いて以下を実行します。</p>
+<blockquote>
+<p>共有フォルダにテストファイルを作成してホスト側で確認できたら成功です。</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="go">touch /media/sf_share/test.txt</span>
+<span class="go">ls /media/sf_share/</span>
+</code></pre></div>
+<p>実行結果としてVMとホストに<code>test.txt</code>が作成されていることを確認します。
+<img alt="BootVirtualMachine-18" src="https://user-images.githubusercontent.com/80967103/200110310-c3f060e1-0184-4aa5-8bfd-7d7fea5eef3f.png" /></p>
+<hr />
+<h3 id="6-swap">6- Swapファイルの作成<a class="headerlink" href="#6-swap" title="Permanent link">&para;</a></h3>
+<p>6-1. 既存Swapファイルを削除<br />
+<div class="highlight"><pre><span></span><code><span class="go">sudo swapoff /swapfile</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">sudo rm /swapfile</span>
+</code></pre></div></p>
+<hr />
+<p>6-2. 新規Swapファイルを作成<br />
+<div class="highlight"><pre><span></span><code><span class="go">cd $HOME</span>
+<span class="go">sudo fallocate -l 6G /swapfile</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">sudo chmod 600 /swapfile</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">sudo mkswap /swapfile</span>
+<span class="go">sudo swapon /swapfile</span>
+<span class="go">sudo swapon --show</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="go">sudo cp /etc/fstab /etc/fstab.bak</span>
+<span class="go">echo &#39;/swapfile none swap sw 0 0&#39; | sudo tee -a /etc/fstab</span>
+<span class="go">echo &#39;vm.swappiness=10&#39; | sudo tee -a /etc/sysctl.conf</span>
+<span class="go">echo &#39;vm.vfs_cache_pressure=50&#39; | sudo tee -a /etc/sysctl.conf</span>
+<span class="go">cat /proc/sys/vm/vfs_cache_pressure</span>
+<span class="go">cat /proc/sys/vm/swappiness</span>
+</code></pre></div></p>
+<hr />
+<h2 id="_4">補足<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="_5">本番運用で使用する際の注意点<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>本番運用で使用される場合は必ず「ネットワークアダプターを有効化」のチェックを外してください。<br />
+<a href="https://docs.spojapanguild.net/setup/2-node-setup/#2-8">2-8. エアギャップオフラインマシンの作成</a>を終えた後に行ってください。</li>
+</ul>
+<p><img alt="BootVirtualMachine-21" src="https://user-images.githubusercontent.com/80967103/200110479-30bdd7ea-88b4-41f2-8642-b6653e45762a.png" /></p>
+<h3 id="guiguest-additions">GUI操作でGuest Additionsがインストールできなかった場合<a class="headerlink" href="#guiguest-additions" title="Permanent link">&para;</a></h3>
+<p>Virtualbox guest addition packagesをインストールします。</p>
+<blockquote>
+<p>ターミナルを開いて以下のコマンドを実行してください。<br />
+Guest Additionsがインストールされていない状態なのでホストからゲストにコピーアンドペーストできません。タイプミスに留意してください。<br />
+成功していれば再起動後、コピーアンドペーストできます。
+<div class="highlight"><pre><span></span><code><span class="go">sudo apt update -y</span>
+<span class="go">sudo apt upgrade -y</span>
+<span class="go">sudo add-apt-repository multiverse</span>
+<span class="go">sudo apt install virtualbox-guest-dkms virtualbox-guest-x11 -y</span>
+</code></pre></div></p>
+</blockquote>
+<p>ユーザーを<code>vboxsf</code>グループに追加して再起動します。
+<div class="highlight"><pre><span></span><code><span class="go">sudo adduser $USER vboxsf</span>
+<span class="go">sudo reboot</span>
+</code></pre></div></p>
+<p>共有フォルダが追加されているか確認
+<div class="highlight"><pre><span></span><code><span class="go">df</span>
+</code></pre></div></p>
+<blockquote>
+<p><code>share</code>          488245288 203122832 285122456  42% <code>/media/sf_share</code></p>
+</blockquote>
+<p>共有フォルダのグループを確認
+<div class="highlight"><pre><span></span><code><span class="go">ls -l /media</span>
+</code></pre></div></p>
+<blockquote>
+<p>drwxrwx--- 1 root <code>vboxsf</code> 96  x月 xx xx:xx sf_share</p>
+</blockquote>
+<p>テストファイル作成  </p>
+<blockquote>
+<p>共有フォルダにテストファイルを作成してホスト側で確認できたら成功です。</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="go">touch /media/sf_share/test.txt</span>
+<span class="go">ls /media/sf_share/</span>
+</code></pre></div>
+<p>実行結果としてVMとホストに<code>test.txt</code>が作成されていることを確認します。
+<img alt="BootVirtualMachine-18" src="https://user-images.githubusercontent.com/80967103/200110310-c3f060e1-0184-4aa5-8bfd-7d7fea5eef3f.png" /></p>
+
+
+
+
+
+
+
+  
+    
+  
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="最終更新日">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2025年3月27日 14:04:55">2025年3月27日 14:04:55</span>
+  </span>
+
+    
+    
+    
+    
+  </aside>
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  ページトップへ戻る
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="フッター" >
+        
+          
+          <a href="../.." class="md-footer__link md-footer__link--prev" aria-label="前: スタートガイド">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                前
+              </span>
+              <div class="md-ellipsis">
+                スタートガイド
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../1-ubuntu-setup/" class="md-footer__link md-footer__link--next" aria-label="次: プール構築マニュアル">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                次
+              </span>
+              <div class="md-ellipsis">
+                プール構築マニュアル
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2020 - 2022 CARDANO COMMUNITY SPO JAPAN GUILD
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+      <div class="md-consent" data-md-component="consent" id="__consent" hidden>
+        <div class="md-consent__overlay"></div>
+        <aside class="md-consent__inner">
+          <form class="md-consent__form md-grid md-typeset" name="consent">
+            
+
+  
+
+
+  
+
+
+
+  
+
+
+<h4>Cookieの使用許諾</h4>
+<p>当サイトは、ドキュメントの効果測定や利用者確認のため、クッキーを使用しGoogle アナリティクスによるトラフィックの分析を行っています。 ご同意いただける場合は「Accept」をクリックしてください。</p>
+<input class="md-toggle" type="checkbox" id="__settings" >
+<div class="md-consent__settings">
+  <ul class="task-list">
+    
+      
+      
+        
+        
+      
+      <li class="task-list-item">
+        <label class="task-list-control">
+          <input type="checkbox" name="analytics" checked>
+          <span class="task-list-indicator"></span>
+          Google Analytics
+        </label>
+      </li>
+    
+      
+      
+        
+        
+      
+      <li class="task-list-item">
+        <label class="task-list-control">
+          <input type="checkbox" name="github" checked>
+          <span class="task-list-indicator"></span>
+          GitHub
+        </label>
+      </li>
+    
+  </ul>
+</div>
+<div class="md-consent__controls">
+  
+    
+      <button class="md-button md-button--primary">同意</button>
+    
+    
+    
+  
+    
+    
+    
+      <label class="md-button" for="__settings">サイトの設定</label>
+    
+  
+</div>
+          </form>
+        </aside>
+      </div>
+      <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.tabs.link", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.instant", "navigation.tracking", "navigation.footer", "navigation.path", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.c7c1ca2c.min.js", "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f807c082.min.js"></script>
+      
+    
+  </body>
+</html>
