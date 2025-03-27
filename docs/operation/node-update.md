@@ -11,7 +11,7 @@ status: new
 
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 10.2.1 | 10.4.0.0 | 9.10.1 | 3.12.1 | 6.5.1 |
+    | 10.2.1 | 10.4.0.0 | 9.10.1 | 3.12.1.0 | 6.5.1 |
 
     **■アップデートパターンDB再構築有無**
 
@@ -109,16 +109,16 @@ cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
         **cabalバージョンアップ**
         ```
         ghcup upgrade
-        ghcup install cabal 3.12.1
-        ghcup set cabal 3.12.1
+        ghcup install cabal 3.12.1.0
+        ghcup set cabal 3.12.1.0
         ```
         cabalバージョン確認
         ```
         cabal --version
         ```
         > 戻り値 
-        cabal-install version 3.12.1   
-        compiled using version 3.12.1 of the Cabal library
+        cabal-install version 3.12.1.0   
+        compiled using version 3.12.1.0 of the Cabal library
 
     ??? danger "GHC 8.10.7以下の場合"
         **GHC 8.10.7以下の場合のみ実行**
