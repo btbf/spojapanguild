@@ -180,7 +180,7 @@ BPでトランザクションを送信します
 
 数分後にトランザクションメタデータを確認する
 ```
-curl -sX POST "https://api.koios.rest/api/v0/tx_metadata" -H "accept: application/json" -H "content-type: application/json"  -d "{\"_tx_hashes\":[\"${submit_txHash}\"]}" | jq .
+curl -sX POST "https://api.koios.rest/api/v1/tx_metadata" -H "accept: application/json" -H "content-type: application/json"  -d "{\"_tx_hashes\":[\"${submit_txHash}\"]}" | jq .
 ```
 
 ### 投票確認
