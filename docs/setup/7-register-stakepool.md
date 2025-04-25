@@ -483,7 +483,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 **以下のコマンドを実行し、プール情報が表示されればブロックチェーンに登録されています**
 === "ブロックプロデューサーノード"
     ```
-    curl -s -X POST "https://api.koios.rest/api/v0/pool_info" \
+    curl -s -X POST "https://api.koios.rest/api/v1/pool_info" \
         -H "Accept: application/json" \
         -H "Content-Type: application/json" \
         -d '{"_pool_bech32_ids":["'$(cat $NODE_HOME/pool.id-bech32)'"]}' | jq .
