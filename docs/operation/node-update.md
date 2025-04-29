@@ -30,6 +30,7 @@ status: new
         * GHC9.6.5ビルド対応
         * 同期時間・パフォーマンス向上
         * CPU/メモリパフォーマンス向上
+        * GenesisMode有効時に必要なCheckpointsFileを追加
     
     !!! tip "cardano-cli v10.7.0.0"
         * ステークプール報酬アカウントにDRep委任先情報を含める拡張
