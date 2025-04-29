@@ -3,7 +3,7 @@
 !!! hint "インストールバージョン"
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 10.2.1 | 10.4.0.0 | 9.10.1 | 3.12.1.0 | 6.5.1 |
+    | 10.3.1 | 10.7.0.0 | 9.6.5 | 3.12.1.0 | 6.5.1 |
 
 !!! danger "コマンド実行時の注意点"
     * Ubuntuコマンド初心者の方は、コードボックスに複数行のコマンドがある場合でも、コマンドを1行づつコピーして実行するようにしてください。ただし `cat > xxx << EOF`のボックスについてはコードボックスのコピーボタンを使用してコマンドラインに貼り付けてください。
@@ -215,8 +215,8 @@ ghcup set cabal 3.12.1.0
 GHCインストール
 
 ```bash
-ghcup install ghc 9.10.1
-ghcup set ghc 9.10.1
+ghcup install ghc 9.6.5
+ghcup set ghc 9.6.5
 ```
 
 バージョン確認
@@ -229,7 +229,7 @@ ghc --version
 
 !!! check "チェック"
     Cabalバージョン：「3.12.1.0」  
-    GHCバージョン：「9.10.1」であることを確認してください。
+    GHCバージョン：「9.6.5」であることを確認してください。
 
 
 ## **2-2. ソースコードからビルド**
@@ -245,7 +245,7 @@ cd $HOME/git
 git clone https://github.com/IntersectMBO/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/10.2.1
+git checkout tags/10.3.1
 ```
 
 Cabalのビルドオプションを構成します。
@@ -253,7 +253,7 @@ Cabalのビルドオプションを構成します。
 ```bash
 cabal clean
 cabal update
-cabal configure --with-compiler=ghc-9.10.1
+cabal configure --with-compiler=ghc-9.6.5
 ```
 
 カルダノノードをビルドします。
@@ -286,11 +286,11 @@ cardano-node version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 10.4.0.0 - linux-x86_64 - ghc-8.10  
-git rev 52b708f37cd3dc92a188717deae2a6a60117f696  
+>cardano-cli 10.7.0.0 - linux-x86_64 - ghc-9.6  
+git rev b3f237b75e64f4d8142af95b053e2828221d707f  
 
->cardano-node 10.2.1 - linux-x86_64 - ghc-8.10  
-git rev 52b708f37cd3dc92a188717deae2a6a60117f696  
+>cardano-node 10.3.1 - linux-x86_64 - ghc-9.6  
+git rev b3f237b75e64f4d8142af95b053e2828221d707f  
   
 
 TMUXセッションを閉じる
@@ -346,21 +346,22 @@ config.json、genesis.json、topology.json
 ```bash
 mkdir $NODE_HOME
 cd $NODE_HOME
-wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/byron-genesis.json -O ${NODE_CONFIG}-byron-genesis.json
-wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/topology.json -O ${NODE_CONFIG}-topology.json
-wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
-wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
-wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
+wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-byron-genesis.json -O ${NODE_CONFIG}-byron-genesis.json
+wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-topology.json -O ${NODE_CONFIG}-topology.json
+wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
+wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
+wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
+wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
 ```
 
 === "リレーノードで実施"
     ```
-    wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/config.json -O ${NODE_CONFIG}-config.json
+    wget --no-use-server-timestamps -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
     ```
 
 === "ブロックプロデューサーノードで実施"
     ```
-    wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/config-bp.json -O ${NODE_CONFIG}-config.json
+    wget --no-use-server-timestamps -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-config-bp.json -O ${NODE_CONFIG}-config.json
     ```
 
 以下のコードを実行し **config.json**ファイルを更新します。  
@@ -372,6 +373,7 @@ sed -i ${NODE_CONFIG}-config.json \
     -e '2i \  "SnapshotInterval": 86400,' \
     -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
     -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
+    -e 's!"CheckpointsFile": "checkpoints.json"!"CheckpointsFile": "'${NODE_CONFIG}'-checkpoints.json"!' \
     -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
     -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
     -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
