@@ -1217,8 +1217,8 @@ cardano-cli version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 10.7.0.0 - linux-x86_64 - ghc-9.6  
-git rev b3f237b75e64f4d8142af95b053e2828221d707f  
+>cardano-cli 10.1.1.0 - linux-x86_64 - ghc-8.10  
+git rev 1f63dbf2ab39e0b32bf6901dc203866d3e37de08   
 
 
 
