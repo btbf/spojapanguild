@@ -3,22 +3,22 @@ status: new
 ---
 # **ノードアップデートマニュアル**
 
-このガイドは ノードバージョン10.2.1に対応しています。  
-最終更新日：2025年3月26日　　
+このガイドは ノードバージョン10.3.1に対応しています。  
+最終更新日：2025年4月30日　　
 
 !!! info "バージョン対応表"
     * <font color=red>各依存関係もバージョンアップしてますのでよくお読みになって進めてください</font>
 
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 10.2.1 | 10.4.0.0 | 9.10.1 | 3.12.1.0 | 6.5.1 |
+    | 10.3.1 | 10.7.0.0 | 9.6.5 | 3.12.1.0 | 6.5.1 |
 
     **■アップデートパターンDB再構築有無**
 
     | バージョン | DB再構築有無 | 設定ファイル更新有無 | トポロジーファイル更新有無 |
     | :---------- | :---------- | :---------- | :---------- |
     | 9.0.0~9.2.1→10.2.1 | あり | 更新あり | 更新なし |
-    | 10.1.4→10.2.1 | なし | 更新なし | 更新なし |
+    | 10.1.4,10.2.1→10.3.1 | なし | 更新あり | 更新なし |
 
     * <font color=red>作業前にブロック生成スケジュールを確認し余裕のある作業をお願いします</font>
     * <font color=green>複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。</font>
@@ -26,17 +26,20 @@ status: new
 
 ??? danger "主な変更点と新機能および検証結果"
 
-    !!! tip "cardano-node v10.2.1"
-        * トポロジーファイルにLedgerピアスナップショットパスが追加
-        * ローカルルートピアグループ設定に`diffusionMode`を追加
-        * 新トレーシングシステムをデフォルトで有効化。旧システムを利用する場合はconfigファイルに`"UseTraceDispatcher": false`を追加する
+    !!! tip "cardano-node v10.3.1"
+        * GHC9.6.5ビルド対応
+        * 同期時間・パフォーマンス向上
+        * CPU/メモリパフォーマンス向上
+        * GenesisMode有効時に必要なCheckpointsFileを追加
     
-    !!! tip "cardano-cli v10.4.0.0"
-        * `cardano-cli conway transaction sign`の実行結果にTxIDを返す
+    !!! tip "cardano-cli v10.7.0.0"
+        * ステークプール報酬アカウントにDRep委任先情報を含める拡張
+        * トランザクションコスト計算の修正
+        * 将来パラメータクエリの追加
 
     !!! 検証結果
         ■検証環境
-        Ubuntu22.04 / PreProd-Testnet / cardano-node 10.2.1 / cardano-cli 10.4.0.0 / SJG-TOOL 3.9.3  
+        Ubuntu22.04 / PreProd-Testnet / cardano-node 10.3.1 / cardano-cli 10.7.0.0 / SJG-TOOL 3.9.3  
 
         | 検証項目 | 結果 |
         | :---------- | :---------- |
@@ -78,7 +81,7 @@ cabal --version
 ghc --version
 ```
 > 正常戻り値
-`The Glorious Glasgow Haskell Compilation System, version 9.10.1`
+`The Glorious Glasgow Haskell Compilation System, version 9.6.5`
 
 **libsodiumコミット確認**
 ```
@@ -120,18 +123,17 @@ cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
         cabal-install version 3.12.1.0   
         compiled using version 3.12.1.0 of the Cabal library
 
-    ??? danger "GHC 8.10.7以下の場合"
-        **GHC 8.10.7以下の場合のみ実行**
+    ??? danger "GHC 9.6.5以外の場合"
         ```bash
         ghcup upgrade
-        ghcup install ghc 9.10.1
-        ghcup set ghc 9.10.1
+        ghcup install ghc 9.6.5
+        ghcup set ghc 9.6.5
         ```
         ```bash
         ghc --version
         ```
         > 戻り値  
-        The Glorious Glasgow Haskell Compilation System, version 9.10.1  
+        The Glorious Glasgow Haskell Compilation System, version 9.6.5  
 
     ??? danger "libsodiumコミット値が違う場合"
         ```
@@ -447,12 +449,12 @@ cncli 6.5.1
     ```
     mkdir $HOME/git/cardano-node2
     cd $HOME/git/cardano-node2
-    wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.2.1/cardano-node-10.2.1-linux.tar.gz
+    wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.3.1/cardano-node-10.3.1-linux.tar.gz
     ```
 
     解凍する
     ```
-    tar zxvf cardano-node-10.2.1-linux.tar.gz ./bin/cardano-node ./bin/cardano-cli
+    tar zxvf cardano-node-10.3.1-linux.tar.gz ./bin/cardano-node ./bin/cardano-cli
     ```
 
     **バージョン確認**
@@ -462,11 +464,11 @@ cncli 6.5.1
     $(find $HOME/git/cardano-node2 -type f -name "cardano-node") version  
     ```
     以下の戻り値を確認する  
-    >cardano-cli 10.4.0.0 - linux-x86_64 - ghc-8.10  
-    git rev 52b708f37cd3dc92a188717deae2a6a60117f696  
+    >cardano-cli 10.7.0.0 - linux-x86_64 - ghc-9.6  
+    git rev b3f237b75e64f4d8142af95b053e2828221d707f  
 
-    >cardano-node 10.2.1 - linux-x86_64 - ghc-8.10  
-    git rev 52b708f37cd3dc92a188717deae2a6a60117f696  
+    >cardano-node 10.3.1 - linux-x86_64 - ghc-9.6  
+    git rev b3f237b75e64f4d8142af95b053e2828221d707f  
 
 
     **ノードをストップする** 
@@ -494,11 +496,11 @@ cncli 6.5.1
     ```
 
     以下の戻り値を確認する  
-    >cardano-cli 10.4.0.0 - linux-x86_64 - ghc-8.10  
-    git rev 52b708f37cd3dc92a188717deae2a6a60117f696  
+    >cardano-cli 10.7.0.0 - linux-x86_64 - ghc-9.6  
+    git rev b3f237b75e64f4d8142af95b053e2828221d707f  
 
-    >cardano-node 10.2.1 - linux-x86_64 - ghc-8.10  
-    git rev 52b708f37cd3dc92a188717deae2a6a60117f696 
+    >cardano-node 10.3.1 - linux-x86_64 - ghc-9.6  
+    git rev b3f237b75e64f4d8142af95b053e2828221d707f  
 
 
 === "ソースコードからビルドする場合はこちら"
@@ -538,8 +540,8 @@ cncli 6.5.1
 
     ```
     git fetch --all --recurse-submodules --tags
-    git checkout tags/10.2.1
-    cabal configure --with-compiler=ghc-9.10.1
+    git checkout tags/10.3.1
+    cabal configure --with-compiler=ghc-9.6.5
     ```
 
     ```bash
@@ -560,11 +562,11 @@ cncli 6.5.1
     ```
 
     以下の戻り値を確認する  
-    >cardano-cli 10.4.0.0 - linux-x86_64 - ghc-9.10  
-    git rev 52b708f37cd3dc92a188717deae2a6a60117f696  
+    >cardano-cli 10.7.0.0 - linux-x86_64 - ghc-9.6  
+    git rev b3f237b75e64f4d8142af95b053e2828221d707f  
 
-    >cardano-node 10.2.1 - linux-x86_64 - ghc-9.10  
-    git rev 52b708f37cd3dc92a188717deae2a6a60117f696  
+    >cardano-node 10.3.1 - linux-x86_64 - ghc-9.6  
+    git rev b3f237b75e64f4d8142af95b053e2828221d707f  
 
     **ビルド用TMUXセッションを終了する** 
     ```
@@ -596,11 +598,11 @@ cncli 6.5.1
     ```
 
     以下の戻り値を確認する  
-    >cardano-cli 10.4.0.0 - linux-x86_64 - ghc-9.10  
-    git rev 52b708f37cd3dc92a188717deae2a6a60117f696  
+    >cardano-cli 10.7.0.0 - linux-x86_64 - ghc-9.6  
+    git rev b3f237b75e64f4d8142af95b053e2828221d707f  
 
-    >cardano-node 10.2.1 - linux-x86_64 - ghc-9.10  
-    git rev 52b708f37cd3dc92a188717deae2a6a60117f696  
+    >cardano-node 10.3.1 - linux-x86_64 - ghc-9.6  
+    git rev b3f237b75e64f4d8142af95b053e2828221d707f  
 
 
 ### **2-3.設定ファイル更新**
@@ -617,12 +619,14 @@ cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config
     === "リレーで実行"
         ```
         cd $NODE_HOME
-        wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/config.json -O ${NODE_CONFIG}-config.json
+        wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
+        wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
         ```
     === "BPで実行"
         ```
         cd $NODE_HOME
-        wget --no-use-server-timestamps -q https://book.play.dev.cardano.org/environments/${NODE_CONFIG}/config-bp.json -O ${NODE_CONFIG}-config.json
+        wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-config-bp.json -O ${NODE_CONFIG}-config.json
+        wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
         ```
 
 設定ファイルを書き換える
@@ -632,6 +636,7 @@ sed -i ${NODE_CONFIG}-config.json \
     -e '2i \  "SnapshotInterval": 86400,' \
     -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
     -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
+    -e 's!"CheckpointsFile": "checkpoints.json"!"CheckpointsFile": "'${NODE_CONFIG}'-checkpoints.json"!' \
     -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
     -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
     -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
@@ -1212,8 +1217,8 @@ cardano-cli version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 10.4.0.0 - linux-x86_64 - ghc-8.10  
-git rev 52b708f37cd3dc92a188717deae2a6a60117f696   
+>cardano-cli 10.7.0.0 - linux-x86_64 - ghc-9.6  
+git rev b3f237b75e64f4d8142af95b053e2828221d707f  
 
 
 
