@@ -17,7 +17,7 @@ status: new
 
     | バージョン | DB再構築有無 | 設定ファイル更新有無 | トポロジーファイル更新有無 |
     | :---------- | :---------- | :---------- | :---------- |
-    | 9.0.0~9.2.1→10.2.1 | あり | 更新あり | 更新なし |
+    | 9.0.0~9.2.1→10.3.1 | あり | 更新あり | 更新なし |
     | 10.1.4,10.2.1→10.3.1 | なし | 更新あり | 更新なし |
 
     * <font color=red>作業前にブロック生成スケジュールを確認し余裕のある作業をお願いします</font>
@@ -123,7 +123,7 @@ cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
         cabal-install version 3.12.1.0   
         compiled using version 3.12.1.0 of the Cabal library
 
-    ??? danger "GHC 9.6.5以外の場合"
+    ??? danger "GHC 9.6.5以外の場合 (9.6.5より新しい場合を含む)"
         ```bash
         ghcup upgrade
         ghcup install ghc 9.6.5
