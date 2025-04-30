@@ -1,5 +1,13 @@
 # 変更履歴
 
+## 2025/04/30　ver. 13.7.0
+!!! note ""
+    * cardano-node v10.3.1対応
+    * GenesisMode有効時に必要なCheckpointsFileを追加
+    * ノードConfigファイルについてSJG独自バージョン管理へ変更
+    * [**ノードアップデート手順**](operation/node-update.md)更新
+    * 軽微な修正
+
 ## 2025/03/27　ver. 13.6.1
 !!! note ""
     * 軽微な修正
