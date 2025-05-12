@@ -4,7 +4,7 @@ status: new
 # **ノードアップデートマニュアル**
 
 このガイドは ノードバージョン10.3.1に対応しています。  
-最終更新日：2025年4月30日　　
+最終更新日：2025年5月11日　　
 
 !!! info "バージョン対応表"
     * <font color=red>各依存関係もバージョンアップしてますのでよくお読みになって進めてください</font>
@@ -900,6 +900,7 @@ cnreload
     export NETWORK=mainnet
     export AGGREGATOR_ENDPOINT=https://aggregator.release-mainnet.api.mithril.network/aggregator
     export GENESIS_VERIFICATION_KEY=$(wget -q -O - https://raw.githubusercontent.com/input-output-hk/mithril/main/mithril-infra/configuration/release-mainnet/genesis.vkey)
+    export ANCILLARY_VERIFICATION_KEY=$(wget -q -O - https://raw.githubusercontent.com/input-output-hk/mithril/main/mithril-infra/configuration/release-mainnet/ancillary.vkey)
     export SNAPSHOT_DIGEST=latest
     ```
 
@@ -930,7 +931,7 @@ cnreload
 
     最新スナップショットDL
     ```
-    mithril-client cardano-db download --download-dir $NODE_HOME latest
+    mithril-client cardano-db download --download-dir $NODE_HOME --include-ancillary latest
     ```
     > スナップショットダウンロード～解凍まで自動的に行われます。1/5～5/5が終了するまで待ちましょう  
 
