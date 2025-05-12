@@ -7,9 +7,9 @@
     * この作業は [2.ノードインストール](../setup/2-node-setup.md)の2-1～2-7まで実施してから行って下さい。
     * スナップショットノードバージョンとサーバーノードバージョンが異なる場合、DB再構築処理が入る場合がありDB同期までに数時間かかります。
 
-## 1.依存環境インストール
+## 1.インストール
 
-### 1-1. システムアップデート
+### **1-1. システムアップデート**
 ノード停止
 ```
 sudo systemctl stop cardano-node
@@ -18,88 +18,43 @@ sudo systemctl stop cardano-node
 ```
 sudo apt update -y && sudo apt upgrade -y
 ```
-依存環境インストール
-```
-sudo apt install -y libssl-dev build-essential m4 jq
-```
 
-### 1-2. Rustインストール
-!!! note "確認"
-    Rustがインストールされている場合、この項目は実施不要です。
-    ```
-    rustc -V
-    ```
-    >　`Command 'rustc' not found, but can be installed with:`の戻り値がある場合は、以下の作業を実施して下さい。
-
-RUST環境を準備します
-```
-mkdir $HOME/.cargo && mkdir $HOME/.cargo/bin
-chown -R $USER $HOME/.cargo
-touch $HOME/.profile
-chown $USER $HOME/.profile
-```
-
-rustupインストール
-```
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
-> 1) Proceed with installation (default) 1を入力してEnter
-
-```
-source $HOME/.cargo/env
-```
-
-```
-rustup install stable
-rustup default stable
-rustup update
-rustup component add clippy rustfmt
-rustup target add x86_64-unknown-linux-musl
-```
-
-## 2.Mithril-Clientインストール
+### **1-2. Mithirlインストール**
 ```
 cd $HOME/git
-git clone https://github.com/input-output-hk/mithril.git
-```
-
-```
-cd mithril
-git fetch --all --prune
 mithril_release="$(curl -s https://api.github.com/repos/input-output-hk/mithril/releases/latest | jq -r '.tag_name')"
-git checkout tags/${mithril_release}
+wget https://github.com/input-output-hk/mithril/releases/download/${mithril_release}/mithril-${mithril_release}-linux-x64.tar.gz -O mithril.tar.gz
 ```
 
-ビルド
+設定
 ```
-cd mithril-client-cli
-make build
+tar zxvf mithril.tar.gz mithril-client
+sudo cp mithril-client /usr/local/bin/mithril-client
+```
+パーミッション設定
+```
+sudo chmod +x /usr/local/bin/mithril-client
 ```
 
-バージョン確認
+DLファイル削除
 ```
-./mithril-client -V
-```
-> Mithril Githubの[リリースノート](https://github.com/input-output-hk/mithril/releases/latest)内にある`mithril-client-cli`のバージョンをご確認ください。
-
-システムフォルダへコピー
-```
-sudo mv mithril-client /usr/local/bin/mithril-client
+rm mithril.tar.gz mithril-client
 ```
 
 バージョン確認
 ```
 mithril-client -V
 ```
+> Mithril Githubの[リリースノート](https://github.com/input-output-hk/mithril/releases/latest)内にある`mithril-client-cli`のバージョンをご確認ください。
 
-## 3.DBブートストラップ
+## 2.DBブートストラップ
 
 tmux作業ウィンドウを作成する
 ```
 tmux new -s mithril
 ```
 
-### 3-1.変数セット
+### 2-1.変数セット
 
 ```
 export NETWORK=mainnet
@@ -109,7 +64,7 @@ export ANCILLARY_VERIFICATION_KEY=$(wget -q -O - https://raw.githubusercontent.c
 export SNAPSHOT_DIGEST=latest
 ```
 
-### 3-2.最新スナップショットDL
+### 2-2.最新スナップショットDL
 
 既存DBフォルダ削除
 ```
@@ -186,7 +141,7 @@ exit
 
 
 
-## 4.ノード起動
+## 3.ノード起動
 
 ```
 sudo systemctl start cardano-node
