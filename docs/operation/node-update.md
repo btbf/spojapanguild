@@ -905,6 +905,7 @@ cnreload
     export NETWORK=mainnet
     export AGGREGATOR_ENDPOINT=https://aggregator.release-mainnet.api.mithril.network/aggregator
     export GENESIS_VERIFICATION_KEY=$(wget -q -O - https://raw.githubusercontent.com/input-output-hk/mithril/main/mithril-infra/configuration/release-mainnet/genesis.vkey)
+    export ANCILLARY_VERIFICATION_KEY=$(wget -q -O - https://raw.githubusercontent.com/input-output-hk/mithril/main/mithril-infra/configuration/release-mainnet/ancillary.vkey)
     export SNAPSHOT_DIGEST=latest
     ```
 
@@ -935,7 +936,7 @@ cnreload
 
     最新スナップショットDL
     ```
-    mithril-client cardano-db download --download-dir $NODE_HOME latest
+    mithril-client cardano-db download --download-dir $NODE_HOME --include-ancillary latest
     ```
     > スナップショットダウンロード～解凍まで自動的に行われます。1/5～5/5が終了するまで待ちましょう  
 
