@@ -26,7 +26,9 @@ status: new
 ??? danger "主な変更点と新機能および検証結果"
 
     !!! tip "cardano-node v10.4.1"
-        * UTxO-HD統合
+        * UTxO-HD統合  
+        <font color=red>現時点ではプール運営のノードではディスクバックエンドは非推奨のため、当マニュアルではインメモリバックエンドセットアップで構築されています</font>  
+        UTxO-HDの概要については[こちら](https://docs.google.com/presentation/d/16gJt5k9p3H9ycwHNO6O0HGb0cYvRpbwhUsvH4kFEthM/edit?usp=sharing)をご参照ください
         * config.json内 `LedgerDB`新しいキーを設定
     
     !!! tip "cardano-cli v10.8.0.0"
@@ -948,7 +950,10 @@ cnreload
     ```
 -->
 
-### **2-4.LMDB変換
+### **2-4.LMDB変換**
+
+!!! danger "LMDB変換について"
+    10.4.1の元帳データではLMDB構造を使用しているため、10.3.1以前のバージョンからアップグレードする場合リプレイ(再構築)が発生します。この再構築を避けるために以下の設定を実施して元帳データを変換してください。
 
 ledgerディレクトリをバックアップ
 ```
