@@ -961,7 +961,10 @@ snapshot_slotno=$(ls -1 | grep -v '\.checksum$' | sort -r | head -n 1)
 ```
 DB変換
 ```
-$HOME/git/cardano-node2/snapshot-converter Legacy ${snapshot_slotno} Mem ${snapshot_slotno}_mem cardano --config $NODE_HOME/${NODE_CONFIG}-config.json
+$HOME/git/cardano-node2/bin/snapshot-converter Legacy ${snapshot_slotno} Mem ${snapshot_slotno}_mem cardano --config $NODE_HOME/${NODE_CONFIG}-config.json
+```
+DB置換
+```
 rm -rf $NODE_HOME/db/ledger/*
 cp -r ${snapshot_slotno}_mem $NODE_HOME/db/ledger/${snapshot_slotno}
 ```
