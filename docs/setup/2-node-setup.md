@@ -3,7 +3,7 @@
 !!! hint "インストールバージョン"
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 10.3.1 | 10.7.0.0 | 9.6.5 | 3.12.1.0 | 6.5.1 |
+    | 10.4.1 | 10.8.0.0 | 9.6.7 | 3.12.1.0 | 6.5.1 |
 
 !!! danger "コマンド実行時の注意点"
     * Ubuntuコマンド初心者の方は、コードボックスに複数行のコマンドがある場合でも、コマンドを1行づつコピーして実行するようにしてください。ただし `cat > xxx << EOF`のボックスについてはコードボックスのコピーボタンを使用してコマンドラインに貼り付けてください。
@@ -107,7 +107,7 @@ sudo make install
 cd $HOME/git
 git clone https://github.com/supranational/blst
 cd blst
-git checkout v0.3.11
+git checkout v0.3.14
 ./build.sh
 ```
 
@@ -123,7 +123,7 @@ includedir=\${prefix}/include
 Name: libblst
 Description: Multilingual BLS12-381 signature library
 URL: https://github.com/supranational/blst
-Version: 0.3.11
+Version: 0.3.14
 Cflags: -I\${includedir}
 Libs: -L\${libdir} -lblst
 EOF
@@ -142,7 +142,7 @@ sudo chmod u=rw,go=r /usr/local/{lib/{libblst.a,pkgconfig/libblst.pc},include/{b
 ```
 cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
 ```
-> Version 0.3.11
+> Version 0.3.14
 
 
 ### **GHCUPインストール**
@@ -215,8 +215,8 @@ ghcup set cabal 3.12.1.0
 GHCインストール
 
 ```bash
-ghcup install ghc 9.6.5
-ghcup set ghc 9.6.5
+ghcup install ghc 9.6.7
+ghcup set ghc 9.6.7
 ```
 
 バージョン確認
@@ -229,7 +229,7 @@ ghc --version
 
 !!! check "チェック"
     Cabalバージョン：「3.12.1.0」  
-    GHCバージョン：「9.6.5」であることを確認してください。
+    GHCバージョン：「9.6.7」であることを確認してください。
 
 
 ## **2-2. ソースコードからビルド**
@@ -245,7 +245,7 @@ cd $HOME/git
 git clone https://github.com/IntersectMBO/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/10.3.1
+git checkout tags/10.4.1
 ```
 
 Cabalのビルドオプションを構成します。
@@ -253,7 +253,7 @@ Cabalのビルドオプションを構成します。
 ```bash
 cabal clean
 cabal update
-cabal configure --with-compiler=ghc-9.6.5
+cabal configure --with-compiler=ghc-9.6.7
 ```
 
 カルダノノードをビルドします。
@@ -286,11 +286,11 @@ cardano-node version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 10.7.0.0 - linux-x86_64 - ghc-9.6  
-git rev b3f237b75e64f4d8142af95b053e2828221d707f  
+>cardano-cli 10.8.0.0 - linux-x86_64 - ghc-9.6  
+420c94fbb075146c6ec7fba78c5b0482fafe72dd  
 
->cardano-node 10.3.1 - linux-x86_64 - ghc-9.6  
-git rev b3f237b75e64f4d8142af95b053e2828221d707f  
+>cardano-node 10.4.1 - linux-x86_64 - ghc-9.6  
+420c94fbb075146c6ec7fba78c5b0482fafe72dd  
   
 
 TMUXセッションを閉じる
@@ -346,44 +346,24 @@ config.json、genesis.json、topology.json
 ```bash
 mkdir $NODE_HOME
 cd $NODE_HOME
-wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-byron-genesis.json -O ${NODE_CONFIG}-byron-genesis.json
-wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-topology.json -O ${NODE_CONFIG}-topology.json
-wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
-wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
-wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
-wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
+wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-byron-genesis.json -O ${NODE_CONFIG}-byron-genesis.json
+wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-topology.json -O ${NODE_CONFIG}-topology.json
+wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
+wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
+wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
+wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
 ```
 
 === "リレーノードで実施"
     ```
-    wget --no-use-server-timestamps -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
+    wget --no-use-server-timestamps -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
     ```
 
 === "ブロックプロデューサーノードで実施"
     ```
-    wget --no-use-server-timestamps -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-config-bp.json -O ${NODE_CONFIG}-config.json
+    wget --no-use-server-timestamps -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-config-bp.json -O ${NODE_CONFIG}-config.json
     ```
 
-以下のコードを実行し **config.json**ファイルを更新します。  
-
-設定ファイルを書き換える
-
-```bash
-sed -i ${NODE_CONFIG}-config.json \
-    -e '2i \  "SnapshotInterval": 86400,' \
-    -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
-    -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
-    -e 's!"CheckpointsFile": "checkpoints.json"!"CheckpointsFile": "'${NODE_CONFIG}'-checkpoints.json"!' \
-    -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
-    -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-    -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-    -e 's!"TraceMempool": false!"TraceMempool": true!' \
-    -e 's!"rpKeepFilesNum": 10!"rpKeepFilesNum": 30!' \
-    -e 's!"rpMaxAgeHours": 24!"rpMaxAgeHours": 48!' \
-    -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "'${NODE_HOME}'/logs/node.json"\n    \],' \
-    -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
-    -e "s/127.0.0.1/0.0.0.0/g"
-```
 
 環境変数を追加し、.bashrcファイルを更新します。
 
