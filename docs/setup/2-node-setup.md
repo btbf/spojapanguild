@@ -3,7 +3,7 @@
 !!! hint "インストールバージョン"
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 10.4.1 | 10.8.0.0 | 9.6.5 | 3.12.1.0 | 6.5.1 |
+    | 10.4.1 | 10.8.0.0 | 9.6.7 | 3.12.1.0 | 6.5.1 |
 
 !!! danger "コマンド実行時の注意点"
     * Ubuntuコマンド初心者の方は、コードボックスに複数行のコマンドがある場合でも、コマンドを1行づつコピーして実行するようにしてください。ただし `cat > xxx << EOF`のボックスについてはコードボックスのコピーボタンを使用してコマンドラインに貼り付けてください。
@@ -107,7 +107,7 @@ sudo make install
 cd $HOME/git
 git clone https://github.com/supranational/blst
 cd blst
-git checkout v0.3.11
+git checkout v0.3.14
 ./build.sh
 ```
 
@@ -123,7 +123,7 @@ includedir=\${prefix}/include
 Name: libblst
 Description: Multilingual BLS12-381 signature library
 URL: https://github.com/supranational/blst
-Version: 0.3.11
+Version: 0.3.14
 Cflags: -I\${includedir}
 Libs: -L\${libdir} -lblst
 EOF
@@ -142,7 +142,7 @@ sudo chmod u=rw,go=r /usr/local/{lib/{libblst.a,pkgconfig/libblst.pc},include/{b
 ```
 cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
 ```
-> Version 0.3.11
+> Version 0.3.14
 
 
 ### **GHCUPインストール**
@@ -215,8 +215,8 @@ ghcup set cabal 3.12.1.0
 GHCインストール
 
 ```bash
-ghcup install ghc 9.6.5
-ghcup set ghc 9.6.5
+ghcup install ghc 9.6.7
+ghcup set ghc 9.6.7
 ```
 
 バージョン確認
@@ -229,7 +229,7 @@ ghc --version
 
 !!! check "チェック"
     Cabalバージョン：「3.12.1.0」  
-    GHCバージョン：「9.6.5」であることを確認してください。
+    GHCバージョン：「9.6.7」であることを確認してください。
 
 
 ## **2-2. ソースコードからビルド**
@@ -253,7 +253,7 @@ Cabalのビルドオプションを構成します。
 ```bash
 cabal clean
 cabal update
-cabal configure --with-compiler=ghc-9.6.5
+cabal configure --with-compiler=ghc-9.6.7
 ```
 
 カルダノノードをビルドします。

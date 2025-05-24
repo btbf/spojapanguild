@@ -11,7 +11,7 @@ status: new
 
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 10.4.1 | 10.8.0.0 | 9.6.5 | 3.12.1.0 | 6.5.1 |
+    | 10.4.1 | 10.8.0.0 | 9.6.7 | 3.12.1.0 | 6.5.1 |
 
     **■アップデートパターンDB再構築有無**
 
@@ -85,7 +85,7 @@ cabal --version
 ghc --version
 ```
 > 正常戻り値
-`The Glorious Glasgow Haskell Compilation System, version 9.6.5`
+`The Glorious Glasgow Haskell Compilation System, version 9.6.7`
 
 **libsodiumコミット確認**
 ```
@@ -106,7 +106,7 @@ git branch --contains | grep -m1 HEAD | cut -c 21-27
 ```
 cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
 ```
-> 正常戻り値 `Version 0.3.11`
+> 正常戻り値 `Version 0.3.14`
 
 
 ??? danger "各アプリのバージョン(戻り値)が異なる場合"
@@ -127,17 +127,17 @@ cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
         cabal-install version 3.12.1.0   
         compiled using version 3.12.1.0 of the Cabal library
 
-    ??? danger "GHC 9.6.5以外の場合 (9.6.5より新しい場合を含む)"
+    ??? danger "GHC 9.6.7以外の場合 (9.6.7より新しい場合を含む)"
         ```bash
         ghcup upgrade
-        ghcup install ghc 9.6.5
-        ghcup set ghc 9.6.5
+        ghcup install ghc 9.6.7
+        ghcup set ghc 9.6.7
         ```
         ```bash
         ghc --version
         ```
         > 戻り値  
-        The Glorious Glasgow Haskell Compilation System, version 9.6.5  
+        The Glorious Glasgow Haskell Compilation System, version 9.6.7  
 
     ??? danger "libsodiumコミット値が違う場合"
         ```
@@ -196,7 +196,7 @@ cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
             cd $HOME/git
             git clone https://github.com/supranational/blst
             cd blst
-            git checkout v0.3.11
+            git checkout v0.3.14
             ./build.sh
             ```
 
@@ -232,7 +232,7 @@ cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
         ```
         cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
         ```
-        > Version 0.3.11
+        > Version 0.3.14
 
 
 <!--
@@ -545,7 +545,7 @@ cncli 6.5.1
     ```
     git fetch --all --recurse-submodules --tags
     git checkout tags/10.4.1
-    cabal configure --with-compiler=ghc-9.6.5
+    cabal configure --with-compiler=ghc-9.6.7
     ```
 
     ```bash
@@ -608,6 +608,15 @@ cncli 6.5.1
     >cardano-node 10.4.1 - linux-x86_64 - ghc-9.6  
     420c94fbb075146c6ec7fba78c5b0482fafe72dd  
 
+    **snapshot-converterをダウンロードする**
+    ```
+    cd $HOME/git/cardano-node2
+    wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.4.1/cardano-node-10.4.1-linux.tar.gz
+    ```
+    解答する
+    ```
+    tar zxvf cardano-node-10.4.1-linux.tar.gz ./bin/snapshot-converter
+    ```
 
 ### **2-3.設定ファイル更新**
 
