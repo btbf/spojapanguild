@@ -4,7 +4,7 @@ status: new
 # **ノードアップデートマニュアル**
 
 このガイドは ノードバージョン10.4.1に対応しています。  
-最終更新日：2025年5月30日　　
+最終更新日：2025年5月26日　　
 
 !!! info "バージョン対応表"
     * <font color=red>各依存関係もバージョンアップしてますのでよくお読みになって進めてください</font>
@@ -183,12 +183,12 @@ cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
         sudo make install
         ```
 
-    ??? danger "Blst 0.3.10以下または「No such file or directory」の場合"
-        === "0.3.10以下の場合"
+    ??? danger "Blst 0.3.13以下または「No such file or directory」の場合"
+        === "0.3.13以下の場合"
             ```
             cd $HOME/git/blst
             git fetch --all --prune --recurse-submodules --tags
-            git checkout tags/v0.3.11
+            git checkout tags/v0.3.14
             ./build.sh
             ```
         === "「No such file or directory」の場合"
@@ -212,7 +212,7 @@ cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
         Name: libblst
         Description: Multilingual BLS12-381 signature library
         URL: https://github.com/supranational/blst
-        Version: 0.3.11
+        Version: 0.3.14
         Cflags: -I\${includedir}
         Libs: -L\${libdir} -lblst
         EOF

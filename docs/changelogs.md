@@ -1,5 +1,11 @@
 # 変更履歴
 
+## 2025/05/26　ver. 13.8.0
+!!! note ""
+    * cardano-node v10.4.1
+    * [**ノードアップデート手順**](operation/node-update.md)更新
+    * 軽微な修正
+
 ## 2025/05/12　ver. 13.7.1
 !!! note ""
     * Mithril-Client ブートストラップコマンドを修正
