@@ -186,8 +186,9 @@ build-raw transactionコマンドを実行します。
 === "ブロックプロデューサノード"
     ```bash
     cardano-cli conway query utxo \
-        --address ${destinationAddress} \
-        $NODE_NETWORK
+        --address $(cat payment.addr) \
+        $NODE_NETWORK \
+        --output-text
     ```
 > Transacsion Successfully submittedと表示されれば成功
 
@@ -382,7 +383,8 @@ build-raw transactionコマンドを実行します。
     ```bash
     cardano-cli conway query utxo \
         --address ${destinationAddress} \
-        $NODE_NETWORK
+        $NODE_NETWORK \
+        --output-text
     ```
 
 
@@ -573,6 +575,7 @@ build-rawトランザクションコマンドを実行します。
     cardano-cli conway query utxo \
         --address ${destinationAddress} \
         $NODE_NETWORK \
+        --output-text
     ```
 
 

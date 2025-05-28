@@ -611,7 +611,8 @@ build-rawトランザクションコマンドを実行します。
     cd $NODE_HOME
     cardano-cli conway query utxo \
         --address $(cat payment.addr) \
-        $NODE_NETWORK
+        $NODE_NETWORK \
+        --output-text
     ```
 
 トランザクションが消えていればOKです
