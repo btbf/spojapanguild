@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="3.9.3"
+TOOL_VERSION="3.9.4"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -2222,7 +2222,9 @@ payment_utxo(){
   cd $NODE_HOME
   cardano-cli conway query utxo \
     --address $(cat $WALLET_PAY_ADDR_FILENAME) \
-    $NETWORK_IDENTIFIER > fullUtxo.out
+    $NETWORK_IDENTIFIER \
+    --output-text \
+    --out-file fullUtxo.out
 
   tail -n +3 fullUtxo.out | sort -k3 -nr | sed -e '/lovelace + [0-9]/d' > balance.out
 
@@ -2384,9 +2386,10 @@ send_address_CHECK(){
 
 #adahandleConvert
 adahandleConvert(){
+  adahandleprefix="000de140"
   adahandlePolicyID="f0ff48bbb7bbe9d59a40f1ce90e9e9d0ff5002ec48f232b49ca0fb9a"
-  assetNameHex=`echo -n "${1}" | xxd -b -ps -c 80 | tr -d '\n'`
-  curl -s -X GET "$KOIOS_API/asset_addresses?_asset_policy=${adahandlePolicyID}&_asset_name=${assetNameHex}" -H "Accept: application/json" | jq -r '.[].payment_address'
+  assetNameHex=$(echo -n "${1}" | xxd -b -ps -c 80 | tr -d '\n')
+  curl -s -X GET "$KOIOS_API/asset_addresses?_asset_policy=${adahandlePolicyID}&_asset_name=${adahandleprefix}${assetNameHex}" -H "Accept: application/json" | jq -r '.[].payment_address'
 }
 
 #出金前チェック
