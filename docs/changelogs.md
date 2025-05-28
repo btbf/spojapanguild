@@ -2,8 +2,10 @@
 
 ## 2025/05/26　ver. 13.8.0
 !!! note ""
-    * cardano-node v10.4.1
+    * cardano-node v10.4.1対応
+    * `query utxo`コマンドの修正 `--output-text`固定化と`--out-file`指定
     * [**ノードアップデート手順**](operation/node-update.md)更新
+    * [**SJG TOOL v3.9.4リリース**](operation/tool.md)
     * 軽微な修正
 
 ## 2025/05/12　ver. 13.7.1
