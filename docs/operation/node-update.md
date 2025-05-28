@@ -626,21 +626,51 @@ mkdir -p $NODE_HOME/backup
 cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config.json
 ```
 
-新ファイルダウンロード
+
 !!! danger ""
     <font color=red>BPとリレーで実行するコマンドが異なるので、対象サーバーごとにタブを切り替えてください</font>
+    
     === "リレーで実行"
+        設定ファイルダウンロード
         ```
         cd $NODE_HOME
         wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
         wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
         ```
     === "BPで実行"
+        設定ファイルダウンロード
         ```
         cd $NODE_HOME
         wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-config-bp.json -O ${NODE_CONFIG}-config.json
         wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
         ```
+        起動スクリプト更新 
+        ```
+        PORT=`grep "PORT=" $NODE_HOME/startBlockProducingNode.sh`
+        b_PORT=${PORT#"PORT="}
+        echo "BPポートは${b_PORT}です"
+        ```
+        > ↑そのまま実行し、BPのポート番号が表示されることを確認する
+
+        ```bash title="このボックスはすべてコピーして実行してください"
+        cat > $NODE_HOME/startBlockProducingNode.sh << EOF 
+        #!/bin/bash
+        DIRECTORY=$NODE_HOME
+        PORT=${b_PORT}
+        HOSTADDR=0.0.0.0
+        TOPOLOGY=\${DIRECTORY}/${NODE_CONFIG}-topology.json
+        DB_PATH=\${DIRECTORY}/db
+        SOCKET_PATH=\${DIRECTORY}/db/socket
+        CONFIG=\${DIRECTORY}/${NODE_CONFIG}-config.json
+        KES=\${DIRECTORY}/kes.skey
+        VRF=\${DIRECTORY}/vrf.skey
+        CERT=\${DIRECTORY}/node.cert
+        /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A32m -n4m -F1.5 -H2500M -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG} --shelley-kes-key \${KES} --shelley-vrf-key \${VRF} --shelley-operational-certificate \${CERT}
+        EOF
+        ```
+
+
+
 
 <!--
 設定ファイルを書き換える
