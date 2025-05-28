@@ -34,11 +34,11 @@ status: new
     !!! tip "cardano-cli v10.8.0.0"
         * `query stake-pools` JSON出力形式修正
         * トランザクションの構築と署名のコマンドにCBORの正規出力トグルを追加
-        * クエリutxoコマンドの出力形式フラグのデフォルトを１つにした
+        * `query utxo`コマンドの出力形式デフォルトをJSON形式に変更
 
     !!! 検証結果
         ■検証環境
-        Ubuntu22.04 / PreProd-Testnet / cardano-node 10.4.1 / cardano-cli 10.8.0.0 / SJG-TOOL 3.9.3  
+        Ubuntu22.04 / PreProd-Testnet / cardano-node 10.4.1 / cardano-cli 10.8.0.0 / SJG-TOOL 3.9.4  
 
         | 検証項目 | 結果 |
         | :---------- | :---------- |
