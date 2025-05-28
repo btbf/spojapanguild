@@ -37,7 +37,9 @@ payment.addrの残高を出力します。
     ```bash
     cardano-cli conway query utxo \
         --address $(cat payment.addr) \
-        $NODE_NETWORK > fullUtxo.out
+        $NODE_NETWORK \
+        --output-text \
+        --out-file fullUtxo.out
 
     tail -n +3 fullUtxo.out | sort -k3 -nr > balance.out
 

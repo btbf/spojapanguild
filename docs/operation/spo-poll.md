@@ -104,7 +104,9 @@ ${cli_path} governance answer-poll --poll-file $HOME/git/spo-poll/poll_${txHash}
     cd $NODE_HOME
     cardano-cli conway query utxo \
         --address $(cat payment.addr) \
-        $NODE_NETWORK > fullUtxo.out
+        $NODE_NETWORK \
+        --output-text \
+        --out-file fullUtxo.out
 
     tail -n +3 fullUtxo.out | sort -k3 -nr | sed -e '/lovelace + [0-9]/d' > balance.out
 

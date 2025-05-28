@@ -336,7 +336,9 @@ cat $NODE_HOME/poolMetaData.json | jq .
     ```bash
     cardano-cli conway query utxo \
         --address $(cat payment.addr) \
-        $NODE_NETWORK > fullUtxo.out
+        $NODE_NETWORK \
+        --output-text \
+        --out-file fullUtxo.out
 
     tail -n +3 fullUtxo.out | sort -k3 -nr > balance.out
 
