@@ -345,7 +345,8 @@ rm -rf $NODE_HOME/cardano-wallet-shelley-2020.7.28
     ```bash
     cardano-cli conway query utxo \
         --address $(cat payment.addr) \
-        $NODE_NETWORK
+        $NODE_NETWORK \
+        --output-text
     ```
 
     次のように表示されたら入金完了です。

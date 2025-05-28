@@ -3,22 +3,21 @@ status: new
 ---
 # **ノードアップデートマニュアル**
 
-このガイドは ノードバージョン10.3.1に対応しています。  
-最終更新日：2025年5月11日　　
+このガイドは ノードバージョン10.4.1に対応しています。  
+最終更新日：2025年5月26日　　
 
 !!! info "バージョン対応表"
     * <font color=red>各依存関係もバージョンアップしてますのでよくお読みになって進めてください</font>
 
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 10.3.1 | 10.7.0.0 | 9.6.5 | 3.12.1.0 | 6.5.1 |
+    | 10.4.1 | 10.8.0.0 | 9.6.7 | 3.12.1.0 | 6.5.1 |
 
     **■アップデートパターンDB再構築有無**
 
     | バージョン | DB再構築有無 | 設定ファイル更新有無 | トポロジーファイル更新有無 |
     | :---------- | :---------- | :---------- | :---------- |
-    | 9.0.0~9.2.1→10.3.1 | あり | 更新あり | 更新なし |
-    | 10.1.4,10.2.1→10.3.1 | なし | 更新あり | 更新なし |
+    | ~10.3.1→10.4.1 | あり | 更新あり | 更新なし |
 
     * <font color=red>作業前にブロック生成スケジュールを確認し余裕のある作業をお願いします</font>
     * <font color=green>複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。</font>
@@ -26,20 +25,20 @@ status: new
 
 ??? danger "主な変更点と新機能および検証結果"
 
-    !!! tip "cardano-node v10.3.1"
-        * GHC9.6.5ビルド対応
-        * 同期時間・パフォーマンス向上
-        * CPU/メモリパフォーマンス向上
-        * GenesisMode有効時に必要なCheckpointsFileを追加
+    !!! tip "cardano-node v10.4.1"
+        * UTxO-HD統合  
+        <font color=red>現時点ではプール運営のノードではディスクバックエンドは非推奨のため、当マニュアルではインメモリバックエンドセットアップで構築されています</font>  
+        UTxO-HDの概要については[こちら](https://docs.google.com/presentation/d/16gJt5k9p3H9ycwHNO6O0HGb0cYvRpbwhUsvH4kFEthM/edit?usp=sharing)をご参照ください
+        * config.json内 `LedgerDB`新しいキーを設定
     
-    !!! tip "cardano-cli v10.7.0.0"
-        * ステークプール報酬アカウントにDRep委任先情報を含める拡張
-        * トランザクションコスト計算の修正
-        * 将来パラメータクエリの追加
+    !!! tip "cardano-cli v10.8.0.0"
+        * `query stake-pools` JSON出力形式修正
+        * トランザクションの構築と署名のコマンドにCBORの正規出力トグルを追加
+        * クエリutxoコマンドの出力形式フラグのデフォルトを１つにした
 
     !!! 検証結果
         ■検証環境
-        Ubuntu22.04 / PreProd-Testnet / cardano-node 10.3.1 / cardano-cli 10.7.0.0 / SJG-TOOL 3.9.3  
+        Ubuntu22.04 / PreProd-Testnet / cardano-node 10.4.1 / cardano-cli 10.8.0.0 / SJG-TOOL 3.9.3  
 
         | 検証項目 | 結果 |
         | :---------- | :---------- |
@@ -68,6 +67,11 @@ status: new
 sudo apt update -y && sudo apt upgrade -y
 ```
 
+**<font color=red>【重要】LMDBライブラリインストール</font>**
+```bash
+sudo apt install liblmdb-dev -y
+```
+
 ### **1-2. 依存関係バージョン確認**
 
 **cabalバージョン確認**
@@ -81,7 +85,7 @@ cabal --version
 ghc --version
 ```
 > 正常戻り値
-`The Glorious Glasgow Haskell Compilation System, version 9.6.5`
+`The Glorious Glasgow Haskell Compilation System, version 9.6.7`
 
 **libsodiumコミット確認**
 ```
@@ -102,7 +106,7 @@ git branch --contains | grep -m1 HEAD | cut -c 21-27
 ```
 cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
 ```
-> 正常戻り値 `Version 0.3.11`
+> 正常戻り値 `Version 0.3.14`
 
 
 ??? danger "各アプリのバージョン(戻り値)が異なる場合"
@@ -123,17 +127,17 @@ cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
         cabal-install version 3.12.1.0   
         compiled using version 3.12.1.0 of the Cabal library
 
-    ??? danger "GHC 9.6.5以外の場合 (9.6.5より新しい場合を含む)"
+    ??? danger "GHC 9.6.7以外の場合 (9.6.7より新しい場合を含む)"
         ```bash
         ghcup upgrade
-        ghcup install ghc 9.6.5
-        ghcup set ghc 9.6.5
+        ghcup install ghc 9.6.7
+        ghcup set ghc 9.6.7
         ```
         ```bash
         ghc --version
         ```
         > 戻り値  
-        The Glorious Glasgow Haskell Compilation System, version 9.6.5  
+        The Glorious Glasgow Haskell Compilation System, version 9.6.7  
 
     ??? danger "libsodiumコミット値が違う場合"
         ```
@@ -179,12 +183,12 @@ cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
         sudo make install
         ```
 
-    ??? danger "Blst 0.3.10以下または「No such file or directory」の場合"
-        === "0.3.10以下の場合"
+    ??? danger "Blst 0.3.13以下または「No such file or directory」の場合"
+        === "0.3.13以下の場合"
             ```
             cd $HOME/git/blst
             git fetch --all --prune --recurse-submodules --tags
-            git checkout tags/v0.3.11
+            git checkout tags/v0.3.14
             ./build.sh
             ```
         === "「No such file or directory」の場合"
@@ -192,7 +196,7 @@ cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
             cd $HOME/git
             git clone https://github.com/supranational/blst
             cd blst
-            git checkout v0.3.11
+            git checkout v0.3.14
             ./build.sh
             ```
 
@@ -208,7 +212,7 @@ cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
         Name: libblst
         Description: Multilingual BLS12-381 signature library
         URL: https://github.com/supranational/blst
-        Version: 0.3.11
+        Version: 0.3.14
         Cflags: -I\${includedir}
         Libs: -L\${libdir} -lblst
         EOF
@@ -228,7 +232,7 @@ cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
         ```
         cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
         ```
-        > Version 0.3.11
+        > Version 0.3.14
 
 
 <!--
@@ -449,12 +453,12 @@ cncli 6.5.1
     ```
     mkdir $HOME/git/cardano-node2
     cd $HOME/git/cardano-node2
-    wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.3.1/cardano-node-10.3.1-linux.tar.gz
+    wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.4.1/cardano-node-10.4.1-linux.tar.gz
     ```
 
     解凍する
     ```
-    tar zxvf cardano-node-10.3.1-linux.tar.gz ./bin/cardano-node ./bin/cardano-cli
+    tar zxvf cardano-node-10.4.1-linux.tar.gz ./bin/cardano-node ./bin/cardano-cli ./bin/snapshot-converter
     ```
 
     **バージョン確認**
@@ -464,11 +468,11 @@ cncli 6.5.1
     $(find $HOME/git/cardano-node2 -type f -name "cardano-node") version  
     ```
     以下の戻り値を確認する  
-    >cardano-cli 10.7.0.0 - linux-x86_64 - ghc-9.6  
-    git rev b3f237b75e64f4d8142af95b053e2828221d707f  
+    >cardano-cli 10.8.0.0 - linux-x86_64 - ghc-9.6  
+    420c94fbb075146c6ec7fba78c5b0482fafe72dd  
 
-    >cardano-node 10.3.1 - linux-x86_64 - ghc-9.6  
-    git rev b3f237b75e64f4d8142af95b053e2828221d707f  
+    >cardano-node 10.4.1 - linux-x86_64 - ghc-9.6  
+    420c94fbb075146c6ec7fba78c5b0482fafe72dd  
 
 
     **ノードをストップする** 
@@ -496,11 +500,11 @@ cncli 6.5.1
     ```
 
     以下の戻り値を確認する  
-    >cardano-cli 10.7.0.0 - linux-x86_64 - ghc-9.6  
-    git rev b3f237b75e64f4d8142af95b053e2828221d707f  
+    >cardano-cli 10.8.0.0 - linux-x86_64 - ghc-9.6  
+    420c94fbb075146c6ec7fba78c5b0482fafe72dd  
 
-    >cardano-node 10.3.1 - linux-x86_64 - ghc-9.6  
-    git rev b3f237b75e64f4d8142af95b053e2828221d707f  
+    >cardano-node 10.4.1 - linux-x86_64 - ghc-9.6  
+    420c94fbb075146c6ec7fba78c5b0482fafe72dd  
 
 
 === "ソースコードからビルドする場合はこちら"
@@ -540,8 +544,8 @@ cncli 6.5.1
 
     ```
     git fetch --all --recurse-submodules --tags
-    git checkout tags/10.3.1
-    cabal configure --with-compiler=ghc-9.6.5
+    git checkout tags/10.4.1
+    cabal configure --with-compiler=ghc-9.6.7
     ```
 
     ```bash
@@ -562,11 +566,11 @@ cncli 6.5.1
     ```
 
     以下の戻り値を確認する  
-    >cardano-cli 10.7.0.0 - linux-x86_64 - ghc-9.6  
-    git rev b3f237b75e64f4d8142af95b053e2828221d707f  
+    >cardano-cli 10.8.0.0 - linux-x86_64 - ghc-9.6  
+    420c94fbb075146c6ec7fba78c5b0482fafe72dd  
 
-    >cardano-node 10.3.1 - linux-x86_64 - ghc-9.6  
-    git rev b3f237b75e64f4d8142af95b053e2828221d707f  
+    >cardano-node 10.4.1 - linux-x86_64 - ghc-9.6  
+    420c94fbb075146c6ec7fba78c5b0482fafe72dd  
 
     **ビルド用TMUXセッションを終了する** 
     ```
@@ -598,12 +602,21 @@ cncli 6.5.1
     ```
 
     以下の戻り値を確認する  
-    >cardano-cli 10.7.0.0 - linux-x86_64 - ghc-9.6  
-    git rev b3f237b75e64f4d8142af95b053e2828221d707f  
+    >cardano-cli 10.8.0.0 - linux-x86_64 - ghc-9.6  
+    420c94fbb075146c6ec7fba78c5b0482fafe72dd  
 
-    >cardano-node 10.3.1 - linux-x86_64 - ghc-9.6  
-    git rev b3f237b75e64f4d8142af95b053e2828221d707f  
+    >cardano-node 10.4.1 - linux-x86_64 - ghc-9.6  
+    420c94fbb075146c6ec7fba78c5b0482fafe72dd  
 
+    **snapshot-converterをダウンロードする**
+    ```
+    cd $HOME/git/cardano-node2
+    wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.4.1/cardano-node-10.4.1-linux.tar.gz
+    ```
+    解答する
+    ```
+    tar zxvf cardano-node-10.4.1-linux.tar.gz ./bin/snapshot-converter
+    ```
 
 ### **2-3.設定ファイル更新**
 
@@ -613,27 +626,57 @@ mkdir -p $NODE_HOME/backup
 cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config.json
 ```
 
-新ファイルダウンロード
+
 !!! danger ""
     <font color=red>BPとリレーで実行するコマンドが異なるので、対象サーバーごとにタブを切り替えてください</font>
+    
     === "リレーで実行"
+        設定ファイルダウンロード
         ```
         cd $NODE_HOME
-        wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
-        wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
+        wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
+        wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
         ```
     === "BPで実行"
+        設定ファイルダウンロード
         ```
         cd $NODE_HOME
-        wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-config-bp.json -O ${NODE_CONFIG}-config.json
-        wget -q https://spojapanguild.net/node_config/10.3.1/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
+        wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-config-bp.json -O ${NODE_CONFIG}-config.json
+        wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
+        ```
+        起動スクリプト更新 
+        ```
+        PORT=`grep "PORT=" $NODE_HOME/startBlockProducingNode.sh`
+        b_PORT=${PORT#"PORT="}
+        echo "BPポートは${b_PORT}です"
+        ```
+        > ↑そのまま実行し、BPのポート番号が表示されることを確認する
+
+        ```bash title="このボックスはすべてコピーして実行してください"
+        cat > $NODE_HOME/startBlockProducingNode.sh << EOF 
+        #!/bin/bash
+        DIRECTORY=$NODE_HOME
+        PORT=${b_PORT}
+        HOSTADDR=0.0.0.0
+        TOPOLOGY=\${DIRECTORY}/${NODE_CONFIG}-topology.json
+        DB_PATH=\${DIRECTORY}/db
+        SOCKET_PATH=\${DIRECTORY}/db/socket
+        CONFIG=\${DIRECTORY}/${NODE_CONFIG}-config.json
+        KES=\${DIRECTORY}/kes.skey
+        VRF=\${DIRECTORY}/vrf.skey
+        CERT=\${DIRECTORY}/node.cert
+        /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A32m -n4m -F1.5 -H2500M -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG} --shelley-kes-key \${KES} --shelley-vrf-key \${VRF} --shelley-operational-certificate \${CERT}
+        EOF
         ```
 
+
+
+
+<!--
 設定ファイルを書き換える
 
 ```bash
 sed -i ${NODE_CONFIG}-config.json \
-    -e '2i \  "SnapshotInterval": 86400,' \
     -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
     -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
     -e 's!"CheckpointsFile": "checkpoints.json"!"CheckpointsFile": "'${NODE_CONFIG}'-checkpoints.json"!' \
@@ -646,6 +689,7 @@ sed -i ${NODE_CONFIG}-config.json \
     -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
     -e "s/127.0.0.1/0.0.0.0/g"
 ```
+-->
 
 <!--
 **トポロジー設定**
@@ -855,7 +899,7 @@ cnreload
 ```
 > ダイナミックP2Pを有効にしている場合、トポロジーファイル変更によるノード再起動は不要になりました。
 -->
-
+<!--
 ??? danger "9.2.1以下からのアップデートの場合はこちらも実施"
     **DB更新**  
 
@@ -944,8 +988,34 @@ cnreload
     ```
     exit
     ```
+-->
 
-### **2-4.サーバー再起動**
+### **2-4.LMDB変換**
+
+!!! danger "LMDB変換について"
+    10.4.1の元帳データではLMDB構造を使用しているため、10.3.1以前のバージョンからアップグレードする場合リプレイ(再構築)が発生します。この再構築を避けるために以下の設定を実施して元帳データを変換してください。
+
+ledgerディレクトリをバックアップ
+```
+cp -r $NODE_HOME/db/ledger $NODE_HOME/db/ledgerbackup
+```
+スナップショットスロットNo取得
+```
+cd $NODE_HOME/db/ledgerbackup
+snapshot_slotno=$(ls -1 | grep -v '\.checksum$' | sort -r | head -n 1)
+```
+DB変換
+```
+$HOME/git/cardano-node2/bin/snapshot-converter Legacy ${snapshot_slotno} Mem ${snapshot_slotno}_mem cardano --config $NODE_HOME/${NODE_CONFIG}-config.json
+```
+DB置換
+```
+rm -rf $NODE_HOME/db/ledger/*
+cp -r ${snapshot_slotno}_mem $NODE_HOME/db/ledger/${snapshot_slotno}
+```
+
+
+### **2-5.サーバー再起動**
 
 **作業フォルダリネーム**
 
@@ -1218,8 +1288,8 @@ cardano-cli version
 ```
 
 以下の戻り値を確認する  
->cardano-cli 10.7.0.0 - linux-x86_64 - ghc-9.6  
-git rev b3f237b75e64f4d8142af95b053e2828221d707f  
+>cardano-cli 10.8.0.0 - linux-x86_64 - ghc-9.6  
+420c94fbb075146c6ec7fba78c5b0482fafe72dd  
 
 
 

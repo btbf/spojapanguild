@@ -59,7 +59,9 @@ payment.addrの残高を算出します
     ```bash
     cardano-cli conway query utxo \
         --address $(cat payment.addr) \
-        $NODE_NETWORK > fullUtxo.out
+        $NODE_NETWORK \
+        --output-text \
+        --out-file fullUtxo.out
 
     tail -n +3 fullUtxo.out | sort -k3 -nr | sed -e '/lovelace + [0-9]/d' > balance.out
 
@@ -184,8 +186,9 @@ build-raw transactionコマンドを実行します。
 === "ブロックプロデューサノード"
     ```bash
     cardano-cli conway query utxo \
-        --address ${destinationAddress} \
-        $NODE_NETWORK
+        --address $(cat payment.addr) \
+        $NODE_NETWORK \
+        --output-text
     ```
 > Transacsion Successfully submittedと表示されれば成功
 
@@ -239,7 +242,9 @@ payment.addr の残高を算出
     ```bash
     cardano-cli conway query utxo \
         --address $(cat payment.addr) \
-        $NODE_NETWORK > fullUtxo.out
+        $NODE_NETWORK \
+        --output-text \
+        --out-file fullUtxo.out
 
     tail -n +3 fullUtxo.out | sort -k3 -nr | sed -e '/lovelace + [0-9]/d' > balance.out
 
@@ -378,7 +383,8 @@ build-raw transactionコマンドを実行します。
     ```bash
     cardano-cli conway query utxo \
         --address ${destinationAddress} \
-        $NODE_NETWORK
+        $NODE_NETWORK \
+        --output-text
     ```
 
 
@@ -439,7 +445,9 @@ payment.addrの残高を算出します。
     ```bash
     cardano-cli conway query utxo \
         --address $(cat payment.addr) \
-        $NODE_NETWORK > fullUtxo.out
+        $NODE_NETWORK \
+        --output-text \
+        --out-file fullUtxo.out
 
     tail -n +3 fullUtxo.out | sort -k3 -nr | sed -e '/lovelace + [0-9]/d' > balance.out
 
@@ -567,6 +575,7 @@ build-rawトランザクションコマンドを実行します。
     cardano-cli conway query utxo \
         --address ${destinationAddress} \
         $NODE_NETWORK \
+        --output-text
     ```
 
 
