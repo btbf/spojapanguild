@@ -1,5 +1,9 @@
 # 変更履歴
 
+## 2025/07/03　ver. 13.8.1
+!!! note ""
+    * Calidus Pool Key設定手順修正
+
 ## 2025/05/26　ver. 13.8.0
 !!! note ""
     * cardano-node v10.4.1対応
