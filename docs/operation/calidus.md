@@ -290,3 +290,18 @@ UTXOを算出します
 curl -s "https://api.koios.rest/api/v1/pool_calidus_keys?pool_id_bech32=eq.$(cat $NODE_HOME/pool.id-bech32)" | jq .
 ```
 > 戻り値に、`"pool_status": "registered"`の項目があれば登録成功
+
+## **7.Calidusキー転送**
+
+=== "ブロックプロデューサーノード"
+    ```
+    mkdir -p $NODE_HOME/calidus
+    ```
+
+エアギャップの**myCalidusKey.skey** をブロックプロデューサーノードのcnode/calidusディレクトリにコピーします。
+!!! important "ファイル転送"
+    エアギャップの`myCalidusKey.skey`をBPのcnode/calidusディレクトリにコピーします。
+    ``` mermaid
+    graph LR
+        A[エアギャップ] -->|myCalidusKey.skey| B[BP];
+    ```
