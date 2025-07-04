@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="3.9.4"
+TOOL_VERSION="3.9.5"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -489,23 +489,23 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
         printf "$1 ADA \n (ライブステークが有効になるまでスケジュール割り当てはありません)\n"
       fi
     }
-    live_Stake=`cat $NODE_HOME/pooldata.txt | jq -r ".[].live_stake"`
+    live_Stake=`cat $NODE_HOME/pooldata.txt | jq -r ".[0].live_stake"`
     live_Stake=`scale1 $live_Stake`
-    active_Stake=`cat $NODE_HOME/pooldata.txt | jq -r ".[].active_stake"`
+    active_Stake=`cat $NODE_HOME/pooldata.txt | jq -r ".[0].active_stake"`
 
     active_Stake=`active_ST_check $active_Stake`
-    pledge=`cat $NODE_HOME/pooldata.txt | jq -r ".[].pledge"`
+    pledge=`cat $NODE_HOME/pooldata.txt | jq -r ".[0].pledge"`
     pledge_scale=`scale1 $pledge`
 
-    active_epoch=`cat $NODE_HOME/pooldata.txt | jq -r ".[].active_epoch_no"`
+    active_epoch=`cat $NODE_HOME/pooldata.txt | jq -r ".[0].active_epoch_no"`
     future_pledge=`cardano-cli conway query pool-params --stake-pool-id $(cat $NODE_HOME/pool.id-bech32) | jq .[].futurePoolParams.pledge`
     current_pledge=`cardano-cli conway query pool-params --stake-pool-id $(cat $NODE_HOME/pool.id-bech32) | jq .[].poolParams.pledge`
 
   
     printf "ノード起動タイプ:BP ${FG_GREEN}OK${NC}　ネットワーク:${FG_YELLOW}$NETWORK_NAME${NC}\n"
     echo
-    printf "　　対象プール :${FG_CYAN}[`cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_json.ticker"`] `cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_json.name"`${NC}\n"
-    printf "　　　プールID :${FG_CYAN}`cat $NODE_HOME/pooldata.txt | jq -r ".[].pool_id_bech32"`${NC}\n"
+    printf "　　対象プール :${FG_CYAN}[`cat $NODE_HOME/pooldata.txt | jq -r ".[0].meta_json.ticker"`] `cat $NODE_HOME/pooldata.txt | jq -r ".[0].meta_json.name"`${NC}\n"
+    printf "　　　プールID :${FG_CYAN}`cat $NODE_HOME/pooldata.txt | jq -r ".[0].pool_id_bech32"`${NC}\n"
     printf "ライブステーク :${FG_GREEN}$live_Stake${NC} ADA\n"
     printf "　有効ステーク :$active_Stake\n"
     echo
@@ -513,8 +513,8 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     #MetaHashチェック
     
-    metaChainHash=`cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_hash"`
-    metaFileUrl=`cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_url"`
+    metaChainHash=`cat $NODE_HOME/pooldata.txt | jq -r ".[0].meta_hash"`
+    metaFileUrl=`cat $NODE_HOME/pooldata.txt | jq -r ".[0].meta_url"`
     mkdir $NODE_HOME/metaCheck
     wget -q $metaFileUrl -O $NODE_HOME/metaCheck/poolMetaData.json
     cat $NODE_HOME/metaCheck/poolMetaData.json | jq . > $NODE_HOME/metaCheck/metaCheck.json 2>&1
@@ -708,7 +708,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     printf "　incoming :${FG_YELLOW}$peers_in $peer_in_judge${NC}\n"
     printf "　outgoing :${FG_YELLOW}$peers_out $peer_out_judge${NC}\n"
 
-    chain_Vrf_hash=`cat $NODE_HOME/pooldata.txt | jq -r ".[].vrf_key_hash"`
+    chain_Vrf_hash=`cat $NODE_HOME/pooldata.txt | jq -r ".[0].vrf_key_hash"`
 
     #ローカルVRFファイル検証
     mkdir $NODE_HOME/vrf_check
@@ -731,7 +731,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     rm -rf $NODE_HOME/vrf_check
 
-    chain_cert_counter=`cat $NODE_HOME/pooldata.txt | jq -r ".[].op_cert_counter"`
+    chain_cert_counter=`cat $NODE_HOME/pooldata.txt | jq -r ".[0].op_cert_counter"`
     local_cert_counter=`cardano-cli conway text-view decode-cbor --in-file $POOL_OPCERT_FILENAME | grep int | head -1 | cut -d"(" -f2 | cut -d")" -f1`
     kes_remaining=$(curl -s http://localhost:${PROM_PORT}/metrics | grep KESPeriods_int | awk '{ print $2 }')
     kes_days=`bc <<< "$kes_remaining * 1.5"`
@@ -1177,7 +1177,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
     bech32_path="$(which bech32)"
     signer_path="$(which cardano-signer)"
     toolbox_path="$(which catalyst-toolbox)"
-    pool_ticker="$(cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_json.ticker")"
+    pool_ticker="$(cat $NODE_HOME/pooldata.txt | jq -r ".[0].meta_json.ticker")"
     version_chk=0
 
     pre_check(){
@@ -2014,7 +2014,7 @@ choose_proposal(){
 proposal_vote(){
   get_pooldata
   poolid=$(cat $NODE_HOME/pool.id)
-  poolname=$(cat $NODE_HOME/pooldata.txt | jq -r ".[].meta_json.name")
+  poolname=$(cat $NODE_HOME/pooldata.txt | jq -r ".[0].meta_json.name")
   # echo $poolid
   # echo $spo_voters
   echo
