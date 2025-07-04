@@ -3,6 +3,8 @@
 ## 2025/07/03　ver. 13.8.1
 !!! note ""
     * Calidus Pool Key設定手順修正
+    * [**SJG TOOL v3.9.5リリース**](operation/tool.md)
+    * 軽微な修正
 
 ## 2025/05/26　ver. 13.8.0
 !!! note ""
