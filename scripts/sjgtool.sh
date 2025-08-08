@@ -1950,7 +1950,7 @@ choose_proposal(){
       if [[ -n "$vote_proposal" ]]; then
         #echo $vote_proposal | jq .
 
-        local spo_available_type=("NoConfidence" "NewCommittee" "HardForkInitiation" "InfoAction")
+        local spo_available_type=("NoConfidence" "NewCommittee" "UpdateCommittee" "HardForkInitiation" "InfoAction")
         local expiresAfter=$(echo $vote_proposal | jq .expiresAfter)
         local proposedIn=$(echo $vote_proposal | jq .proposedIn)
         local deposit=$(echo $vote_proposal | jq .proposalProcedure.deposit)
