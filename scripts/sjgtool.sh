@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="3.9.5"
+TOOL_VERSION="3.9.6"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -1950,7 +1950,7 @@ choose_proposal(){
       if [[ -n "$vote_proposal" ]]; then
         #echo $vote_proposal | jq .
 
-        local spo_available_type=("NoConfidence" "NewCommittee" "HardForkInitiation" "InfoAction")
+        local spo_available_type=("NoConfidence" "NewCommittee" "HardForkInitiation" "UpdateCommittee" "InfoAction")
         local expiresAfter=$(echo $vote_proposal | jq .expiresAfter)
         local proposedIn=$(echo $vote_proposal | jq .proposedIn)
         local deposit=$(echo $vote_proposal | jq .proposalProcedure.deposit)
