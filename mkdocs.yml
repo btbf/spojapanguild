@@ -151,6 +151,8 @@ nav:
       - '5.ガバナンス':
           - 'ガバナンスアクションSPO投票': './operation/gov-spo-vote.md'
           - 'カタリスト有権者登録': './operation/catalyst-voting.md'
+      - '7.ミッドナイト':
+        - 'Glacier Drop請求手続き': './operation/midnight-glacier-drop.md'
       - '6.Linuxコマンド集': './operation/command.md'
     - 'SJGラーニング': ./learning.md
     - 'よくある質問':
