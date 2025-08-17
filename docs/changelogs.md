@@ -2,9 +2,9 @@
 
 ## 2025/08/17　ver. 13.8.2
 !!! note ""
-    * Glacier Drop SPO請求手続き手順追加(operation/midnight-glacier-drop.md)
+    * [Glacier Drop SPO請求手続き手順追加](operation/midnight-glacier-drop.md)
     * [**SJG TOOL v3.9.6リリース**](operation/tool.md)
-    
+
 ## 2025/07/03　ver. 13.8.1
 !!! note ""
     * Calidus Pool Key設定手順修正
