@@ -1,6 +1,6 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2025/5/28 v3.9.4
+最終更新日：2025/8/21 v3.9.7
 
 !!! info "主な機能"
     * payment.addr残高照会
@@ -68,6 +68,9 @@ gtool
     また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
 
 ## 更新履歴
+
+### v3.9.7
+    * cardano-cli 10.11.0.0対応
 
 ### v3.9.6
     * ガバナンスSPO投票バグ修正
