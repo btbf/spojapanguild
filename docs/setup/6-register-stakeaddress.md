@@ -94,6 +94,7 @@ keyDepositの値を出力します。
     fee=$(cardano-cli conway transaction calculate-min-fee \
         --tx-body-file tx.tmp \
         --witness-count 2 \
+        --output-text \
         --protocol-params-file params.json | awk '{ print $1 }')
     echo fee: $fee
     ```

@@ -1,5 +1,11 @@
 # 変更履歴
 
+## 2025/08/21　ver. 13.8.3
+!!! note ""
+    * cardano-node v10.5.1対応
+    * [**ノードアップデート手順**](operation/node-update.md)更新
+    * [**SJG TOOL v3.9.7リリース**](operation/tool.md)
+
 ## 2025/08/17　ver. 13.8.2
 !!! note ""
     * [Glacier Drop SPO請求手続き手順追加](operation/midnight-glacier-drop.md)

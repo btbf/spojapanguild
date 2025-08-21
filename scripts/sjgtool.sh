@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="3.9.6"
+TOOL_VERSION="3.9.7"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -217,6 +217,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               fee=$(cardano-cli conway transaction calculate-min-fee \
                   --tx-body-file tx.tmp \
                   --witness-count 2 \
+                  --output-text \
                   --protocol-params-file params.json | awk '{ print $1 }')
 
 
@@ -292,6 +293,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               fee=$(cardano-cli conway transaction calculate-min-fee \
                   --tx-body-file tx.tmp \
                   --witness-count 2 \
+                  --output-text \
                   --protocol-params-file params.json | awk '{ print $1 }')
               
 
@@ -390,6 +392,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               fee=$(cardano-cli conway transaction calculate-min-fee \
               --tx-body-file tx.tmp \
               --witness-count 1 \
+              --output-text \
               --protocol-params-file params.json | awk '{ print $1 }')
 
 
@@ -1328,6 +1331,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       fee=$(cardano-cli conway transaction calculate-min-fee \
       --tx-body-file tx.tmp \
       --witness-count 1 \
+      --output-text \
       --protocol-params-file $NODE_HOME/params.json | awk '{ print $1 }')
       
       txOut=$((${total_balance}-${fee}))
@@ -1849,6 +1853,7 @@ $tx_in \\
 fee=\$(cardano-cli conway transaction calculate-min-fee \\
 --tx-body-file \$NODE_HOME/governance/drep-tx.tmp \\
 --witness-count 2 \\
+--output-text \\
 --protocol-params-file \$NODE_HOME/params.json | awk '{ print \$1 }')
 echo Tx手数料: \$fee Lovelace
 sleep 2
@@ -2119,6 +2124,7 @@ $tx_in \\
 fee=\$(cardano-cli conway transaction calculate-min-fee \\
 --tx-body-file \$NODE_HOME/governance/vote-tx.tmp \\
 --witness-count 2 \\
+--output-text \\
 --protocol-params-file \$NODE_HOME/params.json | awk '{ print \$1 }')
 echo Tx手数料: \$fee Lovelace
 sleep 2
