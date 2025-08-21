@@ -151,6 +151,7 @@ build-raw transactionコマンドを実行します。
     fee=$(cardano-cli conway transaction calculate-min-fee \
         --tx-body-file tx.tmp \
         --witness-count 2 \
+        --output-text \
         --protocol-params-file params.json | awk '{ print $1 }')
     echo fee: $fee
     ```
@@ -374,6 +375,7 @@ chmod a-rwx $HOME/cold-keys
     fee=$(cardano-cli conway transaction calculate-min-fee \
         --tx-body-file tx.tmp \
         --witness-count 2 \
+        --output-text \
         --protocol-params-file params.json | awk '{ print $1 }')
     echo fee: $fee
     ```
@@ -517,6 +519,7 @@ build-rawトランザクションコマンドを実行します。
     fee=$(cardano-cli conway transaction calculate-min-fee \
         --tx-body-file tx.tmp \
         --witness-count 1 \
+        --output-text \
         --protocol-params-file params.json | awk '{ print $1 }')
     echo fee: $fee
     ```
