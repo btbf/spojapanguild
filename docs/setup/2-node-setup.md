@@ -346,22 +346,22 @@ config.json、genesis.json、topology.json
 ```bash
 mkdir $NODE_HOME
 cd $NODE_HOME
-wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-byron-genesis.json -O ${NODE_CONFIG}-byron-genesis.json
-wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-topology.json -O ${NODE_CONFIG}-topology.json
-wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
-wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
-wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
-wget -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
+wget -q https://spojapanguild.net/node_config/10.5.1/${NODE_CONFIG}-byron-genesis.json -O ${NODE_CONFIG}-byron-genesis.json
+wget -q https://spojapanguild.net/node_config/10.5.1/${NODE_CONFIG}-topology.json -O ${NODE_CONFIG}-topology.json
+wget -q https://spojapanguild.net/node_config/10.5.1/${NODE_CONFIG}-shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
+wget -q https://spojapanguild.net/node_config/10.5.1/${NODE_CONFIG}-alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
+wget -q https://spojapanguild.net/node_config/10.5.1/${NODE_CONFIG}-conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
+wget -q https://spojapanguild.net/node_config/10.5.1/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
 ```
 
 === "リレーノードで実施"
     ```
-    wget --no-use-server-timestamps -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
+    wget --no-use-server-timestamps -q https://spojapanguild.net/node_config/10.5.1/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
     ```
 
 === "ブロックプロデューサーノードで実施"
     ```
-    wget --no-use-server-timestamps -q https://spojapanguild.net/node_config/10.4.1/${NODE_CONFIG}-config-bp.json -O ${NODE_CONFIG}-config.json
+    wget --no-use-server-timestamps -q https://spojapanguild.net/node_config/10.5.1/${NODE_CONFIG}-config-bp.json -O ${NODE_CONFIG}-config.json
     ```
 
 
