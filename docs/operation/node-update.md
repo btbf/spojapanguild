@@ -4,21 +4,21 @@ status: new
 # **ノードアップデートマニュアル**
 
 このガイドは ノードバージョン10.5.1に対応しています。  
-最終更新日：2025年7月25日　　
+最終更新日：2025年8月21日　　
 
 !!! info "バージョン対応表"
     * <font color=red>各依存関係もバージョンアップしてますのでよくお読みになって進めてください</font>
 
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 10.5.1 | 10.11.0.0 | 9.6.7 | 3.12.1.0 | 6.5.1 |
+    | 10.5.1 | 10.11.0.0 | 9.6.7 | 3.12.1.0 | 6.6.0 |
 
     **■アップデートパターンDB再構築有無**
 
     | バージョン | DB再構築有無 | 設定ファイル更新有無 | トポロジーファイル更新有無 |
     | :---------- | :---------- | :---------- | :---------- |
-    | ~10.3.1→10.5.1 | あり | 更新あり | 更新あり |
-    | 10.4.1→10.5.1 | なし | 更新あり | 更新あり |
+    | ~10.3.1→10.5.1 | あり | 更新あり | 更新なし |
+    | 10.4.1→10.5.1 | なし | 更新あり | 更新なし |
 
     * <font color=red>作業前にブロック生成スケジュールを確認し余裕のある作業をお願いします</font>
     * <font color=green>複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。</font>
@@ -424,9 +424,9 @@ CNCLIバージョン確認
 cncli --version
 ```
 > 以下の戻り値ならOK  
-cncli 6.5.1
+cncli 6.6.0
 
-??? danger "cncli v6.5.0以下だった場合(クリックして開く)"
+??? danger "cncli v6.5.1以下だった場合(クリックして開く)"
     
     **CNCLIをアップデートする**
 
@@ -448,7 +448,7 @@ cncli 6.5.1
     ```
     cncli --version
     ```
-    > cncli v6.5.1になったことを確認する  
+    > cncli v6.6.0になったことを確認する  
 
 
 ## **2.ノードアップデート**
@@ -655,14 +655,14 @@ cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config
         ```
         cd $NODE_HOME
         wget -q https://spojapanguild.net/node_config/10.5.1/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
-        wget -q https://spojapanguild.net/node_config/10.5.1/${NODE_CONFIG}-peer-snapshot -O ${NODE_CONFIG}-peer-snapshot
         wget -q https://spojapanguild.net/node_config/10.5.1/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
         ```
-
+        <!--
         トポロジーファイルに`peerSnapshotFile`パスを設定する
         ```
         sed -i '/"publicRoots": \[/i \  "peerSnapshotFile": "${NODE_CONFIG}-peer-snapshot.json",' ${NODE_CONFIG}-topology.json
         ```
+        -->
 
     === "BPで実行"
         設定ファイルダウンロード
