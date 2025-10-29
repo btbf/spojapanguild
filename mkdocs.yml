@@ -118,6 +118,7 @@ nav:
       - '9.監視ツール設定': './setup/9-monitoring-tools-setup.md'
       - '10.ブロックログ設定': './setup/10-blocklog-setup.md'
       - '11.SPO BlockNotify設定': './setup/11-blocknotify-setup.md'
+      - '12.SPOニュースレター登録': './setup/12-spo-newsletter.md'
       - '寄付とクレジット': './setup/99-donation-credit.md'
     - 'プール運用マニュアル':
       - '運用ガイド': './operation/start-guide.md'
