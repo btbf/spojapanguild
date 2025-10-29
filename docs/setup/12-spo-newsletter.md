@@ -12,3 +12,15 @@
 入力フォーム参考例  
 DRepの方はDRepIDの入力もお願い致します。
 [![](../images/spo-newsletter-jp.png)](../images/spo-newsletter-jp.png)
+
+## メールアドレス認証
+フォーム入力後、メールアドレス認証用のメールが送られてきますので「Confirm email address」をクリックして認証してください。
+![](../images/spo-newsletter-jp2.png)
+
+この画面が表示されたら認証完了です。  
+![](../images/spo-newsletter-jp3.png)
+
+## Xフォロー
+SPO JAPAN GUILDの最新情報はXでも発信しております！  
+[https://x.com/spojapanguild](https://x.com/spojapanguild)  
+![](../images/sjg-x.png)
