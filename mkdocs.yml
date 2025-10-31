@@ -97,7 +97,10 @@ extra_css:
 nav:
     - 'HOME':
       - 'スタートガイド': './index.md'
-      - 'エアギャップマシン作成': './setup/air-gap-guid.md'
+      - 'エアギャップマシン作成': 
+        - 'エアギャップマシンとは？': './setup/airgap/air-gap-guid.md'
+        - '自動セットアップ': './setup/airgap/vb/air-gap-auto.md'
+        - '手動セットアップ': './setup/airgap/vb/air-gap-manual.md'
       - 'プール構築マニュアル': './setup/1-ubuntu-setup.md'
       - 'プール運用マニュアル': './operation/start-guide.md'
       - 'SJGラーニング': ./learning.md
