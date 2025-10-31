@@ -1,5 +1,9 @@
 # 変更履歴
 
+## 2025/10/31　ver. 13.8.4
+!!! note ""
+    * [SPOニュースレター登録手順](setup/12-spo-newsletter.md)追加
+
 ## 2025/08/21　ver. 13.8.3
 !!! note ""
     * cardano-node v10.5.1対応
