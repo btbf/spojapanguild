@@ -10,7 +10,9 @@
 [https://services.iohk.io/ja-jp/spo-newsletter-jp](https://services.iohk.io/ja-jp/spo-newsletter-jp)
 
 入力フォーム参考例  
-DRepの方はDRepIDの入力もお願い致します。
+1. ニュースレターを受け取りたいメールアドレスを入力してください
+2. DRepの方はDRepIDの入力もお願い致します
+3. SPOギルド所属欄には「SPO JAPAN GUILD」を入力してください
 [![](../images/spo-newsletter-jp.png)](../images/spo-newsletter-jp.png)
 
 ## メールアドレス認証
@@ -18,6 +20,7 @@ DRepの方はDRepIDの入力もお願い致します。
 ![](../images/spo-newsletter-jp2.png)
 
 この画面が表示されたら認証完了です。  
+※表示されるメールアドレスは登録時に入力したメールアドレスです。
 ![](../images/spo-newsletter-jp3.png)
 
 ## Xフォロー
