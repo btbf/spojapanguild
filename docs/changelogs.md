@@ -1,5 +1,10 @@
 # 変更履歴
 
+## 2025/11/3　ver. 13.8.5
+!!! note ""
+    * [**SJG TOOL v4.0.0リリース**](operation/tool.md)
+    * 軽微な修正
+
 ## 2025/10/31　ver. 13.8.4
 !!! note ""
     * [SPOニュースレター登録手順](setup/12-spo-newsletter.md)追加

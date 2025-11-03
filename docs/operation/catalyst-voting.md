@@ -21,10 +21,10 @@
 === "ブロックプロデューサーノード"
     ```bash
     cd $HOME/git
-    wget https://github.com/input-output-hk/bech32/archive/refs/tags/$(curl -s https://api.github.com/repos/input-output-hk/bech32/releases/latest | jq -r .tag_name).tar.gz
-    tar -xf $(curl -s https://api.github.com/repos/input-output-hk/bech32/releases/latest | jq -r .tag_name).tar.gz
-    mv bech32-$(curl -s https://api.github.com/repos/input-output-hk/bech32/releases/latest | jq -r .tag_name | tr -d v) bech32
-    rm $(curl -s https://api.github.com/repos/input-output-hk/bech32/releases/latest | jq -r .tag_name).tar.gz
+    wget  https://github.com/IntersectMBO/bech32/archive/refs/tags/$(curl -s https://api.github.com/repos/IntersectMBO/bech32/releases/latest | jq -r .tag_name).tar.gz
+    tar -xf $(curl -s https://api.github.com/repos/IntersectMBO/bech32/releases/latest | jq -r .tag_name).tar.gz
+    mv bech32-$(curl -s https://api.github.com/repos/IntersectMBO/bech32/releases/latest | jq -r .tag_name | tr -d v) bech32
+    rm $(curl -s https://api.github.com/repos/IntersectMBO/bech32/releases/latest | jq -r .tag_name).tar.gz
     ```
 
 ビルド
@@ -68,7 +68,7 @@ binディレクトリへコピー
     ```
     cardano-signer help | grep -m 1 "cardano-signer"
     ```
-> cardano-signer 1.13.0
+> cardano-signer 1.32.0
 
 #### エアギャップへコピー
 
@@ -98,16 +98,16 @@ binディレクトリへコピー
     ```
     cardano-signer help | grep -m 1 "cardano-signer"
     ```
-    > cardano-signer 1.13.0
+    > cardano-signer 1.32.0
 
 
 ### **catalyst-toolboxインストール**
 === "ブロックプロデューサーノード"
     ```
     cd $HOME/git
-    git clone https://github.com/input-output-hk/catalyst-toolbox.git
-    cd catalyst-toolbox
-    git checkout 6c3ebb7
+    git clone https://github.com/input-output-hk/catalyst-core.git
+    cd catalyst-core
+    git checkout 1bdacb3
     ```
 
 Rustパッケージアップデート
@@ -119,7 +119,7 @@ Rustパッケージアップデート
 インストール
 === "ブロックプロデューサーノード"
     ```
-    cd catalyst-toolbox
+    cd src/catalyst-toolbox
     cargo install --path . --force
     ```
 
