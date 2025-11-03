@@ -72,12 +72,14 @@ gtool
 ### v4.0.0
     * KES更新フロー簡略化
     * Airgap Scripts導入
+    * ADAハンドル名前解決バグ修正
 
-    エアギャップに環境変数を追加してください
-    ```
-    echo alias airgap="'cd $HOME/cnode && [ -f airgap-set.tar.gz ] && tar -xOzf airgap-set.tar.gz airgap_script | bash -s verify || echo "airgap-set.tar.gz が見つかりません"'" >> $HOME/.bashrc
-    source $HOME/.bashrc
-    ```
+エアギャップに環境変数を追加してください
+
+```
+echo alias airgap="'cd $HOME/cnode && [ -f airgap-set.tar.gz ] && tar -xOzf airgap-set.tar.gz airgap_script | bash -s verify || echo "airgap-set.tar.gz が見つかりません"'" >> $HOME/.bashrc
+source $HOME/.bashrc
+```
 
 ### v3.9.7
     * cardano-cli 10.11.0.0対応
