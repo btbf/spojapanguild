@@ -2571,10 +2571,6 @@ update(){
     printf "SPO JAPAN GUILD TOOL UPDATE\n"
     printf "Ver.${FG_YELLOW}$CUR_VERSION${NC}から${FG_GREEN}$GIT_VERSION${NC}へアップデートしました\n"
     echo
-    echo -e "${FG_RED}エアギャップに環境変数を追加する必要があります${NC}"
-    echo -e "SJGマニュアルの「プール運用マニュアル」→「ツール設定」→「SJGツール導入設定」${FG_GREEN}更新履歴${NC}をご参照ください"
-    echo "https://docs.spojapanguild.net/operation/tool/"
-    echo
     echo "Enterを押してリロードしてください"
     read Wait
     return 1
