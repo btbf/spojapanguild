@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="3.9.7"
+TOOL_VERSION="4.0.0"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -41,8 +41,18 @@ bech32_install
 #echo $NETWORK_NAME
 #echo $KOIOS_API
 
-node_type=`filecheck "$NODE_HOME/$POOL_OPCERT_FILENAME"`
-NETWORK_ERA=$(${CCLI} query tip ${NETWORK_IDENTIFIER} 2>/dev/null | jq -r '.era //empty')
+node_type=$(filecheck "$NODE_HOME/$POOL_OPCERT_FILENAME")
+#ノード起動状態確認
+
+CNODE_PID=$(pgrep -fn "$(basename ${CNODEBIN}).*.port ${CNODE_PORT}")
+if [ -z "$CNODE_PID" ]; then
+  printf "\n${FG_RED}ノードが起動していません${NC}\n\n"
+  NETWORK_ERA="None"
+else
+  NETWORK_ERA=$(${CCLI} query tip ${NETWORK_IDENTIFIER} 2>/dev/null | jq -r '.era //empty')
+  cardano-cli conway query protocol-parameters $NETWORK_IDENTIFIER --out-file $NODE_HOME/params.json
+fi
+
 
 if [ ${node_type} == "true" ]; then
     node_name="BP"
@@ -50,19 +60,13 @@ else
     node_name="Relay"
 fi
 
-#プロトコルパラメータファイル作成
-cd $NODE_HOME
-cardano-cli conway query protocol-parameters \
-  $NETWORK_IDENTIFIER \
-  --out-file params.json
-
 node_version=$(${CNODEBIN} version | head -1 | cut -d' ' -f2)
 cli_version=$(${CCLI} version | head -1 | cut -d' ' -f2)
 
 db_size=$(du -sh $NODE_HOME/db | awk '{print $1}')
 avail_disk=$(df -h /usr | awk 'NR==2 {print $4}')
 
-echo -e " >> SPO JAPAN GUILD TOOL ${FG_YELLOW}ver$TOOL_VERSION${NC} <<"
+echo -e " >> SPO JAPAN GUILD TOOL ${FG_YELLOW}Version $TOOL_VERSION${NC} <<"
 echo ' ---------------------------------------------------------------------'
 echo -e " Server:${FG_YELLOW}-$node_name-${NC} | NetWork:${FG_GREEN}-${NETWORK_NAME}-${NC} | Era:${FG_YELLOW}${NETWORK_ERA}${NC} |"
 echo ' ---------------------------------------------------------------------'
@@ -81,10 +85,12 @@ echo '
 echo
 read -n 1 -p "メニュー番号を入力してください : >" num
 case ${num} in
+
   1)
     ################################################
     ## ウォレット操作 
     ################################################
+    node_run_check
     clear
     echo '----------------------------'
     echo '>> ウォレット操作'
@@ -103,7 +109,7 @@ case ${num} in
         echo '>> ウォレット未使用UTXO確認'
         echo '----------------------------'
         echo
-        efile_check=`filecheck "$NODE_HOME/$WALLET_PAY_ADDR_FILENAME"`
+        efile_check=$(filecheck "$NODE_HOME/$WALLET_PAY_ADDR_FILENAME")
         if [ ${efile_check} == "true" ]; then
           echo "■paymentアドレス"
           printf "${FG_YELLOW}$(cat $WALLET_PAY_ADDR_FILENAME)${NC}\n\n"
@@ -133,14 +139,14 @@ case ${num} in
         echo '>> プール報酬確認'
         echo '----------------------------'
         echo
-        efile_check=`filecheck "$NODE_HOME/$WALLET_STAKE_ADDR_FILENAME"`
+        efile_check=$(filecheck "$NODE_HOME/$WALLET_STAKE_ADDR_FILENAME")
         if [ ${efile_check} == "true" ]; then
           echo "■stakeアドレス"
           printf "${FG_YELLOW}$(cat $WALLET_STAKE_ADDR_FILENAME)${NC}\n\n"
           pool_reward=$(cardano-cli conway query stake-address-info --address $(cat $WALLET_STAKE_ADDR_FILENAME) $NETWORK_IDENTIFIER | jq .[].rewardAccountBalance)
-          #pool_reward=`cat $PARENT/stake_json.txt | grep rewardAccountBalance | awk '{ print $2 }'`
+          #pool_reward=$(cat $PARENT/stake_json.txt | grep rewardAccountBalance | awk '{ print $2 }')
           #echo $pool_reward
-          pool_reward_Amount=`scale1 $pool_reward`
+          pool_reward_Amount=$(scale1 $pool_reward)
           printf "報酬額:${FG_GREEN}$pool_reward_Amount${NC} ADA ($pool_reward Lovelace)\n"
 
         else
@@ -184,7 +190,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
             echo "報酬は全額引き出しのみとなります"
             echo '------------------------------------------------------------------------'
             
-            efile_check=`filecheck "$NODE_HOME/$WALLET_STAKE_ADDR_FILENAME"`
+            efile_check=$(filecheck "$NODE_HOME/$WALLET_STAKE_ADDR_FILENAME")
             if [ ${efile_check} == "true" ]; then
               #stake.addr残高算出
               echo
@@ -261,8 +267,8 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
             echo "■ 注意 ■"
             echo "報酬は全額引き出しのみとなります"
             echo '------------------------------------------------------------------------'
-            payfile_check=`filecheck "$NODE_HOME/$WALLET_PAY_ADDR_FILENAME"`
-            stakefile_check=`filecheck "$NODE_HOME/$WALLET_STAKE_ADDR_FILENAME"`
+            payfile_check=$(filecheck "$NODE_HOME/$WALLET_PAY_ADDR_FILENAME")
+            stakefile_check=$(filecheck "$NODE_HOME/$WALLET_STAKE_ADDR_FILENAME")
             if [ ${payfile_check} == "true" ] && [ ${stakefile_check} == "true" ]; then
               #stake.addr残高算出
               reward_Balance
@@ -339,7 +345,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
             echo "出金には十分ご注意ください"
             echo '------------------------------------------------------------------------'
             printf "${FG_YELLOW}出金をキャンセルする場合は 1 を入力してEnterを押してください${NC}\n\n"
-            efile_check=`filecheck "$NODE_HOME/$WALLET_PAY_ADDR_FILENAME"`
+            efile_check=$(filecheck "$NODE_HOME/$WALLET_PAY_ADDR_FILENAME")
             if [ ${efile_check} == "true" ]; then
               #出金先アドレスチェック
               echo
@@ -360,7 +366,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               do
                 read -p "出金額： > " amountToSend
                 if [[ "$amountToSend" -ge 1000000 ]]; then
-                  cal_amount=`scale1 $amountToSend`
+                  cal_amount=$(scale1 $amountToSend)
                   break
                 else
                     echo
@@ -401,7 +407,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               
               tx_Check $destinationAddress $amountToSend $fee ${txOut}
 
-              #printf "$rows" "出金後残高:" "`scale1 ${txOut}` ADA"
+              #printf "$rows" "出金後残高:" "$(scale1 ${txOut}) ADA"
 
               #最終トランザクションファイル作成
               cardano-cli conway transaction build-raw \
@@ -450,8 +456,9 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     ;;
     
   2)
+    node_run_check
     clear
-    log_file="$HOME/dirname-`date +'%Y-%m-%d_%H-%M-%S'`.log"
+    log_file="$HOME/dirname-$(date +'%Y-%m-%d_%H-%M-%S').log"
     echo '------------------------------------------------------------------------'
     echo -e "> BPブロック生成可能状態チェック"
     echo '------------------------------------------------------------------------'
@@ -459,7 +466,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     poolfileCheck
     kesfileCheck
 
-    #kes_vk_file_check=`filecheck "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME"`
+    #kes_vk_file_check=$(filecheck "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME")
     #if [ $kes_vk_file_check == "false" ]; then
     #  printf "\n${FG_RED}$POOL_HOTKEY_VK_FILENAMEが見つかりません${NC}\n\n"
     #  printf "エアギャップにある${FG_GREEN}$POOL_HOTKEY_VK_FILENAME${NC}をBPの${FG_YELLOW}$NODE_HOME${NC}にコピーし再度実行してください\n"
@@ -467,8 +474,8 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     #fi
 
 
-    mempool_CHK=`cat $CONFIG | jq ".TraceMempool"`
-    p2p_CHK=`cat $CONFIG | jq ".EnableP2P"`
+    mempool_CHK=$(cat $CONFIG | jq ".TraceMempool")
+    p2p_CHK=$(cat $CONFIG | jq ".EnableP2P")
 
     get_pooldata
 
@@ -487,28 +494,28 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     active_ST_check(){
       if [ $1 != 0 ]; then
-        printf "${FG_CYAN}`scale1 $1`${NC} ADA"
+        printf "${FG_CYAN}$(scale1 $1)${NC} ADA"
       else
         printf "$1 ADA \n (ライブステークが有効になるまでスケジュール割り当てはありません)\n"
       fi
     }
-    live_Stake=`cat $NODE_HOME/pooldata.txt | jq -r ".[0].live_stake"`
-    live_Stake=`scale1 $live_Stake`
-    active_Stake=`cat $NODE_HOME/pooldata.txt | jq -r ".[0].active_stake"`
+    live_Stake=$(cat $NODE_HOME/pooldata.txt | jq -r ".[0].live_stake")
+    live_Stake=$(scale1 $live_Stake)
+    active_Stake=$(cat $NODE_HOME/pooldata.txt | jq -r ".[0].active_stake")
 
-    active_Stake=`active_ST_check $active_Stake`
-    pledge=`cat $NODE_HOME/pooldata.txt | jq -r ".[0].pledge"`
-    pledge_scale=`scale1 $pledge`
+    active_Stake=$(active_ST_check $active_Stake)
+    pledge=$(cat $NODE_HOME/pooldata.txt | jq -r ".[0].pledge")
+    pledge_scale=$(scale1 $pledge)
 
-    active_epoch=`cat $NODE_HOME/pooldata.txt | jq -r ".[0].active_epoch_no"`
-    future_pledge=`cardano-cli conway query pool-params --stake-pool-id $(cat $NODE_HOME/pool.id-bech32) | jq .[].futurePoolParams.pledge`
-    current_pledge=`cardano-cli conway query pool-params --stake-pool-id $(cat $NODE_HOME/pool.id-bech32) | jq .[].poolParams.pledge`
+    active_epoch=$(cat $NODE_HOME/pooldata.txt | jq -r ".[0].active_epoch_no")
+    future_pledge=$(cardano-cli conway query pool-params --stake-pool-id $(cat $NODE_HOME/pool.id-bech32) | jq .[].futurePoolParams.pledge)
+    current_pledge=$(cardano-cli conway query pool-params --stake-pool-id $(cat $NODE_HOME/pool.id-bech32) | jq .[].poolParams.pledge)
 
   
     printf "ノード起動タイプ:BP ${FG_GREEN}OK${NC}　ネットワーク:${FG_YELLOW}$NETWORK_NAME${NC}\n"
     echo
-    printf "　　対象プール :${FG_CYAN}[`cat $NODE_HOME/pooldata.txt | jq -r ".[0].meta_json.ticker"`] `cat $NODE_HOME/pooldata.txt | jq -r ".[0].meta_json.name"`${NC}\n"
-    printf "　　　プールID :${FG_CYAN}`cat $NODE_HOME/pooldata.txt | jq -r ".[0].pool_id_bech32"`${NC}\n"
+    printf "　　対象プール :${FG_CYAN}[$(cat $NODE_HOME/pooldata.txt | jq -r ".[0].meta_json.ticker")] $(cat $NODE_HOME/pooldata.txt | jq -r ".[0].meta_json.name")${NC}\n"
+    printf "　　　プールID :${FG_CYAN}$(cat $NODE_HOME/pooldata.txt | jq -r ".[0].pool_id_bech32")${NC}\n"
     printf "ライブステーク :${FG_GREEN}$live_Stake${NC} ADA\n"
     printf "　有効ステーク :$active_Stake\n"
     echo
@@ -516,12 +523,12 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     #MetaHashチェック
     
-    metaChainHash=`cat $NODE_HOME/pooldata.txt | jq -r ".[0].meta_hash"`
-    metaFileUrl=`cat $NODE_HOME/pooldata.txt | jq -r ".[0].meta_url"`
+    metaChainHash=$(cat $NODE_HOME/pooldata.txt | jq -r ".[0].meta_hash")
+    metaFileUrl=$(cat $NODE_HOME/pooldata.txt | jq -r ".[0].meta_url")
     mkdir $NODE_HOME/metaCheck
     wget -q $metaFileUrl -O $NODE_HOME/metaCheck/poolMetaData.json
     cat $NODE_HOME/metaCheck/poolMetaData.json | jq . > $NODE_HOME/metaCheck/metaCheck.json 2>&1
-    metaCheck=`cat $NODE_HOME/metaCheck/metaCheck.json | grep name`
+    metaCheck=$(cat $NODE_HOME/metaCheck/metaCheck.json | grep name)
     printf "${FG_MAGENTA}■メタデータチェック${NC}： "
     if [ -z "$metaCheck" ]; then
       printf "${FG_RED}NG${NC}　"
@@ -530,7 +537,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       echo "プール運用マニュアルの「プール情報更新」で再登録してください"
       echo
     else
-      metaFileHash=`cardano-cli conway stake-pool metadata-hash --pool-metadata-file $NODE_HOME/metaCheck/poolMetaData.json`
+      metaFileHash=$(cardano-cli conway stake-pool metadata-hash --pool-metadata-file $NODE_HOME/metaCheck/poolMetaData.json)
       if [ $metaChainHash == $metaFileHash ]; then
         printf "${FG_GREEN}OK${NC}\n"
         printf "チェーン登録ハッシュ：${FG_YELLOW}$metaChainHash${NC}\n"
@@ -547,12 +554,12 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     
     rm -rf $NODE_HOME/metaCheck
     
-    koios_stake_total=`curl -s -X POST "$KOIOS_API/account_info" -H "Accept: application/json" -H "content-type: application/json" -d "{\"_stake_addresses\":[\"$(cat $NODE_HOME/$WALLET_STAKE_ADDR_FILENAME)\"]}" | jq -r '.[].total_balance'`
+    koios_stake_total=$(curl -s -X POST "$KOIOS_API/account_info" -H "Accept: application/json" -H "content-type: application/json" -d "{\"_stake_addresses\":[\"$(cat $NODE_HOME/$WALLET_STAKE_ADDR_FILENAME)\"]}" | jq -r '.[].total_balance')
 
     if [ $active_epoch -gt $current_epoch ] && [ $future_pledge -ne $current_pledge ]; then
       pledge=$current_pledge
-      pledge_scale=`scale1 $pledge`
-      future_pledge_scale=`scale1 $future_pledge`
+      pledge_scale=$(scale1 $pledge)
+      future_pledge_scale=$(scale1 $future_pledge)
       print_pledge="${FG_YELLOW}$pledge_scale${NC} ADA → ${FG_RED}$future_pledge_scale${NC} ADA ($active_epoch エポックで有効)\n"
     else
       print_pledge="${FG_YELLOW}$pledge_scale${NC} ADA\n"
@@ -571,21 +578,21 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
       printf "　　委任合計　 :$(scale1 ${koios_stake_total}) ADA (payment.addr + stake.addr報酬合計)\n"
 
    #ノード起動スクリプトファイル名読み取り
-    exec_path=`grep -H "ExecStart" /etc/systemd/system/cardano-node.service`
+    exec_path=$(grep -H "ExecStart" /etc/systemd/system/cardano-node.service)
     exec_path=${exec_path##*/}
     script_name=${exec_path/%?/}
     script_path="$NODE_HOME/$script_name"
     script_path=$script_path
 
     #起動スクリプトからBP起動ファイル読み取り
-    kes_path=`grep -H "KES=" $script_path`
-    vrf_path=`grep -H "VRF=" $script_path`
-    cert_path=`grep -H "CERT=" $script_path`
+    kes_path=$(grep -H "KES=" $script_path)
+    vrf_path=$(grep -H "VRF=" $script_path)
+    cert_path=$(grep -H "CERT=" $script_path)
     echo
     printf "${FG_MAGENTA}■BPファイル存在確認${NC}\n"
     if [ $kes_path ]; then
       kes_name=${kes_path##*/}
-      kes_CHK=`filecheck "$NODE_HOME/$kes_name"`
+      kes_CHK=$(filecheck "$NODE_HOME/$kes_name")
       if [ $kes_CHK == "true" ]; then
         printf "　 $kes_name: ${FG_GREEN}OK${NC}\n"
         okCnt=$((${okCnt}+1))
@@ -601,7 +608,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     if [ $vrf_path ]; then
       vrf_name=${vrf_path##*/}
-      vrf_CHK=`filecheck "$NODE_HOME/$vrf_name"`
+      vrf_CHK=$(filecheck "$NODE_HOME/$vrf_name")
       if [ $vrf_CHK == "true" ]; then
         printf "　 $vrf_name: ${FG_GREEN}OK${NC}\n"
         okCnt=$((${okCnt}+1))
@@ -617,7 +624,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     if [ $cert_path ]; then
     cert_name=${cert_path##*/}
-    cert_CHK=`filecheck "$NODE_HOME/$cert_name"`
+    cert_CHK=$(filecheck "$NODE_HOME/$cert_name")
       if [ $cert_CHK == "true" ]; then
         printf "　$cert_name: ${FG_GREEN}OK${NC}\n"
         okCnt=$((${okCnt}+1))
@@ -633,7 +640,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     #ノード同期状況確認
     #APIから最新ブロックNo取得
-    koios_blockNo=`curl -s -X GET "$KOIOS_API/tip" -H "Accept: application/json" | jq -r '.[].block_no'`
+    koios_blockNo=$(curl -s -X GET "$KOIOS_API/tip" -H "Accept: application/json" | jq -r '.[].block_no')
     
 
     #ノードから同期済みブロック取得
@@ -711,7 +718,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     printf "　incoming :${FG_YELLOW}$peers_in $peer_in_judge${NC}\n"
     printf "　outgoing :${FG_YELLOW}$peers_out $peer_out_judge${NC}\n"
 
-    chain_Vrf_hash=`cat $NODE_HOME/pooldata.txt | jq -r ".[0].vrf_key_hash"`
+    chain_Vrf_hash=$(cat $NODE_HOME/pooldata.txt | jq -r ".[0].vrf_key_hash")
 
     #ローカルVRFファイル検証
     mkdir $NODE_HOME/vrf_check
@@ -734,12 +741,12 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     rm -rf $NODE_HOME/vrf_check
 
-    chain_cert_counter=`cat $NODE_HOME/pooldata.txt | jq -r ".[0].op_cert_counter"`
-    local_cert_counter=`cardano-cli conway text-view decode-cbor --in-file $POOL_OPCERT_FILENAME | grep int | head -1 | cut -d"(" -f2 | cut -d")" -f1`
+    chain_cert_counter=$(cat $NODE_HOME/pooldata.txt | jq -r ".[0].op_cert_counter")
+    local_cert_counter=$(cardano-cli conway text-view decode-cbor --in-file $POOL_OPCERT_FILENAME | grep int | head -1 | cut -d"(" -f2 | cut -d")" -f1)
     kes_remaining=$(curl -s http://localhost:${PROM_PORT}/metrics | grep KESPeriods_int | awk '{ print $2 }')
-    kes_days=`bc <<< "$kes_remaining * 1.5"`
-    kes_cborHex=`cat $NODE_HOME/$POOL_HOTKEY_VK_FILENAME | jq '.cborHex' | tr -d '"'`
-    cert_cborHex=`cardano-cli conway text-view decode-cbor --in-file $NODE_HOME/$POOL_OPCERT_FILENAME | awk 'NR==4,NR==6 {print}' | sed 's/ //g' | sed 's/#.*//' | tr -d '\n'`
+    kes_days=$(bc <<< "$kes_remaining * 1.5")
+    kes_cborHex=$(cat $NODE_HOME/$POOL_HOTKEY_VK_FILENAME | jq '.cborHex' | tr -d '"')
+    cert_cborHex=$(cardano-cli conway text-view decode-cbor --in-file $NODE_HOME/$POOL_OPCERT_FILENAME | awk 'NR==4,NR==6 {print}' | sed 's/ //g' | sed 's/#.*//' | tr -d '\n')
 
     #証明書判定
     if [ $kes_cborHex == $cert_cborHex ]; then
@@ -807,18 +814,18 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
   
   3)
     clear
-
-    #KEStimenig
-    slotNumInt=$(curl -s http://localhost:${PROM_PORT}/metrics | grep cardano_node_metrics_slotNum_int | awk '{ print $2 }')
-    kesTiming=`echo "scale=6; ${slotNumInt} / 129600" | bc | awk '{printf "%.5f\n", $0}'`
-
     echo '------------------------------------------------------------------------'
     echo -e "> KES更新作業"
     echo '------------------------------------------------------------------------'
 
     kesfileCheck
+    koios_current_Slot
+    #KEStimenig
 
-    node_cert_file_check=`filecheck "$NODE_HOME/$POOL_OPCERT_FILENAME"`
+    kesTiming=$(echo "scale=6; ${koios_currentSlot} / 129600" | bc | awk '{printf "%.5f\n", $0}')
+    echo "現在のスロット番号:$koios_currentSlot"
+
+    node_cert_file_check=$(filecheck "$NODE_HOME/$POOL_OPCERT_FILENAME")
     if [ $node_cert_file_check == "false" ]; then
       printf "\n${FG_RED}$POOL_OPCERT_FILENAMEが見つかりません${NC}\n\n"
       printf "$NODE_HOME/scripts/envの${FG_YELLOW}[POOL_OPCERT_FILENAME]${NC}の値を正しいファイル名(例：${FG_GREEN}node.cert${NC})に書き換えてください\n"
@@ -827,7 +834,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     echo '------------------------------------------------------------------------'
     echo -e "■ 実行フロー"
-    echo ' 1.既存のKESファイル/CERTファイルバックアップ'
+    echo ' 1.ノード停止'
     echo ' 2.既存のKESファイル/CERTファイル削除'
     echo ' 3.新規KESファイル作成'
     echo ' 4.エアギャップ操作/CERTファイル移動(手動)'
@@ -847,15 +854,14 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     #YESNO関数
     yes_no
-     
-    echo
+    
     printf "${FG_MAGENTA}KES更新タイミングチェック${NC}:$kesTiming\n"
     sleep 1
 
     kesTimingDecimal=${kesTiming#*.}
     if [ $kesTimingDecimal -ge 99800 ]; then
       printf "KesStartがもうすぐ切り替わります($kesTiming)\n"
-      nextkes=`printf $kesTiming | awk '{printf("%d\n",$1+1)}'`
+      nextkes=$(printf $kesTiming | awk '{printf("%d\n",$1+1)}')
       printf "startKesPeriodが$nextkesへ切り替わってから再度実行してください\n"
       select_rtn
     else
@@ -864,180 +870,151 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     sleep 2
 
     #最新ブロックカウンター番号チェック
-    kesperiodinfo=$(cardano-cli conway query kes-period-info ${NETWORK_IDENTIFIER} --op-cert-file $NODE_HOME/$POOL_OPCERT_FILENAME --out-file $NODE_HOME/kesperiod.json)
-    lastBlockCnt=`cat kesperiod.json | jq -r '.qKesNodeStateOperationalCertificateNumber'`
-    rm $NODE_HOME/kesperiod.json
+    
+    get_pooldata
+    lastBlockCnt=$(cat $NODE_HOME/pooldata.txt | jq -r ".[0].op_cert_counter")
   
     #現在のKESPeriod算出
-    slotNo=$(cardano-cli conway query tip ${NETWORK_IDENTIFIER} | jq -r '.slot')
     slotsPerKESPeriod=$(cat $NODE_HOME/${NODE_CONFIG}-shelley-genesis.json | jq -r '.slotsPerKESPeriod')
-    kesPeriod=$((${slotNo} / ${slotsPerKESPeriod}))
+    kesPeriod=$((${koios_currentSlot} / ${slotsPerKESPeriod}))
     startKesPeriod=${kesPeriod}
-    
-    kesfolder="$NODE_HOME/kes-backup"
-    if [ ! -d $kesfolder ]; then
-      mkdir $kesfolder
-      printf "$kesfolderディレクトリを作成しました\n"
+
+    kesfolder=$NODE_HOME/kes-backup
+    if [ -d "$kesfolder" ] && [ "$(ls -A "$kesfolder")" ]; then
+      rm -rf $kesfolder
     fi
-
-    date=`date +\%Y\%m\%d\%H\%M`
-    printf "${FG_MAGENTA}■旧KESファイルのバックアップ...${NC}\n"
-    sleep 2
-    cp $NODE_HOME/$POOL_HOTKEY_VK_FILENAME $kesfolder/$date-$POOL_HOTKEY_VK_FILENAME
-    printf "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME を $kesfolder/$date-$POOL_HOTKEY_VK_FILENAMEへコピーしました\n"
-    cp $NODE_HOME/$POOL_HOTKEY_SK_FILENAME $kesfolder/$date-$POOL_HOTKEY_SK_FILENAME
-    printf "$NODE_HOME/$POOL_HOTKEY_SK_FILENAME を $kesfolder/$date-$POOL_HOTKEY_SK_FILENAMEへコピーしました\n"
-    cp $NODE_HOME/$POOL_OPCERT_FILENAME $kesfolder/$date-$POOL_OPCERT_FILENAME
-    printf "$NODE_HOME/$POOL_OPCERT_FILENAME を $kesfolder/$date-$POOL_OPCERT_FILENAMEへコピーしました\n\n"
-
-    # チェックするディレクトリを指定
-    # 特定のファイル名に含まれる文字列を指定（3種類）
-    oldKessKey="${POOL_HOTKEY_SK_FILENAME}"
-    oldKesvKey="${POOL_HOTKEY_VK_FILENAME}"
-    oldNodecertKey="${POOL_OPCERT_FILENAME}"
-
-    # 関数: 古いファイルを削除する
-    KesCleanupFiles() {
-      local pattern=${1}
-      local dir=${2}
-      
-      # 該当するファイルをリストアップ
-      local file_list=$(ls -1t ${dir} | grep ${pattern})
-      
-      # 該当するファイル数を取得
-      local file_count=$(echo "${file_list}" | wc -l)
-      
-      # ファイルが5つ以上ある場合
-      if [ "$file_count" -ge 5 ]; then
-        # 古いファイルをリストアップし、5番目のファイル以降を削除
-        echo "$file_list" | tail -n +6 | while read -r file; do
-          rm "$dir/$file"
-        done
-      fi
-    }
-
-    # 古いバックアップファイル削除
-    KesCleanupFiles "$oldKessKey" "$kesfolder"
-    KesCleanupFiles "$oldKesvKey" "$kesfolder"
-    KesCleanupFiles "$oldNodecertKey" "$kesfolder"
-
-    kesVkey256=`sha256sum $POOL_HOTKEY_VK_FILENAME | awk '{ print $1 }'`
-    kesSkey256=`sha256sum $POOL_HOTKEY_SK_FILENAME | awk '{ print $1 }'`
-
-    printf "${FG_MAGENTA}■旧KESファイルの削除...${NC}\n"
-    sleep 2
-    rm $NODE_HOME/$POOL_HOTKEY_VK_FILENAME
-    printf "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME を削除しました\n"
-    rm $NODE_HOME/$POOL_HOTKEY_SK_FILENAME
-    printf "$NODE_HOME/$POOL_HOTKEY_SK_FILENAME を削除しました\n"
-    #rm $NODE_HOME/$POOL_OPCERT_FILENAME
-    #printf "$NODE_HOME/$POOL_OPCERT_FILENAME を削除しました\n\n"
 
     printf "${FG_MAGENTA}■新しいKESファイルの作成...${NC}\n"
     cardano-cli conway node key-gen-KES \
     --verification-key-file $NODE_HOME/$POOL_HOTKEY_VK_FILENAME \
     --signing-key-file $NODE_HOME/$POOL_HOTKEY_SK_FILENAME
-    sleep 5
+    sleep 2
     
-    kesVkey256=`sha256sum $POOL_HOTKEY_VK_FILENAME | awk '{ print $1 }'`
-    kesSkey256=`sha256sum $POOL_HOTKEY_SK_FILENAME | awk '{ print $1 }'`
-
+    kesVkey256=$(sha256sum $POOL_HOTKEY_VK_FILENAME | awk '{ print $1 }')
+    kesSkey256=$(sha256sum $POOL_HOTKEY_SK_FILENAME | awk '{ print $1 }')
 
     printf "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME ${FG_YELLOW}$kesVkey256${NC}を作成しました\n"
     printf "$NODE_HOME/$POOL_HOTKEY_SK_FILENAME ${FG_YELLOW}$kesSkey256${NC}を作成しました\n\n"
-    sleep 5
-    clear
 
-    sleep 2
-    echo
-    echo
-    echo '■エアギャップオフラインマシンで以下の操作を実施してください'
-    echo '(項目1～6まであります)'
-    echo
-    sleep 2
-    echo
-    echo -e "${FG_YELLOW}1. BPの$POOL_HOTKEY_VK_FILENAMEと$POOL_HOTKEY_SK_FILENAME をエアギャップのcnodeディレクトリにコピーしてください${NC}"
-    echo '----------------------------------------'
-    echo ">> [BP] ⇒ $POOL_HOTKEY_VK_FILENAME / $POOL_HOTKEY_SK_FILENAME ⇒ [エアギャップ]"
-    echo '----------------------------------------'
-    sleep 1
-    echo
-    echo -e "${FG_YELLOW}2. ファイルハッシュ値確認${NC}"
-    echo '----------------------------------------'
-    echo 'cd $NODE_HOME'
-    echo "sha256sum $POOL_HOTKEY_VK_FILENAME"
-    echo "sha256sum $POOL_HOTKEY_SK_FILENAME"
-    echo '----------------------------------------'
-    echo '上記コマンドの戻り値が以下のハッシュ値と等しいか確認する'
-    echo
-    echo -e "$POOL_HOTKEY_VK_FILENAME >> ${FG_YELLOW}$kesVkey256${NC}"
-    echo -e "$POOL_HOTKEY_SK_FILENAME >> ${FG_YELLOW}$kesSkey256${NC}"
-    echo
-    read -p "上記を終えたらEnterを押して次の操作を表示します"
-
-    clear
+    create_airgap_script "KES更新作業"
     echo
     #lastBlockCnt=" "
+    sleep 2
     echo "■カウンター番号情報"
     if expr "$lastBlockCnt" : "[0-9]*$" >&/dev/null; then
       counterValue=$(( $lastBlockCnt +1 ))
-      printf "${FG_MAGENTA}チェーン上カウンター番号${NC}: ${FG_YELLOW}${lastBlockCnt}${NC} \n\n"
-      printf "${FG_MAGENTA}今回更新のカウンター番号${NC}: ${FG_YELLOW}$counterValue${NC} \n\n"
-      printf "node.cert生成時に指定するカウンター番号は\n必ずチェーン上カウンター番号 ${FG_YELLOW}+1${NC} を指定する必要があります\n\n\n"
+      printf "${FG_MAGENTA}チェーン上カウンター番号${NC}: ${FG_YELLOW}${lastBlockCnt}${NC} \n"
+      printf "${FG_MAGENTA}今回更新のカウンター番号${NC}: ${FG_YELLOW}$counterValue${NC} \n"
+      printf "${FG_MAGENTA}KES開始期間${NC}:${FG_YELLOW}$startKesPeriod${NC}\n"
     else
       counterValue=0
       echo
       echo "ブロック未生成です"
       echo -e "今回更新のカウンター番号は ${FG_YELLOW}$counterValue${NC} で更新します"
     fi
-    echo '■エアギャップオフラインマシンで以下の操作を実施してください'
+    echo "上記の内容でエアギャップ用スクリプト作成します"
     echo
-    echo -e "${FG_YELLOW}3. カウンターファイル生成${NC} (生成カウンター ${FG_YELLOW}$counterValue${NC} )"
-    echo '----------------------------------------'
-    echo "chmod u+rwx $COLDKEYS_DIR"
-    echo 'cardano-cli conway node new-counter \'
-    echo "  --cold-verification-key-file $COLDKEYS_DIR/$POOL_COLDKEY_VK_FILENAME"' \'
-    echo '  --counter-value '$counterValue' \'
-    echo "  --operational-certificate-issue-counter-file $COLDKEYS_DIR/$POOL_OPCERT_COUNTER_FILENAME"
-    echo '----------------------------------------'
-    sleep 1
-    echo
-    echo -e "${FG_YELLOW}4. カウンター番号確認${NC}"
-    echo '----------------------------------------'
-    echo 'cardano-cli conway text-view decode-cbor \'
-    echo " --in-file  $COLDKEYS_DIR/$POOL_OPCERT_COUNTER_FILENAME"' \'
-    echo ' | grep int | head -1 | cut -d"(" -f2 | cut -d")" -f1'
-    echo '----------------------------------------'
-    echo -e "${FG_RED}上記コマンド実行の戻り値が ${FG_YELLOW}$counterValue ${FG_RED}であることを確認してください${NC}"
-    echo
-    read -p "上記を終えたらEnterを押して次の操作を表示します"
+    read -p "Enterを押して次の操作を表示します"
 
-    clear
-    echo
-    echo '■エアギャップオフラインマシンで以下の操作を実施してください'
-    echo
+
+    #エアギャップ用スクリプト追記
+    cat >> $NODE_HOME/airgap_script << EOF
+    chmod u+rwx $COLDKEYS_DIR
+    cardano-cli conway node new-counter \
+      --cold-verification-key-file $COLDKEYS_DIR/$POOL_COLDKEY_VK_FILENAME \
+      --counter-value $counterValue \
+      --operational-certificate-issue-counter-file $COLDKEYS_DIR/$POOL_OPCERT_COUNTER_FILENAME
+
+    
+    counter_no=\$(cardano-cli conway text-view decode-cbor --in-file  $COLDKEYS_DIR/$POOL_OPCERT_COUNTER_FILENAME | grep int | head -1 | cut -d"(" -f2 | cut -d")" -f1)
+    echo -e "\n作成された$POOL_OPCERT_COUNTER_FILENAMEのカウンター番号は${FG_YELLOW}\$counter_no${NC}です\n"
+
     printf "${FG_MAGENTA}現在のstartKesPeriod${NC}: ${FG_YELLOW}${startKesPeriod}${NC}\n\n"
-    sleep 2
-    echo
-    echo -e "${FG_YELLOW}5. $POOL_OPCERT_FILENAMEファイルを作成する${NC}"
-    echo '----------------------------------------'
-    echo 'cd $NODE_HOME'
-    echo 'cardano-cli conway node issue-op-cert \'
-    echo "  --kes-verification-key-file $POOL_HOTKEY_VK_FILENAME "'\'
-    echo "  --cold-signing-key-file $COLDKEYS_DIR/$POOL_COLDKEY_SK_FILENAME"' \'
-    echo "  --operational-certificate-issue-counter $COLDKEYS_DIR/$POOL_OPCERT_COUNTER_FILENAME"' \'
-    echo "  --kes-period ${startKesPeriod} "'\'
-    echo "  --out-file $POOL_OPCERT_FILENAME"
-    echo "chmod a-rwx $COLDKEYS_DIR"
+
+    cd \$NODE_HOME
+    cardano-cli conway node issue-op-cert \
+      --kes-verification-key-file $POOL_HOTKEY_VK_FILENAME \
+      --cold-signing-key-file $COLDKEYS_DIR/$POOL_COLDKEY_SK_FILENAME \
+      --operational-certificate-issue-counter $COLDKEYS_DIR/$POOL_OPCERT_COUNTER_FILENAME \
+      --kes-period ${startKesPeriod} \
+      --out-file $POOL_OPCERT_FILENAME
+    chmod a-rwx $COLDKEYS_DIR
+
+    echo "$POOL_OPCERT_FILENAMEファイルを作成しました"
+
     echo '----------------------------------------'
     sleep 1
     echo
-    echo -e "${FG_YELLOW}6. エアギャップの $POOL_OPCERT_FILENAME をBPのcnodeディレクトリにコピーしてください${NC}"
+    echo -e "${FG_YELLOW}エアギャップの $POOL_OPCERT_FILENAME をBPのcnodeディレクトリにコピーしてください${NC}"
     echo '----------------------------------------'
     echo ">> [エアギャップ] ⇒ $POOL_OPCERT_FILENAME ⇒ [BP]"
     echo '----------------------------------------'
     echo
-    read -p "操作が終わったらEnterを押してください"
+    echo "BPのcnodeディレクトリにコピー後、以下のハッシュ値を確認してください"
+    opcert256=\$(sha256sum $POOL_OPCERT_FILENAME | awk '{ print \$1 }')
+    echo -e "${FG_YELLOW}\$opcert256${NC}"
+    echo
+    read -p "操作が終わったらEnterを押してください" < /dev/tty
+    rm \$NODE_HOME/airgap-set.tar.gz
+
+EOF
+    echo
+    echo "エアギャップ用スクリプト作成しました"
+    cd ${NODE_HOME}
+    tar -czf ${NODE_HOME}/airgap-set.tar.gz airgap_script $POOL_HOTKEY_VK_FILENAME $POOL_HOTKEY_SK_FILENAME
+    rm $NODE_HOME/airgap_script
+    printf "${FG_GREEN}airgap-set.tar.gzを作成しました${NC}\n"
+    echo "このファイルには以下のファイルが含まれています"
+    echo " - airgap_script(エアギャップ用スクリプト)"
+    echo " - $POOL_HOTKEY_VK_FILENAME"
+    echo " - $POOL_HOTKEY_SK_FILENAME"
+    echo
+    sleep 2
+    
+    #エアギャップ操作メッセージ
+    echo '■エアギャップオフラインマシンで以下の操作を実施してください'
+    echo
+    echo -e "${FG_YELLOW}1. BPのairgap-set.tar.gzをエアギャップのcnodeディレクトリにコピーしてください${NC}"
+    echo '----------------------------------------'
+    echo ">> [BP] ⇒ airgap-set.tar.gz ⇒ [エアギャップ]"
+    echo '----------------------------------------'
+    echo
+    echo -e "${FG_YELLOW}2. エアギャップで以下のコマンドを実行してください${NC}"
+    echo '----------------------------------------'
+    echo 'airgap'
+    echo '----------------------------------------'
+    echo "airgap-set.tar.gzハッシュ値確認用"
+    gz256=$(sha256sum $NODE_HOME/airgap-set.tar.gz | awk '{ print $1 }')
+    echo -e "${FG_YELLOW}$gz256${NC}"
+    echo
+    echo "エアギャップ上の指示に従ってください"
+    echo
+    read -p "エアギャップから$POOL_OPCERT_FILENAMEをBPのcnodeディレクトリにコピーしたらハッシュ値を表示します" < /dev/tty
+
+    clear
+    while :
+      do
+      opcert_chek=$(filecheck "$NODE_HOME/$POOL_OPCERT_FILENAME")
+      if [[ $opcert_chek == "true" ]]; then
+        printf "\n${FG_GREEN}$POOL_OPCERT_FILENAMEが確認できました${NC}\n\n"
+        echo "エアギャップに表示されているハッシュ値と一致するか確認してください"
+        opcert256=$(sha256sum $NODE_HOME/$POOL_OPCERT_FILENAME | awk '{ print $1 }')
+        echo -e "${FG_YELLOW}$opcert256${NC}"
+        echo
+        echo "ハッシュ値は一致していますか？"
+        echo '[1] 一致している　[2] 一致していない'
+        read -s -n 1 retun_cmd
+        if [ "$retun_cmd" == "1" ]; then
+          break
+        else
+          printf "\n${FG_RED}ハッシュ値が一致しません。エアギャップから正しくコピーされているか確認してください${NC}\n\n"
+          read -p "コピーしたらEnterを押して再度確認します"
+        fi
+      else
+        printf "\n${FG_RED}$POOL_OPCERT_FILENAMEが見つかりません。エアギャップから正しくコピーされているか確認してください${NC}\n\n"
+        read -p "コピーしたらEnterを押して再度確認します"
+      fi
+    done
 
     echo
     echo "新しいKESファイルを有効化するにはノードを再起動する必要があります"
@@ -1054,6 +1031,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
               sudo systemctl reload-or-restart cardano-node
               printf "\n${FG_GREEN}ノードを再起動しました。${NC}\nglive viewを起動して同期状況を確認してください\n\n"
               printf "${FG_RED}ノード同期完了後、当ツールの[2] ブロック生成状態チェックを実行してください${NC}\n\n"
+              rm $NODE_HOME/airgap-set.tar.gz
               break
               ;;
             2) 
@@ -1075,13 +1053,13 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
   4)
   clear
 
-  envCheck=`cat $NODE_HOME/scripts/env | grep "#UPDATE_CHECK="`
+  envCheck=$(cat $NODE_HOME/scripts/env | grep "#UPDATE_CHECK=")
   if [ -n "$envCheck" ]; then
     sed -i $NODE_HOME/scripts/env \
       -e '1,77s!#UPDATE_CHECK!UPDATE_CHECK!'
   fi
 
-  upFlag=`sed -n '1,77p' $NODE_HOME/scripts/env | grep "UPDATE_CHECK=" | cut -c 15`
+  upFlag=$(sed -n '1,77p' $NODE_HOME/scripts/env | grep "UPDATE_CHECK=" | cut -c 15)
 
     echo '------------------------------------------------------------------------'
     echo -e "> envUpdateチェックフラグ切替　　　現在のフラグ状態：${FG_GREEN} $upFlag${NC}"   
@@ -1115,7 +1093,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
           sed -i $NODE_HOME/scripts/env \
             -e '1,77s!UPDATE_CHECK="N"!UPDATE_CHECK="Y"!'
           
-          upFlag_fix=`sed -n '1,77p' $NODE_HOME/scripts/env | grep "UPDATE_CHECK=" | cut -c 15`
+          upFlag_fix=$(sed -n '1,77p' $NODE_HOME/scripts/env | grep "UPDATE_CHECK=" | cut -c 15)
           echo
           echo -e "envファイルのUpdateチェックを${FG_GREEN} $upFlag_fix ${NC}にしました。"
           echo "GliveViewを起動し、UpdateチェックでYを入力してください"
@@ -1138,7 +1116,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
           sed -i $NODE_HOME/scripts/env \
             -e '1,77s!UPDATE_CHECK="Y"!UPDATE_CHECK="N"!'
           
-          upFlag_fix=`sed -n '1,77p' $NODE_HOME/scripts/env | grep "UPDATE_CHECK=" | cut -c 15`
+          upFlag_fix=$(sed -n '1,77p' $NODE_HOME/scripts/env | grep "UPDATE_CHECK=" | cut -c 15)
           echo
           echo -e "envファイルのUpdateチェックを${FG_GREEN} $upFlag_fix ${NC}にしました。"
           select_rtn
@@ -1169,6 +1147,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
   ## Catalyst有権者登録 
   ################################################
   5)
+  node_run_check
   clear
 
     echo '------------------------------------------------------------------------'
@@ -1301,7 +1280,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       #トランザクション作成
       while :
         do
-        regifile_check=`filecheck "$HOME/CatalystVoting/vote-registration.cbor"`
+        regifile_check=$(filecheck "$HOME/CatalystVoting/vote-registration.cbor")
         if [ $regifile_check == "true" ]; then
           break
         else
@@ -1410,7 +1389,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       
       while :
         do
-        skey_check=`filecheck "$HOME/CatalystVoting/${pool_ticker}_voting.skey"`
+        skey_check=$(filecheck "$HOME/CatalystVoting/${pool_ticker}_voting.skey")
         if [ ${skey_check} == "true" ]; then
           catalyst-toolbox qr-code encode \
             --pin $(echo ${send_pincode}) \
@@ -1425,7 +1404,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
       done
 
 
-      qr_check=`filecheck "$HOME/CatalystVoting/${pool_ticker}_vote_qrcode.png"`
+      qr_check=$(filecheck "$HOME/CatalystVoting/${pool_ticker}_vote_qrcode.png")
       if [ $qr_check == "true" ]; then
         echo
         echo "QRコードを作成しました"
@@ -1442,12 +1421,12 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
     }
 
     #起動チェック
-    voting_s_file_check=`filecheck "$HOME/CatalystVoting/${pool_ticker}_voting.skey"`
-    voting_v_file_check=`filecheck "$HOME/CatalystVoting/${pool_ticker}_voting.vkey"`
-    voting_j_file_check=`filecheck "$HOME/CatalystVoting/${pool_ticker}_voting.json"`
-    cbor_file_check=`filecheck "$HOME/CatalystVoting/vote-registration.cbor"`
-    txlog_file_check=`filecheck "$HOME/CatalystVoting/txhash.log"`
-    qrcode_file_check=`filecheck "$HOME/CatalystVoting/${pool_ticker}_vote_qrcode.png"`
+    voting_s_file_check=$(filecheck "$HOME/CatalystVoting/${pool_ticker}_voting.skey")
+    voting_v_file_check=$(filecheck "$HOME/CatalystVoting/${pool_ticker}_voting.vkey")
+    voting_j_file_check=$(filecheck "$HOME/CatalystVoting/${pool_ticker}_voting.json")
+    cbor_file_check=$(filecheck "$HOME/CatalystVoting/vote-registration.cbor")
+    txlog_file_check=$(filecheck "$HOME/CatalystVoting/txhash.log")
+    qrcode_file_check=$(filecheck "$HOME/CatalystVoting/${pool_ticker}_vote_qrcode.png")
 
     if [ $voting_s_file_check == "false" ] && [ $voting_v_file_check == "false" ] && [ $voting_j_file_check == "false" ] && [ $cbor_file_check == "false" ] && [ $txlog_file_check == "false" ] && [ $qrcode_file_check == "false" ]; then
       printf "投票用キーファイル作成: ${FG_YELLOW}未作成${NC}　CBORファイル作成: ${FG_YELLOW}未作成${NC}　トランザクション送信: ${FG_YELLOW}未送信${NC}　QRコード作成: ${FG_YELLOW}未作成${NC}\n\n"
@@ -1482,6 +1461,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
   ;;
 
   6)
+    node_run_check
     clear
     governance_dir=$NODE_HOME/governance
     mkdir -p $governance_dir
@@ -1560,7 +1540,6 @@ byteLength(){
   echo -n ${strings} | wc -c
 }
 
-
 select_rtn(){
   echo
   echo '[h] メイン画面へ戻る　[q] 終了'
@@ -1588,7 +1567,7 @@ select_rtn(){
 }
 
 kesfileCheck(){
-  kes_vk_file_check=`filecheck "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME"`
+  kes_vk_file_check=$(filecheck "$NODE_HOME/$POOL_HOTKEY_VK_FILENAME")
   if [ $kes_vk_file_check == "false" ]; then
     printf "\n${FG_RED}$POOL_HOTKEY_VK_FILENAMEが見つかりません${NC}\n\n"
     printf "$NODE_HOME/scripts/envの${FG_YELLOW}[POOL_HOTKEY_VK_FILENAME]${NC}の値を正しいファイル名(例：${FG_GREEN}kes.vkey${NC})に書き換えるか\n"
@@ -1596,7 +1575,7 @@ kesfileCheck(){
     select_rtn
   fi
 
-  kes_sk_file_check=`filecheck "$NODE_HOME/$POOL_HOTKEY_SK_FILENAME"`
+  kes_sk_file_check=$(filecheck "$NODE_HOME/$POOL_HOTKEY_SK_FILENAME")
   if [ $kes_sk_file_check == "false" ]; then
     printf "\n${FG_RED}$POOL_HOTKEY_SK_FILENAMEが見つかりません${NC}\n\n"
     printf "$NODE_HOME/scripts/envの${FG_YELLOW}[POOL_HOTKEY_SK_FILENAME]${NC}の値を正しいファイル名(例：${FG_GREEN}kes.skey${NC})に書き換えるか\n"
@@ -1684,6 +1663,92 @@ filecheck(){
       question_str_jp_text=$(echo $question_str_jp_response | jq -r ".translations[0].text")
       echo $question_str_jp_text
   }
+
+
+create_airgap_script(){
+  cat > $NODE_HOME/airgap_script << EOF
+#!/bin/bash
+# shellcheck disable=SC1091,SC2086,SC1001,SC2317
+# shellcheck source="\$HOME/.bashrc"
+
+clear
+script_title="${1}"
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+CYAN='\e[36m'
+PURPLE='\e[35m'
+YELLOW='\e[33m'
+BLUE='\e[34m'
+WHITE='\e[37m'
+BOLD='\e[1m'
+UNDERLINE='\e[4m'
+NC='\033[0m' # No Color
+
+
+yes_no(){
+  while :
+      do
+        read -r -n 1 select_number < /dev/tty
+          case \${select_number} in
+            1) return 0 ;;                              # Yes
+            2) echo "スクリプトを終了します" > /dev/tty; return 1 ;;  # No
+            *) echo "1 か 2 を入力してください" > /dev/tty ;;
+          esac
+    done
+}
+
+Verify(){
+  echo
+  echo "BPに表示されているairgap-set.tar.gzのハッシュを確認してください"
+  hash_value=\$(sha256sum \${NODE_HOME}/airgap-set.tar.gz | awk '{print \$1}')
+  echo -e "ハッシュ値：\${YELLOW}\${hash_value}\${NC}"
+  echo
+  echo "上記のハッシュ値をBPに表示されてるハッシュ値と照合してください"
+  echo
+  echo "[1] 一致する [2] 一致しない"
+
+  if yes_no; then
+      echo
+      echo "\${script_title}処理を実行しますか？"
+      echo "[1] はい [2] いいえ"
+
+      if yes_no; then
+          tar -xzf \${NODE_HOME}/airgap-set.tar.gz --exclude="airgap_script" -C \${NODE_HOME}
+          if [ \$? -ne 0 ]; then
+              echo -e "\${RED}airgap-set.tar.gzの解凍に失敗しました。\${NC}"
+              rm \${NODE_HOME}/airgap_script
+              exit 1
+          fi
+          return 0   # 正常終了で関数を抜ける
+      else
+          echo "処理をキャンセルしました。"
+          exit 0
+      fi
+  else
+      echo "再度BPからairgap-set.tar.gzをコピーしてください"
+      sleep 2
+      exit 1
+  fi
+}
+
+case \$1 in
+  "verify" )
+    Verify
+  ;;
+
+  "*" )
+    echo "不正な引数です"
+    rm \${NODE_HOME}/airgap_script
+    exit 0
+  ;;
+esac
+
+#------------------------------------------
+
+
+EOF
+}
 
 ################################################
 ## 処理関数 
@@ -2206,7 +2271,7 @@ reward_Balance(){
     rewardBalance=$(cardano-cli conway query stake-address-info \
         $NETWORK_IDENTIFIER \
         --address $(cat $WALLET_STAKE_ADDR_FILENAME) | jq -r ".[0].rewardAccountBalance")
-    echo "プール報酬: `scale1 $rewardBalance` ADA"
+    echo "プール報酬: $(scale1 $rewardBalance) ADA"
     echo
 
   if [ ${rewardBalance} == 0 ]; then
@@ -2221,6 +2286,12 @@ reward_Balance(){
 current_Slot(){
   currentSlot=$(cardano-cli conway query tip $NETWORK_IDENTIFIER | jq -r '.slot')
   #echo Current Slot: $currentSlot
+}
+
+#Koisスロット取得
+koios_current_Slot(){
+  koios_currentSlot=$(curl -s -X GET "$KOIOS_API/tip" -H "accept: application/json" | jq -r '.[0].abs_slot')
+  koios_ecpocSlot=$(curl -s -X GET "$KOIOS_API/tip" -H "accept: application/json" | jq -r '.[0].epoch_slot')
 }
 
 #payment.addrUTXO算出
@@ -2326,7 +2397,7 @@ send_address(){
   while :
     do
       read -p "出金先のアドレス(またはADAHandle)を入力してください： > " destinationAddress
-      cntDestADDRESS=`echo ${#destinationAddress}`
+      cntDestADDRESS=$(echo ${#destinationAddress})
       if { [ $cntDestADDRESS -ge 30 ]; } && { [[ "$destinationAddress" == addr* ]] || [[ "$destinationAddress" == DdzF* ]]; }; then
         if { [ ${NETWORK_NAME} = "Mainnet" ] && [[ "$destinationAddress" != *_test* ]]; } || { [ ${NETWORK_NAME} != "Mainnet" ] && [[ "$destinationAddress" = *_test* ]]; } ; then
           echo
@@ -2354,7 +2425,7 @@ send_address(){
         printf "\n${FG_RED}出金先アドレスを再度入力してください${NC}\n\n"
       else
       #adahandle
-        adahandleADDRESS=`adahandleConvert $destinationAddress`
+        adahandleADDRESS=$(adahandleConvert $destinationAddress)
         #echo $adahandleADDRESS
         if [ -n "$adahandleADDRESS" ]; then
           echo
@@ -2392,10 +2463,12 @@ send_address_CHECK(){
 
 #adahandleConvert
 adahandleConvert(){
-  adahandleprefix="000de140"
   adahandlePolicyID="f0ff48bbb7bbe9d59a40f1ce90e9e9d0ff5002ec48f232b49ca0fb9a"
   assetNameHex=$(echo -n "${1}" | xxd -b -ps -c 80 | tr -d '\n')
-  curl -s -X GET "$KOIOS_API/asset_addresses?_asset_policy=${adahandlePolicyID}&_asset_name=${adahandleprefix}${assetNameHex}" -H "Accept: application/json" | jq -r '.[].payment_address'
+  if [[ $NODE_CONFIG != "mainnet" ]]; then
+    assetNameHex="000de140${assetNameHex}"
+  fi
+  curl -s -X GET "$KOIOS_API/asset_addresses?_asset_policy=${adahandlePolicyID}&_asset_name=${assetNameHex}" -H "Accept: application/json" | jq -r '.[].payment_address'
 }
 
 #出金前チェック
@@ -2404,29 +2477,29 @@ tx_Check(){
   rows32="%15s ${FG_GREEN}%-15s${NC}\n"
   #printf "$rows" "Send_Address:" "${destinationAddress::20}...${destinationAddress: -20}"
   printf "$rows36" "送金先アドレス:" "$1"
-  printf "$rows32" "       送金ADA:" "`scale1 $2` ADA"
-  printf "$rows32" "　　　  手数料:" "`scale3 $3` ADA"
-  printf "$rows32" "    Wallet残高:" "`scale1 $4` ADA"
+  printf "$rows32" "       送金ADA:" "$(scale1 $2) ADA"
+  printf "$rows32" "　　　  手数料:" "$(scale3 $3) ADA"
+  printf "$rows32" "    Wallet残高:" "$(scale1 $4) ADA"
 
 }
 
 #loverace変換
 scale1(){
-  #r_amount=`echo "scale=1; $1 / 1000000" | bc`
-  r_amount=`echo "scale=6; $1 / 1000000" | bc`
+  #r_amount=$(echo "scale=1; $1 / 1000000" | bc)
+  r_amount=$(echo "scale=6; $1 / 1000000" | bc)
   echo $r_amount
 }
 
 scale3(){
-  #r_amount=`echo "scale=3; $1 / 1000000" | bc | awk '{printf "%.5f\n", $0}'`
-  r_amount=`echo "scale=6; $1 / 1000000" | bc | awk '{printf "%.5f\n", $0}'`
+  #r_amount=$(echo "scale=3; $1 / 1000000" | bc | awk '{printf "%.5f\n", $0}')
+  r_amount=$(echo "scale=6; $1 / 1000000" | bc | awk '{printf "%.5f\n", $0}')
   echo $r_amount
 }
 
 
 #プールIDファイルチェック
 poolfileCheck(){
-  idfile_check=`filecheck "$NODE_HOME/$POOL_ID_BECH32_FILENAME"`
+  idfile_check=$(filecheck "$NODE_HOME/$POOL_ID_BECH32_FILENAME")
   if [ $idfile_check == "false" ]; then
     echo "$POOL_ID_BECH32_FILENAMEが見つかりません"
     echo "エアギャップで作成し、$NODE_HOMEにコピーしてください"
@@ -2455,7 +2528,7 @@ get_pooldata(){
   -d $pId_json > $NODE_HOME/pooldata.txt
   wait
 
-  pooldata_chk=`cat pooldata.txt`
+  pooldata_chk=$(cat pooldata.txt)
   if [[ $pooldata_chk != *"pool_id_bech32"* ]]; then
     echo "APIからプールデータを取得できませんでした。再度お試しください"
     select_rtn
@@ -2486,8 +2559,8 @@ yes_no(){
 update(){
   printf "Update Check...\n"
   wget -q https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/sjgtool.sh -O $NODE_HOME/scripts/sjgtool.sh.tmp
-  tmp256=`sha256sum $NODE_HOME/scripts/sjgtool.sh.tmp | awk '{ print $1 }'`
-  sh256=`sha256sum $NODE_HOME/scripts/sjgtool.sh | awk '{ print $1 }'`
+  tmp256=$(sha256sum $NODE_HOME/scripts/sjgtool.sh.tmp | awk '{ print $1 }')
+  sh256=$(sha256sum $NODE_HOME/scripts/sjgtool.sh | awk '{ print $1 }')
 
   
   if [[ ! $tmp256 == $sh256 ]]; then
@@ -2497,6 +2570,11 @@ update(){
     chmod 755 $NODE_HOME/scripts/sjgtool.sh
     printf "SPO JAPAN GUILD TOOL UPDATE\n"
     printf "Ver.${FG_YELLOW}$CUR_VERSION${NC}から${FG_GREEN}$GIT_VERSION${NC}へアップデートしました\n"
+    echo
+    echo -e "${FG_RED}エアギャップに環境変数を追加する必要があります${NC}"
+    echo -e "SJGマニュアルの「プール運用マニュアル」→「ツール設定」→「SJGツール導入設定」${FG_GREEN}更新履歴${NC}をご参照ください"
+    echo "https://docs.spojapanguild.net/operation/tool/"
+    echo
     echo "Enterを押してリロードしてください"
     read Wait
     return 1
@@ -2504,6 +2582,24 @@ update(){
     rm $NODE_HOME/scripts/sjgtool.sh.tmp
     clear
     return 2
+  fi
+}
+
+#ノード起動確認
+node_run_check(){
+  CNODE_PID=$(pgrep -fn "$(basename ${CNODEBIN}).*.port ${CNODE_PORT}")
+  clear
+  if [[ -n $CNODE_PID ]]; then
+      slot_check=$(curl -s localhost:${PROM_PORT}/metrics | grep slotNum_int)
+      if [ -z "$slot_check" ]; then
+          echo "ノードは起動していますが最新ブロックに同期していません"
+          echo -e "${FG_RED}この処理を実行するにはノードが最新ブロックに同期している必要があります${NC}"
+          exit 1
+      fi
+  else 
+    echo "ノードが起動していません"
+    echo -e "${FG_RED}この処理を実行するにはノードが最新ブロックに同期している必要があります${NC}"
+    exit 1
   fi
 }
 
@@ -2539,7 +2635,7 @@ bech32_install(){
 
 PARENT=$(cd $(dirname $0);pwd)
 
-env_chk=`filecheck $PARENT/env`
+env_chk=$(filecheck $PARENT/env)
 if [ $env_chk == "true" ]; then
   source ./env
   cd $NODE_HOME
@@ -2554,8 +2650,8 @@ clear
 POOL_ID_BECH32_FILENAME="${POOL_ID_FILENAME}-bech32"
 
 #poolIDファイルリネーム
-poolid_file=`filecheck "$NODE_HOME/stakepoolid_hex.txt"`
-new_poolid_file=`filecheck "$NODE_HOME/$POOL_ID_FILENAME"`
+poolid_file=$(filecheck "$NODE_HOME/stakepoolid_hex.txt")
+new_poolid_file=$(filecheck "$NODE_HOME/$POOL_ID_FILENAME")
 if [ ${new_poolid_file} == "false" ]; then
   if [ ${poolid_file} == "true" ]; then
       mv $NODE_HOME/stakepoolid_hex.txt $NODE_HOME/$POOL_ID_FILENAME
@@ -2566,8 +2662,8 @@ if [ ${new_poolid_file} == "false" ]; then
   fi
 fi
 
-poolid_file=`filecheck "$NODE_HOME/stakepoolid_bech32.txt"`
-new_poolid_bech32_file=`filecheck "$NODE_HOME/$POOL_ID_BECH32_FILENAME"`
+poolid_file=$(filecheck "$NODE_HOME/stakepoolid_bech32.txt")
+new_poolid_bech32_file=$(filecheck "$NODE_HOME/$POOL_ID_BECH32_FILENAME")
 if [ ${new_poolid_bech32_file} == "false" ]; then
   if [ ${poolid_file} == "true" ]; then
       mv $NODE_HOME/stakepoolid_bech32.txt $NODE_HOME/$POOL_ID_BECH32_FILENAME
@@ -2583,24 +2679,6 @@ if [[ ${new_poolid_file} == "false" || ${new_poolid_bech32_file} == "false" ]]; 
   clear
 fi
 
-#ノード起動確認
-CNODE_PID=$(pgrep -fn "$(basename ${CNODEBIN}).*.port ${CNODE_PORT}")
-clear
-if [[ -n $CNODE_PID ]]; then
-  while :
-  do
-    slot_check=$(curl -s localhost:${PROM_PORT}/metrics | grep slotNum_int)
-    if [ -z "$slot_check" ]; then
-        echo "ノードが起動するまでこのままお待ちください"
-        sleep 30
-    else
-      main;
-      break
-    fi
-  
-  done
-    
-else 
-    printf "\n${FG_RED}ノードを起動して再度実行してください${NC}\n\n"
-    exit
-fi
+main;
+
+

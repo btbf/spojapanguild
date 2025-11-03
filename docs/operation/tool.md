@@ -1,6 +1,6 @@
 # SPO JAPAN GUILD TOOL
 
-最終更新日：2025/8/21 v3.9.7
+最終更新日：2025/11/3 v4.0.0
 
 !!! info "主な機能"
     * payment.addr残高照会
@@ -68,6 +68,18 @@ gtool
     また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
 
 ## 更新履歴
+
+### v4.0.0
+    * KES更新フロー簡略化
+    * Airgap Scripts導入
+    * ADAハンドル名前解決バグ修正
+
+エアギャップに環境変数を追加してください
+
+```
+echo alias airgap="'cd $HOME/cnode && [ -f airgap-set.tar.gz ] && tar -xOzf airgap-set.tar.gz airgap_script | bash -s verify || echo "airgap-set.tar.gz が見つかりません"'" >> $HOME/.bashrc
+source $HOME/.bashrc
+```
 
 ### v3.9.7
     * cardano-cli 10.11.0.0対応

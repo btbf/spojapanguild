@@ -10,7 +10,7 @@ SPO JAPAN GUILDでは、カルダノネットワーク分散化促進活動の�
 
 !!! info "情報"
     このマニュアルは、カルダノノードv10.5.1に対応しています。  
-    最終更新日：2025年10月31日 guide version 13.8.4
+    最終更新日：2025年11月3日 guide version 13.8.5
 
 !!! tip "サポート"
     サポートが必要な場合は、ディスコード[SPO JAPAN GUILDコミュニティ](https://discord.gg/U3gU54c)で現役のSPOに質問できます
@@ -100,7 +100,7 @@ SPO＝Stake Pool Operator
     flowchart BT
         a2[リレー1] & a3[リレー2] <-- 開放FW --> a4[カルダノネットワーク]
         subgraph ide1[プール]
-            subgraph リレーIP指定FW
+            subgraph BP
                 a1[BP]
             end
                 a1[BP] <--> a2[リレー1] & a3[リレー2]
