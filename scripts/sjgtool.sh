@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="4.0.0"
+TOOL_VERSION="4.0.1"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -954,7 +954,6 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     opcert256=\$(sha256sum $POOL_OPCERT_FILENAME | awk '{ print \$1 }')
     echo -e "${FG_YELLOW}\$opcert256${NC}"
     echo
-    read -p "操作が終わったらEnterを押してください" < /dev/tty
     rm \$NODE_HOME/airgap-set.tar.gz
 
 EOF
