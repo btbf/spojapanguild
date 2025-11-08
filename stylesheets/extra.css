@@ -1,0 +1,105 @@
+.md-typeset {
+    font-size: .75rem;
+}
+
+.md-typeset :is(.admonition,details) {
+    font-size: .75rem;
+}
+
+.md-typeset pre>code {
+    font-size: .72rem;
+}
+
+.md-grid {
+    max-width: 1500px; 
+}
+
+.md-sidebar--secondary {
+    width: 18rem;
+
+}
+.md-sidebar--secondary .md-nav__link {
+    font-size:.65rem;
+}
+
+.mermaid .label {
+    color: var(--md-mermaid-font-color) !important;
+}
+
+.nodes .label text,.clusters .cluster .cluster-label text {
+    fill: var(--md-mermaid-font-color) !important;
+}
+
+.label text{
+    fill: var(--md-mermaid-font-color) !important;
+}
+
+.clusters .cluster rect {
+    fill: var(--md-scheme-node-fg-color--transparent) !important;
+}
+
+.note .quote{
+    word-break:break-word;
+}
+
+
+.mermaid .edgeLabel {
+    padding: 10px;
+    background-color: var(--md-mermaid-node-label-bg-color) !important;
+    stroke:var(--md-mermaid-font-color) !important;
+}
+
+.mermaid .arrowheadPath,.mermaid .edgePath .path {
+    stroke:var(--md-mermaid-node-fg-color) !important;
+}
+
+.node rect {
+    fill: var(--md-mermaid-node-bg-color) !important;
+    stroke: var(--md-mermaid-node-fg-color) !important;
+    }
+    
+:root>* {
+
+    --md-mermaid-node-bg-color: var(--md-scheme-node-fg-color--transparent);
+    --md-mermaid-node-label-bg-color: var(--md-scheme-node-label-color);
+    --md-mermaid-node-fg-color: var(--md-scheme-node-fg-color);
+    --md-mermaid-font-color: var(--md-scheme-node-font-color);
+
+}
+    
+[data-md-color-scheme="slate"] {
+    --md-scheme-node-font-color :#FFF;
+    --md-scheme-node-label-color: #333;
+    --md-scheme-node-fg-color: #00b0ff;
+    --md-scheme-node-fg-color--transparent: rgba(25, 151, 255, 0.1);
+    --md-scheme-node-bg-color: #fff;
+    --md-scheme-node-bg-color--light: hsla(0,0%,100%,.7);
+}
+
+[data-md-color-scheme="default"] { 
+    --md-scheme-node-font-color :#000;
+    --md-scheme-node-label-color: #FFF;
+    --md-scheme-node-fg-color: #4051b5;
+    --md-scheme-node-fg-color--transparent: rgba(25, 151, 255, 0.1);
+    --md-scheme-node-bg-color: #fff;
+    --md-scheme-node-bg-color--light: hsla(0,0%,100%,.7);
+}
+
+.pricing .md-typeset__table{
+    display:block;
+}
+
+.pricing table:not([class]){
+    display:revert;
+}
+
+.pricing table:not([class]) tr:nth-child(-n + 2) th:not([align]){
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: 700;
+}
+
+.pricing table:not([class]) td:not([align]){
+    text-align: center;
+    font-size: 1.2em;
+}
