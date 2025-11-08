@@ -1086,7 +1086,7 @@ sudo journalctl --unit=cardano-node --follow
 **gLiveView更新**
 ```
 sed -i $NODE_HOME/scripts/env \
-    -e '1,73s!UPDATE_CHECK="N"!UPDATE_CHECK="Y"!'
+    -e '1,73s!UPDATE_CHECK="N"!UPDATE_CHECK="Y"!' \
     -e '1,73s!#PROM_HOST=127.0.0.1!PROM_HOST=127.0.0.1!' \
     -e '1,73s!#PROM_PORT=12798!PROM_PORT=12798!'
 ```
