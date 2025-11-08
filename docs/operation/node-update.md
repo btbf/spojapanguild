@@ -1086,7 +1086,9 @@ sudo journalctl --unit=cardano-node --follow
 **gLiveView更新**
 ```
 sed -i $NODE_HOME/scripts/env \
-    -e '1,40s!UPDATE_CHECK="N"!UPDATE_CHECK="Y"!'
+    -e '1,73s!UPDATE_CHECK="N"!UPDATE_CHECK="Y"!'
+    -e '1,73s!#PROM_HOST=127.0.0.1!PROM_HOST=127.0.0.1!' \
+    -e '1,73s!#PROM_PORT=12798!PROM_PORT=12798!'
 ```
 
 **gliveを起動する**
@@ -1105,14 +1107,14 @@ press any key to proceed ..
 **更新フラグを切り替える**
 ```
 sed -i $NODE_HOME/scripts/env \
-    -e '1,40s!UPDATE_CHECK="Y"!UPDATE_CHECK="N"!'
+    -e '1,73s!UPDATE_CHECK="Y"!UPDATE_CHECK="N"!'
 ```
 
 **gliveバージョン確認**
 ```
 glive
 ```
-> Koios gLiveView v1.30.4
+> Koios gLiveView v1.32.0
 
 <!--
 ??? danger "8.1.2/8.7.3からアップデートする場合はこちらも実施必須"
