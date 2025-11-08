@@ -1,5 +1,10 @@
 # 変更履歴
 
+## 2025/11/3　ver. 13.8.6
+!!! note ""
+    * gLiveview 1.32.0対応
+    * 軽微な修正
+
 ## 2025/11/3　ver. 13.8.5
 !!! note ""
     * [**SJG TOOL v4.0.0リリース**](operation/tool.md)
