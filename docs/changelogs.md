@@ -1,5 +1,11 @@
 # 変更履歴
 
+## 2025/11/21　ver. 13.8.7
+!!! note ""
+    * cardano-node v10.5.2対応
+    * [**ノードアップデート手順**](operation/node-update.md)更新
+    * 軽微な修正
+
 ## 2025/11/8　ver. 13.8.6
 !!! note ""
     * gLiveview 1.32.0対応
