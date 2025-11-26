@@ -3,22 +3,26 @@ status: new
 ---
 # **ノードアップデートマニュアル**
 
-このガイドは ノードバージョン10.5.2に対応しています。  
-最終更新日：2025年11月21日　　
+このガイドは ノードバージョン10.5.3に対応しています。  
+最終更新日：2025年11月26日  
+
+!!! danger "必ずお読みください"
+    cardano-node <font color=red><strong>v10.1.4</strong></font>をご利用の方はこのアップデートを<font color=red><strong>実施しない</strong></font>でください！！  
+    先日発生したチェーンフォークの調査継続とバージョン多様性を維持する目的です。
 
 !!! info "バージョン対応表"
     * <font color=red>各依存関係もバージョンアップしてますのでよくお読みになって進めてください</font>
 
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 10.5.2 | 10.11.0.0 | 9.6.7 | 3.12.1.0 | 6.6.0 |
+    | 10.5.3 | 10.11.0.0 | 9.6.7 | 3.12.1.0 | 6.7.0 |
 
     **■アップデートパターンDB再構築有無**
 
     | バージョン | DB再構築有無 | 設定ファイル更新有無 | トポロジーファイル更新有無 |
     | :---------- | :---------- | :---------- | :---------- |
-    | 10.1.4~10.3.1→10.5.2 | あり | 更新あり | 更新なし |
-    | 10.4.1→10.5.2 | なし | 更新あり | 更新なし |
+    | 10.3.1→10.5.3 | あり | 更新あり | 更新なし |
+    | 10.4.1→10.5.3 | なし | 更新あり | 更新なし |
 
     * <font color=red>作業前にブロック生成スケジュールを確認し余裕のある作業をお願いします</font>
     * <font color=green>複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。</font>
@@ -27,6 +31,12 @@ status: new
 ??? danger "主な変更点と新機能および検証結果"
 
     !!! tip "cardano-node"
+        **10.5.3 <font color=red>バグ修正緊急リリース</font>**
+        
+        - cardano-crypto-classライブラリ参照先修正
+        - ソースビルドの場合 blst v0.3.14使用必須
+        - PraosModeのみ有効
+
         **10.5.2 <font color=red>バグ修正緊急リリース</font>**  
 
         <font color=red> 10.3.x, 10.4.x or 10.5.xをご利用中の場合は速やかに10.5.2へアップグレードしてください</font>
@@ -68,7 +78,7 @@ status: new
 
     !!! 検証結果
         ■検証環境
-        Ubuntu22.04 / PreProd-Testnet / cardano-node 10.5.2 / cardano-cli 10.11.0.0 / SJG-TOOL 3.9.4  
+        Ubuntu22.04 / PreProd-Testnet / cardano-node 10.5.3 / cardano-cli 10.11.0.0 / SJG-TOOL 3.9.4  
 
         | 検証項目 | 結果 |
         | :---------- | :---------- |
@@ -94,10 +104,9 @@ status: new
 current_node=$(cardano-node version | grep cardano-node)
 echo $current_node
 ```
-
-!!! warning "以後の作業の注意点"
-    <font color=red>これより以下の作業においてインストール中のcardano-nodeバージョンによって作業が異なります</font>  
-    上記コマンドの戻り値に合った**当枠と同じオレンジ枠**のコマンドも実行してください。
+!!! danger "必ずお読みください"
+    cardano-node <font color=red><strong>v10.1.4</strong></font>をご利用の方はこのアップデートを<font color=red><strong>実施しない</strong></font>でください！！  
+    先日発生したチェーンフォークの調査継続とバージョン多様性を維持する目的です。
 
 
 ### **1-1. システムアップデート**
@@ -107,7 +116,7 @@ echo $current_node
 sudo apt update -y && sudo apt upgrade -y
 ```
 
-??? warning "10.1.4~10.3.1からアップデートする場合はこちらも実施(クリックして開く)"
+??? warning "10.3.1からアップデートする場合はこちらも実施(クリックして開く)"
     **<font color=red>【重要】LMDBライブラリインストール</font>**
     ```bash
     sudo apt install liblmdb-dev -y
@@ -439,9 +448,13 @@ CNCLIバージョン確認
 cncli --version
 ```
 > 以下の戻り値ならOK  
-cncli 6.6.0
+cncli 6.7.0
 
-??? danger "cncli v6.5.1以下だった場合(クリックして開く)"
+!!! hint ""
+    cncli 6.7.0でcardano-db再同期時において33ブロック以上ロールバックする際のcncli同期エラー(※1)が解消されています。  
+    ※1 `Missing eta_v for block xxxxxx`エラー 
+
+??? danger "cncli v6.6.0以下だった場合(クリックして開く)"
     
     **CNCLIをアップデートする**
 
@@ -463,7 +476,7 @@ cncli 6.6.0
     ```
     cncli --version
     ```
-    > cncli v6.6.0になったことを確認する  
+    > cncli v6.7.0になったことを確認する  
 
 
 ## **2.ノードアップデート**
@@ -488,12 +501,12 @@ cncli 6.6.0
     ```
     mkdir $HOME/git/cardano-node2
     cd $HOME/git/cardano-node2
-    wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.5.2/cardano-node-10.5.2-linux.tar.gz
+    wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.5.3/cardano-node-10.5.3-linux.tar.gz
     ```
 
     解凍する
     ```
-    tar zxvf cardano-node-10.5.2-linux.tar.gz ./bin/cardano-node ./bin/cardano-cli ./bin/snapshot-converter
+    tar zxvf cardano-node-10.5.3-linux.tar.gz ./bin/cardano-node ./bin/cardano-cli ./bin/snapshot-converter
     ```
 
     **バージョン確認**
@@ -504,10 +517,10 @@ cncli 6.6.0
     ```
     以下の戻り値を確認する  
     >cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-    1ec98e952863fd836df8e7c3476fcce6cc019fce 
+    6c034ec038d8d276a3595e10e2d38643f09bd1f2 
 
-    >cardano-node 10.5.2 - linux-x86_64 - ghc-9.6  
-    1ec98e952863fd836df8e7c3476fcce6cc019fce 
+    >cardano-node 10.5.3 - linux-x86_64 - ghc-9.6  
+    6c034ec038d8d276a3595e10e2d38643f09bd1f2 
 
 
     **ノードをストップする** 
@@ -536,10 +549,10 @@ cncli 6.6.0
 
     以下の戻り値を確認する  
     >cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-    1ec98e952863fd836df8e7c3476fcce6cc019fce 
+    6c034ec038d8d276a3595e10e2d38643f09bd1f2 
 
-    >cardano-node 10.5.2 - linux-x86_64 - ghc-9.6  
-    1ec98e952863fd836df8e7c3476fcce6cc019fce 
+    >cardano-node 10.5.3 - linux-x86_64 - ghc-9.6  
+    6c034ec038d8d276a3595e10e2d38643f09bd1f2 
 
 
 === "ソースコードからビルドする場合はこちら"
@@ -579,7 +592,7 @@ cncli 6.6.0
 
     ```
     git fetch --all --recurse-submodules --tags
-    git checkout tags/10.5.2
+    git checkout tags/10.5.3
     cabal configure --with-compiler=ghc-9.6.7
     ```
 
@@ -602,10 +615,10 @@ cncli 6.6.0
 
     以下の戻り値を確認する  
     >cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-    1ec98e952863fd836df8e7c3476fcce6cc019fce 
+    6c034ec038d8d276a3595e10e2d38643f09bd1f2 
 
-    >cardano-node 10.5.2 - linux-x86_64 - ghc-9.6  
-    1ec98e952863fd836df8e7c3476fcce6cc019fce 
+    >cardano-node 10.5.3 - linux-x86_64 - ghc-9.6  
+    6c034ec038d8d276a3595e10e2d38643f09bd1f2 
 
     **ビルド用TMUXセッションを終了する** 
     ```
@@ -638,20 +651,20 @@ cncli 6.6.0
 
     以下の戻り値を確認する  
     >cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-    1ec98e952863fd836df8e7c3476fcce6cc019fce 
+    6c034ec038d8d276a3595e10e2d38643f09bd1f2 
 
-    >cardano-node 10.5.2 - linux-x86_64 - ghc-9.6  
-    1ec98e952863fd836df8e7c3476fcce6cc019fce 
+    >cardano-node 10.5.3 - linux-x86_64 - ghc-9.6  
+    6c034ec038d8d276a3595e10e2d38643f09bd1f2 
 
     ??? warning "10.3.1以下からアップデートする場合はこちらも実施(クリックして開く)"
         **snapshot-converterをダウンロードする**
         ```
         cd $HOME/git/cardano-node2
-        wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.5.2/cardano-node-10.5.2-linux.tar.gz
+        wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.5.3/cardano-node-10.5.3-linux.tar.gz
         ```
         解凍する
         ```
-        tar zxvf cardano-node-10.5.2-linux.tar.gz ./bin/snapshot-converter
+        tar zxvf cardano-node-10.5.3-linux.tar.gz ./bin/snapshot-converter
         ```
 
 ### **2-3.設定ファイル更新**
@@ -883,8 +896,6 @@ cnreload
 ```
 > ダイナミックP2Pを有効にしている場合、トポロジーファイル変更によるノード再起動は不要になりました。
 -->
-!!! hint ""
-    10.5.1からアップデートの場合この処理は実施しなくても大丈夫です
 
 既存ファイルバックアップ
 ```
@@ -899,8 +910,8 @@ cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config
         設定ファイルダウンロード
         ```
         cd $NODE_HOME
-        wget -q https://spojapanguild.net/node_config/10.5.1/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
-        wget -q https://spojapanguild.net/node_config/10.5.1/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
+        wget -q https://spojapanguild.net/node_config/10.5.3/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
+        wget -q https://spojapanguild.net/node_config/10.5.3/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
         ```
         <!--
         トポロジーファイルに`peerSnapshotFile`パスを設定する
@@ -913,8 +924,8 @@ cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config
         設定ファイルダウンロード
         ```
         cd $NODE_HOME
-        wget -q https://spojapanguild.net/node_config/10.5.1/${NODE_CONFIG}-config-bp.json -O ${NODE_CONFIG}-config.json
-        wget -q https://spojapanguild.net/node_config/10.5.1/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
+        wget -q https://spojapanguild.net/node_config/10.5.3/${NODE_CONFIG}-config-bp.json -O ${NODE_CONFIG}-config.json
+        wget -q https://spojapanguild.net/node_config/10.5.3/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
         ```
 
 ??? warning "10.1.4~10.3.1からアップデートする場合はこちらも実施(クリックして開く)"
@@ -1338,7 +1349,7 @@ cardano-cli version
 
 以下の戻り値を確認する  
 >cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-1ec98e952863fd836df8e7c3476fcce6cc019fce 
+6c034ec038d8d276a3595e10e2d38643f09bd1f2 
 
 
 
