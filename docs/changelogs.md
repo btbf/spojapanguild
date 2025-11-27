@@ -1,5 +1,10 @@
 # 変更履歴
 
+## 2025/11/28　ver. 13.8.9
+!!! note ""
+    * [**SJG TOOL v4.0.2リリース**](operation/tool.md)
+    * Grafanaセキュリティ設定 proxy_pass 名前解決修正
+
 ## 2025/11/27　ver. 13.8.8
 !!! note ""
     * cardano-node v10.5.3対応
