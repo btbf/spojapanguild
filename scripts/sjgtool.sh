@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="4.0.1"
+TOOL_VERSION="4.0.2"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -2605,7 +2605,29 @@ bech32_install(){
 
   check_bech32=$(which bech32)
   version_bech32="1.1.7"
+  version_cabal="3.12.1.0"
   install_bech32=$(bech32 -v 2> /dev/null)
+  check_cabal=$(which cabal)
+  #cabalインストール
+  if [ -z "$check_cabal" ]; then
+    echo "cabalインストール"
+    cd $HOME
+    BOOTSTRAP_HASKELL_NONINTERACTIVE=1
+    BOOTSTRAP_HASKELL_NO_UPGRADE=1
+    BOOTSTRAP_HASKELL_INSTALL_NO_STACK=yes
+    BOOTSTRAP_HASKELL_ADJUST_BASHRC=1
+    unset BOOTSTRAP_HASKELL_INSTALL_HLS
+    export BOOTSTRAP_HASKELL_NONINTERACTIVE BOOTSTRAP_HASKELL_INSTALL_STACK BOOTSTRAP_HASKELL_ADJUST_BASHRC
+    source ~/.bashrc
+    ghcup upgrade
+    ghcup install cabal $version_cabal
+    ghcup set cabal $version_cabal
+
+    cabal --version
+    echo "cabalインストール完了"
+    sleep 2
+  fi
+  
   if [ -z "$check_bech32" ] || [ "$install_bech32" != "$version_bech32" ]; then
     echo "依存関係のbech32をインストールします"
     cd $HOME/git
