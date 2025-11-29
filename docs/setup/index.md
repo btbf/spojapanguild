@@ -53,10 +53,10 @@
     ```
 
 === "Macの場合"
-    ターミナルを起動する 
-    1. ⌘ + Space（command + スペース）
-    2.「terminal」 と入力
-    3. Enter
+    ターミナルを起動する  
+    1. ⌘ + Space（command + スペース）  
+    2.「terminal」 と入力  
+    3. Enter  
 
     sshディレクトリを確認する
     ```
@@ -73,5 +73,6 @@
     mv ssh_ed25519.pub authorized_keys
     ```
 
-ssh_ed25519 秘密鍵  
-authorized_keys 公開鍵  
+これらのファイルを紛失しないようご注意ください。  
+ssh_ed25519 (秘密鍵)  
+authorized_keys (公開鍵)  
