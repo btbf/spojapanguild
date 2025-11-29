@@ -105,7 +105,7 @@ CNCLIのバージョンを確認します。
 ```bash
 cncli --version
 ```
-> 6.6.0 が最新バージョンです
+> 6.7.0 が最新バージョンです
 
 ## **10-2. sqlite3インストール**
 
@@ -544,7 +544,7 @@ rm $HOME/cncli-${cncli_release}-x86_64-unknown-linux-gnu.tar.gz
 ```
 cncli --version
 ```
-> cncli 6.0.1になったことを確認する 
+> cncli 6.7.0になったことを確認する 
 
 ノードを再起動する
 ```bash
@@ -583,4 +583,4 @@ sudo systemctl start cnode-cncli-sync.service
 
 
 !!! info "制作クレジット"
-    このツールは海外ギルドオペレーター制作の[CNCLI By AndrewWestberg](https://github.com/cardano-community/cncli)、[logmonitor by Guild Operators](https://cardano-community.github.io/guild-operators/#/Scripts/logmonitor)、[Guild LiveView](https://cardano-community.github.io/guild-operators/#/Scripts/gliveview)、[BLOCK LOG for CNTools](https://cardano-community.github.io/guild-operators/#/Scripts/cntools)を組み合わせたツールとなっております。カスタマイズするにあたり、開発者の[AHLNET(AHL)](https://twitter.com/olaahlman)にご協力頂きました。ありがとうございます。
+    このツールは海外ギルドオペレーター制作の[CNCLI By AndrewWestberg](https://github.com/cardano-community/cncli)、[Guild LiveView](https://cardano-community.github.io/guild-operators/#/Scripts/gliveview)、[BLOCK LOG for CNTools](https://cardano-community.github.io/guild-operators/#/Scripts/cntools)を組み合わせたツールとなっております。カスタマイズするにあたり、開発者の[AHLNET(AHL)](https://twitter.com/olaahlman)にご協力頂きました。ありがとうございます。
