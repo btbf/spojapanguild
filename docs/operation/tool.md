@@ -61,6 +61,11 @@ TOOLを実行する
 gtool
 ```
 
+**エアギャップマシンに環境変数を追加する**
+```
+echo alias airgap="'cd $HOME/cnode && [ -f airgap-set.tar.gz ] && tar -xOzf airgap-set.tar.gz airgap_script | bash -s verify || echo "airgap-set.tar.gz が見つかりません"'" >> $HOME/.bashrc
+```
+
 !!! bug "既知の不具合"
 
     なし
@@ -68,6 +73,9 @@ gtool
     また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
 
 ## 更新履歴
+
+### v4.0.2
+    * bech32インストール時バグ修正
 
 ### v4.0.0
     * KES更新フロー簡略化

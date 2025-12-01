@@ -8,20 +8,13 @@
 !!! tip "ヒント"
     この手順はエアギャップオフラインマシン(VirtualBox上のUbuntu)では実施する必要はありません
 
-
-## **1-1.オススメのターミナルソフト**
-
-1.R-Login(Windows)   
-[https://kmiya-culti.github.io/RLogin/](https://kmiya-culti.github.io/RLogin/) 
-!!! tip "接続状態維持のための設定"
-    R-Login使用の際は、未操作時の接続状態を保持するため以下の設定を行ってください。
-    ![](../images/r-login-setting.jpg)
-
-
-2.Terminal(Mac)  
-[https://www.webdesignleaves.com/pr/plugins/mac_terminal_basics_01.html](https://www.webdesignleaves.com/pr/plugins/mac_terminal_basics_01.html)  
-  
-
+## **1-1.サーバーログイン**
+| 項目 | 設定値 |
+:---|:---
+| **`ホスト`** | サーバーIP |
+| **`ポート`** | ssh(22) |
+| **`ユーザー`** | root |
+| **`パスワード`** | 契約時に送られてくるrootパスワード |
 
 ## **1-2.ユーザーアカウントの作成**
 
@@ -81,10 +74,10 @@ exit
     echo "\$nrconf{restart} = 'a';" | sudo tee /etc/needrestart/conf.d/50local.conf
     ```
     ```
-    echo "\$nrconf{blacklist_rc} = [qr(^cardano-node\\.service$) => 0,];" | sudo tee -a /etc/needrestart/conf.d/50local.conf
+    echo "\$nrconf{blacklist_rc} = [qr(^cardano-node\\.service$) => 0, qr(^cnode-blocknotify\\.service$) => 0, qr(^cnode-cncli-sync\\.service$) => 0,];" | sudo tee -a /etc/needrestart/conf.d/50local.conf
     ```
 
-## **1-3.SSH鍵認証方式へ切り替え**
+## **1-3.SSH設定変更**
 
 !!! summary
     SSHを強化する基本的なルールは次の通りです。
@@ -95,34 +88,17 @@ exit
     * 許可されていないアカウントからのログイン試行をログに記録する \(fail2banなどの、不正アクセスをブロックまたは禁止するソフトウェアの導入を検討する\)
     * SSHログイン元のIPアドレス範囲のみに限定する \(希望する場合のみ\)※利用プロバイダーによっては、定期的にグローバルIPが変更されるので注意が必要
 
-**ペア鍵の作成**
-
+SSHディレクトリ作成
 ```sh
-ssh-keygen -t ed25519 -N '' -C ssh_connect -f ~/.ssh/ssh_ed25519
+mkdir ~/.ssh
 ```
+<font color=red>事前準備で作成した`authorized_keys`を`$HOME/.ssh`ディレクトリにアップロードする</font>
 
-```sh
-cd ~/.ssh
-ls
+パーミッション設定
 ```
-ssh_ed25519（秘密鍵）とssh_ed25519.pub（公開鍵）というファイルが作成されているか確認する。
-
-```sh
-cd ~/.ssh/
-cat ssh_ed25519.pub >> authorized_keys
-chmod 600 authorized_keys
+chmod 600 ~/.ssh/authorized_keys
 chmod 700 ~/.ssh
 ```
-
-**SSH鍵ファイルをダウンロードする** 
-
-1.R-loginの場合はファイル転送ウィンドウを開く  
-2.左側ウィンドウ(ローカル側)は任意の階層にフォルダを作成する。  
-3.右側ウィンドウ(サーバ側)は「.ssh」フォルダを選択する  
-4.右側ウィンドウから、ssh_ed25519とssh_ed25519.pubの上で右クリックして「ファイルのダウンロード」を選択する  
-5.一旦サーバからログアウトする  
-6.R-Loginのサーバ接続編集画面を開き、「SSH認証鍵」をクリックし4でダウンロードしたssh_ed25519ファイルを選ぶ  
-7.サーバへ接続する  
 
 **SSHの設定変更**
 
@@ -133,15 +109,10 @@ sudo nano /etc/ssh/sshd_config
 ```
 
 **ResponseAuthentication**の項目を「no」にします。
-=== "Ubuntu20.04の場合"
-    ```text
-    ChallengeResponseAuthentication no
-    ```
 
-=== "Ubuntu22.04の場合"
-    ```text
-    KbdInteractiveAuthentication no
-    ```
+```text
+KbdInteractiveAuthentication no
+```
 
 **PasswordAuthentication**の項目を「no」にする
 
