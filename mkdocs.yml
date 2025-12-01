@@ -97,17 +97,15 @@ extra_css:
 nav:
     - 'HOME':
       - 'スタートガイド': './index.md'
-      - 'プール構築マニュアル': './setup/index.md'
+      - 'エアギャップマシン作成': './setup/air-gap-guid.md'
+      - 'プール構築マニュアル': './setup/1-ubuntu-setup.md'
       - 'プール運用マニュアル': './operation/start-guide.md'
       - 'SJGラーニング': ./learning.md
-      - 'よくある質問': './faq/node.md'
       - '更新履歴': './changelogs.md'
       - '貢献者': './contributors.md'
       - '寄付とクレジット': './setup/99-donation-credit.md'
 
     - 'プール構築マニュアル':
-      - '構築ガイド': './setup/index.md'
-      - '0.エアギャップマシン作成': './setup/air-gap-guid.md'
       - '1.Ubuntu初期設定': './setup/1-ubuntu-setup.md'
       - '2.ノードインストール': './setup/2-node-setup.md'
       - '3.リレー/BPの接続': './setup/3-relay-bp-setup.md'
@@ -156,7 +154,7 @@ nav:
       - '7.ミッドナイト':
         - 'Glacier Drop請求手続き': './operation/midnight-glacier-drop.md'
       - '6.Linuxコマンド集': './operation/command.md'
-    - 'SJGラーニング': ./learning.md
+    - 'SJGラーニング': './learning.md'
     - 'よくある質問':
       - '運用編':
         - 'ノード関連': './faq/node.md'
