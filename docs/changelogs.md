@@ -414,7 +414,7 @@
     * Cardano-node1.35.4対応
     * prometheus-node-exporter1.5.0アップデート手順追加  
         ([9.監視ツールセットアップ](setup/9-monitoring-tools-setup.md)、[ノードアップデート](operation/node-update.md))
-    * [エアギャップマシン作成](setup/air-gap-guid.md) ページ新設。Version7対応
+    * [エアギャップマシン作成](setup/air-gap-guide.md) ページ新設。Version7対応
     * [1.Ubuntu初期設定](setup/1-ubuntu-setup.md)ファイアウォール設定の一部を変更  
         (設定が必要な各ページ([3-リレー/BPの接続](setup/3-relay-bp-setup.md)、[9.監視ツールセットアップ](setup/9-monitoring-tools-setup.md))へ移動)
     * リレー2台目以降の設定手順を各ページに追加
@@ -483,7 +483,7 @@
 
 ## 2022/05/10　ver. 12.0
 !!! note ""
-    * [エアギャップマシン作成手順](setup/air-gap-guid.md)を追加  
+    * [エアギャップマシン作成手順](setup/air-gap-guide.md)を追加  
     * [Linuxコマンド集](operation/command.md)を追加
     * [SJG Tool](operation/tool.md)のバージョンアップ
     * その他軽微な修正
