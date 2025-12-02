@@ -106,7 +106,7 @@ nav:
 
     - 'プール構築マニュアル':
       - '構築ガイド': './setup/index.md'
-      - '0.エアギャップマシン作成': './setup/air-gap-guid.md'
+      - '0.エアギャップマシン作成': './setup/air-gap-guide.md'
       - '1.Ubuntu初期設定': './setup/1-ubuntu-setup.md'
       - '2.ノードインストール': './setup/2-node-setup.md'
       - '3.リレー/BPの接続': './setup/3-relay-bp-setup.md'

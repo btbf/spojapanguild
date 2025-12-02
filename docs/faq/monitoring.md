@@ -1,9 +1,9 @@
 # ノード監視に関するよくある質問
 
-## Q1.Grafanaのログインパスワードを忘れました
+## Q1. Grafanaのログインパスワードを忘れました
 
-??? note "A.ログインに必要な情報を初期化します"
-    リレー１にて以下を実施します。
+??? note "A. ログインに必要な情報を初期化します"
+    Grafana導入サーバーにて以下を実施します。
     ```
     sudo sqlite3 /var/lib/grafana/grafana.db
     ```
@@ -13,9 +13,7 @@
     ```
     .quit
     ```
-    以下の情報でログインし、パスワードを再設定してください
+    実行後、以下の情報でログインし、パスワードを再設定してください。
 
-    Username:`admin`  
-    password:`admin`
-
-
+    Username: `admin`    
+    password: `admin`
