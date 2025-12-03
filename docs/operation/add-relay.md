@@ -1,142 +1,144 @@
-# リレーノード増設マニュアル
+# リレーノード増設手順
 
-まずは、増設リレーサーバーで1~3を実施してください。  
+増設するリレーサーバーでは、まず1〜3を実施し、その後4以降の手順へ進んでください。    
 
-## 1.Ubuntu初期設定
-[https://docs.spojapanguild.net/setup/1-ubuntu-setup/](https://docs.spojapanguild.net/setup/1-ubuntu-setup/)
+???+ note "増設するリレーサーバーで実施"
 
-## 2.ノードインストール
-[https://docs.spojapanguild.net/setup/2-node-setup/](https://docs.spojapanguild.net/setup/2-node-setup/)
+    ## 1. Ubuntu初期設定
+    [https://docs.spojapanguild.net/setup/1-ubuntu-setup/#1ubuntu](../setup/1-ubuntu-setup.md/#1ubuntu)
 
-## 3.リレーサーバートポロジー設定
-[https://docs.spojapanguild.net/setup/3-relay-bp-setup/#3-1](https://docs.spojapanguild.net/setup/3-relay-bp-setup/#3-1)
+    ## 2. ノードインストール
+    [https://docs.spojapanguild.net/setup/2-node-setup/#2](../setup/2-node-setup.md/#2)
+
+    ## 3. リレーサーバーでトポロジーファイルの設定
+    [https://docs.spojapanguild.net/setup/3-relay-bp-setup/#3-3](../setup/3-relay-bp-setup.md/#3-3)
 
 
-## 4.BPとリレー1のトポロジー変更
+## 4. BPとリレー1のトポロジー変更
 === "ブロックプロデューサー"
 
-    実行前に `+`をクリックして注釈を確認してください。  
+    実行前に `+` をクリックして注釈を確認してください。  
 
     ``` yaml
     cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
     {
-    "bootstrapPeers": null,
-    "localRoots": [
+      "bootstrapPeers": null,
+      "localRoots": [
         {
           "accessPoints": [
             {
-            "address": "リレー１のIP",#(1)!
-            "port": 6000 #(2)!
+              "address": "リレー1のIP",#(1)!
+              "port": 6000 #(2)!
             },
             {
-            "address": "リレー２のIP",#(3)!
-            "port": 6000 #(4)!
+              "address": "リレー2のIP",#(3)!
+              "port": 6000 #(4)!
             }
           ],
           "advertise": false,#(8)!
           "trustable": true,
           "valency": 2 #(5)!
         }
-    ],
-    "publicRoots": [],#(6)!
-    "useLedgerAfterSlot": -1 #(7)!
+      ],
+      "publicRoots": [],#(6)!
+      "useLedgerAfterSlot": -1 #(7)!
     }
     EOF
     ```
     { .annotate }
 
-    1.  リレー１のIPアドレスまたはDNSアドレスに置き換えてください
-    2.  リレー１のポートに置き換えてください
-    3.  リレー２のIPアドレスまたはDNSアドレスに置き換えてください
-    4.  リレー２のポートに置き換えてください
-    5.  固定接続ピアの数を指定してください
-    6.  "publicRoots":を空にしてください
-    7.  `-1`を指定することで台帳から接続先を取得しないBPモードになります
-    8. ここでは`advertise`を`false`にしてください
+    1. リレー1のIPアドレスまたはDNSアドレスに置き換えてください。
+    2. リレー1のポートに置き換えてください。
+    3. リレー2のIPアドレスまたはDNSアドレスに置き換えてください。
+    4. リレー2のポートに置き換えてください。
+    5. 固定接続ピアの数を指定してください。
+    6. `"publicRoots":`を空にしてください。
+    7. `-1`を指定することで台帳から接続先を取得しないBPモードになります。
+    8. ここでは`advertise`を`false`にしてください。
 
 === "リレーノード1"
 
-    実行前に `+`をクリックして注釈を確認してください。  
+    実行前に `+` をクリックして注釈を確認してください。  
 
     ``` yaml
     cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
     {
-    "bootstrapPeers": [
+      "bootstrapPeers": [
         {
-        "address": "backbone.cardano.iog.io",
-        "port": 3001
+          "address": "backbone.cardano.iog.io",
+          "port": 3001
         },
         {
-        "address": "backbone.mainnet.emurgornd.com",
-        "port": 3001
+          "address": "backbone.mainnet.cardanofoundation.org",
+          "port": 3001
         },
         {
-        "address": "backbone.mainnet.cardanofoundation.org",
-        "port": 3001
+          "address": "backbone.mainnet.emurgornd.com",
+          "port": 3001
         }
-    ],
-    "localRoots": [
+      ],
+      "localRoots": [
         {
-        "accessPoints": [
+          "accessPoints": [
             {
-            "address": "BPのIP",#(1)!
-            "port": 00000 #(2)!
+              "address": "BPのIP",#(1)!
+              "port": 00000 #(2)!
             }
-        ],
-            "advertise": false,#(5)!
-            "trustable": true,
-            "valency": 1
+          ],
+          "advertise": false,#(5)!
+          "trustable": true,
+          "valency": 1
         },
         {
-        "accessPoints": [
+          "accessPoints": [
             {
-            "address": "リレー2のIP",#(3)!
-            "port": 6000 #(4)!
+              "address": "リレー2のIP",#(3)!
+              "port": 6000 #(4)!
             }
-        ],
-            "advertise": true,
-            "trustable": true,
-            "valency": 1
+          ],
+          "advertise": true,
+          "trustable": true,
+          "valency": 1
         }
-    ],
-    "publicRoots": [
+      ],
+      "publicRoots": [
         {
-        "accessPoints": [],
-        "advertise": false
+          "accessPoints": [],
+          "advertise": false
         }
-    ],
-    "useLedgerAfterSlot": 128908821
+      ],
+      "useLedgerAfterSlot": 157852837
     }
     EOF
     ```
     { .annotate }
 
-    1.  BPのIPアドレスまたはDNSアドレスに置き換えてください
-    2.  BPのポートに置き換えてください
-    3.  リレー2のIPアドレスまたはDNSアドレスに置き換えてください
-    4.  リレー2のポートに置き換えてください
-    5.  accessPointsにBPを指定する時は必ず`advertise`を`false`にしてください
+    1. BPのIPアドレスまたはDNSアドレスに置き換えてください。
+    2. BPのポートに置き換えてください。
+    3. リレー2のIPアドレスまたはDNSアドレスに置き換えてください。
+    4. リレー2のポートに置き換えてください。
+    5. `accessPoints`にBPを指定する時は必ず`advertise`を`false`にしてください。
 
-ノードを再起動する
-```
-cnrestart
+ノードを再起動します。
+```bash
+sudo systemctl reload-or-restart cardano-node
 ```
 
-## 5.プール情報更新
+## 5. プール情報の更新
 
 [プール情報の更新](../operation/cert-update.md)を実行し、増設したリレーをチェーンに登録します。
 
-## 6.Grafanaセットアップ
+## 6. Grafanaのセットアップ
 
-=== "増設リレーで実施"
-    9-1.インストール  
-    「BPまたはリレー2以降」タブと「リレーノード/BP」タブを増設リレーで実施  
-    [https://docs.spojapanguild.net/setup/9-monitoring-tools-setup/#9-1](../setup/9-monitoring-tools-setup.md)
+=== "増設したリレーサーバーで実施"
 
+      「9-1.インストール」を実施してください。  
+      > 「BPまたはリレー2以降」タブと「リレーノード/BP」タブを増設したリレーサーバーで実施します。  
+      [https://docs.spojapanguild.net/setup/9-monitoring-tools-setup/#9-1](../setup/9-monitoring-tools-setup.md#9-1)
+    
+      
+=== "Grafana導入済みのリレーサーバーで実施"
 
-=== "Grafana導入済みのリレーで実施"
-      9-2.設定ファイルの作成
-      Grafanaがインストールされているサーバーで実施 #9-2
-    [https://docs.spojapanguild.net/setup/9-monitoring-tools-setup/#2](../setup/9-monitoring-tools-setup.md)
-
-
+      「9-2.設定ファイルの作成」を実施してください。  
+      > Grafanaがインストールされているサーバーで実施します。  
+      [https://docs.spojapanguild.net/setup/9-monitoring-tools-setup/#9-2](../setup/9-monitoring-tools-setup.md#9-2)
