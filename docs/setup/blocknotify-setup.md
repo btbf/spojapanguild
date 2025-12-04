@@ -1,4 +1,4 @@
-# **SPO Block Notify設定**
+# **12. SPO BlockNotify設定**
 
 !!! info "概要"
     最終更新日：2025/3/6  v2.5.0
@@ -66,7 +66,7 @@
 
 
 
-## **11-1. 依存プログラムをインストールする**
+## **12-1. 依存プログラムをインストールする**
 
 **Python環境をセットアップする**
 
@@ -110,7 +110,7 @@ rm ${bn_release}.tar.gz
 
 ```
 
-## **11-2. 通知アプリの設定**
+## **12-2. 通知アプリの設定**
 
 通知させたいアプリのタブをクリックし設定を確認してください。
 
@@ -257,7 +257,7 @@ rm ${bn_release}.tar.gz
     * 5.ページ下部の「設定を保存する」をクリックする  
     ![*](../images/block_notify/5-1-3.jpg)
 
-## **11-3. 通知プログラムの設定**
+## **12-3. 通知プログラムの設定**
 
 **設定ファイルをSJG用に書き換える**
 ```
@@ -401,7 +401,7 @@ blocknotify
 
 -->
 
-## **11-4.アップデート手順**
+## **12-4. アップデート手順**
 
 SPO BlockNotifyを停止する
 ```
@@ -445,7 +445,7 @@ sudo systemctl start cnode-blocknotify.service
 python3 $NODE_HOME/scripts/block-notify/block_notify.py version
 ```
 
-## **11-5.アンインストール手順**
+## **12-5. アンインストール手順**
 
 ```
 sudo systemctl stop cnode-blocknotify.service
@@ -454,3 +454,5 @@ sudo systemctl stop cnode-blocknotify.service
 sudo systemctl disable cnode-blocknotify.service
 sudo rm /etc/systemd/system/cnode-blocknotify.service
 ```
+
+---

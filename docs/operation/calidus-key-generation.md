@@ -1,4 +1,4 @@
-# **Calidus Pool Key設定**
+# **Calidusキー生成**
 
 !!! info "概要"
     - ステークプールの所有権を証明するための署名技術
@@ -7,7 +7,7 @@
     - 今後Calidus Pool Keyに対応した多様なサービスがリリース予定
 
 
-## **1.cardano-signerインストール**
+## **1. cardano-signerインストール**
 
 ### **ブロックプロデューサー**
 
@@ -58,7 +58,7 @@
     cardano-signer --version
     ```
 
-## **2.Calidusキー作成**
+## **2. Calidusキー作成**
 
 !!! danger "Calidusキーとjsonファイルの取り扱いについて"
     - 通常のウォレットと同じ性質のペアキーとなります。
@@ -89,7 +89,7 @@
         --out-file Calidus-MnemonicsKey.json
     ```
 
-## **3.メタデータ作成**
+## **3. メタデータ作成**
 
 **プール秘密鍵で署名したメタデータ作成します**  
 === "エアギャップマシン"
@@ -104,7 +104,7 @@
     ```
 
 
-## **5.オンチェーン登録**
+## **4. オンチェーン登録**
 
 最新のスロット番号を取得します
 
@@ -286,13 +286,13 @@ UTXOを算出します
 
 > Transacsion Successfully submittedと表示されれば成功
 
-## **6.オンチェーン確認**
+## **5. オンチェーン確認**
 ```
 curl -s "https://api.koios.rest/api/v1/pool_calidus_keys?pool_id_bech32=eq.$(cat $NODE_HOME/pool.id-bech32)" | jq .
 ```
 > 戻り値に、`"pool_status": "registered"`の項目があれば登録成功
 
-## **7.Calidusキー転送**
+## **6. Calidusキー転送**
 
 === "ブロックプロデューサーノード"
     ```
@@ -306,3 +306,5 @@ curl -s "https://api.koios.rest/api/v1/pool_calidus_keys?pool_id_bech32=eq.$(cat
     graph LR
         A[エアギャップ] -->|myCalidusKey.skey| B[BP];
     ```
+
+---

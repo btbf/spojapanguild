@@ -1,8 +1,8 @@
-# **9.監視ツールセットアップ**
+# **10. 監視ツール設定**
 
 プロメテウスはターゲットに指定したメトリックHTTPエンドポイントをスクレイピングし、情報を収集する監視ツールです。[オフィシャルドキュメントはこちら](https://prometheus.io/docs/introduction/overview/) グラファナは収集されたデータを視覚的に表示させるダッシュボードツールです。
 
-### **9-1.インストール**
+### **10-1. インストール**
 
 !!! abstract "概要"
     「prometheus」および「prometheus node exporter」をインストールします。 この手順では、リレーノード1でprometheusとGrafana本体を稼働させ、各サーバーの情報を取得する方法です。
@@ -127,7 +127,7 @@ prometheus-node-exporterアップデート
     > 戻り値1行目が`node_exporter, version 1.5.0`ならOK
 
 
-## **9-2.設定ファイルの作成**
+## **10-2. 設定ファイルの作成**
 
 リレーノード1にインストールしたPrometheusの設定ファイルを作成します。ここに記載されたサーバーのデータを取得します。
 
@@ -270,7 +270,7 @@ prometheus.yml構文チェック
 sudo systemctl restart prometheus.service
 ```
 
-## **9-3.Grafanaダッシュボードの設定**
+## **10-3. Grafanaダッシュボードの設定**
 
 1. ローカルPCのブラウザから http://リレーノード1IPアドレス:3000 を開きます。
 2. ログイン名・PWは **admin** / **admin**
@@ -309,3 +309,5 @@ sudo systemctl restart prometheus.service
 
     * [セキュリティ強化設定](../operation/grafana-security.md)
     * 異常時に通知する[アラート設定](../operation/grafana-alert.md)
+
+---

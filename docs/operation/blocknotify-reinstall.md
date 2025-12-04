@@ -1,7 +1,7 @@
 ---
 status: new
 ---
-#　SPO Block Notify移行マニュアル
+# **SPOBlockNotify移行手順**
 
 !!! note "このマニュアルについて"
 
@@ -27,7 +27,7 @@ status: new
 以下は現在のインストール状況に合わせて選択してください。
 
 ??? danger "旧ブロック生成ステータス通知 v.1.x.xからのアップデート"
-    ## 旧ブロック生成ステータス通知 v.1.x.xからのアップデート
+    ## **1. 旧ブロック生成ステータス通知 v.1.x.xからのアップデート**
 
     パッケージを更新する
     ```bash
@@ -57,7 +57,7 @@ status: new
     pip3 install --upgrade watchdog pytz python-dateutil requests discordwebhook slackweb i18nice
     ```
 
-    ### 1. サービスファイル修正
+    ### **サービスファイル修正**
 
     サービスを停止する
     ```
@@ -256,7 +256,7 @@ status: new
     sudo systemctl enable cnode-blocknotify.service
     ```
 
-    ### 2.SPO Block Notify設定
+    ### **SPO Block Notify設定**
 
     依存関係インストール
 
@@ -325,7 +325,7 @@ status: new
     python3 $NODE_HOME/scripts/block-notify/block_notify.py version
     ```
 
-    ### 3.サービス起動
+    ### **サービス起動**
     !!! note "サービス起動について"
 
         * `cncli`および`logmonitor`は`cnode-node.service`に紐づいて起動します
@@ -338,7 +338,7 @@ status: new
 
 
 
-    ### 4.サービス起動確認
+    ### **サービス起動確認**
 
     便利なエイリアス設定
     !!! hint "エイリアス設定"
@@ -435,14 +435,14 @@ status: new
 
             Ctrl+cで閉じます
 
-    ### 5. 旧ファイル削除
+    ### **旧ファイル削除**
     ```
     rm $NODE_HOME/guild-db/blocklog/block_check.py $NODE_HOME/guild-db/blocklog/send.txt
     ```
 
 
 ??? danger "SPO Block Notify v.2.1.2/v2.1.3からのアップデート"
-    ## SPO Block Notify v.2.1.2/v2.1.3からのアップデート
+    ## **2. SPO Block Notify v.2.1.2/v2.1.3からのアップデート**
 
     パッケージを更新する
     ```bash
@@ -472,7 +472,7 @@ status: new
     pip3 install --upgrade watchdog pytz python-dateutil requests discordwebhook slackweb i18nice
     ```
 
-    ### 1. サービスファイル修正
+    ### **サービスファイル修正**
 
     サービスを停止する
     ```
@@ -518,7 +518,7 @@ status: new
     ```
 
 
-    ### 2.SPO Block Notify再設定
+    ### **SPO Block Notify再設定**
 
     `.env`バックアップ
     ```
@@ -590,7 +590,7 @@ status: new
     python3 $NODE_HOME/scripts/block-notify/block_notify.py version
     ```
 
-    ### 3.サービス起動
+    ### **サービス起動**
     !!! note "サービス起動について"
 
         * `cncli`および`logmonitor`は`cnode-node.service`に紐づいて起動します
@@ -678,12 +678,12 @@ status: new
             Ctrl+cで閉じます
 
 ??? danger "旧ブロック生成ステータス通知 未導入からのインストール"
-    ## 旧ブロック生成ステータス通知 未導入からのインストール
+    ## **3. 旧ブロック生成ステータス通知 未導入からのインストール**
 
     !!! danger "前提条件"
         TMUX起動のブロックログが導入済みでかつ旧ブロック生成ステータス通知が未導入の場合
 
-    ### 1. サービスファイル修正
+    ### **サービスファイル修正**
 
     サービスを停止する
     ```
@@ -849,7 +849,8 @@ status: new
     sudo systemctl start cnode-logmonitor.service
     ```
 
-    ### 2.SPO Block Notify設定
+    ### **SPO Block Notify設定**
 
     [11.SPO BlockNotify設定](../setup/11-blocknotify-setup.md)を実施してください。
 
+---

@@ -1,4 +1,4 @@
-# **ステークプールを廃止する**
+# **プール廃止処理**
 
 !!! important "プール廃止の流れ"
     
@@ -15,7 +15,7 @@
         click G "./#3paymentaddr"
     ```
 
-## **1.リタイア処理**
+## **1. リタイア処理**
 
 現在のエポックを計算します。
 
@@ -249,7 +249,7 @@ chmod a-rwx $HOME/cold-keys
     309 #リタイアエポック
     ```
 
-## 2.**登録料返還確認**
+## **2. 登録料返還確認**
 
 !!! caution "注意"
     以降の処理は、プールのリタイア処理が完了してから実施してください
@@ -275,11 +275,11 @@ chmod a-rwx $HOME/cold-keys
 
 > rewardAccountBalance: の値を確認する
 
-## **3.stake.addrから引き出し**
+## **3. stake.addrから引き出し**
 
 [stake.addrからpayment.addrへ送金する方法](./withdrawal.md#2-1-paymentaddr)  
 
-## **4.ステークキー解除手順**
+## **4. ステークキー解除手順**
 
 !!! fail "注意"
     * この手順ではstake.addrの登録を解除し、2ADAの返還手続きを行います。
@@ -434,7 +434,7 @@ chmod a-rwx $HOME/cold-keys
         $NODE_NETWORK
     ```
 
-## **5.payment.addrから全額引き出す手順**
+## **5. payment.addrから全額引き出す手順**
 
 まずは、最新のスロット番号を取得し **invalid-hereafter** パラメータを正しく設定します。
 
@@ -624,3 +624,5 @@ build-rawトランザクションコマンドを実行します。
                            TxHash                                 TxIx        Lovelace
 ----------------------------------------------------------------------------------------
 ```
+
+---

@@ -1,4 +1,4 @@
-# SJG貢献者
+# **貢献者一覧**
 
 **<h2>創設・運営者</h2>**
 [BTBF :fontawesome-brands-twitter:{ .twitter }](https://twitter.com/btbfpark) | Pool: [[XSP]X-StakePool](https://jp.cexplorer.io/pool/pool10zyf32q3w3n9x940j6yqgkwuegzn77p94wcmpku6gvmrqw8a97d) / [[XSP2]X-StakePool](https://jp.cexplorer.io/pool/pool14fjmlppz76667ws3jl5luejf2wgztuhpsftulvh3ucc65anqgve)  
@@ -15,3 +15,5 @@
 ・[SUGAR :fontawesome-brands-twitter:{ .twitter }](https://twitter.com/sugar417K) | Pool:[[SUGAR] Sugar Stake Pool](https://jp.cexplorer.io/pool/pool1tjr4zpndkvwkw3du3fvt59f5men6jhuevt7rpx6xw0wcct5kl04)  
 ・[MOBC :fontawesome-brands-twitter:{ .twitter }](https://twitter.com/MOBC_StakePool) | Pool:[ [MOBC] MOBC StakePoolServer](https://jp.cexplorer.io/pool/pool1chzrvd7wzmw8ufsehctn8fmf7ca27xf7d6f5tpreat7kxx6hwf9)  
 And More...  
+
+---

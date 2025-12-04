@@ -1,6 +1,4 @@
----
-title: MacにUbuntu 22.04 をインストールする
----
+# **エアギャップ環境セットアップ**
 
 # Mac に Ubuntu 22.04 をインストールする
 
@@ -112,3 +110,4 @@ sudo nmcli device wifi connect "TP-Link_0000" password "01234567"
 
 以上で次回起動時もWiFiに接続された状態になります。
 
+---
