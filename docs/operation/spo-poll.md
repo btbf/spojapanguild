@@ -190,3 +190,5 @@ CIP-0094ダッシュボードで自身の投票を確認してみましょう！
 Adastat.net [[Mainnet]](https://adastat.net/polls) / Cardanoscan.io [[Mainnet]](https://cardanoscan.io/spo-polls/)
 
 以上です。
+
+---

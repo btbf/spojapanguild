@@ -1,3 +1,5 @@
+# **カタリスト有権者登録**
+
 !!! summary "概要"
     * このマニュアルは、プールのpayment.addrを有権者登録する方法です。  
       payment.addrの資金をVotingパワーに使用でき、Catalyst投票が可能になります。
@@ -70,7 +72,7 @@ binディレクトリへコピー
     ```
 > cardano-signer 1.32.0
 
-#### エアギャップへコピー
+#### **エアギャップへコピー**
 
 **BPの`$HOME/git/`直下にある`cardano-signer`をダウンロードし、エアギャップの`$HOME/git/`直下にコピーする**
 
@@ -131,9 +133,9 @@ Rustパッケージアップデート
     > catalyst-toolbox 0.5.0
 
 
-## 2. 有権者登録作業
+## **2. 有権者登録作業**
 
-### SJGTOOL起動
+### **SJGTOOL起動**
 
 ![](../images/catalyst_vote/catalyst1.jpg)
 
@@ -154,7 +156,7 @@ Rustパッケージアップデート
 !!! hint "中断した場合"
     処理が途中で中断した場合でも、SJGTOOLを起動し`[5]Catalyst有権者登録`を選択すれば途中から再開できます。
 
-### QRコード作成後
+### **QRコード作成後**
 
 QRコードが発行できたら`$HOME/CatalystVoting`ディレクトリ内ファイルの整理をお願いします。
 
@@ -166,3 +168,5 @@ QRコードが発行できたら`$HOME/CatalystVoting`ディレクトリ内フ�
 | vote-registration.cbor | 削除 | 任意 |
 | XXX_vote_qrcode.png | 保管 | 必須 |
 | txhash.log | 保管 | 任意 |
+
+---

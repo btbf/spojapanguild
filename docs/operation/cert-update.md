@@ -1,4 +1,4 @@
-# **プール情報(pool.cert)の更新**
+# **運用証明書(pool.cert)の更新**
 
 !!! summary "概要"
     * 誓約、固定手数料、変動手数料、リレー情報、メタデータを変更する場合に実施します。
@@ -291,3 +291,5 @@ build-rawトランザクションコマンドを実行します。
         $NODE_NETWORK
     ```
     > Transacsion Successfully submittedと表示されれば成功
+
+---

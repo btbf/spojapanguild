@@ -1,4 +1,4 @@
-# **12.SPO ニュースレター登録**
+# **SPOニュースレター登録**
 
 !!! info "概要"
     SPOニュースレター日本語版はInput Outputが毎月1回発行するSPO向けのメールマガジンです。  
@@ -27,3 +27,5 @@
 SPO JAPAN GUILDの最新情報はXでも発信しております！  
 [https://x.com/spojapanguild](https://x.com/spojapanguild)  
 ![](../images/sjg-x.png)
+
+---

@@ -1,4 +1,4 @@
-
+" **Linuxコマンド集**
 
 !!! hint ""
     [[AKYO] AKYO🥁](https://jp.cexplorer.io/pool/pool1jsxk3ymqv2gdc6mhqk52544g2aun4zhq5wgx6n32l5s3jlne70n) Akyoさんからご提供いただきました。ありがとうございます！
@@ -160,3 +160,5 @@ journalctl --unit=cardano-node --since=today
 journalctl --unit=cardano-node --since='2020-07-29 00:00:00' --until='2020-07-29 12:00:00'
 ```
 > コマンド入力に戻る場合は「Ctrl＋C」（ノードは終了しません）
+
+---

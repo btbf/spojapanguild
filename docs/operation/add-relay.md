@@ -1,17 +1,17 @@
-# リレーノード増設手順
+# **リレーノード増設**
 
 増設するリレーサーバーでは、まず1〜3を実施し、その後4以降の手順へ進んでください。    
 
 ???+ note "増設するリレーサーバーで実施"
 
     ## 1. Ubuntu初期設定
-    [https://docs.spojapanguild.net/setup/1-ubuntu-setup/#1ubuntu](../setup/1-ubuntu-setup.md/#1ubuntu)
+    [https://docs.spojapanguild.net/setup/ubuntu-setup/#1ubuntu](../setup/ubuntu-setup.md/#1ubuntu)
 
     ## 2. ノードインストール
-    [https://docs.spojapanguild.net/setup/2-node-setup/#2](../setup/2-node-setup.md/#2)
+    [https://docs.spojapanguild.net/setup/node-setup/#2](../setup/node-setup.md/#2)
 
     ## 3. リレーサーバーでトポロジーファイルの設定
-    [https://docs.spojapanguild.net/setup/3-relay-bp-setup/#3-3](../setup/3-relay-bp-setup.md/#3-3)
+    [https://docs.spojapanguild.net/setup/relay-bp-setup/#3-3](../setup/relay-bp-setup.md/#3-3)
 
 
 ## 4. BPとリレー1のトポロジー変更
@@ -134,11 +134,13 @@ sudo systemctl reload-or-restart cardano-node
 
       「9-1.インストール」を実施してください。  
       > 「BPまたはリレー2以降」タブと「リレーノード/BP」タブを増設したリレーサーバーで実施します。  
-      [https://docs.spojapanguild.net/setup/9-monitoring-tools-setup/#9-1](../setup/9-monitoring-tools-setup.md#9-1)
+      [https://docs.spojapanguild.net/setup/monitoring-setup/#9-1](../setup/monitoring-setup.md#9-1)
     
       
 === "Grafana導入済みのリレーサーバーで実施"
 
       「9-2.設定ファイルの作成」を実施してください。  
       > Grafanaがインストールされているサーバーで実施します。  
-      [https://docs.spojapanguild.net/setup/9-monitoring-tools-setup/#9-2](../setup/9-monitoring-tools-setup.md#9-2)
+      [https://docs.spojapanguild.net/setup/monitoring-setup/#9-2](../setup/monitoring-setup.md#9-2)
+
+---

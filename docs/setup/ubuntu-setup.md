@@ -1,4 +1,4 @@
-# **1.Ubuntu初期設定**
+# **2. Ubuntu初期設定**
 
 !!! tip "AWSをご利用の方"
     AWS EC2及びlightsailは特殊環境なため、このマニュアル通りに動かない場合がございます。  
@@ -8,7 +8,7 @@
 !!! tip "ヒント"
     この手順はエアギャップオフラインマシン(VirtualBox上のUbuntu)では実施する必要はありません
 
-## **1-1.サーバーログイン**
+## **2-1. サーバーログイン**
 | 項目 | 設定値 |
 :---|:---
 | **`ホスト`** | サーバーIP |
@@ -16,7 +16,7 @@
 | **`ユーザー`** | root |
 | **`パスワード`** | 契約時に送られてくるrootパスワード |
 
-## **1-2.ユーザーアカウントの作成**
+## **2-2. ユーザーアカウントの作成**
 
 !!! summary "ヒント"
     rootアカウントはサーバーの最上位権限です。
@@ -77,7 +77,7 @@ exit
     echo "\$nrconf{blacklist_rc} = [qr(^cardano-node\\.service$) => 0, qr(^cnode-blocknotify\\.service$) => 0, qr(^cnode-cncli-sync\\.service$) => 0,];" | sudo tee -a /etc/needrestart/conf.d/50local.conf
     ```
 
-## **1-3.SSH設定変更**
+## **2-3. SSH設定変更**
 
 !!! summary
     SSHを強化する基本的なルールは次の通りです。
@@ -163,7 +163,7 @@ sudo service sshd reload
     接続できない場合は、接続されてるターミナル画面でサーバー設定を確認して下さい。
 
 
-## **1-4.ファイアウォール有効化**
+## **2-4. ファイアウォール有効化**
 
 標準のUFWファイアウォールを使用して、インバウンドアクセスポートを限定します。
 
@@ -200,7 +200,7 @@ sudo ufw status
 以下の戻り値があればOK
 > Status: active
 
-## **1-5.システムを更新する**
+## **2-5. システムを更新する**
 
 !!! tip "重要"
     不正アクセスを予防するには、システムに最新のパッチを適用することが重要です。
@@ -219,7 +219,7 @@ sudo apt install unattended-upgrades
 sudo dpkg-reconfigure --priority=low unattended-upgrades
 ```
 
-## **1-6.rootアカウントを無効にする**
+## **2-6. rootアカウントを無効にする**
 
 サーバーのセキュリティを維持するために、頻繁にrootアカウントでログインしないでください。
 !!! check "通常はrootアカウント無効にします"
@@ -232,7 +232,7 @@ sudo dpkg-reconfigure --priority=low unattended-upgrades
     sudo passwd -u root
     ```
 
-## **1-7.安全な共有メモリー**
+## **2-7. 安全な共有メモリー**
 
 システムで共有されるメモリを保護します。
 
@@ -248,7 +248,7 @@ sudo nano /etc/fstab
 tmpfs	/run/shm	tmpfs	ro,noexec,nosuid	0 0
 ```
 
-## **1-8.Fail2banのインストール**
+## **2-8. Fail2banのインストール**
 
 !!! info ""
     Fail2banは、ログファイルを監視し、ログイン試行に失敗した特定のパターンを監視する侵入防止システムです。特定のIPアドレスから（指定された時間内に）一定数のログイン失敗が検知された場合、Fail2banはそのIPアドレスからのアクセスをブロックします。
@@ -283,7 +283,7 @@ fail2banを再起動して設定を有効にします。
 sudo systemctl restart fail2ban
 ```
 
-## **1-9.Chronyを設定する**
+## **2-9. Chronyを設定する**
 
 
 chronyをインストールします。
@@ -366,7 +366,7 @@ chronyc tracking
 ```
 
 
-## **1-10.SSHの2段階認証を設定する**
+## **2-10. SSHの2段階認証を設定する**
 
 !!! danger "注意"
     * こちらの導入は必須ではありません。導入する場合、事前にお手元のスマートフォンに「Google認証システムアプリ」のインストールが必要です
@@ -486,7 +486,4 @@ Do you want to enable rate-limiting? (y/n) : y
 
 スマートフォンでGoogle認証システムアプリを開き、QRコードを読み取り2段階認証を機能させます。
 
-
-
-
-
+---

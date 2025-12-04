@@ -1,6 +1,8 @@
-## **1.事前準備**
+# **プール構築マニュアル**
 
-### 1-1. ターミナルソフトインストール
+## **事前準備**
+
+### **ターミナルソフトインストール**
 
 1.R-Login(Windows)   
 [https://kmiya-culti.github.io/RLogin/](https://kmiya-culti.github.io/RLogin/) 
@@ -20,7 +22,7 @@
 [https://www.webdesignleaves.com/pr/plugins/mac_terminal_basics_01.html](https://www.webdesignleaves.com/pr/plugins/mac_terminal_basics_01.html) 
 
 
-### 1-2. SSH鍵作成
+### **SSH鍵作成**
 
 === "Windowsの場合"
     ターミナルを管理者で起動する  
@@ -75,4 +77,6 @@
 
 これらのファイルを紛失しないようご注意ください。  
 ssh_ed25519 (秘密鍵)  
-authorized_keys (公開鍵)  
+authorized_keys (公開鍵)
+
+---

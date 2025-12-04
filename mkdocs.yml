@@ -96,65 +96,65 @@ extra_css:
 
 nav:
     - 'HOME':
-      - 'スタートガイド': './index.md'
+      - 'はじめに': './index.md'
       - 'プール構築マニュアル': './setup/index.md'
-      - 'プール運用マニュアル': './operation/start-guide.md'
+      - 'プール運用マニュアル': './operation/index.md'
       - 'SJGラーニング': ./learning.md
       - '更新履歴': './changelogs.md'
       - '貢献者': './contributors.md'
-      - '寄付とクレジット': './setup/99-donation-credit.md'
+      - '寄付とクレジット': './setup/donation-credit.md'
 
     - 'プール構築マニュアル':
-      - '構築ガイド': './setup/index.md'
-      - '0.エアギャップマシン作成': './setup/air-gap-guide.md'
-      - '1.Ubuntu初期設定': './setup/1-ubuntu-setup.md'
-      - '2.ノードインストール': './setup/2-node-setup.md'
-      - '3.リレー/BPの接続': './setup/3-relay-bp-setup.md'
-      - '4.BP用キー作成': './setup/4-bp-setup.md'
-      - '5.アドレスの作成': './setup/5-generate-address.md'
-      - '6.ステークアドレスの登録': './setup/6-register-stakeaddress.md'
-      - '7.ステークプールの登録': './setup/7-register-stakepool.md'
-      - '8.最終調整': './setup/8-final-adjustment.md'
-      - '9.監視ツール設定': './setup/9-monitoring-tools-setup.md'
-      - '10.ブロックログ設定': './setup/10-blocklog-setup.md'
-      - '11.SPO BlockNotify設定': './setup/11-blocknotify-setup.md'
-      - '12.SPOニュースレター登録': './setup/12-spo-newsletter.md'
-      - '寄付とクレジット': './setup/99-donation-credit.md'
+      - '構築マニュアル': './setup/index.md'
+      - '1. エアギャップ環境セットアップ': './setup/air-gapped-setup.md'
+      - '2. Ubuntu初期設定': './setup/ubuntu-setup.md'
+      - '3. ノードインストール': './setup/node-setup.md'
+      - '4. リレー/BPの接続': './setup/relay-bp-setup.md'
+      - '5. BP用キー生成': './setup/bp-key-setup.md'
+      - '6. アドレス生成': './setup/address-generate.md'
+      - '7. ステークアドレス登録': './setup/stake-address-register.md'
+      - '8. ステークプール登録': './setup/stake-pool-register.md'
+      - '9. 最終チェック': './setup/final-checks.md'
+      - '10. 監視ツール設定': './setup/monitoring-setup.md'
+      - '11. ブロックログ設定': './setup/blocklog-setup.md'
+      - '12. SPO BlockNotify設定': './setup/blocknotify-setup.md'
+      - 'SPOニュースレター登録': './setup/spo-newsletter.md'
+      - '寄付とクレジット': './setup/donation-credit.md'
     - 'プール運用マニュアル':
-      - '運用ガイド': './operation/start-guide.md'
-      - '1.プールオペレーション':
-        - '1-1.KESの更新': './operation/kes-update.md'
-        - '1-2.プール情報更新': './operation/cert-update.md'
-        - '1-3.資金引き出し': './operation/withdrawal.md'
-        - '1-4.Calidusキー発行': './operation/calidus.md'
-        - '1-5.プール廃止処理': './operation/pool-retire.md'
-      - '2.ノード管理':
-        - '2-1.ノードアップデート': './operation/node-update.md'
-        - '2-2.DB同期(Mithril)':  './operation/mithril-client.md'
-        - '2-3.リレーノード増設': './operation/add-relay.md'
-        - '2-4.BPポート変更': './operation/bpport.md'
-      - '3.サーバー管理':
-        # - '3-1.サーバー間転送設定':
+      - '運用マニュアル': './operation/index.md'
+      - '1. プールオペレーション':
+        - '1-1. KESの更新': './operation/kes-update.md'
+        - '1-2. 運用証明書の更新': './operation/cert-update.md'
+        - '1-3. 資金引き出し': './operation/withdrawal.md'
+        - '1-4. Calidusキー生成': './operation/calidus-key-generation.md'
+        - '1-5. プール廃止処理': './operation/pool-retire.md'
+      - '2. ノード管理':
+        - '2-1. ノードアップデート': './operation/node-update.md'
+        - '2-2. DB同期(Mithril)':  './operation/mithril-client.md'
+        - '2-3. リレーノード増設': './operation/add-relay.md'
+        - '2-4. BPポート変更': './operation/bp-port-change.md'
+      - '3. サーバー管理':
+        # - '3-1. サーバー間転送設定':
         #   - '事前設定': './operation/rsync-ssh.md'
         #   - 'ファイル転送手順': './operation/transfer.md'
-        - '3-1.Ubuntu22.04移行': './operation/ubuntu22.md'
-        - '3-2.サーバー引越し':
-          - 'リレーサーバー': './operation/relay-move.md'
-          - 'BPサーバー': './operation/bp-move.md'
-      - '4.ツール設定':
-        - '4-1.SJGツール導入設定': './operation/tool.md'
-        - '4-2.SFTPソフト設定': './operation/sftp.md'
-        - '4-3.Grafana追加設定':
+        - '3-1. Ubuntu22.04移行': './operation/ubuntu22-migration.md'
+        - '3-2. サーバー移行':
+          - 'リレーサーバー移行': './operation/relay-migration.md'
+          - 'BPサーバー移行': './operation/bp-migration.md'
+      - '4. ツール設定':
+        - '4-1. SJGツール導入設定': './operation/sjg-tool-setup.md'
+        - '4-2. SFTPソフト設定': './operation/sftp-setup.md'
+        - '4-3. Grafana追加設定':
           - 'Grafanaセキュリティ強化': './operation/grafana-security.md'
           - 'Grafanaアラート設定': './operation/grafana-alert.md'
           - 'Grafanaリポジトリ変更': './operation/grafana-repo.md'
-        - '4-5.SPOBlockNotify移行手順': './operation/blocknotify-reinstall.md'
-      - '5.ガバナンス':
+        - '4-4. SPOBlockNotify移行手順': './operation/blocknotify-reinstall.md'
+      - '5. ガバナンス':
           - 'ガバナンスアクションSPO投票': './operation/gov-spo-vote.md'
           - 'カタリスト有権者登録': './operation/catalyst-voting.md'
-      - '7.ミッドナイト':
+      - '6. Midnight関連':
         - 'Glacier Drop請求手続き': './operation/midnight-glacier-drop.md'
-      - '6.Linuxコマンド集': './operation/command.md'
+      - '7. Linuxコマンド集': './operation/linux-commands.md'
     - 'SJGラーニング': './learning.md'
     - 'よくある質問':
       - '運用編':

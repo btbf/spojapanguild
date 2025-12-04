@@ -1,12 +1,11 @@
-# **10.ステークプールブロックログ導入手順**
-
+# **11. ブロックログ設定**
 
 !!! info "ブロックログについて"
     このツールはウロボロスにおける自プールのブロック生成スケジュールを事前に取得するツールです。  
     <font color=red>ブロック生成スケジュールはセキュリティ上パブリックには公開されません。</font>
 
 
-## **10-0. インストール要件**
+## **11-1. インストール要件**
 
 !!! abstract "設定サーバー"
     * BPノード限定
@@ -48,7 +47,7 @@
 
  
 
-## **10-1. CNCLIインストール**
+## **11-2. CNCLIインストール**
 
 !!! info "CNCLIについて"
     [AndrewWestberg](https://twitter.com/amw7)さんによって開発された[CNCLI](https://github.com/cardano-community/cncli)はプールのブロック生成スケジュールを算出し、Shelley期におけるSPOに革命をもたらしました。
@@ -107,7 +106,7 @@ cncli --version
 ```
 > 6.7.0 が最新バージョンです
 
-## **10-2. sqlite3インストール**
+## **11-3. sqlite3インストール**
 
 ```bash
 sudo apt install sqlite3
@@ -116,7 +115,7 @@ sqlite3 --version
 > 3.31.1以上のバージョンがインストールされたらOKです。
 
 
-## **10-3. 依存ファイルダウンロード**
+## **11-4. 依存ファイルダウンロード**
 
 依存関係のあるプログラムをダウンロードします。
 
@@ -188,7 +187,7 @@ sed -i $NODE_HOME/scripts/cncli.sh \
 -e '1,30s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
 ```
 
-## **10-4. サービスファイル作成・登録**
+## **11-5. サービスファイル作成・登録**
 
 ```bash
 cd $NODE_HOME
@@ -364,7 +363,7 @@ sudo systemctl enable cnode-logmonitor.service
     単語を入力するだけで、起動状態(ログ)を確認できます。  
     `cnclilog`　`validate`　`leaderlog`　`logmonitor`
 
-## **10-5. ブロックチェーンとDBを同期**
+## **11-6. ブロックチェーンとDBを同期**
 
 **cncli-sync**サービスを開始します
 ```bash
@@ -431,7 +430,7 @@ cnclilog
 
 
 
-## **10-6. ブロックログを表示する**
+## **11-7. ブロックログを表示する**
 
 このツールでは上記で設定してきたプログラムを組み合わせ、割り当てられたスロットリーダーに対してのブロック生成結果をデータベースに格納し、確認することができます。
 
@@ -483,7 +482,7 @@ echo $LANG
 ```
 
 
-## **10-7. スケジュールを取得する**
+## **11-8. スケジュールを取得する**
 
 !!! hit "ブロック生成スケジュール取得のタイミングについて"
     取得タイミングは、エポックスロットが約302400を過ぎてから次エポックのスケジュールを自動取得します(次エポックの1.5日前)  
@@ -515,7 +514,7 @@ echo $LANG
     設定手順は[SPO BlockNotify設定](./11-blocknotify-setup.md)を参照してください。
 
 
-## 10-99.CNCLI更新手順
+## **11-99. CNCLI更新手順**
 **以下は最新版がリリースされた場合に実行してください**  
 
 cncli旧バージョンからの更新手順
@@ -584,3 +583,5 @@ sudo systemctl start cnode-cncli-sync.service
 
 !!! info "制作クレジット"
     このツールは海外ギルドオペレーター制作の[CNCLI By AndrewWestberg](https://github.com/cardano-community/cncli)、[Guild LiveView](https://cardano-community.github.io/guild-operators/#/Scripts/gliveview)、[BLOCK LOG for CNTools](https://cardano-community.github.io/guild-operators/#/Scripts/cntools)を組み合わせたツールとなっております。カスタマイズするにあたり、開発者の[AHLNET(AHL)](https://twitter.com/olaahlman)にご協力頂きました。ありがとうございます。
+
+---
