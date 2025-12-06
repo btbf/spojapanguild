@@ -2,81 +2,93 @@
 
 ## **事前準備**
 
-### **ターミナルソフトインストール**
+### **ターミナルソフトのインストール**
 
-1.R-Login(Windows)   
-[https://kmiya-culti.github.io/RLogin/](https://kmiya-culti.github.io/RLogin/) 
-!!! tip "R-Login推奨設定"
+ステークプールの構築・運用では、各サーバーへSSH接続するためのターミナルソフトが必要です。  
+ターミナルソフトにはさまざまな種類がありますが、このマニュアルでは代表的なものを紹介します。  
+ご使用のOSに合わせてインストールしてください。  
 
-    **カラー設定**  
-    <img src=../images/r-login-setting2.png width="500px">
-    
-    **接続状態維持設定**  
-    <img src=../images/r-login-setting.png width="500px">
+!!! note "各種ターミナルソフト一覧"
+    !!! info "R-Login（Windows）"
+        Windows向けの軽量SSHクライアントです。  
+        タブ管理やカラー設定が容易で、SPOの利用実績も多い安定したソフトです。
 
-2.Termius(Win/Mac/Linux/iPhone/Android)  
-[https://termius.com/](https://termius.com/)
+        ダウンロード：[https://kmiya-culti.github.io/RLogin/](https://kmiya-culti.github.io/RLogin/) 
 
+        ??? tip "R-Login 推奨設定"
 
-3.Terminal(Mac)  
-[https://www.webdesignleaves.com/pr/plugins/mac_terminal_basics_01.html](https://www.webdesignleaves.com/pr/plugins/mac_terminal_basics_01.html) 
+            **カラー設定**  
+            <img src=../images/r-login-setting2.png width="500px">
+            
+            **接続状態維持設定**  
+            <img src=../images/r-login-setting.png width="500px">
+
+    !!! info "Terminal（macOS 標準ターミナル）"
+        macOSに標準搭載されているターミナルアプリです。  
+        追加インストール不要で、そのままSSH接続に利用できます。
+
+        参考：[https://www.webdesignleaves.com/pr/plugins/mac_terminal_basics_01.html](https://www.webdesignleaves.com/pr/plugins/mac_terminal_basics_01.html) 
+
+    !!! info "Termius（Windows / macOS / Linux / iOS / Android）"
+        複数OSに対応した高機能SSHクライアントです。  
+        クラウド同期により、PCとスマホ間で設定を共有できます。
+
+        公式サイト：[https://termius.com/](https://termius.com/)
 
 
 ### **SSH鍵作成**
 
 === "Windowsの場合"
-    ターミナルを管理者で起動する  
+    **1. 管理者モードでターミナルを起動します。**  
 
-    1.Win + X を押す  
-    2.ターミナル（管理者）を選択する
-
-    SSHクライアント確認  
-    ```
+    `Win + X` を押下し、ターミナル（管理者）を選択し、SSHクライアントの有無を確認します。  
+    ```powershell
     Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Client*'
     ```
-    > State : Installed
+    > `State : Installed`であれば問題ありません。
 
-    ??? hint "`State : NotPresent`の場合はSSHクライアントをインストールしてください"
-        ```
+    ??? tip "`State : NotPresent`の場合"
+
+        以下のコマンドで追加してください。
+        ```powershell
         Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
         ```
     
-    SSH鍵生成
-    ```
+    **2. SSH鍵生成**  
+    ```powershell
     mkdir ~/.ssh -Force
-    cd ~/.ssh
-    ssh-keygen -t ed25519 -N '""' -C "ssh_connect" -f ./ssh_ed25519
+    ssh-keygen -t ed25519 -N "" -C "ssh_connect" -f ~/.ssh/ssh_ed25519
     ```
     
-    公開鍵リネーム
-    ```
+    **3. 公開鍵ファイル名の変更**
+    ```powershell
     cd ~/.ssh
     mv ssh_ed25519.pub authorized_keys
     ```
 
-=== "Macの場合"
-    ターミナルを起動する  
-    1. ⌘ + Space（command + スペース）  
-    2.「terminal」 と入力  
-    3. Enter  
 
-    sshディレクトリを確認する
-    ```
+=== "Macの場合"
+    **1. ターミナルを起動します。**  
+
+    `⌘ + Space（Command + Space）`を押下し、「`terminal`」と入力し、Enterを押下します。
+
+    **2. SSH鍵生成**
+    ```bash
     mkdir -p ~/.ssh
-    ```
-    SSH鍵生成
-    ```
     ssh-keygen -t ed25519 -N "" -C "ssh_connect" -f ~/.ssh/ssh_ed25519
     ```
 
-    公開鍵リネーム
-    ```
+    **3. 公開鍵ファイル名の変更**
+    ```bash
     cd ~/.ssh
     mv ssh_ed25519.pub authorized_keys
     ```
 
-これらのファイルを紛失しないようご注意ください。  
-ssh_ed25519 (秘密鍵)  
-authorized_keys (公開鍵)
+!!! danger "注意"
+    以下の鍵は絶対に紛失しないでください。  
+    紛失するとサーバーへ接続できなくなります。  
+
+    `ssh_ed25519` （秘密鍵）  
+    `authorized_keys` （公開鍵）
 
 ---
