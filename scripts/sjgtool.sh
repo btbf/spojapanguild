@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="4.0.3"
+TOOL_VERSION="4.0.4"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -748,13 +748,19 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     check_issuerColdKey() {
       echo "$decode_ocert_output" \
         | sed 's/#.*//' \
-        | tr -dc '0-9a-fA-F \n' \
+        | tr -dc '0-9a-fA-F' \
+        | fold -w2 \
         | awk '
-            { for(i=1;i<=NF;i++) if($i ~ /^[0-9A-Fa-f]{2}$/) a[++n]=toupper($i) }
+            { a[++n] = toupper($1) }
             END {
-              for(i=1;i<=n;i++) if(a[i]=="58" && a[i+1]=="20") last=i
+              for(i=1;i<=n;i++)
+                if(a[i]=="58" && a[i+1]=="20") last=i
+
+              if(!last) { print ""; exit }
+
               start = last + 2
-              for(j=start; j<start+32; j++) printf "%s", a[j]
+              for(j=start; j<start+32; j++)
+                printf "%s", a[j]
               printf "\n"
             }
           '
