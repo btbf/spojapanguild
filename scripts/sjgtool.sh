@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="4.0.2"
+TOOL_VERSION="4.0.3"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -511,11 +511,11 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     future_pledge=$(cardano-cli conway query pool-params --stake-pool-id $(cat $NODE_HOME/pool.id-bech32) | jq .[].futurePoolParams.pledge)
     current_pledge=$(cardano-cli conway query pool-params --stake-pool-id $(cat $NODE_HOME/pool.id-bech32) | jq .[].poolParams.pledge)
 
-  
+    onchain_poolid=$(cat $NODE_HOME/pooldata.txt | jq -r ".[0].pool_id_bech32")
     printf "ノード起動タイプ:BP ${FG_GREEN}OK${NC}　ネットワーク:${FG_YELLOW}$NETWORK_NAME${NC}\n"
     echo
     printf "　　対象プール :${FG_CYAN}[$(cat $NODE_HOME/pooldata.txt | jq -r ".[0].meta_json.ticker")] $(cat $NODE_HOME/pooldata.txt | jq -r ".[0].meta_json.name")${NC}\n"
-    printf "　　　プールID :${FG_CYAN}$(cat $NODE_HOME/pooldata.txt | jq -r ".[0].pool_id_bech32")${NC}\n"
+    printf "　　　プールID :${FG_CYAN}${onchain_poolid}${NC}\n"
     printf "ライブステーク :${FG_GREEN}$live_Stake${NC} ADA\n"
     printf "　有効ステーク :$active_Stake\n"
     echo
@@ -720,6 +720,7 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
 
     chain_Vrf_hash=$(cat $NODE_HOME/pooldata.txt | jq -r ".[0].vrf_key_hash")
 
+
     #ローカルVRFファイル検証
     mkdir $NODE_HOME/vrf_check
     cp $NODE_HOME/$POOL_VRF_SK_FILENAME $NODE_HOME/vrf_check/
@@ -740,40 +741,81 @@ ${FG_MAGENTA}■プール資金出金($WALLET_PAY_ADDR_FILENAME)${NC}
     printf "ローカルファイルハッシュ値 :${FG_YELLOW}$local_vrf_hash${NC}\n"
 
     rm -rf $NODE_HOME/vrf_check
+    
+
+    #運用証明書(node.cert)検証
+    decode_ocert_output=$(cardano-cli conway text-view decode-cbor --in-file "$NODE_HOME/$POOL_OPCERT_FILENAME")
+    check_issuerColdKey() {
+      echo "$decode_ocert_output" \
+        | sed 's/#.*//' \
+        | tr -dc '0-9a-fA-F \n' \
+        | awk '
+            { for(i=1;i<=NF;i++) if($i ~ /^[0-9A-Fa-f]{2}$/) a[++n]=toupper($i) }
+            END {
+              for(i=1;i<=n;i++) if(a[i]=="58" && a[i+1]=="20") last=i
+              start = last + 2
+              for(j=start; j<start+32; j++) printf "%s", a[j]
+              printf "\n"
+            }
+          '
+    }
+
+    #証明書発行者キーからプールID算出
+    issuerColdKey_hex=$(check_issuerColdKey)
+    node_cert_poolid=$(echo "$issuerColdKey_hex" | xxd -r -p | b2sum -l 224 | awk "{print \$1}" | bech32 pool)
+
 
     chain_cert_counter=$(cat $NODE_HOME/pooldata.txt | jq -r ".[0].op_cert_counter")
-    local_cert_counter=$(cardano-cli conway text-view decode-cbor --in-file $POOL_OPCERT_FILENAME | grep int | head -1 | cut -d"(" -f2 | cut -d")" -f1)
+    local_cert_counter=$(echo "$decode_ocert_output" | grep int | head -1 | cut -d"(" -f2 | cut -d")" -f1)
     kes_remaining=$(curl -s http://localhost:${PROM_PORT}/metrics | grep KESPeriods_int | awk '{ print $2 }')
     kes_days=$(bc <<< "$kes_remaining * 1.5")
     kes_cborHex=$(cat $NODE_HOME/$POOL_HOTKEY_VK_FILENAME | jq '.cborHex' | tr -d '"')
-    cert_cborHex=$(cardano-cli conway text-view decode-cbor --in-file $NODE_HOME/$POOL_OPCERT_FILENAME | awk 'NR==4,NR==6 {print}' | sed 's/ //g' | sed 's/#.*//' | tr -d '\n')
+    cert_cborHex=$(echo "$decode_ocert_output" | awk 'NR==4,NR==6 {print}' | sed 's/ //g' | sed 's/#.*//' | tr -d '\n')
 
     #証明書判定
-    if [ $kes_cborHex == $cert_cborHex ]; then
-      if [ $chain_cert_counter != "null" ] && [ $local_cert_counter -ge $(($chain_cert_counter+2)) ] && [ $kes_remaining -ge 1 ]; then
-        cc="${FG_RED}NG カウンター番号がチェーンより2以上大きいです${NC}\n"
-      elif [ $chain_cert_counter != "null" ] && [ $local_cert_counter -ge $chain_cert_counter ] && [ $kes_remaining -ge 1 ] ; then
-        cc="${FG_GREEN}OK${NC}\n"
-        okCnt=$((${okCnt}+1))
-      elif [ $chain_cert_counter != "null" ] && [ $local_cert_counter -lt $chain_cert_counter ] && [ $kes_remaining -ge 1 ]; then
-        cc="${FG_RED}NG カウンター番号がチェーンより小さいです${NC}\n"
-      elif [ $chain_cert_counter == "null" ] && [ $kes_remaining -ge 1 ]; then
-        cc="${FG_GREEN}OK (ブロック未生成)${NC}\n"
-        okCnt=$((${okCnt}+1))
-      else
-        cc="${FG_RED}NG KESの有効期限が切れています${NC}\n"
-      fi
+    # 1. PoolID 判定
+    if [ "$node_cert_poolid" != "$onchain_poolid" ]; then
+        cc="${FG_RED}NG 証明書のプールIDがオンチェーンと一致しません${NC}\n"
+
+    # 2. KESダイジェスト比較
+    elif [ "$kes_cborHex" != "$cert_cborHex" ]; then
+        cc="${FG_RED}NG 署名されたKESキーが一致しません${NC}\n"
+
+    # 3. カウンター比較
     else
-      cc="${FG_RED}NG CERTファイルに署名された$POOL_HOTKEY_VK_FILENAMEファイルが異なります。${NC}\n"
+        diff=$((local_cert_counter - chain_cert_counter))
+
+        if [ "$chain_cert_counter" = "null" ]; then
+            cc="${FG_GREEN}OK (初回ブロック未生成)${NC}\n"
+            okCnt=$((okCnt+1))
+
+        elif [ "$diff" -ge 2 ]; then
+            cc="${FG_RED}NG カウンター番号がチェーンより2以上大きいです${NC}\n"
+
+        elif [ "$diff" -ge 0 ]; then
+            cc="${FG_GREEN}OK${NC}\n"
+            okCnt=$((okCnt+1))
+
+        else
+            cc="${FG_RED}NG カウンター番号がチェーンより小さいです${NC}\n"
+        fi
     fi
 
+
     echo
-    printf "${FG_MAGENTA}■プール運用証明書チェック${NC}($POOL_OPCERT_FILENAME) $cc\n"
-    printf "　    チェーン上カウンター :${FG_YELLOW}$chain_cert_counter${NC}\n"
-    printf "　　CERTファイルカウンター :${FG_YELLOW}$local_cert_counter${NC}\n"
-    printf "　　　　　　　 KES残り日数 :${FG_YELLOW}$kes_days日${NC}\n"
-    printf "　  CERTファイルKES-VK_Hex :${FG_YELLOW}$cert_cborHex${NC}\n"
-    printf "　      ローカルKES-VK_Hex :${FG_YELLOW}$kes_cborHex${NC}\n"
+    echo -e "${FG_MAGENTA}■プール運用証明書チェック${NC} $POOL_OPCERT_FILENAME $cc"
+
+    # ラベル幅を統一（推奨 28）
+    width=28
+
+    printf "%-31s : ${FG_YELLOW}%s${NC}\n" "チェーンプールID"            "$onchain_poolid"
+    printf "%-31s : ${FG_YELLOW}%s${NC}\n" "証明書内プールID"            "$node_cert_poolid"
+    printf "%-34s : ${FG_YELLOW}%s${NC}\n" "チェーン上カウンター"        "$chain_cert_counter"
+    printf "%-33s : ${FG_YELLOW}%s${NC}\n" "CERTファイルカウンター"      "$local_cert_counter"
+    printf "%-${width}s : ${FG_YELLOW}%s日${NC}\n" "KES残り日数"                "$kes_days"
+    printf "%-${width}s : ${FG_YELLOW}%s${NC}\n" "CERTファイルKES-VK_Hex"      "$cert_cborHex"
+    printf "%-${width}s : ${FG_YELLOW}%s${NC}\n" "ローカルKES-VK_Hex"          "$kes_cborHex"
+
 
     echo
     kes_int=$(($current_KES-$Start_KES+$metrics_KES))
@@ -1795,6 +1837,7 @@ check_drep_delegate(){
   esac
   echo "----------------------------------------------------------"
 }
+
 
 drep_delegate(){
   clear
