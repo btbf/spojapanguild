@@ -4,7 +4,7 @@ SPO JAPAN GUILDでは、ステークプール構築マニュアルの整備、�
 今後もカルダノ分散化を促進するためにも、継続性のある活動を行ってまいります。
 寄付して頂いた資金は、ホームページサーバー代、ドメイン代、開発費、人件費、マーケティング費に使用させていただきます。
 
-### SPO JAPAN GUILDプールへの委任 
+## **SPO JAPAN GUILDプールへの委任**
 私達をサポート頂ける方は当プールへ委任頂けますと幸いです。  
 
 
@@ -17,7 +17,7 @@ SPO JAPAN GUILDでは、ステークプール構築マニュアルの整備、�
     * 固定手数料：340ADA
     * 変動手数料：20%～
 
-### SPO JAPAN GUILDへの寄付
+## **SPO JAPAN GUILDへの寄付**
 !!! quote "ADAアドレス"
     ```bash
     addr1qxq6jar2wtktu3nlak78ghugtd8vcxcze33wsk2ehlwkavp2f4gnzre574n6an99yql25wcy09ygededc7e6f77jutvs0lgxef

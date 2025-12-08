@@ -4,17 +4,17 @@
 
 ???+ note "増設するリレーサーバーで実施"
 
-    ## 1. Ubuntu初期設定
-    [https://docs.spojapanguild.net/setup/ubuntu-setup/#1ubuntu](../setup/ubuntu-setup.md/#1ubuntu)
+    ## **1. Ubuntu初期設定**
+    [https://docs.spojapanguild.net/setup/ubuntu-setup/#ubuntu](../setup/ubuntu-setup.md/#ubuntu)
 
-    ## 2. ノードインストール
-    [https://docs.spojapanguild.net/setup/node-setup/#2](../setup/node-setup.md/#2)
+    ## **2. ノードセットアップ**
+    [https://docs.spojapanguild.net/setup/node-setup](../setup/node-setup.md)
 
-    ## 3. リレーサーバーでトポロジーファイルの設定
-    [https://docs.spojapanguild.net/setup/relay-bp-setup/#3-3](../setup/relay-bp-setup.md/#3-3)
+    ## **3. トポロジーファイル設定**
+    [https://docs.spojapanguild.net/setup/relay-bp-setup/#2](../setup/relay-bp-setup.md/#2)
 
 
-## 4. BPとリレー1のトポロジー変更
+## **4. BPとリレー1のトポロジー変更**
 === "ブロックプロデューサー"
 
     実行前に `+` をクリックして注釈を確認してください。  
@@ -124,23 +124,23 @@
 sudo systemctl reload-or-restart cardano-node
 ```
 
-## 5. プール情報の更新
+## **5. 運用証明書(pool.cert)の更新**
 
-[プール情報の更新](../operation/cert-update.md)を実行し、増設したリレーをチェーンに登録します。
+[運用証明書(pool.cert)の更新](../operation/cert-update.md)を実行し、増設したリレーをチェーンに登録します。
 
-## 6. Grafanaのセットアップ
+## **6. Grafanaのセットアップ**
 
 === "増設したリレーサーバーで実施"
 
-      「9-1.インストール」を実施してください。  
+      「1.インストール」を実施してください。  
       > 「BPまたはリレー2以降」タブと「リレーノード/BP」タブを増設したリレーサーバーで実施します。  
-      [https://docs.spojapanguild.net/setup/monitoring-setup/#9-1](../setup/monitoring-setup.md#9-1)
+      [https://docs.spojapanguild.net/setup/monitoring-setup/#1](../setup/monitoring-setup.md#1)
     
       
 === "Grafana導入済みのリレーサーバーで実施"
 
-      「9-2.設定ファイルの作成」を実施してください。  
+      「2.設定ファイルの作成」を実施してください。  
       > Grafanaがインストールされているサーバーで実施します。  
-      [https://docs.spojapanguild.net/setup/monitoring-setup/#9-2](../setup/monitoring-setup.md#9-2)
+      [https://docs.spojapanguild.net/setup/monitoring-setup/#2](../setup/monitoring-setup.md#2)
 
 ---

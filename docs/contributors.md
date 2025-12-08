@@ -1,10 +1,10 @@
 # **貢献者一覧**
 
-**<h2>創設・運営者</h2>**
+## **創設・運営者**
 [BTBF :fontawesome-brands-twitter:{ .twitter }](https://twitter.com/btbfpark) | Pool: [[XSP]X-StakePool](https://jp.cexplorer.io/pool/pool10zyf32q3w3n9x940j6yqgkwuegzn77p94wcmpku6gvmrqw8a97d) / [[XSP2]X-StakePool](https://jp.cexplorer.io/pool/pool14fjmlppz76667ws3jl5luejf2wgztuhpsftulvh3ucc65anqgve)  
 `コミュニティ運営`/`技術サポート`/`ツール開発`/`ドキュメント整備` 担当
 
-## **主な貢献者**
+### **主な貢献者**
 `ディスコード内サポート` `ドキュメント寄稿・修正` `技術検証作業`などにご協力頂いた皆様です。
 
 ・[SAKAKIBARA :fontawesome-brands-twitter:{ .twitter }](https://twitter.com/sakakibara1JPN) | Pool: [[1JPN] 日本壱プール](https://jp.cexplorer.io/pool/pool12jnulzs7j8lsku4r2a7q6tee6tt66872vwhqh8jxvgzn6837jtl)  

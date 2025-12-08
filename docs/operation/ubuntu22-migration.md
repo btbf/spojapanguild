@@ -10,12 +10,12 @@
 
 ## **1. 事前準備**
 
-### **スナップショットの作成**
+### **1-1. スナップショットの作成**
 
 !!! warning "スナップショットの作成"
     アップグレード前に<font color=red>**必ず**</font>、VPSのサーバー管理画面から現時点のスナップショット(バックアップ)を作成してください。万一アップグレードに失敗した場合、素早く復旧できます。
 
-### **SSH鍵の種類を確認する**
+### **1-2. SSH鍵の種類を確認する**
 
 SSH接続用のローカルパソコンに保存されている、SSH秘密鍵ファイルの種類を確認してください。
 
@@ -24,11 +24,11 @@ SSH接続用のローカルパソコンに保存されている、SSH秘密鍵�
 
 のどちらか
 
-### **SSHターミナルバージョン最新化**
+### **1-3. SSHターミナルバージョン最新化**
 
 WindowsでR-loginをご利用の場合は、[最新のRLogin](https://github.com/kmiya-culti/RLogin/releases/)を使用して下さい。
 
-### **作業対象サーバログイン**
+### **1-4. 作業対象サーバログイン**
 
 !!! Tip "接続方法"
     1-4～1-8は通常のSSH接続で作業する
@@ -77,7 +77,7 @@ WindowsでR-loginをご利用の場合は、[最新のRLogin](https://github.com
     Ubuntu22.04に対応した暗号方式です。次の項目に移動して下さい。
    
 
-### **ノードを停止する**
+### **1-5. ノードを停止する**
 ```
 sudo systemctl stop cardano-node
 ```
@@ -87,7 +87,7 @@ sudo systemctl stop cardano-node
 sudo systemctl disable cardano-node
 ```
 
-### **システムアップデート**
+### **1-6. システムアップデート**
 ```
 sudo apt update -y && sudo apt upgrade -y
 ```
@@ -115,12 +115,12 @@ python3 -V
     > Python 3.8.10になったことを確認する
 
 
-### **パッケージインストール**
+### **1-7. パッケージインストール**
 ```
 sudo apt install update-manager-core
 ```
 
-### **Ubuntuバージョン確認**
+### **1-8. Ubuntuバージョン確認**
 
 現在のバージョンを確認する
 
@@ -136,7 +136,7 @@ sudo do-release-upgrade -c | grep "New release"
 ```
 > New release '22.04.x LTS' available.　xの数字はアップグレード時期によって変わります
 
-### **システムを再起動**
+### **1-9. システムを再起動**
 ```
 sudo reboot
 ```
@@ -168,7 +168,7 @@ sudo reboot
         「ファイル」→「サーバーに接続」→ 接続先右クリックし「接続を編集する」→「プロトコル」→ SSH枠の「KeepAlveパケット送信間隔(sec)」にチェックを入れ、空欄に`20`を入力する。
 
 
-### **アップグレード実行**
+### **2-1. アップグレード実行**
 
 !!! Question "接続パターン"
     * パターン1：VPSサーバー管理画面のコンソールから接続する
@@ -180,7 +180,7 @@ sudo reboot
 sudo do-release-upgrade
 ```
 
-### **アップグレードメッセージ**
+### **2-2. アップグレードメッセージ**
 以下、確認メッセージ例です。<font color=red>ご利用のサーバーによって表示内容が異なる場合があります。</font>表示された内容をよく読んで下さい。
 
 !!! hit "SSHで作業する場合"
@@ -322,7 +322,7 @@ Continue [yN] y      # y を入力してEnter
 !!! Tip "接続方法"
     3~5はSSH接続で作業する
 
-### **現在のUbuntuバージョンを確認する**
+### **3-1. 現在のUbuntuバージョンを確認する**
 
 ``` { .yaml .annotate }
 cat /etc/os-release | grep "VERSION=" # (1)!
@@ -332,12 +332,12 @@ cat /etc/os-release | grep "VERSION=" # (1)!
 
 > VERSION="22.04.x LTS (Jammy Jellyfish)"　xの数字はアップグレード時期によって変わります
 
-### **ブラケットペーストモードOFF**
+### **3-2. ブラケットペーストモードOFF**
 ```
 echo "set enable-bracketed-paste off" >> ~/.inputrc
 ```
 
-### **SSH再接続**
+### **3-3. SSH再接続**
 ```
 exit
 ```
@@ -427,7 +427,7 @@ rm -rf ghc-8.10.7
 
 ## **6. エアギャップマシンアップグレード**
 
-### **事前準備**
+### **6-1. 事前準備**
 
 - [x] 6-1-1.Ubuntuへログインし、主要ファイルのアクセス制限を解除する
 
@@ -453,14 +453,14 @@ chmod u+rwx $HOME/cold-keys
 - [x] 6-1-4.Ubuntuをシャットダウン(電源オフ)する
 
 
-### **VirtualBoxアップグレード**
+### **6-2. VirtualBoxアップグレード**
 
 VirtualBoxのダウンロードサイトにアクセスし、`VirtualBox 7.0.8 platform packages`の`Windows hosts`または`macOS`のリンクからダウンロードし、既存のVirtuialBoxに対して<font color=red>**上書きインストール**</font>してください
 
  * [VirtualBoxの入手](https://www.virtualbox.org/wiki/Downloads)
 
 
-### **システムアップデート**
+### **6-3. システムアップデート**
 
 - [x] 6-3-1.VirtualBoxのマシン設定からネットワークを有効にする
 ![](../images/airgap/airgap0.png)
@@ -493,7 +493,7 @@ df -h /root
 - [x] インストール後再起動を求められたら再起動する。
 
 
-### **Ubuntuアップグレード**
+### **6-4. Ubuntuアップグレード**
 
 - [x] 6-4-1.アプリケーション一覧から`update`と検索し、[ソフトウェアの更新]を起動
 ![](../images/airgap/airgap4.png)
@@ -516,7 +516,7 @@ df -h /root
 ![](../images/airgap/airgap10.png)
 
 
-### **GuestAddtionsアップグレード**
+### **6-5. GuestAddtionsアップグレード**
 
 - [x] 6-5-1.GuestAddtionsをアップグレードする
 ![](../images/airgap/airgap11.png)
@@ -527,7 +527,7 @@ df -h /root
 - [x] 6-5-2.Ubuntuをシャットダウン(電源オフ)する
 
 
-### **最終仕上げ**
+### **6-6. 最終仕上げ**
 
 - [x] 6-6-1.ネットワークオフ
 ![](../images/airgap/airgap13.png)

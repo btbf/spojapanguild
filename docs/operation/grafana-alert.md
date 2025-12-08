@@ -9,13 +9,13 @@
 * Grafanaバージョンv9.4.1以上
 * Grafana [SJG最新ダッシュボード](../setup/9-monitoring-tools-setup.md#9-4grafana)適用済み
 
-### Grafanaバージョン確認
+### **1-1. Grafanaバージョン確認**
 
 ```
 grafana-cli -v
 ```
 
-### Grafanaアップデート
+### **1-2. Grafanaアップデート**
 ```
 sudo apt update -y && sudo apt upgrade -y
 ```
@@ -27,7 +27,7 @@ sudo apt update -y && sudo apt upgrade -y
 1.「左サイドメニュー」→「Alerting」の右の矢印→「Alert rules」→「New alert rule」の順にクリックする
 ![](../images/grafana-alert/1-0.png)
 
-### **ノードスロット監視**
+### **2-1. ノードスロット監視**
 
 * ①:`Relay1-スロット監視`など任意のルール名
 * ②:`Metrics Browser`をクリック
@@ -75,7 +75,7 @@ sudo apt update -y && sudo apt upgrade -y
 
 
 
-### **BP→リレー接続監視**
+### **2-2. BP→リレー接続監視**
 上記で作成したルールをコピーする
 ![](../images/grafana-alert/1-5.png)
 
@@ -88,7 +88,7 @@ sudo apt update -y && sudo apt upgrade -y
 例）`BPからリレーへの接続が確認できません。接続状況を確認してください`
 * ⑳:ページ上部の`Save rule and exit`を選択
 
-### **チェーン密度監視**
+### **2-3. チェーン密度監視**
 上記で作成したルールをコピーする
 ![](../images/grafana-alert/1-5.png)
 
@@ -101,7 +101,7 @@ sudo apt update -y && sudo apt upgrade -y
 例）`チェーン密度が4.5％を下回っています。これはカルダノチェーン全体の問題です`
 * ⑳:ページ上部の`Save rule and exit`を選択
 
-### **ノードタイム監視**
+### **2-4. ノードタイム監視**
 上記で作成したルールをコピーする
 ![](../images/grafana-alert/1-5.png)
 
@@ -129,7 +129,7 @@ sudo apt update -y && sudo apt upgrade -y
 * 「4 Add annotation」の検知内容のメッセージ内容を書き換える
 * ⑳:ページ上部の`Save rule and exit`を選択
 
-### **KES残り日数監視**
+### **2-5. KES残り日数監視**
 上記で作成したルールをコピーする
 ![](../images/grafana-alert/1-5.png)
 
@@ -142,7 +142,7 @@ sudo apt update -y && sudo apt upgrade -y
 例）`KESキーの期限が迫っています。ブロック生成予定のないタイミングでKESキーを更新してください`
 * ⑳:ページ上部の`Save rule and exit`を選択
 
-### **ディスク使用率監視**
+### **2-6. ディスク使用率監視**
 上記で作成したルールをコピーする
 ![](../images/grafana-alert/1-5.png)
 

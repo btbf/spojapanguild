@@ -1,6 +1,3 @@
----
-status: new
----
 # **SPOBlockNotify移行手順**
 
 !!! note "このマニュアルについて"
@@ -57,7 +54,7 @@ status: new
     pip3 install --upgrade watchdog pytz python-dateutil requests discordwebhook slackweb i18nice
     ```
 
-    ### **サービスファイル修正**
+    ### **1-1. サービスファイル修正**
 
     サービスを停止する
     ```
@@ -256,7 +253,7 @@ status: new
     sudo systemctl enable cnode-blocknotify.service
     ```
 
-    ### **SPO Block Notify設定**
+    ### **1-2. SPO Block Notify設定**
 
     依存関係インストール
 
@@ -325,7 +322,7 @@ status: new
     python3 $NODE_HOME/scripts/block-notify/block_notify.py version
     ```
 
-    ### **サービス起動**
+    ### **1-3. サービス起動**
     !!! note "サービス起動について"
 
         * `cncli`および`logmonitor`は`cnode-node.service`に紐づいて起動します
@@ -338,7 +335,7 @@ status: new
 
 
 
-    ### **サービス起動確認**
+    ### **1-4. サービス起動確認**
 
     便利なエイリアス設定
     !!! hint "エイリアス設定"
@@ -435,7 +432,7 @@ status: new
 
             Ctrl+cで閉じます
 
-    ### **旧ファイル削除**
+    ### **1-5. 旧ファイル削除**
     ```
     rm $NODE_HOME/guild-db/blocklog/block_check.py $NODE_HOME/guild-db/blocklog/send.txt
     ```
@@ -472,7 +469,7 @@ status: new
     pip3 install --upgrade watchdog pytz python-dateutil requests discordwebhook slackweb i18nice
     ```
 
-    ### **サービスファイル修正**
+    ### **2-1. サービスファイル修正**
 
     サービスを停止する
     ```
@@ -518,7 +515,7 @@ status: new
     ```
 
 
-    ### **SPO Block Notify再設定**
+    ### **2-2. SPO Block Notify再設定**
 
     `.env`バックアップ
     ```
@@ -590,7 +587,7 @@ status: new
     python3 $NODE_HOME/scripts/block-notify/block_notify.py version
     ```
 
-    ### **サービス起動**
+    ### **2-3. サービス起動**
     !!! note "サービス起動について"
 
         * `cncli`および`logmonitor`は`cnode-node.service`に紐づいて起動します
@@ -683,7 +680,7 @@ status: new
     !!! danger "前提条件"
         TMUX起動のブロックログが導入済みでかつ旧ブロック生成ステータス通知が未導入の場合
 
-    ### **サービスファイル修正**
+    ### **3-1. サービスファイル修正**
 
     サービスを停止する
     ```
@@ -849,7 +846,7 @@ status: new
     sudo systemctl start cnode-logmonitor.service
     ```
 
-    ### **SPO Block Notify設定**
+    ### **3-2. SPO Block Notify設定**
 
     [11.SPO BlockNotify設定](../setup/11-blocknotify-setup.md)を実施してください。
 

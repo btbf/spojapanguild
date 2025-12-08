@@ -3,7 +3,7 @@
 !!! info 
     本手順は、MacOSで実施してます。Windowsの方は読み替えて実施してください。
 
-## 1. FileZillaのダウンロード
+## **1. FileZillaのダウンロード**
 
 次のリンクの遷移先から[FileZilla Client](https://filezilla-project.org/)をダウンロードします。
 
@@ -24,7 +24,7 @@
 ![FileZilla-5](https://user-images.githubusercontent.com/80967103/167056869-3a42a555-9f4f-425c-acaf-74bee800f950.png)
 
 
-## 2. SFTP設定
+## **2. SFTP設定**
 サイトマネージャーでの各種設定
 
 | 項目 | 設定値 |

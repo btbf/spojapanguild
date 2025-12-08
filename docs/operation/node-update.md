@@ -109,7 +109,7 @@ echo $current_node
     先日発生したチェーンフォークの調査継続とバージョン多様性を維持する目的です。
 
 
-### **システムアップデート**
+### **1-1. システムアップデート**
 
 システムアップデート
 ```bash
@@ -122,7 +122,7 @@ sudo apt update -y && sudo apt upgrade -y
     sudo apt install liblmdb-dev -y
     ```
 
-### **依存関係バージョン確認**
+### **1-2. 依存関係バージョン確認**
 
 **cabalバージョン確認**
 ```
@@ -441,7 +441,7 @@ sudo systemctl start prometheus-node-exporter.service
     ```
 -->
 
-### **CNCLIバージョン確認(BPのみ)**
+### **1-3. CNCLIバージョン確認(BPのみ)**
 
 CNCLIバージョン確認
 ```
@@ -490,7 +490,7 @@ cncli 6.7.0
 
 === "ビルド済みバイナリを使用する場合"
 
-    ### **バイナリダウンロード**
+    ### **2-1. バイナリダウンロード**
 
     旧バイナリを削除する
     ```bash
@@ -528,7 +528,7 @@ cncli 6.7.0
     sudo systemctl stop cardano-node
     ```
 
-    ### **バイナリインストール**
+    ### **2-2. バイナリインストール**
 
     **バイナリーファイルをシステムフォルダーへコピーする**
 
@@ -667,7 +667,7 @@ cncli 6.7.0
         tar zxvf cardano-node-10.5.3-linux.tar.gz ./bin/snapshot-converter
         ```
 
-### **設定ファイル更新**
+### **2-3. 設定ファイル更新**
 
 <!--
 設定ファイルを書き換える
@@ -1073,7 +1073,7 @@ cp -r ${snapshot_slotno}_mem $NODE_HOME/db/ledger/${snapshot_slotno}
 -->
 
 
-### **サーバー再起動**
+### **2-4. サーバー再起動**
 
 **作業フォルダリネーム**
 
@@ -1112,7 +1112,7 @@ sudo journalctl --unit=cardano-node --follow
 
 ## **3. 依存関係作業**
 
-### **リレー/BP共通**
+### **3-1. リレー/BP共通**
 
 **gLiveView更新**
 ```
@@ -1213,7 +1213,7 @@ sed -i $NODE_HOME/scripts/cncli.sh \
 sudo systemctl restart cnode-cncli-sync.service
 ```
 -->
-### **BPサービス確認** 
+### **3-2. BPサービス確認** 
 
 ??? danger "ブロック生成ステータス通知またはSPO Block Notifyを未導入(更新)していない方"
 
@@ -1255,7 +1255,7 @@ BPノードが完全に同期した後、サービス起動状態を確認する
     R-loginの転送機能が遅いので、大容量ファイルをダウン・アップロードする場合は、SFTP接続可能なソフトを使用すると効率的です。（FileZilaなど）  
     ファイル転送に便利な[SFTP機能ソフトの導入手順はこちら](./sftp.md)
 
-### **バイナリファイルコピー**
+### **4-1. バイナリファイルコピー**
 
 === "ビルド済みバイナリをダウンロードした場合"
 
@@ -1294,7 +1294,7 @@ SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し、以�
     <font color=red>(cardano-node2が無ければ作成する)</font>
 
 
-### **インストール**
+### **4-2. インストール**
 
 エアギャップマシンで以下を実行する
 === "エアギャップ"
@@ -1341,7 +1341,7 @@ SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し、以�
     ```
     -->
 
-### **バージョン確認**
+### **4-3. バージョン確認**
 
 ```bash
 cardano-cli version

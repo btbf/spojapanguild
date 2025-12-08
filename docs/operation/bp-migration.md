@@ -1,8 +1,4 @@
----
-status: new
----
 # **BPサーバー移行（旧VPS会社→新VPS会社）**
-
 
 !!! tip "前提注意事項"
     * 本まとめは現VPS会社→新VPS会社へと `BPのみ` を移行するまとめです。
@@ -20,12 +16,12 @@ status: new
         * もし変更する場合は、以下のファイル内のパス名を手動で変更してください。
         * `startBlockProducingNode.sh` DIRECTORY=/home/ユーザー名/cnode
 
-### **Ubuntu初期設定**
+### **1-1. Ubuntu初期設定**
 
 新サーバーで[Ubuntu初期設定](../setup/1-ubuntu-setup.md)を実施します。  
 
 
-### **ノードセットアップ**
+### **1-2. ノードセットアップ**
 
 1. [依存関係インストール](../setup/2-node-setup.md#2) 〜
 [gLiveViewのインストール](../setup/2-node-setup.md#2-7-gliveview)まで実施します。
@@ -74,7 +70,7 @@ status: new
 
 ## **3. 旧BP移行処理**
 
-### **旧BPノード停止**
+### **3-1. 旧BPノード停止**
 
 === "旧BP"
 
@@ -85,7 +81,7 @@ status: new
     sudo systemctl disable cardano-node
     ```  
 
-### **旧BPファイル移動**
+### **3-2. 旧BPファイル移動**
 
 ??? tio "**参考）移行ファイル一覧**"
 
@@ -127,7 +123,7 @@ graph LR
 
 ## **4. 新BP再設定**
 
-### **移行ファイル復元**
+### **4-1. 移行ファイル復元**
 
 === "新BP"
 
@@ -155,7 +151,7 @@ graph LR
     rm bp-move.zst
     ```
 
-### **パーミッション変更**
+### **4-2. パーミッション変更**
 === "新BP"
     ```
     cd $NODE_HOME
@@ -173,7 +169,7 @@ graph LR
     journalctl --unit=cardano-node --follow
     ```
 
-### **新BP接続確認**
+### **4-3. 新BP接続確認**
 gLiveViewで新BPが最新ブロックと同期後、リレーと疎通(I/O)ができているかを確認します。
 
 === "新BP"
@@ -184,7 +180,7 @@ gLiveViewで新BPが最新ブロックと同期後、リレーと疎通(I/O)が�
     ```
     > PeerリストにリレーのIPがあることを確認してください。
 
-### **params.json再作成**
+### **4-4. params.json再作成**
 
 === "新BP"
 ```
@@ -194,7 +190,7 @@ cardano-cli conway query protocol-parameters \
     --out-file params.json
 ```
 
-### **ブロックログ設定**
+### **4-5. ブロックログ設定**
 
 - [ステークプールブロックログ導入手順](../setup/10-blocklog-setup.md)
 
@@ -202,16 +198,16 @@ cardano-cli conway query protocol-parameters \
     「10-6. 過去のブロック生成実績取得」は実施しないでください。
 
 
-### **SJGツール導入**
+### **4-6. SJGツール導入**
 
 - [SPO JAPAN GUILD TOOL](../operation/tool.md)
 
 
-### **ブロック生成状態チェック**
+### **4-7. ブロック生成状態チェック**
 
 SJGツールを起動し、「[2] ブロック生成状態チェック」ですべての項目がOKになることを確認する
 
-### **ブロック生成ステータス通知設定**
+### **4-8. ブロック生成ステータス通知設定**
 (SPO Block Notify)
 
 === "旧BPで導入済みの場合"
@@ -242,7 +238,7 @@ SJGツールを起動し、「[2] ブロック生成状態チェック」です�
 
 ## **5. Prometheus設定**
 
-### **新BP`node exporter`インストール**
+### **5-1. 新BP`node exporter`インストール**
 
 === "新BP"
     ```
@@ -266,7 +262,7 @@ SJGツールを起動し、「[2] ブロック生成状態チェック」です�
     sudo systemctl reload-or-restart cardano-node
     ```
 
-### **Grafanaサーバー`prometheus.yml`の修正**
+### **5-2. Grafanaサーバー`prometheus.yml`の修正**
 
 === "Grafanaサーバー(リレー1)"
 
@@ -292,14 +288,14 @@ SJGツールを起動し、「[2] ブロック生成状態チェック」です�
 ---
 ## **6. 最終作業**
 
-### **旧BPシャットダウン**
+### **6-1. 旧BPシャットダウン**
 
 === "旧BP"
     ```
     sudo shutdown -h now
     ```
 
-### **Tracemempool無効化**
+### **6-2. Tracemempool無効化**
 
 Txの増加が確認できたらTracemempoolを無効にします。
 
@@ -314,7 +310,7 @@ Txの増加が確認できたらTracemempoolを無効にします。
 sudo systemctl reload-or-restart cardano-node
 ```
 
-### **6-3.Mithril-Signer再セットアップ**
+### **6-3. Mithril-Signer再セットアップ**
 旧サーバーでMithril-Signer-Nodeを実行していた場合は、新サーバーでも再セットアップしてください。不明点がある場合はBTBF SPO LAB.でご質問ください。
 
 ---

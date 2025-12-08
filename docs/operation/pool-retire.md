@@ -231,7 +231,7 @@ chmod a-rwx $HOME/cold-keys
         $NODE_NETWORK
     ```
 
-### **リタイア確認**
+### **1-1. リタイア確認**
 
 * KOIOS APIを使用してリタイア処理ステータスを確認できます。
 

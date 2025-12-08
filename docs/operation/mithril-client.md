@@ -9,7 +9,7 @@
 
 ## **1. インストール**
 
-### **システムアップデート**
+### **1-1. システムアップデート**
 ノード停止
 ```
 sudo systemctl stop cardano-node
@@ -19,7 +19,7 @@ sudo systemctl stop cardano-node
 sudo apt update -y && sudo apt upgrade -y
 ```
 
-### **Mithirlインストール**
+### **1-2. Mithirlインストール**
 ```
 cd $HOME/git
 mithril_release="$(curl -s https://api.github.com/repos/input-output-hk/mithril/releases/latest | jq -r '.tag_name')"
@@ -47,14 +47,14 @@ mithril-client -V
 ```
 > Mithril Githubの[リリースノート](https://github.com/input-output-hk/mithril/releases/latest)内にある`mithril-client-cli`のバージョンをご確認ください。
 
-## 2.DBブートストラップ
+## **2.DBブートストラップ**
 
 tmux作業ウィンドウを作成する
 ```
 tmux new -s mithril
 ```
 
-### 2-1.変数セット
+### **2-1. 変数セット**
 
 ```
 export NETWORK=mainnet
@@ -64,7 +64,7 @@ export ANCILLARY_VERIFICATION_KEY=$(wget -q -O - https://raw.githubusercontent.c
 export SNAPSHOT_DIGEST=latest
 ```
 
-### 2-2.最新スナップショットDL
+### **2-2.最新スナップショットDL**
 
 既存DBフォルダ削除
 ```
