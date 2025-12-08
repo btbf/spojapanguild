@@ -1,113 +1,104 @@
 # **エアギャップ環境セットアップ**
+USBブートでUbuntu 22.04を起動します。
 
-# Mac に Ubuntu 22.04 をインストールする
+## **Macの場合**
 
-## Bootable USB で起動する
+## **1. Bootable USBからの起動**  
+作成済みのUbuntu Bootable USBをMacに接続し、電源投入と同時に`Option`キーを押し続けて起動ディスク選択画面を開きます。  
+> 画面が表示されるまでキーを押し続けてください。
 
-### USB を認識させる
-
-USB を Mac に挿し「Option」キーを押しながら電源を入れる。
-
-!!! info "Windows用キーボードを使用している場合"
-    Optionキーはありませんので代わりに「Alt」キーを押してください
-
-起動音が鳴り以下のような画面が表示されるまでキーを押したままにしてください。
+!!! tip "Windows用キーボードを使用している場合"  
+    `Option`キーの代わりに`Alt`キーを押してください。
 
 ![](../images/airgap/01-mac-boot.jpg)
 
 
-### ブートデバイスを選択する
-
-こちらの例ではハードディスクのようなアイコンが内蔵のHDDまたはSSDですので、オレンジ色のほうのUSBを選択しEnterキーを押します。
-
-そうするとUSBから起動が始まります。
+### **1-1. 起動デバイスを選択**
+画面には内蔵ディスク（グレーのアイコン）とUSB（オレンジのアイコン）が表示されます。  
+USBデバイスを選択し、Enterキーを押して起動します。
 
 ![](../images/airgap/02-mac-usb-boot.jpg)
 
 
-### Ubuntu Server のインストールを開始する
-
-以下のような画面が表示されますので、「Try or Install Ubuntu Server」を選択してEnterキーを押すとUbuntu Serverのインストーラーが起動します。
+### **1-2. Ubuntu Serverのインストール開始**
+表示されたメニューから「`Try or Install Ubuntu Server`」を選択し、Enterキーを押下。  
+その後は画面の指示に従って通常のUbuntu Serverインストールを進めてください。
 
 ![](../images/airgap/03-install-ubuntu-server.jpg)
 
 
+## **2. Mac mini での WiFi 設定（Intel モデルのみ）**
+!!! tip "Appleシリコン搭載 Mac mini（M1/M2/M3）の方へ"
+    Appleシリコンでは、WiFiドライバが提供されていないため、WiFiは利用できません。  
+    有線LANを使用してください。
 
-## Mac mini で WiFi を認識させる
+??? info "Intel Mac mini（Broadcom WiFiチップ搭載）の場合はこちら"  
+    **前提条件**  
 
-### 1-1. 前提条件
+    以下の条件を満たすモデルのみWiFiが利用できます。  
 
-Broadcomのチップであれば対応可能
+    - Intel CPU 搭載モデル  
+    - Broadcom製 WiFiチップ  
 
-- Apple Silicon (M1,M2,M3) Mac mini
-    - ドライバがオープンにされていないため対応不可
+    **1. 有線LANでインターネットに接続**  
 
-### 1-2. 有線LAN でネットに接続する
+    WiFiドライバをインストールするため、まず有線LANでネットワークに接続します。  
 
-ドライバをインストールするために有線でネットに繋いでください。
+    **2. WiFiチップの型番を確認**  
+    ```bash
+    lspci -nn | grep -i network
+    ```
 
+    Broadcom チップが表示されれば対象です。  
+    > Broadcom Inc. and subsidiaries BCM4331
 
-### 1-3. チップの型番を確認する
+    **3. ドライバのインストール**  
+    ```bash
+    sudo apt update -y
+    ```
+    ```bash
+    sudo apt install bcmwl-kernel-source network-manager -y
+    ```
 
-```bash
-lspci -nn | grep -i network
-```
-以下のような戻り値があれば 1-3. に進む
+    **4. 再起動**  
+    ```bash
+    sudo reboot
+    ```
 
-> Broadcom Inc. and subsidiaries BCM4331
+    **5. WiFiデバイス名の確認**  
+    ```bash
+    nmcli device
+    ```
 
+    例：
+    ```
+    DEVICE    TYPE      STATE         CONNECTION 
+    wlp2s0    wifi      disconnected  --         
+    enp1s0f0  ethernet  unmanaged     --         
+    lo        loopback  unmanaged     --        
+    ```
+    > 上記の例では`wlp2s0`がWiFiデバイスです。
 
-### 1-4. ドライバをインストールする
+    **6. アクセスポイント一覧の取得**  
+    ```bash
+    nmcli device wifi list
+    ```
 
-```bash
-sudo apt update -y
-```
-```bash
-sudo apt install bcmwl-kernel-source network-manager -y
-```
+    例：
+    ```
+    IN-USE  BSSID              SSID               MODE   CHAN  RATE        SIGNAL  BARS  SECURITY  
+            00:11:22:33:44:55  ExampleWiFi_24G    Infra  11    300 Mbit/s  92      ▂▄▆█  WPA2      
+            66:77:88:99:AA:BB  OfficeNet_AP01     Infra  36    540 Mbit/s  75      ▂▄▆_  WPA2    
+    ```
 
+    **7. WiFiへの接続**  
 
-### 1-5. 再起動する
+    例：
+    SSID「`ExampleWiFi_24G`」、パスワード「`mywifi1234`」 に接続する場合
 
-```bash
-sudo reboot
-```
-
-
-### 1-6. WiFi デバイス名を確認する
-```bash
-nmcli device
-```
-
-以下の戻り値の例では wlp2s0 が WiFi デバイスです
-```
-DEVICE    TYPE      STATE         CONNECTION 
-wlp2s0    wifi      disconnected  --         
-enp1s0f0  ethernet  unmanaged     --         
-lo        loopback  unmanaged     --        
-```
-
-
-### 1-7. アクセスポイント一覧を取得する
-```bash
-nmcli device wifi list
-```
-
-```
-IN-USE  BSSID              SSID             MODE   CHAN  RATE        SIGNAL  BARS  SECURITY  
-        00:00:00:00:00:00  TP-Link_0000     Infra  40    540 Mbit/s  97      ▂▄▆█  WPA2      
-        00:00:00:00:00:00  aterm-000af8-g   Infra  6     270 Mbit/s  79      ▂▄▆_  WPA2    
-```
-
-
-### 1-8. WiFi に接続する
-
-`TP-Link_0000` にパスワード `01234567` で接続する場合
-
-```bash
-sudo nmcli device wifi connect "TP-Link_0000" password "01234567"
-```
-
-以上で次回起動時もWiFiに接続された状態になります。
+    ```bash
+    sudo nmcli device wifi connect "ExampleWiFi_24G" password "mywifi1234"
+    ```
+    > 次回以降の起動でも自動的に接続されます。
 
 ---
