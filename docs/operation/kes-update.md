@@ -1,7 +1,7 @@
 # **KESの更新**
 
 以降は、すべて手動で行うKES更新手順です。  
-ドキュメントとして記載しておきますが、<font color=red>**実運用では、半自動更新が可能な[SJG TOOL](../operation/sjg-tool-setup.md/#spo-japan-guild-tool)の利用を推奨します。**</font>
+ドキュメントとして記載しておきますが、<font color=red>**実運用では、半自動更新が可能な[SJG TOOL](../operation/sjg-tool-setup.md)の利用を推奨します。**</font>
 
 !!! summary "概要"
     **KESとは**
@@ -266,7 +266,7 @@ BPとエアギャップで`node.cert`のハッシュ値が一致しているこ�
 
 
 ## **12. チェックプログラム実行**
-確認のため、**[SJG TOOL](../operation/sjg-tool-setup.md/#spo-japan-guild-tool)**を実行します。
+確認のため、**[SJG TOOL](../operation/sjg-tool-setup.md)**を実行します。
 
 ```bash
 gtool

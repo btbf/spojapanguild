@@ -94,7 +94,7 @@ sudo systemctl reload-or-restart cnode-blockcheck.service
 ```
 
 デタッチ方法
-```
+``` { .yaml .no-copy }
 Ctrl + b → d
 ```
 

@@ -13,7 +13,7 @@
         Windows向けの軽量SSHクライアントです。  
         タブ管理やカラー設定が容易で、SPOの利用実績も多い安定したソフトです。
 
-        ダウンロード：[https://kmiya-culti.github.io/RLogin/](https://kmiya-culti.github.io/RLogin/) 
+        ダウンロード：[https://kmiya-culti.github.io/RLogin/](https://kmiya-culti.github.io/RLogin/){target="_blank" rel="noopener"}
 
         ??? tip "R-Login 推奨設定"
 
@@ -27,13 +27,13 @@
         macOSに標準搭載されているターミナルアプリです。  
         追加インストール不要で、そのままSSH接続に利用できます。
 
-        参考：[https://www.webdesignleaves.com/pr/plugins/mac_terminal_basics_01.html](https://www.webdesignleaves.com/pr/plugins/mac_terminal_basics_01.html) 
+        参考：[https://www.webdesignleaves.com/pr/plugins/mac_terminal_basics_01.html](https://www.webdesignleaves.com/pr/plugins/mac_terminal_basics_01.html){target="_blank" rel="noopener"}
 
     !!! info "Termius（Windows / macOS / Linux / iOS / Android）"
         複数OSに対応した高機能SSHクライアントです。  
         クラウド同期により、PCとスマホ間で設定を共有できます。
 
-        公式サイト：[https://termius.com/](https://termius.com/)
+        公式サイト：[https://termius.com/](https://termius.com/){target="_blank" rel="noopener"}
 
 
 ### **SSH鍵作成**

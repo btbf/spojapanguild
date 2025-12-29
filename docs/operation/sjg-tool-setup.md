@@ -70,7 +70,7 @@ echo alias airgap="'cd $HOME/cnode && [ -f airgap-set.tar.gz ] && tar -xOzf airg
 
     なし
 
-    また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues)を提出してください。
+    また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues){target="_blank" rel="noopener"}を提出してください。
 
 ---
 

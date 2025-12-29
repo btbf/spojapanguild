@@ -1,104 +1,310 @@
-# **エアギャップ環境セットアップ**
-USBブートでUbuntu 22.04を起動します。
+# **エアギャップ環境構築**
+!!! info "エアギャップマシンとは" 
+    エアギャップマシンとは、ネットワークから完全に隔離されたオフライン環境で動作する専用マシンを指します。  
+    ステークプール運用においては、ウォレットの秘密鍵およびプール運営用の秘密鍵を安全に管理し、**オフライン状態**で**`cardano-cli`**を用いたトランザクション署名を行うために使用します。  
+    エアギャップの一般的な定義および考え方については、[Wikipediaの解説](https://ja.wikipedia.org/wiki/%E3%82%A8%E3%82%A2%E3%82%AE%E3%83%A3%E3%83%83%E3%83%97){target="_blank" rel="noopener"}をご参照ください。
 
-## **Macの場合**
-
-## **1. Bootable USBからの起動**  
-作成済みのUbuntu Bootable USBをMacに接続し、電源投入と同時に`Option`キーを押し続けて起動ディスク選択画面を開きます。  
-> 画面が表示されるまでキーを押し続けてください。
-
-!!! tip "Windows用キーボードを使用している場合"  
-    `Option`キーの代わりに`Alt`キーを押してください。
-
-![](../images/airgap/01-mac-boot.jpg)
+    !!! danger "秘密鍵オンライン保存のリスク"
+        これらの秘密鍵をオンライン環境（BP/リレーノード等）に保存すると、ハッキング・マルウェア感染などにより、**資金やプール運営権限の盗難等につながる重大なリスク**が発生します。    
+        そのため、{==**秘密鍵の管理と署名処理は必ずエアギャップマシン上で実施してください。**==}  
 
 
-### **1-1. 起動デバイスを選択**
-画面には内蔵ディスク（グレーのアイコン）とUSB（オレンジのアイコン）が表示されます。  
-USBデバイスを選択し、Enterキーを押して起動します。
-
-![](../images/airgap/02-mac-usb-boot.jpg)
-
-
-### **1-2. Ubuntu Serverのインストール開始**
-表示されたメニューから「`Try or Install Ubuntu Server`」を選択し、Enterキーを押下。  
-その後は画面の指示に従って通常のUbuntu Serverインストールを進めてください。
-
-![](../images/airgap/03-install-ubuntu-server.jpg)
+## **方針**
+!!! note "前提"
+    エアギャップ環境としての安全性を確保するため、本マニュアルではUSBブートにより **`Ubuntu 24.04`** を起動し、{==**既存OSを削除した単一OS構成でインストールする運用を前提**==}とします。  
+    Liveブート、デュアルブート、および仮想環境（VirtualBox等）は、永続性やホストOSへの依存が残るため、本マニュアルでは採用しません。
 
 
-## **2. Mac mini での WiFi 設定（Intel モデルのみ）**
-!!! tip "Appleシリコン搭載 Mac mini（M1/M2/M3）の方へ"
-    Appleシリコンでは、WiFiドライバが提供されていないため、WiFiは利用できません。  
-    有線LANを使用してください。
+## **エアギャップマシンの構築手順**
+!!! danger "注意点"
+    USBメディアの作成環境と、作成したUSBで実際にUbuntuを起動する環境は、まったく別の作業です。  
+    これらを混同しないよう、次のように区別してください。
 
-??? info "Intel Mac mini（Broadcom WiFiチップ搭載）の場合はこちら"  
-    **前提条件**  
+    - **USB作成用PC**  
+    Windows／macOS／Intel Mac／Apple Silicon Mac いずれでも可（ISOファイルの書き込み専用）
+    - **USB起動対象PC**  
+    UbuntuをインストールするPC（既存OSが消去されても問題ないPC / x86_64）
 
-    以下の条件を満たすモデルのみWiFiが利用できます。  
 
-    - Intel CPU 搭載モデル  
-    - Broadcom製 WiFiチップ  
+### **1. Ubuntu Desktopイメージの取得**
+Ubuntu **`Desktop`** イメージファイルをダウンロードします。
 
-    **1. 有線LANでインターネットに接続**  
+[**Ubuntu 24.04.* (Noble Numbat)**](https://releases.ubuntu.com/noble){target="_blank" rel="noopener"}  
+※ ダウンロード完了まで少しかかるのでしばらくお待ちください。
 
-    WiFiドライバをインストールするため、まず有線LANでネットワークに接続します。  
 
-    **2. WiFiチップの型番を確認**  
-    ```bash
-    lspci -nn | grep -i network
-    ```
+### **2. USBブートディスク作成（balenaEtcher）**
 
-    Broadcom チップが表示されれば対象です。  
-    > Broadcom Inc. and subsidiaries BCM4331
+#### **前提条件**
+!!! tip "ヒント"
+    - 初期化しても問題ない容量**`12GB`**以上のUSBメモリデバイス  
+    - `Windows`または`macOS`が動作するPC  
+    - [1. Ubuntu Desktopイメージの取得](../setup/air-gapped-setup.md/#1-ubuntu-desktop)で取得したISOイメージファイル
 
-    **3. ドライバのインストール**  
-    ```bash
-    sudo apt update -y
-    ```
-    ```bash
-    sudo apt install bcmwl-kernel-source network-manager -y
-    ```
+#### **`balenaEtcher`の使用概要**
+balenaEtcherは、無料かつオープンソースのUSB書き込みツールであり、Ubuntuインストールに使用するブート可能なUSBメディアを安全かつ簡単に作成できます。
 
-    **4. 再起動**  
-    ```bash
-    sudo reboot
-    ```
+##### **2-1. Etcherのインストール**
+balenaEtcherの公式サイトにアクセスし、インストーラーをダウンロードしてインストールします。
 
-    **5. WiFiデバイス名の確認**  
-    ```bash
-    nmcli device
-    ```
+[https://etcher.balena.io](https://etcher.balena.io){target="_blank" rel="noopener"}
 
-    例：
-    ```
-    DEVICE    TYPE      STATE         CONNECTION 
-    wlp2s0    wifi      disconnected  --         
-    enp1s0f0  ethernet  unmanaged     --         
-    lo        loopback  unmanaged     --        
-    ```
-    > 上記の例では`wlp2s0`がWiFiデバイスです。
+!!! info "各OSでのインストール手順"
+    === "Windowsの場合"
+        **1.** **`Etcher for Windows (x86|x64) (Installer)`**の右側の「**`Download`**」を選択します。  
+        **2.** Windows 64-bit用のインストーラー（`balenaEtcher-*.*.*.Setup.exe`）をダウンロードします。  
+        **3.** ダウンロードした`.exe`ファイルを実行し、画面の指示に従ってインストールを完了させます。
 
-    **6. アクセスポイント一覧の取得**  
-    ```bash
-    nmcli device wifi list
-    ```
+        - エクスプローラーを開き、左側メニューの「ダウンロード」を選択
+        - `balenaEtcher-*.*.*.Setup.exe`ファイルをダブルクリック
+        > **インストーラーの指示に従い進めてください**
 
-    例：
-    ```
-    IN-USE  BSSID              SSID               MODE   CHAN  RATE        SIGNAL  BARS  SECURITY  
-            00:11:22:33:44:55  ExampleWiFi_24G    Infra  11    300 Mbit/s  92      ▂▄▆█  WPA2      
-            66:77:88:99:AA:BB  OfficeNet_AP01     Infra  36    540 Mbit/s  75      ▂▄▆_  WPA2    
-    ```
+    === "Macの場合"
+        **1.** 利用しているMacのアーキテクチャに応じて、対応する **`Etcher for macOS`** の「**`Download`**」を選択します。
 
-    **7. WiFiへの接続**  
+        - **Apple Silicon (M1/M2/M3 など)** → **`Etcher for macOS (arm64)`**
+        - **Intel Mac** → **`Etcher for macOS (x64)`**
 
-    例：
-    SSID「`ExampleWiFi_24G`」、パスワード「`mywifi1234`」 に接続する場合
+        **2.** ダウンロードした `.dmg` ファイル（例：  
 
-    ```bash
-    sudo nmcli device wifi connect "ExampleWiFi_24G" password "mywifi1234"
-    ```
-    > 次回以降の起動でも自動的に接続されます。
+        - `balenaEtcher-*.*.*-arm64.dmg`  
+        - `balenaEtcher-*.*.*-x64.dmg`  
+
+        ）を開き、**`Etcher`** アイコンを **アプリケーションフォルダへドラッグ＆ドロップ** してインストールします。
+
+        **3.** 初回起動時に警告が表示されても、上記手順で取得したファイルであれば問題ありません。  
+        「`開く`」を選択して続行してください。
+
+##### **2-2. USBメディアの作成**
+USBブートディスクを作成します。
+
+!!! info "手順"  
+    **1.** USBメモリをPCに挿入します。  
+    > USBポートに正しく接続されていることを確認してください。
+
+    **2.** Etcherを起動します。
+
+    **3.** Ubuntu ISO イメージを選択します。   
+    > 「**Flash from file**」を選択し、事前にダウンロードしたUbuntu ISO イメージファイルを選択します。
+
+    **4.** USBメモリを選択します。  
+    > 「**Select target**」を選択し、書き込み先となるUSBメモリを選択後、「`Select 1`」を選択します。  
+
+    !!! danger "誤ったディスクを選ばないよう注意してください。"
+        USB以外のストレージを選択するとデータが消去されます。  
+
+    **5.** 「Flash」を実行します。  
+    「**Flash!**」を選択すると書き込み権限の付与が求められるのでPC（Windows/macOS）の管理者パスワードを入力し、「`Ok`」を選択します。  
+    > 「“balenaEtcher.app” がリムーバブルボリューム上のファイルにアクセスしようとしています。」というダイアログが表示された場合は、「許可」を選択してください。  
+    > USBメモリの書き込み速度に依存しますが、処理の完了まで数分から15分程度を要します。
+    
+    **6.** 書き込み完了後の確認
+    > 書き込みが完了するとEtcher上で「**Flash Completed!**」と表示されますので画面を閉じて終了し、USBを抜いてください。
+
+    !!! tip "ヒント"
+        macOS環境では、USBメディアが「読み取れません」といった警告が表示される場合がありますが、これは正常ですのでUSBを取り外して問題ありません。
+
+
+### **3. USBブートによるUbuntuの起動**
+1. エアギャップマシンとして使用するPCに先ほど書き込んだUSBを挿入します。    
+2. コンピューターを起動します。  
+3. 表示されたメニューから「**`Try or Install Ubuntu`**」を選択し、Enterキーを押下します。  
+その後は画面の指示に従って通常のUbuntu Desktopのインストールを進めてください。  
+> Ubuntuが起動しない場合は、コンピューターを再起動してください。  
+> その際Windowsでは主に`F12`、Macだと`Option`または`Alt`キーを押し続けてください。
+
+![](../images/airgap/ubuntu-desktop-24.04.3/1_ubuntu-24.04.3-install.png)
+
+#### **3-1. インストーラーのセットアップ**
+※ 以降の画像は一例であり、環境によって表示が異なる場合があります。  
+
+1. 言語を選択。  
+![](../images/airgap/ubuntu-desktop-24.04.3/2_ubuntu-24.04.3-install.png)
+
+2. アクセシビリティ設定は選択せず、「`次`」を選択します。  
+![](../images/airgap/ubuntu-desktop-24.04.3/3_ubuntu-24.04.3-install.png)
+
+3. 使用しているキーボードレイアウトを選択します。  
+![](../images/airgap/ubuntu-desktop-24.04.3/4_ubuntu-24.04.3-install.png)
+
+4. 「`今はインターネットに接続しない`」を選択します。  
+![](../images/airgap/ubuntu-desktop-24.04.3/5_ubuntu-24.04.3-install.png)
+
+5. 「`Ubuntuをインストール`」を選択します。  
+![](../images/airgap/ubuntu-desktop-24.04.3/6_ubuntu-24.04.3-install.png)
+
+6. 対話型インストール「`対話式インストール`」を選択します。  
+![](../images/airgap/ubuntu-desktop-24.04.3/7_ubuntu-24.04.3-install.png)
+
+7. 「`規定の選択`」を選択します。  
+![](../images/airgap/ubuntu-desktop-24.04.3/8_ubuntu-24.04.3-install.png)
+
+8. 不要なドライバやバイナリを最小化するため、サードパーティ製ソフトウェアはインストールしません。  
+![](../images/airgap/ubuntu-desktop-24.04.3/9_ubuntu-24.04.3-install.png)
+
+#### **3-2. ディスクのセットアップ**
+1. 「`ディスクを削除してUbuntuをインストールする`」を選択します。
+![](../images/airgap/ubuntu-desktop-24.04.3/10_ubuntu-24.04.3-install.png)
+
+2. ユーザー名とパスワードを設定します。  
+![](../images/airgap/ubuntu-desktop-24.04.3/11_ubuntu-24.04.3-install.png)
+> コンピューター名の末尾は自動で入力されます。  
+
+3. タイムゾーンの選択をします。
+![](../images/airgap/ubuntu-desktop-24.04.3/12_ubuntu-24.04.3-install.png)
+
+4. インストールの準備が完了したので確認し、「`インストール`」を選択します。  
+![](../images/airgap/ubuntu-desktop-24.04.3/13_ubuntu-24.04.3-install.png)
+
+#### **3-3. インストールの完了**
+1. インストール完了画面を待機し、完了後「`今すぐ再起動`」を選択します。
+![](../images/airgap/ubuntu-desktop-24.04.3/14_ubuntu-24.04.3-install.png)
+
+2. USBを取り外すため「`Enter`」を押下してください。  
+「`Enter`」を押下後、すぐUSBを抜いてください。  
+![](../images/airgap/ubuntu-desktop-24.04.3/15_ubuntu-24.04.3-install.png)
+
+3. ログイン画面でパスワードを入力します。
+![](../images/airgap/ubuntu-desktop-24.04.3/16_ubuntu-24.04.3-install.png)
+
+#### **3-4. 追加設定**
+1. 以下の画面が表示されたら右上の「`次へ`」を選択します。  
+![](../images/airgap/ubuntu-desktop-24.04.3/17_ubuntu-24.04.3-install.png)
+
+2. 「`Skip for now`」が選択されていることを確認し、右上の「`スキップ`」を選択します。  
+![](../images/airgap/ubuntu-desktop-24.04.3/18_ubuntu-24.04.3-install.png)
+
+3. 「`いいえ、システムデータを共有しません`」を選択し、右上の「`次へ`」を選択します。  
+![](../images/airgap/ubuntu-desktop-24.04.3/19_ubuntu-24.04.3-install.png)
+
+4. 右上の「`完了`」を選択します。  
+![](../images/airgap/ubuntu-desktop-24.04.3/20_ubuntu-24.04.3-install.png)
+
+5. 追加設定が完了しました。    
+![](../images/airgap/ubuntu-desktop-24.04.3/21_ubuntu-24.04.3-install.png)
+
+#### **3-5. ターミナルの設定**
+1. ターミナルの設定をするため左下のアイコンを選択し、「`端末`」アイコンを選択します。  
+![](../images/airgap/ubuntu-desktop-24.04.3/22_ubuntu-24.04.3-install.png)
+
+2. ターミナルを右クリックして、「`ダッシュボードにピン留め`」を選択します。  
+![](../images/airgap/ubuntu-desktop-24.04.3/23_ubuntu-24.04.3-install.png)
+
+#### **3-6. 各種設定**
+1. ブラケットモードの無効化設定をします。  
+```bash
+echo 'set enable-bracketed-paste off' >> ~/.inputrc
+```
+
+2. ターミナルを終了します。
+```bash
+exit
+```
+
+3. ディスプレイ設定（任意）  
+好みに応じて、画面を右クリックして「`Display Settings`」を開き、「`Scale`」を「`200%`」に設定します。
+
+#### **3-7. 通信機能の完全無効化**
+エアギャップ・オフラインマシンとして運用するため、`Wi-Fi` / `Bluetooth` / `有線通信`を含むすべてのネットワーク機能を`OS`レベルで無効化します。  
+※ 機内モードは再起動後に解除されるため使用しません。
+
+1. `NetworkManager`の完全停止  
+```bash
+sudo systemctl stop NetworkManager
+```
+```bash
+sudo systemctl disable NetworkManager
+```
+
+2. `Bluetooth` サービスの完全無効化
+```bash
+sudo systemctl stop bluetooth
+```
+```bash
+sudo systemctl disable bluetooth
+```
+```bash
+sudo systemctl mask bluetooth
+```
+
+3. `rfkill` による無線デバイス遮断
+```bash
+sudo rfkill block all
+```
+
+4. 無線デバイス遮断の確認
+```bash
+rfkill list
+```
+`Soft blocked: yes` であることを確認します。　　
+
+5. `rfkill` の永続化
+```bash
+sudo tee /etc/systemd/system/rfkill-block.service > /dev/null << 'EOF'
+[Unit]
+Description=Block all radios (air-gapped)
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/rfkill block all
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+
+6. 有効化
+```bash
+sudo systemctl daemon-reload
+```
+```bash
+sudo systemctl enable rfkill-block.service
+```
+
+7. システムを再起動します。
+```bash
+sudo reboot
+```
+
+**状態確認**  
+
+1. `NetworkManager`
+```bash
+nmcli general status
+```
+期待される表示例：
+``` { .yaml .no-copy }
+Error: NetworkManager is not running.
+```  
+
+2. `Wi-Fi` / `無線`
+```bash
+nmcli radio
+```
+期待される表示例：
+``` { .yaml .no-copy }
+Error: NetworkManager is not running.
+```
+
+3. `rfkill`
+```bash
+rfkill list
+```
+> `Soft blocked: yes` であることを確認します。
+
+4. Bluetooth サービスの状態確認
+```bash
+systemctl status bluetooth --no-pager
+```
+期待される表示例：
+``` { .yaml .no-copy }
+○ bluetooth.service
+     Loaded: masked (Reason: Unit bluetooth.service is masked.)
+     Active: inactive (dead)
+```
+
+
+以上の設定によりエアギャップ環境の構築が完了しました。
 
 ---

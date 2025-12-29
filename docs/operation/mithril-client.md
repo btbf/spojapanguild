@@ -4,7 +4,7 @@
     * このマニュアルではMithril-Clientを使用したcardano-node DB同期ブートストラップを実行します。
     * ノード初回起動時のDB同期時間を約2日から約30分以内にまで短縮できます。
     * Mithrilプロトコルはまだベータバージョンのため、ご自身の責任で実施してください。
-    * この作業は [2.ノードインストール](../setup/2-node-setup.md)の2-1～2-7まで実施してから行って下さい。
+    * この作業は [ノードセットアップ](../setup/node-setup.md)の`1. 依存関係インストール` ～ `7. gLiveViewのインストール`まで実施してから行って下さい。
     * スナップショットノードバージョンとサーバーノードバージョンが異なる場合、DB再構築処理が入る場合がありDB同期までに数時間かかります。
 
 ## **1. インストール**
@@ -45,7 +45,7 @@ rm mithril.tar.gz mithril-client
 ```
 mithril-client -V
 ```
-> Mithril Githubの[リリースノート](https://github.com/input-output-hk/mithril/releases/latest)内にある`mithril-client-cli`のバージョンをご確認ください。
+> Mithril Githubの[リリースノート](https://github.com/input-output-hk/mithril/releases/latest){target="_blank" rel="noopener"}内にある`mithril-client-cli`のバージョンをご確認ください。
 
 ## **2.DBブートストラップ**
 

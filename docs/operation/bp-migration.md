@@ -4,7 +4,7 @@
     * 本まとめは現VPS会社→新VPS会社へと `BPのみ` を移行するまとめです。
     * 実際に行う際には手順をよく読みながら進めてください。
     * ブロック生成予定まで余裕がある時に実施してください。
-    * 旧BPは[3-3.旧BPシャットダウン](./bp-move.md#3-3bp)まで、**起動状態** にしておいてください。
+    * 旧BPは[6-1. 旧BPシャットダウン](../operation/bp-migration.md/#6-1-bp)まで、**起動状態** にしておいてください。
 
 ## **1. 新BPセットアップ**
 
@@ -18,19 +18,20 @@
 
 ### **1-1. Ubuntu初期設定**
 
-新サーバーで[Ubuntu初期設定](../setup/1-ubuntu-setup.md)を実施します。  
+新サーバーで[Ubuntu初期設定](../setup/ubuntu-setup.md)を実施します。  
 
 
 ### **1-2. ノードセットアップ**
 
-1. [依存関係インストール](../setup/2-node-setup.md#2) 〜
-[gLiveViewのインストール](../setup/2-node-setup.md#2-7-gliveview)まで実施します。
-2. [リレーとBPを接続する](../setup/3-relay-bp-setup.md)の「BPの場合」を実施します。
+1. [1. 依存関係インストール](../setup/node-setup.md/#1) 〜
+[7. gLiveViewのインストール](../setup/node-setup.md/#7-gliveview)まで実施します。
+2. [2. トポロジーファイル設定変更](../setup/relay-bp-setup.md/#2)の「**`BPの場合`**」を実施します。
 
 
 ## **2. 既存リレー作業**
 リレートポロジー情報変更 
  
+ <!--
 === "手動P2Pの場合"
     !!! tip ""
         === "リレーノード"
@@ -53,22 +54,26 @@
     sudo systemctl reload-or-restart cardano-node
     ```
     > gLiveviewでリレーが最新ブロックと同期することをご確認ください
+-->
 
-=== "ダイナミックP2Pの場合"
+=== "ダイナミックP2P"
 
     ```
     nano $NODE_HOME/${NODE_CONFIG}-topology.json
     ```
-    > 旧BPのIPとポートを新BPのIPとポートに変更する
+    > 旧BPのIPとポートを新BPのIPとポートに変更します。
 
     トポロジーファイルの再読み込み
     ```
     cnreload
     ```
-    > ダイナミックP2P有効時、トポロジーファイル変更による再起動は不要です。
-
 
 ## **3. 旧BP移行処理**
+
+ユーザー名とノードポート番号をメモなどに控えておいてください。
+```bash
+nano $NODE_HOME/startBlockProducingNode.sh
+```
 
 ### **3-1. 旧BPノード停止**
 
@@ -83,7 +88,7 @@
 
 ### **3-2. 旧BPファイル移動**
 
-??? tio "**参考）移行ファイル一覧**"
+!!! tio "**参考）移行ファイル一覧**"
 
     | ファイル名 | 用途 |
     :----|:----
@@ -99,7 +104,9 @@
     | startBlockProducingNode.sh | ノード起動スクリプト |
     | pool.id-bech32 | stakepoolid(bech32形式) |
     | pool.id | stakepoolid(hex形式) |
-    | guild-db | ブロックログ関連フォルダ(cncli.db以外) |
+    | guild-db | ブロックログ関連ディレクトリ(cncli.db以外) |
+    | governance | ガバナンス関連ディレクトリ |
+    | calidus | Calidus関連ディレクトリ |
 
 
 === "旧BP"
@@ -109,11 +116,24 @@
     sudo apt install zstd
     ```
 
-    上記の移行ファイルを一つのファイルに圧縮する
+    上記の移行ファイルを一つのファイルに圧縮します。  
+
+    !!! tip "該当ディレクトリが存在しない場合"
+        `governance/` や `calidus/` を使用していない場合は、**存在しないディレクトリ名をコマンドから削除して実行してください。**
+
     ```
     cd $NODE_HOME
-    tar --exclude "guild-db/cncli/cncli.db" -acvf bp-move.zst guild-db/ vrf.skey vrf.vkey kes.skey kes.vkey node.cert payment.addr stake.addr poolMetaData.json poolMetaDataHash.txt startBlockProducingNode.sh pool.id-bech32 pool.id
+    tar --exclude "guild-db/cncli/cncli.db" -acvf bp-move.zst \
+      vrf.skey vrf.vkey \
+      kes.skey kes.vkey \
+      node.cert \
+      payment.addr stake.addr \
+      poolMetaData.json poolMetaDataHash.txt \
+      startBlockProducingNode.sh \
+      pool.id-bech32 pool.id \
+      guild-db/ governance/ calidus/
     ```
+    
 
 旧BPのcnodeにある`bp-move.zst`を新BPのcnodeディレクトリにコピーする
 ``` mermaid
@@ -150,6 +170,9 @@ graph LR
     ```
     rm bp-move.zst
     ```
+
+    新規BPサーバーで[5. BPノードとして再起動](../setup/bp-key-setup.md/#5-bp)を実行し、「`startBlockProducingNode.sh`」を生成してください。
+    > 旧BPと新BPのユーザー名とノードポート番号は同じにしておくこと
 
 ### **4-2. パーミッション変更**
 === "新BP"
@@ -192,15 +215,12 @@ cardano-cli conway query protocol-parameters \
 
 ### **4-5. ブロックログ設定**
 
-- [ステークプールブロックログ導入手順](../setup/10-blocklog-setup.md)
-
-!!! danger "注意"
-    「10-6. 過去のブロック生成実績取得」は実施しないでください。
+- [ブロックログ設定](../setup/blocklog-setup.md)
 
 
 ### **4-6. SJGツール導入**
 
-- [SPO JAPAN GUILD TOOL](../operation/tool.md)
+- [SJGツール導入設定](../operation/sjg-tool-setup.md)
 
 
 ### **4-7. ブロック生成状態チェック**
@@ -212,7 +232,7 @@ SJGツールを起動し、「[2] ブロック生成状態チェック」です�
 
 === "旧BPで導入済みの場合"
 
-    1. 新BPで[11-1. 依存プログラムをインストールする](../setup/11-blocknotify-setup.md#11-1)のみを実施する
+    1. 新BPで[1. 依存プログラムのインストール](../setup/blocknotify-setup.md/#1)のみを実施する
     2. 旧BPで設定ファイルを確認する
     
     ```
@@ -227,13 +247,13 @@ SJGツールを起動し、「[2] ブロック生成状態チェック」です�
     cat $NODE_HOME/scripts/block-notify/config.ini
     ```
 
-    3. 新BPで[11-3. 通知プログラムの設定](../setup/11-blocknotify-setup.md#11-3)を実施する
+    3. 新BPで[3. 通知プログラムの設定](../setup/blocknotify-setup.md/#3)を実施する
     （config.iniの設定値は旧BPで表示された設定ファイルの内容を参考にする）
 
 
 === "旧BPで未導入の場合"
     
-    [SPO Block Notify設定](../setup/11-blocknotify-setup.md)から導入してください。
+    [SPO BlockNotify設定](../setup/blocknotify-setup.md)から導入してください。
 
 
 ## **5. Prometheus設定**

@@ -8,7 +8,7 @@
 sudo systemctl stop cardano-node
 ```
 
-※[エイリアス](../setup/2-node-setup.md#_1)設定済みの場合
+※[エイリアス](../setup/node-setup.md/#6-1)設定済みの場合
 ```
 cnstop
 ```
@@ -18,7 +18,7 @@ cnstop
 sudo systemctl start cardano-node
 ```
 
-※[エイリアス](../setup/2-node-setup.md#_1)設定済みの場合
+※[エイリアス](../setup/node-setup.md/#6-1)設定済みの場合
 ```
 cnstart
 ```
@@ -28,24 +28,22 @@ cnstart
 sudo systemctl reload-or-restart cardano-node
 ```
 
-※[エイリアス](../setup/2-node-setup.md#_1)設定済みの場合
+※[エイリアス](../setup/node-setup.md/#6-1)設定済みの場合
 ```
 cnrestart
 ```
 
 ## **サーバ再起動**
-**補足**
-- ノード停止してから実施しましょう。
 ```
 sudo reboot
 ```
+> ノードを停止してから実行してください。
 
 ## **プロセス確認**
-**補足**
-- カルダノノードサービス
 ```
 ps aux | grep cardano-node
 ```
+> Cardano ノードのサービス確認
 
 ## **ネットワーク確認**
 ```
@@ -58,27 +56,31 @@ nc -vz <IP> <Port>
 ```
 
 ## **ブロックログ各サービス再起動**
-**補足**
-- (cncli / leaderlog / validate / logmonitor)
 ```
 sudo systemctl reload-or-restart cnode-cncli-sync.service
 ```
+> (cncli / leaderlog / validate)
 
+```
+sudo systemctl reload-or-restart cnode-logmonitor.service
+```
+> logmonitor
+
+## **SPO Block Notifyサービス再起動**
+```
+sudo systemctl reload-or-restart cnode-blocknotify.service
+```
 
 ## **パラメータファイル更新**
-**補足**
-- バックアップ及び更新、確認
 ```
 cd $NODE_HOME
 date=`date +\%Y\%m\%d`
 mv params.json params-$date.json
 cardano-cli conway query protocol-parameters \
-    --mainnet \
+    ${NODE_NETWORK} \
     --out-file params.json
 ```
-```
-nano params.json
-```
+> バックアップ及び更新、確認
 
 ## **TraceMempoolをTrueからFalseにする**
 ```
@@ -111,8 +113,6 @@ sudo rm /swapfile
 ```
 
 ## **スワップファイル作成**
-**補足**
-- 8GBのスワップを設定するコマンド
 ```
 sudo systemctl stop cardano-node
 ```
@@ -133,6 +133,7 @@ cat /proc/sys/vm/swappiness
 ```
 sudo reboot
 ```
+> 8GBのスワップを設定するコマンド
 
 ## **SSH接続**
 ```

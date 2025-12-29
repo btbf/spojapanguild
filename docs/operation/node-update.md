@@ -68,7 +68,7 @@ status: new
 
         * UTxO-HD統合  
         <font color=red>現時点ではプール運営のノードではディスクバックエンドは非推奨のため、当マニュアルではインメモリバックエンドセットアップで構築されています</font>  
-        UTxO-HDの概要については[こちら](https://docs.google.com/presentation/d/16gJt5k9p3H9ycwHNO6O0HGb0cYvRpbwhUsvH4kFEthM/edit?usp=sharing)をご参照ください
+        UTxO-HDの概要については[こちら](https://docs.google.com/presentation/d/16gJt5k9p3H9ycwHNO6O0HGb0cYvRpbwhUsvH4kFEthM/edit?usp=sharing){target="_blank" rel="noopener"}をご参照ください
         * config.json内 `LedgerDB`新しいキーを設定
     
     !!! tip "cardano-cli v10.11.0.0"
@@ -515,12 +515,14 @@ cncli 6.7.0
     $(find $HOME/git/cardano-node2 -type f -name "cardano-cli") version  
     $(find $HOME/git/cardano-node2 -type f -name "cardano-node") version  
     ```
-    以下の戻り値を確認する  
-    >cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-    6c034ec038d8d276a3595e10e2d38643f09bd1f2 
+    以下の戻り値を確認します。  
+    ``` { .yaml .no-copy }
+    cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
+    6c034ec038d8d276a3595e10e2d38643f09bd1f2
 
-    >cardano-node 10.5.3 - linux-x86_64 - ghc-9.6  
-    6c034ec038d8d276a3595e10e2d38643f09bd1f2 
+    cardano-node 10.5.3 - linux-x86_64 - ghc-9.6  
+    6c034ec038d8d276a3595e10e2d38643f09bd1f2
+    ```
 
 
     **ノードをストップする** 
@@ -547,12 +549,14 @@ cncli 6.7.0
     cardano-node version
     ```
 
-    以下の戻り値を確認する  
-    >cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-    6c034ec038d8d276a3595e10e2d38643f09bd1f2 
+    以下の戻り値を確認します。
+    ``` { .yaml .no-copy }
+    cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
+    6c034ec038d8d276a3595e10e2d38643f09bd1f2
 
-    >cardano-node 10.5.3 - linux-x86_64 - ghc-9.6  
-    6c034ec038d8d276a3595e10e2d38643f09bd1f2 
+    cardano-node 10.5.3 - linux-x86_64 - ghc-9.6  
+    6c034ec038d8d276a3595e10e2d38643f09bd1f2
+    ```
 
 
 === "ソースコードからビルドする場合はこちら"
@@ -613,12 +617,14 @@ cncli 6.7.0
     $(./scripts/bin-path.sh cardano-node) version  
     ```
 
-    以下の戻り値を確認する  
-    >cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-    6c034ec038d8d276a3595e10e2d38643f09bd1f2 
+    以下の戻り値を確認します。
+    ``` { .yaml .no-copy }
+    cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
+    6c034ec038d8d276a3595e10e2d38643f09bd1f2
 
-    >cardano-node 10.5.3 - linux-x86_64 - ghc-9.6  
-    6c034ec038d8d276a3595e10e2d38643f09bd1f2 
+    cardano-node 10.5.3 - linux-x86_64 - ghc-9.6  
+    6c034ec038d8d276a3595e10e2d38643f09bd1f2
+    ```
 
     **ビルド用TMUXセッションを終了する** 
     ```
@@ -649,12 +655,14 @@ cncli 6.7.0
     cardano-node version
     ```
 
-    以下の戻り値を確認する  
-    >cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-    6c034ec038d8d276a3595e10e2d38643f09bd1f2 
+    以下の戻り値を確認します。
+    ``` { .yaml .no-copy }
+    cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
+    6c034ec038d8d276a3595e10e2d38643f09bd1f2
 
-    >cardano-node 10.5.3 - linux-x86_64 - ghc-9.6  
-    6c034ec038d8d276a3595e10e2d38643f09bd1f2 
+    cardano-node 10.5.3 - linux-x86_64 - ghc-9.6  
+    6c034ec038d8d276a3595e10e2d38643f09bd1f2
+    ```
 
     ??? warning "10.3.1以下からアップデートする場合はこちらも実施(クリックして開く)"
         **snapshot-converterをダウンロードする**
@@ -985,8 +993,8 @@ cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config
         ```
         mithril-client -V
         ```
-        > Mithril Githubの[リリースノート](https://github.com/input-output-hk/mithril/releases/latest)内にある`mithril-client-cli`のバージョンをご確認ください。
-
+        > Mithril Githubの[リリースノート](https://github.com/input-output-hk/mithril/releases/latest){target="_blank" rel="noopener"}内にある`mithril-client-cli`のバージョンをご確認ください。
+                                        
 
         スナップショット復元
 
@@ -1253,54 +1261,54 @@ BPノードが完全に同期した後、サービス起動状態を確認する
 ## **4. エアギャップアップデート**
 !!! hint "SFTP機能ソフト導入"
     R-loginの転送機能が遅いので、大容量ファイルをダウン・アップロードする場合は、SFTP接続可能なソフトを使用すると効率的です。（FileZilaなど）  
-    ファイル転送に便利な[SFTP機能ソフトの導入手順はこちら](./sftp.md)
+    ファイル転送には[SFTPソフト設定](../operation/sftp-setup.md)を行ってください。
 
 ### **4-1. バイナリファイルコピー**
+リレーサーバーで`cardano-cli` バイナリファイルをコピーして、ローカルPCにダウンロードしてください。  
+> PATH : `/home/usr/cardano-cli`
 
 === "ビルド済みバイナリをダウンロードした場合"
-
-    リレーサーバーで以下を実行する
-
-    ```bash
-    sudo cp $(find $HOME/git/cardano-node -type f -name "cardano-cli") ~/cardano-cli
-    ```
-
+    === "リレーサーバー"
+        ```bash
+        sudo cp $(find $HOME/git/cardano-node -type f -name "cardano-cli") ~/cardano-cli
+        ```
 
 === "ソースコードからビルドした場合"
+    === "リレーサーバー" 
+        ```bash
+        cd $HOME/git/cardano-node
+        sudo cp $(./scripts/bin-path.sh cardano-cli) ~/cardano-cli
+        ```
 
-    リレーサーバーで以下を実行する
+```mermaid
+graph LR
+    A[リレーサーバー] -->|**cardano-cli**| B[ローカルのホストマシン];
+``` 
 
+USBを用いて`cardano-cli`をエアギャップに移動します。
+```mermaid
+graph LR
+    A[ローカルのホストマシン] -->|**cardano-cli**| B[エアギャップ];
+``` 
+
+=== "エアギャップ"
+    ディレクトリ作成
     ```bash
-    cd $HOME/git/cardano-node
-    sudo cp $(./scripts/bin-path.sh cardano-cli) ~/cardano-cli
+    mkdir -p $HOME/git/cardano-node2
     ```
-
-SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し、以下をダウンロードする 
-
-* /home/usr/cardano-cli
-
-をローカルパソコンにダウンロードします  
-(エアギャップUbuntuとの共有フォルダ)
+    > $HOME/git/cardano-node2/ に`cardano-cli`を格納します。  
 
 
+### **4-2. `cardano-cli` バイナリの配置**
 
-<BR>
-
-**エアギャップマシンにファイルを入れる**  
-
+エアギャップマシンで以下を実行します。
 === "エアギャップ"
-
-    * $HOME/git/cardano-node2/ に`cardano-cli`を入れる   
-    <font color=red>(cardano-node2が無ければ作成する)</font>
-
-
-### **4-2. インストール**
-
-エアギャップマシンで以下を実行する
-=== "エアギャップ"
-    cardano-cliをシステムフォルダへコピーする
+    cardano-cliをシステムフォルダへコピー
     ```bash
     sudo cp $(find $HOME/git/cardano-node2 -type f -name "cardano-cli") /usr/local/bin/cardano-cli
+    ```
+    ```bash
+    sudo chmod +x /usr/local/bin/cardano-cli
     ```
     <!--
     `make`がインストールされていることを確認する
@@ -1341,20 +1349,16 @@ SFTP機能ソフト(Filezillaなど)で転送元サーバーに接続し、以�
     ```
     -->
 
-### **4-3. バージョン確認**
-
+### **4-3. バージョンの確認**
 ```bash
 cardano-cli version
 ```
 
-以下の戻り値を確認する  
->cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-6c034ec038d8d276a3595e10e2d38643f09bd1f2 
-
-
-
-!!! danger "確認"
-    エアギャップではcardano-nodeは使用しないため転送してもしなくてもOKです。
+以下の戻り値を確認します。  
+``` { .yaml .no-copy }
+cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
+6c034ec038d8d276a3595e10e2d38643f09bd1f2
+```
 
 
 <!--

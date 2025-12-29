@@ -6,8 +6,9 @@
 
 ## **登録方法**
 
-登録はこちら  
-[https://services.iohk.io/ja-jp/spo-newsletter-jp](https://services.iohk.io/ja-jp/spo-newsletter-jp)
+登録はこちら：
+
+**[https://services.iohk.io/ja-jp/spo-newsletter-jp](https://services.iohk.io/ja-jp/spo-newsletter-jp){target="_blank" rel="noopener"}**
 
 入力フォーム参考例  
 1. ニュースレターを受け取りたいメールアドレスを入力してください
@@ -25,7 +26,9 @@
 
 ## **Xフォロー**
 SPO JAPAN GUILDの最新情報はXでも発信しております！  
-[https://x.com/spojapanguild](https://x.com/spojapanguild)  
+
+**[https://x.com/spojapanguild](https://x.com/spojapanguild){target="_blank" rel="noopener"}**  
+
 ![](../images/sjg-x.png)
 
 ---

@@ -26,7 +26,7 @@ SSH接続用のローカルパソコンに保存されている、SSH秘密鍵�
 
 ### **1-3. SSHターミナルバージョン最新化**
 
-WindowsでR-loginをご利用の場合は、[最新のRLogin](https://github.com/kmiya-culti/RLogin/releases/)を使用して下さい。
+WindowsでR-loginをご利用の場合は、[最新のRLogin](https://github.com/kmiya-culti/RLogin/releases/){target="_blank" rel="noopener"}を使用して下さい。
 
 ### **1-4. 作業対象サーバログイン**
 
@@ -419,10 +419,12 @@ rm -rf ghc-8.10.7
 
 ## **5. ノード再インストール**
 
-<font color=red>ソースコードからビルドされたcardano-node/cliを使用していた場合のみ、以下の手順で再ビルドしてください</font>
+<font color=red>ソースコードからビルドされたcardano-node/cliを使用していた場合のみ、以下の手順を実行してください</font>
 !!! info "再ビルド"
-    [ノードアップデートマニュアル](./node-update.md)  
-    1-1、1-2、2-1、2-2を実施
+    1. [1-1. システムアップデート](../operation/node-update.md/#1-1)  
+    2. [1-2. 依存関係バージョン確認](../operation/node-update.md/#1-2)  
+    3. [2-1. バイナリダウンロード](../operation/node-update.md/#2-1)  
+    4. [2-2. バイナリインストール](../operation/node-update.md/#2-2)  
 
 
 ## **6. エアギャップマシンアップグレード**
@@ -457,7 +459,7 @@ chmod u+rwx $HOME/cold-keys
 
 VirtualBoxのダウンロードサイトにアクセスし、`VirtualBox 7.0.8 platform packages`の`Windows hosts`または`macOS`のリンクからダウンロードし、既存のVirtuialBoxに対して<font color=red>**上書きインストール**</font>してください
 
- * [VirtualBoxの入手](https://www.virtualbox.org/wiki/Downloads)
+ * [VirtualBoxの入手](https://www.virtualbox.org/wiki/Downloads){target="_blank" rel="noopener"}
 
 
 ### **6-3. システムアップデート**
@@ -555,6 +557,6 @@ chmod 400 payment.addr
 chmod a-rwx $HOME/cold-keys
 ```
 
-- [x] 6-6-6.Ubuntu22.04で再ビルドしたcardano-cliをコピーする([参考手順](./node-update.md#5))
+- [x] 6-6-6.Ubuntu22.04で再ビルドしたcardano-cliをコピーする([参考手順](../operation/node-update.md/#4-1))
 
 ---

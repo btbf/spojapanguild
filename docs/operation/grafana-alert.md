@@ -7,7 +7,7 @@
 ## **1. 事前確認**
 
 * Grafanaバージョンv9.4.1以上
-* Grafana [SJG最新ダッシュボード](../setup/9-monitoring-tools-setup.md#9-4grafana)適用済み
+* Grafana [SJG最新ダッシュボード](../setup/monitoring-setup.md/#3-grafana)適用済み
 
 ### **1-1. Grafanaバージョン確認**
 
@@ -176,7 +176,7 @@ sudo apt update -y && sudo apt upgrade -y
 
 !!! note "通知先アプリの設定"
     アラートの通知先はLINE/Discord/Telegram/Slackを複数指定することが可能です。  
-    ブロック生成ステータス通知の[通知アプリ設定](../setup/11-blocknotify-setup.md#11-2)で設定した手順と同様に、通知先名などを変えてトークンを発行してください。  
+    ブロック生成ステータス通知の[2. 通知アプリの設定](../setup/blocknotify-setup.md/#2)で設定した手順と同様に、通知先名などを変えてトークンを発行してください。  
 
 ## **4. 通知テンプレート設定**
 
@@ -209,7 +209,7 @@ sudo apt update -y && sudo apt upgrade -y
 
 * 任意の通知名`Self-Alert`を入力
 * 通知先を選択し情報を入力
-* [[3.通知先アプリの設定]](../setup/11-blocknotify-setup.md#11-2)で取得した通知アプリごとのトークンIDやWebhookURLを入力する
+* [2. 通知アプリの設定](../setup/blocknotify-setup.md/#2)で取得した通知アプリごとのトークンIDやWebhookURLを入力する
 * `Option *** Settings`をクリックし`Discription`に以下のタグを入力
 ```
 {{ template "mymessage" . }}
@@ -246,11 +246,11 @@ sudo apt update -y && sudo apt upgrade -y
 ## **6. 通知内容URLカスタマイズ**
 
 !!! note "注意"
-    * 事前に[Grafanaセキュリティ設定](./grafana-security.md)を実施してください
+    * 事前に[Grafanaセキュリティ強化](../operation/grafana-security.md)を実施してください
     * 以下はGrafanaインストールサーバーで実施してください
 
 
-`xxxx.bbb.com`を[[Grafanaセキュリティ設定]](./grafana-security.md#1)で取得したドメイン(サブドメイン)に置き換えて実行する  
+`xxxx.bbb.com`を[Grafanaセキュリティ強化](../operation/grafana-security.md/#1)で取得したドメイン(サブドメイン)に置き換えて実行する  
 `https://`は不要
 ```
 domain=xxxx.bbb.com

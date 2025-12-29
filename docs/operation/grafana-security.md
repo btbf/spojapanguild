@@ -6,7 +6,7 @@
 
 ## **事前確認**
 
-以下の手順は、[9.監視ツールセットアップ](../setup/9-monitoring-tools-setup.md)でGrafanaを導入した既存のリレーサーバーで実施可能です。
+以下の手順は、[監視ツール設定](../setup/monitoring-setup.md)でGrafanaを導入した既存のリレーサーバーで実施可能です。
 
 ～作業の流れ～
 
@@ -40,7 +40,7 @@
 
 === "独自ドメインを持っていない方"
 
-    [DDNS Now](https://ddns.kuku.lu/)で無料のドメインを取得します。
+    [DDNS Now](https://ddns.kuku.lu/){target="_blank" rel="noopener"}で無料のドメインを取得します。
     DDNS Nowは完全無料・定期通知不要・サービス保障稼働率100%など、使いやすいDDNSサービスです。ただしサブドメインなどは設定できません。1アカウント1ドメイン
     
     **ドメイン(アカウント)を取得する**  
@@ -92,7 +92,7 @@ sudo ufw reload
     ![](../images/grafana-security/1-5.png)
 
 
-`xxxx.bbb.com`を[[1.ドメイン(サブドメイン)を取得する]](#1)で取得したドメイン(サブドメイン)に置き換えて実行する
+`xxxx.bbb.com`を[[1.ドメイン(サブドメイン)を取得する]](../operation/grafana-security.md/#1)で取得したドメイン(サブドメイン)に置き換えて実行する
 
 ```
 domain=xxxx.bbb.com
@@ -222,7 +222,7 @@ sudo certbot --nginx
 ## **5. nginx設定変更**
 
 1.websocketを有効にする  
-`xxxx.bbb.com`を[[1.ドメイン(サブドメイン)を取得する]](#1)で取得したドメイン(サブドメイン)に置き換えて実行する
+`xxxx.bbb.com`を[[1.ドメイン(サブドメイン)を取得する]](../operation/grafana-security.md/#1)で取得したドメイン(サブドメイン)に置き換えて実行する
 ```
 domain=xxxx.bbb.com
 ```

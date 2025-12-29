@@ -12,7 +12,7 @@ SPO JAPAN GUILDでは、ステークプール構築マニュアルの整備、�
     ```bash
     pool1sqpksswmxpgk6yxllyq9ad4qhtnt5qyz2pv5xmz6kkt5ujrgqwf
     ```
-    <a href="https://jp.cexplorer.io/pool/pool1sqpksswmxpgk6yxllyq9ad4qhtnt5qyz2pv5xmz6kkt5ujrgqwf" target="_blank"><img src="//img.cexplorer.io/4/5/4/6/7/pool1sqpksswmxpgk6yxllyq9ad4qhtnt5qyz2pv5xmz6kkt5ujrgqwf.png" class="rounded-circle" height="36" width="36" alt="">  [SJG] SPO JAPAN GUILD POOL<br /><small style="color:grey">pool1sqpksswmxpgk6yxllyq9ad4qhtnt5qyz2pv5xmz6kkt5ujrgqwf</small></a>
+    <a href="https://beta.cexplorer.io/pool/pool1sqpksswmxpgk6yxllyq9ad4qhtnt5qyz2pv5xmz6kkt5ujrgqwf?utm_source=cexplorer.io&utm_medium=redirect&utm_campaign=domain-migration" target="_blank"><img src="//img.cexplorer.io/4/5/4/6/7/pool1sqpksswmxpgk6yxllyq9ad4qhtnt5qyz2pv5xmz6kkt5ujrgqwf.png" class="rounded-circle" height="36" width="36" alt="">  [SJG] SPO JAPAN GUILD POOL<br /><small style="color:grey">pool1sqpksswmxpgk6yxllyq9ad4qhtnt5qyz2pv5xmz6kkt5ujrgqwf</small></a>
     
     * 固定手数料：340ADA
     * 変動手数料：20%～
