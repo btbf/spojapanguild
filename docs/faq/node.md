@@ -19,7 +19,7 @@
         sudo systemctl reload-or-restart cardano-node
         ```
 
-        [JSON構文チェックツール（ラッコツールズ）](https://rakko.tools/tools/63/)  
+        [JSON構文チェックツール（ラッコツールズ）](https://rakko.tools/tools/63/){target="_blank" rel="noopener"}  
         ※ **このツールを使うとJSONの構文エラー（不足・過剰な記号など）をチェックできます。**
 
     ???+ tip "「Is your topology file formatted correctly?」 が表示される場合"

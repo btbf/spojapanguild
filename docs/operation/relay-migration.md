@@ -14,15 +14,13 @@
 
 
 ### **1-1. Ubuntu初期設定**
-
-新サーバーで[Ubuntu初期設定](../setup/1-ubuntu-setup.md)を実施します。  
+新サーバーで[Ubuntu初期設定](../setup/ubuntu-setup.md)を実施します。  
 
 
 ### **1-2. ノードセットアップ**
-
-1. [依存関係インストール](../setup/2-node-setup.md#2) 〜
-[gLiveViewのインストール](../setup/2-node-setup.md#2-7-gliveview)まで実施します。
-2. [リレーとBPを接続する](../setup/3-relay-bp-setup.md#3-2)の「リレーノードの場合」を実施します。
+1. [1. 依存関係インストール](../setup/node-setup.md/#1) 〜
+[7. gLiveViewのインストール](../setup/node-setup.md/#7-gliveview)まで実施します。
+2. [2. トポロジーファイル設定変更](../setup/relay-bp-setup.md/#2)の「**`リレーノードの場合`**」を実施します。
 
 
 ## **2. BP設定修正**
@@ -72,13 +70,13 @@
 ## **3. Grafana/Prometheus設定**
 
 === "新リレーでGrafanaも運用する場合"
-    [監視ツールセットアップ](../setup/9-monitoring-tools-setup.md)のリレーノード1タブと[9-3.Grafanaダッシュボード設定](../setup/9-monitoring-tools-setup.md#9-3grafana)を実行する。
+    [監視ツール設定](../setup/monitoring-setup.md)のリレーノード1タブと[3. Grafanaダッシュボードの設定](../setup/monitoring-setup.md/#3-grafana)を実行する。
 
     !!! tip "Grafana追加設定"
         Grafanaは追加設定がありますので必要に応じて実施してください。
 
-        * [アラート設定](./grafana-alert.md)
-        * [セキュリティ強化設定](./grafana-security.md)
+        * [Grafanaアラート設定](../operation/grafana-alert.md)
+        * [Grafanaセキュリティ強化](../operation/grafana-security.md)
 
 
 === "新リレーでGrafanaを運用しない場合"
@@ -133,7 +131,7 @@
 
 
 ## **4. プール情報更新**
-[プール情報の更新](../operation/cert-update.md)を用いて、チェーン登録中のリレーIPを変更する。  
+[運用証明書(pool.cert)の更新](../operation/cert-update.md)を用いて、チェーン登録中のリレーIPを変更する。  
 (DNS運用の場合は不要です)
 
 ---

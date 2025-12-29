@@ -39,6 +39,7 @@ git clone https://github.com/IntersectMBO/libsodium
 cd libsodium
 git checkout dbb48cc
 ./autogen.sh
+sleep 1
 ./configure
 make
 make check
@@ -76,6 +77,7 @@ git clone https://github.com/bitcoin-core/secp256k1.git
 cd secp256k1/
 git checkout acf5c55
 ./autogen.sh
+sleep 1
 ./configure --prefix=/usr --enable-module-schnorrsig --enable-experimental
 make
 make check
@@ -131,10 +133,16 @@ EOF
 
 3.設定ファイルコピー
 
-```bash title="Ubuntu22.04の場合は１行づつ実行してください"
+```bash
 sudo cp libblst.pc /usr/local/lib/pkgconfig/
-sudo cp bindings/blst_aux.h bindings/blst.h bindings/blst.hpp  /usr/local/include/
+```
+```bash
+sudo cp bindings/blst_aux.h bindings/blst.h bindings/blst.hpp /usr/local/include/
+```
+```bash
 sudo cp libblst.a /usr/local/lib
+```
+```bash
 sudo chmod u=rw,go=r /usr/local/{lib/{libblst.a,pkgconfig/libblst.pc},include/{blst.{h,hpp},blst_aux.h}}
 ```
 
@@ -149,12 +157,11 @@ cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
 インストール変数設定
 ```bash
 cd $HOME
-BOOTSTRAP_HASKELL_NONINTERACTIVE=1
-BOOTSTRAP_HASKELL_NO_UPGRADE=1
-BOOTSTRAP_HASKELL_INSTALL_NO_STACK=yes
-BOOTSTRAP_HASKELL_ADJUST_BASHRC=1
+export BOOTSTRAP_HASKELL_NONINTERACTIVE=1
+export BOOTSTRAP_HASKELL_NO_UPGRADE=1
+export BOOTSTRAP_HASKELL_INSTALL_NO_STACK=yes
+export BOOTSTRAP_HASKELL_ADJUST_BASHRC=1
 unset BOOTSTRAP_HASKELL_INSTALL_HLS
-export BOOTSTRAP_HASKELL_NONINTERACTIVE BOOTSTRAP_HASKELL_INSTALL_STACK BOOTSTRAP_HASKELL_ADJUST_BASHRC
 ```
 
 インストール
@@ -454,7 +461,7 @@ source $HOME/.bashrc
 
 
 一旦ノードを停止します。
-```
+``` { .yaml .no-copy }
 Ctrl+C
 ```
 
@@ -548,9 +555,13 @@ sudo chmod 644 /etc/systemd/system/cardano-node.service
 
 次のコマンドを実行して、OS起動時にサービスの自動起動を有効にします。
 
-```bash title="Ubuntu22.04の場合は１行づつ実行してください"
+```bash
 sudo systemctl daemon-reload
+```
+```bash
 sudo systemctl enable cardano-node
+```
+```bash
 sudo systemctl start cardano-node
 ```
 **システム起動後に、ログモニターを表示します**
@@ -589,7 +600,8 @@ cardano-nodeはログが流れる画面だけでは何が表示されている�
 
 
 !!! info ""
-    gLiveViewは重要なノードステータス情報を表示し、systemdサービスとうまく連携します。このツールを作成した [Guild Operators](https://cardano-community.github.io/guild-operators/#/Scripts/gliveview) の功績によるものです。
+    gLiveViewは重要なノードステータス情報を表示し、systemdサービスとうまく連携します。  
+    このツールを作成した [Guild Operators](https://cardano-community.github.io/guild-operators/#/Scripts/gliveview){target="_blank" rel="noopener"}の功績によるものです。
 
 
 Guild LiveViewをインストールします。
@@ -671,51 +683,47 @@ Guild Liveviewを起動します。
 
 
 
-## **8. エアギャップマシンセットアップ**
-!!! info "エアギャップマシンとは？"
+## **8. エアギャップマシンのセットアップ**
 
-    エアギャップオフラインマシンは「コールド環境」と呼ばれコンピュータネットワークにおいてセキュリティを高める方法の一つ。 安全にしたいコンピュータやネットワークを、インターネットや安全でないLANといったネットワークから物理的に隔離することを指す。
+### **8-1. `cardano-cli`バイナリのコピー**
+リレーサーバーで[バイナリファイルのコピー](../operation/node-update.md/#4-1)をします。
 
-    * プール運営においてコールドキーを管理し、トランザクション署名ファイルを作成します。
-    * キーロギング攻撃、マルウエア／ウイルスベースの攻撃、その他ファイアウォールやセキュリティーの悪用から保護します。
-    * 有線・無線のインターネットには接続しないでください。
-    * ネットワーク上にあるVMマシンではありません。
-    * エアギャップについて更に詳しく知りたい場合は、[こちら](https://ja.wikipedia.org/wiki/%E3%82%A8%E3%82%A2%E3%82%AE%E3%83%A3%E3%83%83%E3%83%97)を参照下さい。
+### **8-2. 環境変数の設定**
+```bash
+echo 'export NODE_HOME="$HOME/cnode"' >> ~/.bashrc
+echo 'export NODE_NETWORK="--mainnet"' >> ~/.bashrc
+echo 'export CARDANO_NODE_NETWORK_ID=mainnet' >> ~/.bashrc
 
-１．[2-1. 依存関係インストール](./2-node-setup.md#2-1)と[2-2. ソースコードからビルド](./2-node-setup.md#2-2)をエアギャップマシンで実行する  
-  
-２．以下のパスを環境変数にセットし、フォルダを作成します。
-
-```
-echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
-echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
-echo export NODE_NETWORK="--mainnet" >> $HOME/.bashrc
-echo export CARDANO_NODE_NETWORK_ID=mainnet >> $HOME/.bashrc
-source $HOME/.bashrc
-mkdir -p $NODE_HOME
+source ~/.bashrc
+mkdir -p ${NODE_HOME}
 ```
 
 ??? テストネットの場合はこちら
     === "Preview"
         ```
-        echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
-        echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
-        echo export NODE_CONFIG=preview >> $HOME/.bashrc
-        echo export NODE_NETWORK='"--testnet-magic 2"' >> $HOME/.bashrc
-        echo export CARDANO_NODE_NETWORK_ID=2 >> $HOME/.bashrc
+        echo 'export NODE_HOME="$HOME/cnode"' >> $HOME/.bashrc
+        echo 'export NODE_NETWORK="--testnet-magic 2"' >> $HOME/.bashrc
+        echo 'export CARDANO_NODE_NETWORK_ID=2' >> $HOME/.bashrc
+
         source $HOME/.bashrc
-        mkdir -p $NODE_HOME
+        mkdir -p ${NODE_HOME}
         ```
 
     === "PreProd"
         ```
-        echo export NODE_HOME=$HOME/cnode >> $HOME/.bashrc
-        echo export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $HOME/.bashrc
-        echo export NODE_CONFIG=preview >> $HOME/.bashrc
-        echo export NODE_NETWORK='"--testnet-magic 1"' >> $HOME/.bashrc
-        echo export CARDANO_NODE_NETWORK_ID=1 >> $HOME/.bashrc
+        echo 'export NODE_HOME="$HOME/cnode"' >> $HOME/.bashrc
+        echo 'export NODE_NETWORK="--testnet-magic 1"' >> $HOME/.bashrc
+        echo 'export CARDANO_NODE_NETWORK_ID=1' >> $HOME/.bashrc
+
         source $HOME/.bashrc
-        mkdir -p $NODE_HOME
+        mkdir -p ${NODE_HOME}
         ```
+
+### **8-3. 反映確認**
+```bash
+echo "NODE_HOME=${NODE_HOME}"
+echo "NODE_NETWORK=${NODE_NETWORK}"
+echo "CARDANO_NODE_NETWORK_ID=${CARDANO_NODE_NETWORK_ID}"
+```
 
 ---

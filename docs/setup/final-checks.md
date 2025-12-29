@@ -48,7 +48,7 @@ journalctl --unit=cardano-node --follow
 
 **SPO JAPAN GUILD TOOLを導入する**
 
-導入手順は**プール構築マニュアル内の[SJG TOOL](../operation/tool.md)**をご参照ください
+導入手順は**プール構築マニュアル内の[SJGツール導入設定](../operation/sjg-tool-setup.md)**をご参照ください
 
 **TOOLを実行する**
 
@@ -59,6 +59,6 @@ gtool
 
 
 !!! success "！重要！"
-    プール運用マニュアル[運用ガイド](./../operation/start-guide.md)を必ず確認し、プール運営について学習してください。
+    [プール運用マニュアル](../operation/index.md)を必ず確認し、プール運営について学習してください。
 
 ---

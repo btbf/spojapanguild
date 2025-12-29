@@ -2,7 +2,7 @@
 
 !!! Abstract "概要"
     こちらの手順は初回プール登録時のみ有効です。  
-    プール登録後にメタ情報、誓約、固定費、変動費、リレー情報を変更する場合は、[プール情報(pool.cert)の更新](../operation/cert-update.md)の変更手順を実施してください。
+    プール登録後にメタ情報、誓約、固定費、変動費、リレー情報を変更する場合は、[運用証明書(pool.cert)の更新](../operation/cert-update.md)の変更手順を実施してください。
 
 
 !!! warning "プール登録料"
@@ -19,7 +19,8 @@
 
     !!! example ""
 
-        1.Githubアカウントを作成しログインします [https://github.com/](https://github.com/)  
+        1.Githubアカウントを作成しログインします。  
+        [https://github.com/](https://github.com/){target="_blank" rel="noopener"}  
         　<font color=red>ユーザー名を最大13文字以内で作成してください</font>
 
         2.Repositoriesタブをクリックし、右上の**New** をクリックします。 
@@ -231,47 +232,14 @@ cat $NODE_HOME/poolMetaData.json | jq .
         --pool-relay-port 6000 \
     ```
 
-    **ラウンドロビンDNSベース** [**SRV DNS record**](https://support.dnsimple.com/articles/srv-record/)の場合  
+    **ラウンドロビンDNSベース** [**SRV DNS record**](https://support.dnsimple.com/articles/srv-record/){target="_blank" rel="noopener"}の場合  
     [relay.yourdomain.com]をあなたのドメイン名に書き換え
     ```bash
         --multi-host-pool-relay relay.yourdomain.com \
         --pool-relay-port 6000 \
     ```
 
-
-=== "エアギャップマシン(リレー1台の場合)"
-    下記のスクリプトは例です。ご自身のプール運用設定値に変更してから実行してください。
-
-    !!! danger "値を変更する"
-        `--pool-pledge` 誓約数  
-        `--pool-cost` 固定手数料  
-        `--pool-margin` 変動手数料  
-        `***.***.***.***`はリレー1のIPに置き換えてください  
-        `https://xxx.github.io/xxx/poolMetaData.json` はご自身のメタデータURLに置き換えてください
-
-
-
-
-  
-    ```bash
-    cd $NODE_HOME
-    cardano-cli conway stake-pool registration-certificate \
-        --cold-verification-key-file $HOME/cold-keys/node.vkey \
-        --vrf-verification-key-file vrf.vkey \
-        --pool-pledge 100000000 \
-        --pool-cost 170000000 \
-        --pool-margin 0.05 \
-        --pool-reward-account-verification-key-file stake.vkey \
-        --pool-owner-stake-verification-key-file stake.vkey \
-        $NODE_NETWORK \
-        --pool-relay-ipv4 ***.***.***.*** \
-        --pool-relay-port 6000 \
-        --metadata-url https://xxx.github.io/xxx/poolMetaData.json \
-        --metadata-hash $(cat poolMetaDataHash.txt) \
-        --out-file pool.cert
-    ```
-
-=== "エアギャップマシン(リレー2台の場合)"
+=== "エアギャップマシン(リレー2台構成)"
     下記のスクリプトは例です。ご自身のプール運用設定値に変更してから実行してください。  
     
     !!! danger "値を変更する"
@@ -501,7 +469,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
     ```
 
 表示されたPoolIDであなたのステークプールがブロックチェーンに登録されているか、次のサイトで確認することが出来ます。  
-[Cardanoscan](https://cardanoscan.io/pools){ .md-button blank}
+[Cardanoscan](https://cardanoscan.io/pools){.md-button blank | target="_blank" rel="noopener"}
 
 !!! success "あと一息です！"
     上記サイトであなたのプールティッカーが表示されたらブロックチェーンに登録されました！しかしまだブロック生成できる状態ではありません。この後も重要な作業が続きますがもう少し頑張ってください！

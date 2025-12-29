@@ -5,7 +5,7 @@
 
 ## **1. FileZillaのダウンロード**
 
-次のリンクの遷移先から[FileZilla Client](https://filezilla-project.org/)をダウンロードします。
+次のリンクの遷移先から[FileZilla Client](https://filezilla-project.org/){target="_blank" rel="noopener"}をダウンロードします。
 
 | OS | ファイル名 |
 :---|:---

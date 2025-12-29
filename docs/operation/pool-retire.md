@@ -56,7 +56,7 @@
     * 最も遅いエポックは 338 \( eMax + 現在のエポック\)
 
     * プールはリタイア指定エポック開始時にリタイア処理されます。  
-    * もし心変わりがある場合は、エポック指定エポック開始前に[新しい登録証明書](./cert-update.md)を送信することでリタイア手続きを無効にできます。
+    * もし心変わりがある場合は、エポック指定エポック開始前に[運用証明書(pool.cert)の更新](../operation/cert-update.md)を送信することでリタイア手続きを無効にできます。
     * プール登録料500ADAはリタイア処理エポック開始時にstake.addrに入金されます。  
 
 
@@ -277,7 +277,8 @@ chmod a-rwx $HOME/cold-keys
 
 ## **3. stake.addrから引き出し**
 
-[stake.addrからpayment.addrへ送金する方法](./withdrawal.md#2-1-paymentaddr)  
+[stake.addrからpayment.addrへ送金する方法](../operation/withdrawal.md/#1-1-paymentaddr)  
+
 
 ## **4. ステークキー解除手順**
 

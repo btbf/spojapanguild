@@ -3,7 +3,7 @@
 実践的で安全な運用ができるように構成されています。
 
 !!! tip "サポート"
-    運用に関する質問や不明点があれば、Discordの[SPO JAPAN GUILD](https://discord.gg/U3gU54c)コミュニティに参加し、現役SPOに相談できます。
+    運用に関する質問や不明点があれば、Discordの[SPO JAPAN GUILD](https://discord.gg/U3gU54c){target="_blank" rel="noopener"}コミュニティに参加し、現役SPOに相談できます。
 
 
 ## **パラメーターの理解**
@@ -100,6 +100,8 @@
 | **vrf.skey**🔴    | VRF秘密鍵 | **BP** ／ エアギャップ ／ USB | :lock: |
 | **node.vkey**    | コールド公開鍵 | エアギャップ ／ USB | :lock: |
 | **node.skey**    | コールド秘密鍵 | エアギャップ ／ USB | :lock: |
+| **myCalidusKey.vkey**       | Calidus公開鍵  | エアギャップ ／ USB | :lock: |
+| **myCalidusKey.skey**       | Calidus秘密鍵 | **BP** ／ エアギャップ ／ USB | :lock: |
 | **payment.addr**    | paymentアドレスファイル | **BP** ／ エアギャップ ／ USB | :arrows_clockwise: |
 | **stake.addr**       | ステークアドレスファイル | **BP** ／ エアギャップ ／ USB | :arrows_clockwise: |
 | **kes.vkey**    | KES公開鍵 | エアギャップ ／ USB | :arrows_clockwise: |
@@ -107,6 +109,11 @@
 | **node.cert**🔴    | プール運用証明書 | **BP** ／ エアギャップ ／ USB | :arrows_clockwise: |
 | **pool.cert**    | プール登録証明書 | エアギャップ ／ USB | :arrows_clockwise: |
 | **node.counter**    | カウンターファイル | エアギャップ ／ USB | :arrows_clockwise: |
+| **Calidus-MnemonicsKey.json**    | Calidusニーモニックファイル | エアギャップ ／ USB | :arrows_clockwise: |
+| **myCalidusRegistrationMetadata.json**    | Calidus登録メタデータファイル | エアギャップ ／ USB | :arrows_clockwise: |
+
+> Calidus関連ファイル（`myCalidusKey.vkey`、`myCalidusKey.skey`、`Calidus-MnemonicsKey.json`、`myCalidusRegistrationMetadata.json`）は、[Calidusキー生成](../operation/calidus-key-generation.md)を実施した場合に作成されるファイルです。  
+> Calidusを利用しない場合、本ファイル群は存在しません。
 
 
 ### **ノード起動用の設定ファイル**
@@ -127,7 +134,7 @@
 | **startBlockProducingNode.sh**       | BP用ノード起動スクリプト | BP | :arrows_clockwise: |
 | **gLiveView.sh**      | ノードGUI用スクリプト  | リレー/BP | :arrows_clockwise: |
 | **params.json**      | パラメーターファイル  | BP | :arrows_clockwise: |
-| **poolMetaData.json**      | プール情報JSON  | BP | :arrows_clockwise: |
+| **poolMetaData.json**      | プールメタデータファイル  | BP | :arrows_clockwise: |
 | **poolMetaDataHash.txt**      | poolMetaData.jsonハッシュ値ファイル  | BP | :arrows_clockwise: |
 | **fullUtxo.out**    | UTXO出力ファイル | 使用後削除可 | - |
 | **balance.out**    | ウォレット残高出力ファイル | 使用後削除可 | - |

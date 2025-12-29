@@ -1,272 +1,263 @@
 # **Ubuntu初期設定**
 
-!!! tip "AWSをご利用の方"
-    AWS EC2及びlightsailは特殊環境なため、このマニュアル通りに動かない場合がございます。  
-    不明な点はGuildコミュニティで質問してみてください。
-
-
 !!! tip "ヒント"
-    この手順はエアギャップオフラインマシン(VirtualBox上のUbuntu)では実施する必要はありません
+    この手順は、エアギャップオフラインマシンのUbuntuでは実施する必要はございません。
 
-## **1. サーバーログイン**
+!!! info "AWSをご利用の方"
+    `AWS EC2` / `Lightsail` では SSH 鍵認証やユーザー構成が異なるため、本マニュアル通りに動作しない場合があります。
+
+
+## **1. サーバーログイン（初回のみ / root）**
+
+!!! warning "重要"
+    この手順は **初回ログイン時のみ** 使用します。  
+    以降の設定で、`root`ログインおよびパスワード認証は無効化します。
+
 | 項目 | 設定値 |
-:---|:---
-| **`ホスト`** | サーバーIP |
-| **`ポート`** | ssh(22) |
-| **`ユーザー`** | root |
-| **`パスワード`** | 契約時に送られてくるrootパスワード |
-
-## **2. ユーザーアカウントの作成**
-
-!!! summary "ヒント"
-    rootアカウントはサーバーの最上位権限です。
-    サーバを操作する場合はrootアカウントを使用せず、root権限を付与したユーザーアカウントで操作するようにしましょう。
+|---|---|
+| **ホスト** | サーバーIP |
+| **ポート** | SSH（22） |
+| **ユーザー** | root |
+| **パスワード** | 契約時に送付される初期 root パスワード |
 
 
+## **2. ユーザーアカウント作成**
+!!! info "ヒント"
+    日常運用では`root`アカウントを使用せず、sudo権限を付与した一般ユーザーで操作します。
 
-新しいユーザーの追加　(例：cardano)
+新しいユーザーを作成します。  
+> 任意のアルファベット文字を入力してください。  
+> この例では`cardano` ユーザーとして以降進めます。
 
-1.上記ターミナルソフトを使用し、サーバーに割り当てられた初期アカウント(rootなど)でログインする。  
-
-2.新しいユーザーアカウントを作る(任意のアルファベット文字)  
-
-```sh
+```bash
 adduser cardano
 ```
 
-```text
-New password:           # ユーザーのパスワードを設定
-Retype new password:    # 確認再入力
+``` { .yaml .no-copy }
+New password:           # パスワードを設定
+Retype new password:    # 確認のため再入力
 
 Enter the new value, or press ENTER for the default
-        Full Name []:   # フルネーム等の情報を設定 (不要であればブランクでも OK)
+        Full Name []:   # フルネーム等の情報を設定（不要であればブランクでも問題ありません）
         Room Number []:
         Work Phone []:
         Home Phone []:
         Other []:
-Is the information correct? [Y/n]:y
+Is the information correct? [Y/n] : y
 ```
 
-cardanoをsudoグループに追加する
-
-```text
-usermod -G sudo cardano
+`cardano`にsudo権限を付与します。
+```bash
+usermod -aG sudo cardano
 ```
 
-rootユーザーからログアウトする
-
-```
+rootからログアウトします。
+```bash
 exit
 ```
 
-3.ターミナルソフトのユーザーをパスワードを上記で作成したユーザーとパスワードに書き換えて再接続します。
+!!! tip "ヒント"
+    ターミナルソフトのユーザー名とパスワードを上記で作成したユーザー名とパスワードに書き換えて再接続します。
 
-!!! hint "Ubuntu22.04の場合の特別設定"
-    ご利用のOSがUbuntu22.04の場合は、以下のコマンドを実行してください。
+**`Ubuntu 22.04`以降の設定**
 
-    ブラケットペーストモードOFF
-    ```
-    echo "set enable-bracketed-paste off" >> ~/.inputrc
-    ```
+ブラケットペースト機能を無効化します。
+```bash
+echo "set enable-bracketed-paste off" >> ~/.inputrc
+```
+> 設定反映のため、ターミナルから一度ログアウトして再ログインしてください。
 
-    デーモン再起動自動化
-    ```
-    echo "\$nrconf{restart} = 'a';" | sudo tee /etc/needrestart/conf.d/50local.conf
-    ```
-    ```
-    echo "\$nrconf{blacklist_rc} = [qr(^cardano-node\\.service$) => 0, qr(^cnode-blocknotify\\.service$) => 0, qr(^cnode-cncli-sync\\.service$) => 0,];" | sudo tee -a /etc/needrestart/conf.d/50local.conf
-    ```
+デーモン再起動を自動化します。
+```bash
+echo "\$nrconf{restart} = 'a';" | sudo tee /etc/needrestart/conf.d/50local.conf
+```
+```bash
+echo "\$nrconf{blacklist_rc} = [qr(^cardano-node\\.service$) => 0, qr(^cnode-blocknotify\\.service$) => 0, qr(^cnode-cncli-sync\\.service$) => 0,];" | sudo tee -a /etc/needrestart/conf.d/50local.conf
+```
 
 ## **3. SSH設定変更**
 
-!!! summary
-    SSHを強化する基本的なルールは次の通りです。
+!!! info "SSH強化設定ルール"
 
-    * SSHログイン時パスワード無効化 \(秘密鍵を使用\)
-    * SSHデフォルトポート(22)の変更
-    * rootアカウントでのSSHログイン無効化 \(root権限が必要なコマンドは`su` or `sudo`コマンドを使う\)
-    * 許可されていないアカウントからのログイン試行をログに記録する \(fail2banなどの、不正アクセスをブロックまたは禁止するソフトウェアの導入を検討する\)
-    * SSHログイン元のIPアドレス範囲のみに限定する \(希望する場合のみ\)※利用プロバイダーによっては、定期的にグローバルIPが変更されるので注意が必要
+    * SSHログイン時パスワード無効化（秘密鍵を使用）
+    * SSHデフォルトポート（22）の変更
+    * rootアカウントでのSSHログイン無効化（root権限が必要な操作は `sudo` を使用します。）
+    * 許可されていないアカウントからのログイン試行をログに記録（fail2ban 等で対策）  
+    * SSHログイン元のIPアドレス範囲のみに限定（希望する場合のみ）※利用プロバイダーによっては、定期的にグローバルIPが変更されるので注意が必要
 
-SSHディレクトリ作成
-```sh
-mkdir ~/.ssh
-```
-<font color=red>事前準備で作成した`authorized_keys`を`$HOME/.ssh`ディレクトリにアップロードする</font>
-
-パーミッション設定
-```
-chmod 600 ~/.ssh/authorized_keys
-chmod 700 ~/.ssh
-```
-
-**SSHの設定変更**
-
-`/etc/ssh/sshd_config`ファイルを開く
-
-```text
-sudo nano /etc/ssh/sshd_config
-```
-
-**ResponseAuthentication**の項目を「no」にします。
-
-```text
-KbdInteractiveAuthentication no
-```
-
-**PasswordAuthentication**の項目を「no」にする
-
-```text
-PasswordAuthentication no 
-```
-
-**PermitRootLogin**の項目を「no」にする
-
-```text
-PermitRootLogin no
-```
-
-**PermitEmptyPasswords**の項目を「no」にする
-
-```text
-PermitEmptyPasswords no
-```
-
-
-!!! hint "SSHポートのヒント"
+!!! tip "SSHポートのヒント"
     SSHポートは世界標準で22番が割り当てられています。  
-    しかし、ポートアタックの標的となり得るため任意の番号へ変更することをおすすめしています。任意の番号は<font color=red>49513～65535</font>までの数字で設定してください。
+    しかし、ポートスキャンやブルートフォース攻撃の標的となりやすいため、本マニュアルでは任意のポート番号への変更を推奨します。  
+    ポート番号は、IANAが定義する動的／プライベートポート範囲である<font color=red>49513～65535</font>の中から指定してください。
 
-SSHポートを任意の番号へ変更する。先頭の#を削除して番号を指定してください。
+SSHディレクトリを作成します。
 ```bash
-Port xxxxx
+mkdir -p ~/.ssh
 ```
 
-> Ctrl+O で保存し、Ctrl+Xで閉じる
+!!! important "ファイル転送"
+    [事前準備](../setup/index.md/#_2)で生成した`authorized_keys`を対象サーバーの`$HOME/.ssh`ディレクトリにコピーします。
+    ```mermaid
+    graph LR
+        A[ローカルのホストマシン] -->|**authorized_keys**| B[対象サーバー];
+    ``` 
 
-SSH構文にエラーがないかチェックします。
+パーミッションを設定します。
+```bash
+chown -R "$USER:$USER" ~/.ssh
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+```
 
-```text
+`49513～65535`の範囲内でSSHポート番号を`""`内に指定してください。
+```bash
+PORT_NUM=""
+```
+
+```bash
+sudo tee /etc/ssh/sshd_config.d/01-custom-ssh.conf > /dev/null << EOF
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitRootLogin no
+PermitEmptyPasswords no
+Port ${PORT_NUM}
+EOF
+```
+
+構文をチェックします。
+```bash
 sudo sshd -t
 ```
 
-SSH構文エラーがない場合、SSHプロセスを再起動します。
-
-```text
-sudo service sshd reload
+有効設定を確認します。
+```bash
+sudo sshd -T | grep -iE 'passwordauthentication|kbdinteractiveauthentication|permitrootlogin|port'
 ```
 
-接続したまま、ターミナルソフトをもう一つ起動する。
+問題がなければ、SSHサービスを再起動します。
+```bash
+sudo systemctl restart ssh
+```
 
 !!! info "ターミナルソフト設定について"
-    接続設定のSSHポート番号を変更し秘密鍵を設定しサーバーへログインできるか確認して下さい。
-    接続できない場合は、接続されてるターミナル画面でサーバー設定を確認して下さい。
-
+    - 現在起動中のターミナルは接続したままにしてもう一つ起動してください。
+    - 接続設定のSSHポート番号を変更し秘密鍵を設定しサーバーへログインできるか確認して下さい。
+    - 接続できない場合は、接続されてるターミナル画面でサーバー設定を確認して下さい。
 
 ## **4. ファイアウォール有効化**
 
-標準のUFWファイアウォールを使用して、インバウンドアクセスポートを限定します。
+標準のファイアウォール（UFW）を使用して、インバウンドのアクセス可能なポートを限定します。
 
-??? info "設定前の注意事項"
-    ご利用のVPSによっては管理画面からFWを設定する場合があります（例AWS系など）  
-    その場合は以下の設定を行わず、VPSマイページ管理画面などから個別に設定してください。
+!!! warning "注意事項"
+    !!! tip "設定前の注意事項"
+        ご利用のVPSによっては管理画面からファイアウォールを設定する必要があります。（例AWS系など）  
+        その場合は以下の設定を行わず、VPSマイページ管理画面などから個別に設定してください。
 
-??? info "さくらVPSをご利用の場合"
-    管理画面からパケットフィルターを、”利用しない”に設定してください。    
+    !!! tip "さくらVPSをご利用の場合"
+        管理画面からパケットフィルターを、”利用しない”に設定してください。    
 
-SSHポートを許可する  
 
-```
-PORT=`grep "Port" /etc/ssh/sshd_config`
-s_PORT=${PORT#"Port"}
-ssh_PORT=`echo ${s_PORT} | sed -e 's/[^0-9]//g'`
-echo ${ssh_PORT}
+SSHポートを許可します。
+```bash
+SSH_PORT=$(sudo sshd -T | awk '$1=="port"{print $2}')
+echo "有効なSSHポート: ${SSH_PORT}"
 ```
 
 ```bash
-sudo ufw allow ${ssh_PORT}/tcp
+sudo ufw allow ${SSH_PORT}/tcp
 ```
-FWを有効化
+
+ファイアウォールを有効化します。
 ```bash
 sudo ufw enable
 ```
 以下のメッセージが表示されたら `y` を入力して `Enter`
 > Command may disrupt existing ssh connections. Proceed with operation (y|n)? y
 
-ステータス確認
-```
+ステータスを確認します。
+```bash
 sudo ufw status
 ```
 以下の戻り値があればOK
 > Status: active
 
-## **5. システムを更新する**
+## **5. システム更新**
 
 !!! tip "重要"
     不正アクセスを予防するには、システムに最新のパッチを適用することが重要です。
 
-```bash title="Ubuntu22.04の場合は１行づつ実行してください"
-sudo apt update -y && sudo apt upgrade -y
-sudo apt autoremove
-sudo apt autoclean
+パッケージリストを更新し、依存関係を含めた包括的なアップグレードを実行します。
+```bash
+sudo apt update -y && sudo apt full-upgrade -y
 ```
 
-自動更新を有効にすると、手動でインストールする手間を省けます。
-> `YES`を選択しEnter
+不要なパッケージを削除します。
+```bash
+sudo apt autoremove -y
+```
 
-```bash title="Ubuntu22.04の場合は１行づつ実行してください"
+パッケージキャッシュを整理します。
+```bash
+sudo apt autoclean -y
+```
+
+セキュリティ更新の自動適用を有効にします。
+```bash
 sudo apt install unattended-upgrades
+```
+```bash
 sudo dpkg-reconfigure --priority=low unattended-upgrades
 ```
+> `YES`を選択し、Enterを押下
 
-## **6. rootアカウントを無効にする**
 
-サーバーのセキュリティを維持するために、頻繁にrootアカウントでログインしないでください。
-!!! check "通常はrootアカウント無効にします"
+## **6. rootアカウントの無効化設定**
+`root`アカウントを無効化します。
+> サーバーのセキュリティ維持のため、頻繁に root アカウントでログインしないでください。
+
+!!! info "`root`アカウント無効"
     ```bash
     sudo passwd -l root
     ```
 
-!!! caution "# 何らかの理由でrootアカウントを有効にする必要がある場合は、-uオプションを使用します。"
+??? info "`root`アカウント有効"
     ```bash
     sudo passwd -u root
     ```
+    > 何らかの理由でrootアカウントを有効にする必要がある場合
 
-## **7. 安全な共有メモリー**
+
+## **7. 共有メモリのセキュリティ強化**
 
 システムで共有されるメモリを保護します。
 
-`/etc/fstab`を開きます
-
-```text
-sudo nano /etc/fstab
+以下の設定を`/etc/fstab`の最終行に追記します。
+```bash
+echo 'tmpfs /run/shm tmpfs ro,noexec,nosuid 0 0' | sudo tee -a /etc/fstab
 ```
 
-次の行をファイルの最後に追記して保存します。
-
-```text
-tmpfs	/run/shm	tmpfs	ro,noexec,nosuid	0 0
+追記の確認をします。
+```bash
+tail -n 5 /etc/fstab
 ```
 
 ## **8. Fail2banのインストール**
 
-!!! info ""
-    Fail2banは、ログファイルを監視し、ログイン試行に失敗した特定のパターンを監視する侵入防止システムです。特定のIPアドレスから（指定された時間内に）一定数のログイン失敗が検知された場合、Fail2banはそのIPアドレスからのアクセスをブロックします。
+!!! info "Fail2banについて"
+    Fail2banは、ログファイルを監視し、ログイン試行に失敗した特定のパターンを監視する侵入防止システムです。  
+    特定のIPアドレスから、指定された時間内に一定数のログイン失敗が検知された場合、Fail2banはそのIPアドレスからのアクセスをブロックします。
 
-
-```text
+```bash
 sudo apt install fail2ban -y
 ```
 
 SSHログインを監視する設定ファイルを開きます。
-
-```text
+```bash
 sudo nano /etc/fail2ban/jail.local
 ```
 
 ファイルの最後に次の行を追加し保存します。
-
-> コマンド中の (SSHポートを入力してください) については1-3で設定したSSHポートを入力してください。()は不要です。
+> コマンド中の (SSHポートを入力してください) については1-3で設定したSSHポートを入力してください。(**)は不要です。
 
 ```bash
 [sshd]
@@ -274,27 +265,31 @@ enabled = true
 port = (SSHポートを入力してください)
 filter = sshd
 logpath = /var/log/auth.log
-maxretry = 3
+maxretry = 6
 ```
 
-fail2banを再起動して設定を有効にします。
-
-```text
-sudo systemctl restart fail2ban
+自動起動を有効化し、即時起動します。
+```bash
+sudo systemctl enable --now fail2ban
 ```
 
-## **9. Chronyを設定する**
+有効化されているかを確認します。
+```bash
+sudo systemctl status fail2ban --no-pager
+```
+> `Active: active (running)`となっていることを確認してください。
 
+## **9. Chronyの設定**
 
 chronyをインストールします。
-
-```sh
-sudo apt install chrony
+```bash
+sudo apt install chrony -y
 ```
 
-/etc/chrony/chrony.conf を更新します。
+`/etc/chrony/chrony.conf`を更新します。
+> 以下をすべてコピーして実行してください。
 
-```bash title="このボックスはすべてコピーして実行してください"
+```bash
 cat > $HOME/chrony.conf << EOF
 pool time.google.com       iburst minpoll 2 maxpoll 2 maxsources 3 maxdelay 0.3
 pool time.facebook.com     iburst minpoll 2 maxpoll 2 maxsources 3 maxdelay 0.3
@@ -335,155 +330,181 @@ local stratum 10
 EOF
 ```
 
-作成したchrony.confを/etc/chrony/chrony.confに移動します。
-```
+作成した`chrony.conf`を`/etc/chrony/chrony.conf`に移動します。
+```bash
 sudo mv $HOME/chrony.conf /etc/chrony/chrony.conf
 ```
 
 UFWで以下を設定します。
-```
+```bash
 sudo ufw allow 123/udp
 ```
 
 設定を有効にするには、Chronyを再起動します。
-
-```text
+```bash
 sudo systemctl reload-or-restart chronyd.service
 ```
 
-ヘルプコマンド
+!!! tip "ヘルプコマンド"
+    同期データのソース確認
+    ```bash
+    chronyc sources
+    ```
 
-同期データのソースを確認します。
-
-```text
-chronyc sources
-```
-
-現在のステータスを表示します。
-
-```text
-chronyc tracking
-```
+    現在のステータス表示
+    ```bash
+    chronyc tracking
+    ```
 
 
-## **10. SSHの2段階認証を設定する**
+## **補足：SSH2段階認証（任意・上級者向け）**
 
 !!! danger "注意"
-    * こちらの導入は必須ではありません。導入する場合、事前にお手元のスマートフォンに「Google認証システムアプリ」のインストールが必要です
+    本設定は必須ではありません。  
+    本設定は、クラウド上の本番サーバー（VPS など）で、公開鍵認証・fail2ban 等を適切に設定した上で、さらなる防御層を追加したい場合の選択肢です。
 
-    * 設定に失敗するとログインできなくなる場合があるので、設定前に二つ目のウィンドウでサーバーにログインしておいてください。万が一ログインできなくなった場合、復旧できます。
-
-
-```bash title="Ubuntu22.04の場合は１行づつ実行してください"
-sudo apt update
-sudo apt upgrade
-sudo apt install libpam-google-authenticator -y
-```
-
-SSHがGoogle Authenticator PAM モジュールを使用するために、`/etc/pam.d/sshd`ファイルを編集します。
-
-```text
-sudo nano /etc/pam.d/sshd 
-```
-
-4行目の `@include common-auth`の先頭へ#を付与してコメントアウトする。
-```
-#@include common-auth
-```
-
-以下の行を追加します。
-
-```text
-auth required pam_google_authenticator.so
-```
-
-以下を使用して`sshd`デーモンを再起動します。
-
-```text
-sudo systemctl restart sshd.service
-```
-
-`/etc/ssh/sshd_config` ファイルを開きます。
-
-```text
-sudo nano /etc/ssh/sshd_config
-```
-
-**ResponseAuthentication**の項目を「yes」にします。
-=== "Ubuntu20.04の場合"
-    ```text
-    ChallengeResponseAuthentication yes
+??? info "`Google Authenticator`を用いたSSH2段階設定（任意）"
+    システムを更新して`libpam-google-authenticator`をインストールします。
+    ```bash
+    sudo apt update -y
+    ```
+    ```bash
+    sudo apt install libpam-google-authenticator -y
     ```
 
-=== "Ubuntu22.04の場合"
-    ```text
+    **google-authenticator**コマンドを実行します。
+    ```bash
+    google-authenticator
+    ```
+
+    !!! tip "推奨設定"
+        質問事項に対して推奨設定をします。  
+
+        !!! warning "注意"
+            プロセス中に大きなQRコードが表示されます。  
+            その下に緊急時のスクラッチコードが表示されますので、忘れずに書き留めておいて下さい。  
+            スマートフォンでGoogle認証システムアプリを開き、QRコードを読み取り2段階認証を機能させてください。
+
+        - `認証トークンを時間ベースにしたいですか？`に対して「`y`」を入力し、Enter押下するとQRコードとsecret keyが表示されるのでスクリーンショットで保存してください。
+        ``` { .yaml .no-copy }
+        Do you want authentication tokens to be time-based (y/n) : y
+        ```
+
+        - `Google Authenticator`でQRコードを読み込み、表示された6桁のコードを入力
+        ``` { .yaml .no-copy }
+        Enter code from app (-1 to skip) : ******
+        ```
+
+        - スクラッチコードも控えておきます。
+        ``` { .yaml .no-copy }
+        Code confirmed
+        Your emergency scratch codes are : 
+          ********
+          ********
+          ********
+          ********
+          ********
+        ```
+
+        - `「/home/$USER/.google_authenticator」ファイルを更新しますか？`に対して「`y`」を入力
+        ``` { .yaml .no-copy }
+        Do you want me to update your "/home/$USER/.google_authenticator" file? (y/n) : y
+        ```
+
+        - `同じ認証トークンの複数回使用を禁止しますか？これにより、約30秒ごとに1回のログインに制限されますが、中間者攻撃を検知したり、防止したりする可能性が高まります。`に対して「`y`」を入力
+        ``` { .yaml .no-copy }
+        Do you want to disallow multiple uses of the same authentication
+        token? This restricts you to one login about every 30s, but it increases
+        your chances to notice or even prevent man-in-the-middle attacks (y/n) : y
+        ```
+
+        - `デフォルトでは、モバイルアプリによって30秒ごとに新しいトークンが生成されます。クライアントとサーバー間の時刻のずれを補正するため、現在時刻の前後に追加のトークンを許可しています。これにより、認証サーバーとクライアント間の時刻のずれは最大30秒まで許容されます。時刻同期がうまくいかない場合は、ウィンドウサイズをデフォルトの3コード（前のコード1つ、現在のコード、次のコード）から17コード（前のコード8つ、現在のコード、次のコード8つ）に増やすことができます。これにより、クライアントとサーバー間の時刻のずれ最大4分まで許容されます。これを実行しますか？`に対して「`n`」を入力
+        ``` { .yaml .no-copy }
+        By default, a new token is generated every 30 seconds by the mobile app.
+        In order to compensate for possible time-skew between the client and the server,
+        we allow an extra token before and after the current time. This allows for a
+        time skew of up to 30 seconds between authentication server and client. If you
+        experience problems with poor time synchronization, you can increase the window
+        from its default size of 3 permitted codes (one previous code, the current
+        code, the next code) to 17 permitted codes (the 8 previous codes, the current
+        code, and the 8 next codes). This will permit for a time skew of up to 4 minutes
+        between client and server.
+        Do you want to do so? (y/n) : n
+        ```
+
+        - `ログイン先のコンピューターがブルートフォース攻撃によるログイン試行に対して強化されていない場合は、認証モジュールのレート制限を有効にすることができます。デフォルトでは、攻撃者によるログイン試行は30秒ごとに3回までに制限されます。レート制限を有効にしますか？`に対して「`y`」を入力
+        ``` { .yaml .no-copy }
+        If the computer that you are logging into isn't hardened against brute-force
+        login attempts, you can enable rate-limiting for the authentication module.
+        By default, this limits attackers to no more than 3 login attempts every 30s.
+        Do you want to enable rate-limiting? (y/n) : y
+        ```
+
+    `Google Authenticator PAM`を有効化します。
+    ```bash
+    grep -q '^auth required pam_google_authenticator.so' /etc/pam.d/sshd \
+      || sudo sed -i '/^@include common-auth$/a auth required pam_google_authenticator.so nullok' /etc/pam.d/sshd
+    ```
+
+    `@include common-auth`の直下に追加されていることを確認します。
+    ```bash
+    grep -n '^auth required pam_google_authenticator\.so' /etc/pam.d/sshd
+    grep -n -A1 '^@include common-auth$' /etc/pam.d/sshd
+    ```
+
+    `02-2fa.conf`ファイルに設定します。
+    ```bash
+    sudo tee /etc/ssh/sshd_config.d/02-2fa.conf > /dev/null << EOF
     KbdInteractiveAuthentication yes
+    UsePAM yes
+    AuthenticationMethods publickey,keyboard-interactive
+    EOF
     ```
 
-**UsePAM**の項目を「yes」にします。
+    構文チェックし、リロードします。
+    ```bash
+    sudo sshd -t
+    ```
+    ```bash
+    sudo systemctl reload ssh
+    ```
 
-```text
-UsePAM yes
-```
+    ### **補足：`SSH 2FA`の必須化設定**
 
-最後の行に1行追加します。(SSH公開鍵秘密鍵ログインを利用の場合)
+    !!! warning "重要"
+        この手順を実施すると、`Google Authenticator`未設定のユーザーは、SSHログインできなくなります。  
+        必ず以下を満たしてから実施してください。
 
-```text
-AuthenticationMethods publickey,keyboard-interactive
-```
+        - 対象ユーザー全員が `google-authenticator`の初期設定を完了している  
+        - 公開鍵認証（`publickey`）による SSH ログインが正常に行える  
+        - 予備の SSH セッションを開いた状態で作業している  
 
-ファイルを保存して閉じます。
+    必須化するために`nullok`を削除します。
+    ```bash
+    sudo sed -i \
+      's/^auth required pam_google_authenticator\.so nullok$/auth required pam_google_authenticator.so/' \
+      /etc/pam.d/sshd
+    ```
 
-以下を使用して`sshd`デーモンを再起動します。
+    設定内容の確認をします。
+    ```bash
+    grep -n '^auth required pam_google_authenticator\.so' /etc/pam.d/sshd
+    ```
+    > `5:auth required pam_google_authenticator.so`であることを確認
 
-```text
-sudo systemctl restart sshd.service
-```
+    構文をチェックします。
+    ```bash
+    sudo sshd -t
+    ```
 
-**google-authenticator** コマンドを実行します。
+    SSHサービスの再読み込みをします。
+    ```bash
+    sudo systemctl reload ssh
+    ```
 
-```text
-google-authenticator
-```
-
-いくつか質問事項が表示されます。推奨項目は以下のとおりです。
-
-``` { .yaml .no-copy }
-Do you want authentication tokens to be time-based (y/n) : y
-```
-
-``` { .yaml .no-copy }
-Do you want me to update your 
-"/home/cardano/.google_authenticator" file? (y/n): y
-```
-
-``` { .yaml .no-copy }
-Do you want to disallow multiple uses of the same authentication
-token? This restricts you to one login about every 30s, but it increases
-your chances to notice or even prevent man-in-the-middle attacks (y/n): y
-```
-
-``` { .yaml .no-copy }
-By default, a new token is generated every 30 seconds by the mobile app.
-In order to compensate for possible time-skew between the client and the server,
-we allow an extra token before and after the current time. This allows for a
-time skew of up to 30 seconds between authentication server and client. If you
-experience problems with poor time synchronization, you can increase the window
-from its default size of 3 permitted codes (one previous code, the current
-code, the next code) to 17 permitted codes (the 8 previous codes, the current
-code, and the 8 next codes). This will permit for a time skew of up to 4 minutes
-between client and server.
-Do you want to do so? (y/n): n
-```
-``` { .yaml .no-copy }
-If the computer that you are logging into isn't hardened against brute-force
-login attempts, you can enable rate-limiting for the authentication module.
-By default, this limits attackers to no more than 3 login attempts every 30s.
-Do you want to enable rate-limiting? (y/n) : y
-```
-
-プロセス中に大きなQRコードが表示されますが、その下には緊急時のスクラッチコードが表示されますので、忘れずに書き留めておいて下さい。
-
-スマートフォンでGoogle認証システムアプリを開き、QRコードを読み取り2段階認証を機能させます。
+    !!! tip "運用上のポイント"
+        - 緊急時はスクラッチコードでログイン可能
+        - `.google_authenticator`ファイルは必ずバックアップを保持
+        - 本番環境では`nullok`削除を推奨（完全な2FA強制）
 
 ---

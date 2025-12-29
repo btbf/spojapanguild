@@ -50,7 +50,7 @@
 ## **2. CNCLIインストール**
 
 !!! info "CNCLIについて"
-    [AndrewWestberg](https://twitter.com/amw7)さんによって開発された[CNCLI](https://github.com/cardano-community/cncli)はプールのブロック生成スケジュールを算出し、Shelley期におけるSPOに革命をもたらしました。
+    [AndrewWestberg](https://twitter.com/amw7){target="_blank" rel="noopener"}さんによって開発された[CNCLI](https://github.com/cardano-community/cncli){target="_blank" rel="noopener"}はプールのブロック生成スケジュールを算出し、Shelley期におけるSPOに革命をもたらしました。
 
   
 RUST環境を準備します
@@ -175,7 +175,7 @@ printf "\nプールID(bech32)は \e[32m${pool_bech32}\e[m です\n\n"
 ```
 
 <strong><font color=red>ご自身のプールID `2種類`が表示されていることを確認してください</font></strong>  
-プールIDが表示されていない場合は、[こちらの手順](../setup/7-register-stakepool.md#4)を実行してください  
+プールIDが表示されていない場合は、[こちらの手順](../setup/stake-pool-register.md/#4)を実行してください  
 
 <br>
 cncli.shファイルを修正します。以下のコマンドをすべてコピーして実行してください
@@ -484,15 +484,13 @@ echo $LANG
 
 ## **8. スケジュールを取得する**
 
-!!! hit "ブロック生成スケジュール取得のタイミングについて"
+!!! tip "ブロック生成スケジュール取得のタイミングについて"
     取得タイミングは、エポックスロットが約302400を過ぎてから次エポックのスケジュールを自動取得します(次エポックの1.5日前)  
-    [11.ブロック生成ステータス通知](./11-blocknotify-setup.md)を導入することで任意の通知プラットフォームへ通知することが可能です。    
+    [SPO BlockNotify設定](../setup/blocknotify-setup.md)を導入することで任意の通知プラットフォームへ通知することが可能です。    
 
 
 
-!!! Tip
-
-    * スケジュールの中に`Error: database is locked`がある場合は、よくある質問の[Q4.スケジュール取得時「Error: database is locked」が表示される](../faq/blocklog.md#q4error-database-is-locked)をご確認ください
+!!! tip "ヒント"
     * `Leaderslots: 0 - Ideal slots for epoch based on active stake: 0.01 - Luck factor 0%`が表示された場合は、残念がらブロック生成スケジュールはありません。
 
 
@@ -511,7 +509,7 @@ echo $LANG
 
 !!! info "ブロック生成ステータスを通知する"
     ブロックログDBに保存されるブロック生成ステータスをLINE/Slack/discord/telegramに通知することができます。  
-    設定手順は[SPO BlockNotify設定](./11-blocknotify-setup.md)を参照してください。
+    設定手順は[SPO BlockNotify設定](../setup/blocknotify-setup.md)を参照してください。
 
 
 ## **9. CNCLI更新手順**
@@ -571,17 +569,21 @@ sudo systemctl stop cnode-cncli-sync.service
 
 cncli.dbを削除する
 ```
-cd $NODE_HOME/guild-db/cncli
-rm cncli.db
+rm $NODE_HOME/guild-db/cncli/cncli.db
 ```
 
 サービスを起動し、同期が100％になるまで待つ
 ```
-sudo systemctl start cnode-cncli-sync.service
+sudo systemctl restart cnode-cncli-sync.service
+```
+
+100% syncedになるまで待つ
+```
+cnclilog
 ```
 
 
 !!! info "制作クレジット"
-    このツールは海外ギルドオペレーター制作の[CNCLI By AndrewWestberg](https://github.com/cardano-community/cncli)、[Guild LiveView](https://cardano-community.github.io/guild-operators/#/Scripts/gliveview)、[BLOCK LOG for CNTools](https://cardano-community.github.io/guild-operators/#/Scripts/cntools)を組み合わせたツールとなっております。カスタマイズするにあたり、開発者の[AHLNET(AHL)](https://twitter.com/olaahlman)にご協力頂きました。ありがとうございます。
+    このツールは海外ギルドオペレーター制作の[CNCLI By AndrewWestberg](https://github.com/cardano-community/cncli){target="_blank" rel="noopener"}、[Guild LiveView](https://cardano-community.github.io/guild-operators/#/Scripts/gliveview){target="_blank" rel="noopener"}、[BLOCK LOG for CNTools](https://cardano-community.github.io/guild-operators/#/Scripts/cntools){target="_blank" rel="noopener"}を組み合わせたツールとなっております。カスタマイズするにあたり、開発者の[AHLNET(AHL)](https://twitter.com/olaahlman){target="_blank" rel="noopener"}にご協力頂きました。ありがとうございます。
 
 ---

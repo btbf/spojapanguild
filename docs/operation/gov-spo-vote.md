@@ -7,8 +7,10 @@
     - トランザクション手数料はpayment.addrから引き落とされます。プール誓約を下回らないようご注意ください。
 
     ガバナンスアクション確認サイト  
-    [https://cardanoscan.io/govActions](https://cardanoscan.io/govActions)  
-    [https://gov.tools/governance_actions](https://gov.tools/governance_actions)
+    [https://adastat.net/governances](https://adastat.net/governances){target="_blank" rel="noopener"}  
+    [https://beta.cexplorer.io/gov/action](https://beta.cexplorer.io/gov/action){target="_blank" rel="noopener"}  
+    [https://cardanoscan.io/govActions](https://cardanoscan.io/govActions){target="_blank" rel="noopener"}  
+    [https://gov.tools/governance_actions](https://gov.tools/governance_actions){target="_blank" rel="noopener"}
 
 
 === "BP/エアギャップ"

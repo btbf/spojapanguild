@@ -108,10 +108,10 @@ nav:
     - 'プール構築マニュアル':
       - '構築マニュアル': './setup/index.md'
       - 'プール構築':
-        - '1. エアギャップ環境セットアップ': './setup/air-gapped-setup.md'
+        - '1. エアギャップ環境構築': './setup/air-gapped-setup.md'
         - '2. Ubuntu初期設定': './setup/ubuntu-setup.md'
         - '3. ノードセットアップ': './setup/node-setup.md'
-        - '4. リレー/BPの接続': './setup/relay-bp-setup.md'
+        - '4. リレー/BP接続設定': './setup/relay-bp-setup.md'
         - '5. BP用キー生成': './setup/bp-key-setup.md'
         - '6. アドレス生成': './setup/address-generate.md'
         - '7. ステークアドレス登録': './setup/stake-address-register.md'

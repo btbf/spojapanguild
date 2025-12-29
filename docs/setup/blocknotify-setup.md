@@ -13,7 +13,7 @@
 
     * 多言語ファイルを用意することで様々な言語に対応しました！
  
-    * ブロックログと連動しておりますので、まだ設定されてない場合は[ブロックログ導入手順](./10-blocklog-setup.md)を先に導入してください。
+    * ブロックログと連動しておりますので、まだ設定されてない場合は[ブロックログ設定](../setup/blocklog-setup.md)を先に導入してください。
 
     * 以下の作業はguild-dbが存在するBPサーバーのみで実施し、ブロック生成スケジュールがないタイミングで実施してください。 
 
@@ -66,9 +66,9 @@
 
 
 
-## **1. 依存プログラムをインストールする**
+## **1. 依存プログラムのインストール**
 
-**Python環境をセットアップする**
+**Python環境のセットアップ**
 
 パッケージを更新する
 ```bash
@@ -123,7 +123,7 @@ rm ${bn_release}.tar.gz
         <font color=red>新しいAPIはLINE公式アカウントを通じて配信されるため、設定を間違えるとセキュリティ漏洩のリスクがあります。複数人で運用する場合はご注意ください</font>  
 
     * **1.LINEビジネスIDを作成する**  
-    LINE Bussiness ID [https://manager.line.biz/](https://manager.line.biz/) にアクセスし、お持ちのLINEアカウントでログインするか新規でBussinessIDを作成してください
+    LINE Bussiness ID [https://manager.line.biz/](https://manager.line.biz/){target="_blank" rel="noopener"} にアクセスし、お持ちのLINEアカウントでログインするか新規でBussinessIDを作成してください
     ![*](../images/block_notify/line-message-api0.jpg)
 
     * **2.LINE公式アカウントを作成する**  
@@ -246,7 +246,7 @@ rm ${bn_release}.tar.gz
 === "Slack"
     * 1.Slackを起動し、通知用のワークスペースとチャンネルを設定する
 
-    * 2.[Incoming Webhook](https://my.slack.com/services/new/incoming-webhook/)の設定ページへアクセスする
+    * 2.[Incoming Webhook](https://my.slack.com/services/new/incoming-webhook/){target="_blank" rel="noopener"}の設定ページへアクセスする
 
     * 3.通知したいワークスペースとチャンネルを選択する  
     ![*](../images/block_notify/5-1-1.jpg)
@@ -282,16 +282,16 @@ nano config.ini
     | ----------- |---------| ------------------------------------ |
     | `pool_ticker`      | ex.) SJG | プールティッカー名を入力する  |
     | `notify_language` | 英語:`en`<br>日本語:`ja`| 通知言語を入力する |
-    | `notify_timezone`   | Asia/Tokyo<br>[タイムゾーン一覧](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568) | お住いの[タイムゾーン](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568)を指定する |
+    | `notify_timezone`   | Asia/Tokyo<br>[タイムゾーン一覧](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568){target="_blank" rel="noopener"} | お住いの[タイムゾーン](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568){target="_blank" rel="noopener"}を指定する |
     | `notify_platform`   | `Line`<br>`Discord`<br>`Slack`<br>`Telegram` | 通知先プラットフォームを指定する<br> (複数指定は無効) |
     | `notify_level`   |全て:`All`<br>Confirm以外:`ExceptCofirm`<br>Missのみ:`OnlyMissed`  | 通知基準を設定する |
     | `nextepoch_leader_date`   |概要のみ:`SummaryOnly`<br>概要と日付:`SummaryDate` | 次エポックスケジュール日時の通知有無<br>次エポックスケジュール日付一覧を通知に流したくない場合は`SummaryOnly`を記載してください |
-    | `line_notify_token`     |[LINE設定](#__tabbed_1_1)で発行したチャンネルアクセストークン | Line通知用のトークンを入力する |
-    | `line_user_id`     |[LINE設定](#__tabbed_1_1)で発行したユーザーID | Line通知用のユーザーIDを入力する |
-    | `discord_webhook_url`   |[Discord設定の(7)](#__tabbed_1_2)で発行したウェブフックURL| DiscordウェブフックURLを入力する |
-    | `slack_webhook_url`   |[Slack設定の(4)](#__tabbed_1_4)で発行したWebhook URL| SlackウェブフックURLを入力する |
-    | `telegram_token`   |[Telegram設定の(5)](#__tabbed_1_3)で発行したAPIトークン | Telegram APIトークンを入力する |
-    | `telegram_id`   |[Telegram設定の(9)](#__tabbed_1_3)で表示されたChat id| Telegram ChatIDを入力する |
+    | `line_notify_token`     |[LINE設定](../setup/blocknotify-setup.md/#__tabbed_1_1)で発行したチャンネルアクセストークン | Line通知用のトークンを入力する |
+    | `line_user_id`     |[LINE設定](../setup/blocknotify-setup.md/#__tabbed_1_1)で発行したユーザーID | Line通知用のユーザーIDを入力する |
+    | `discord_webhook_url`   |[Discord設定の(7)](../setup/blocknotify-setup.md/#__tabbed_1_2)で発行したウェブフックURL| DiscordウェブフックURLを入力する |
+    | `slack_webhook_url`   |[Slack設定の(4)](../setup/blocknotify-setup.md/#__tabbed_1_4)で発行したWebhook URL| SlackウェブフックURLを入力する |
+    | `telegram_token`   |[Telegram設定の(5)](../setup/blocknotify-setup.md/#__tabbed_1_3)で発行したAPIトークン | Telegram APIトークンを入力する |
+    | `telegram_id`   |[Telegram設定の(9)](../setup/blocknotify-setup.md/#__tabbed_1_3)で表示されたChat id| Telegram ChatIDを入力する |
     | `node_home` |ex.)`/home/usr/cnode`| node_homeディレクトリパスを入力する |
     | `guild_db_dir` |ex.)`%(node_home)s/guild-db/blocklog/`| guild-dbのパスを入力する<br>`%(node_home)s`は変数のため変更しないでください |
     | `shelley_genesis` |ex.)`%(node_home)s/files/shelley-genesis.json`| shelley_genesisのファイルパスを入力する<br>`%(node_home)s`は変数のため変更しないでください |
@@ -432,7 +432,7 @@ rm -rf block-notify-${bn_release} ${bn_release}.tar.gz
     <br>
     <font color=red>新しいAPIはLINE公式アカウントを通じて配信されるため、設定を間違えるとセキュリティ漏洩のリスクがあります。複数人で運用する場合はご注意ください</font>  
     <br>
-    上記の点を踏まえ、他の通知システム(Discord/Telegram/Slack)へ移行するか新しい[LINE通知の設定](#__tabbed_1_1)を実施してください。（流れで11-3まで実施しないでください）  
+    上記の点を踏まえ、他の通知システム(Discord/Telegram/Slack)へ移行するか新しい[LINE通知の設定](../setup/blocknotify-setup.md/#__tabbed_1_1)を実施してください。（流れで11-3まで実施しないでください）  
     LINE公式アカウント発行後、`config.ini`の`line_notify_token`と`line_user_id`を発行した値に書き換えてください。
 
 SPO BlockNotifyを起動する

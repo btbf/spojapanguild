@@ -1,6 +1,7 @@
 # **監視ツール設定**
 
-プロメテウスはターゲットに指定したメトリックHTTPエンドポイントをスクレイピングし、情報を収集する監視ツールです。[オフィシャルドキュメントはこちら](https://prometheus.io/docs/introduction/overview/) グラファナは収集されたデータを視覚的に表示させるダッシュボードツールです。
+プロメテウスはターゲットに指定したメトリックHTTPエンドポイントをスクレイピングし、情報を収集する監視ツールです。[オフィシャルドキュメントはこちら](https://prometheus.io/docs/introduction/overview/){target="_blank" rel="noopener"}  
+グラファナは収集されたデータを視覚的に表示させるダッシュボードツールです。
 
 ## **1. インストール**
 
@@ -278,7 +279,7 @@ sudo systemctl restart prometheus.service
 4. 左上の三本線メニューを開き「Connections」→「Data sources」をクリックします。
 5. 「Add new data source」をクリックし、「Prometheus」を選択します。
 6. 名前は `Prometheus`としてください。
-7. **URL** を [http://localhost:9090](http://localhost:9090)に設定します。
+7. **URL** を `http://localhost:9090`に設定します。
 8. **Save & Test**をクリックし`Successfully queried the Prometheus API.`と表示されたら再度`Data sources`をクリックします。
 9. 「Add new data source」をクリックし、下部にある「Infinity」をクリックします。
 10. 設定内容を変更することなく、**Save & Test**をクリックし`Settings saved`と表示されたらOK。
@@ -307,7 +308,7 @@ sudo systemctl restart prometheus.service
     
     以下の追加設定も実施してください。
 
-    * [セキュリティ強化設定](../operation/grafana-security.md)
-    * 異常時に通知する[アラート設定](../operation/grafana-alert.md)
+    * [Grafanaアラート設定](../operation/grafana-alert.md)
+    * [Grafanaセキュリティ強化](../operation/grafana-security.md)
 
 ---
