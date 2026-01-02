@@ -567,7 +567,7 @@ sudo systemctl start cardano-node
 **システム起動後に、ログモニターを表示します**
 
 ```text
-journalctl --unit=cardano-node --follow
+journalctl -u cardano-node -f
 ```
 > コマンド入力に戻る場合は「Ctrl＋C」（この場合ノードは終了しません）
 
