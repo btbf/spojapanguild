@@ -154,6 +154,8 @@ nav:
       - 'ガバナンス':
           - '・ ガバナンスアクションSPO投票': './operation/gov-spo-vote.md'
           - '・ カタリスト有権者登録': './operation/catalyst-voting.md'
+      - 'Mithril関連':
+        - '・ Mithril Signerノードの設定、更新': './operation/mithril-signer-node-setup-and-updates.md'
       - 'Midnight関連':
         - '・ Glacier Drop請求手続き': './operation/midnight-glacier-drop.md'
       - 'Linuxコマンド集':
