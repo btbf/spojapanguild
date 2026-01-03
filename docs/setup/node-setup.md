@@ -641,7 +641,7 @@ sed -i $NODE_HOME/scripts/env \
     -e '1,73s!#CNODE_PORT=6000!CNODE_PORT='${b_PORT}'!' \
     -e '1,73s!#UPDATE_CHECK="Y"!UPDATE_CHECK="N"!' \
     -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/'${NODE_CONFIG}'-config.json"!' \
-    -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node.socket"!SOCKET="${CNODE_HOME}/db/socket"!'
+    -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node.socket"!SOCKET="${CNODE_HOME}/db/socket"!' \
     -e '1,73s!#PROM_HOST=127.0.0.1!PROM_HOST=127.0.0.1!' \
     -e '1,73s!#PROM_PORT=12798!PROM_PORT=12798!'
 ```
