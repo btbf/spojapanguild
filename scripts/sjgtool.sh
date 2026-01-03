@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="4.0.4"
+TOOL_VERSION="4.1.0"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -1036,7 +1036,7 @@ EOF
     echo
     echo "エアギャップ上の指示に従ってください"
     echo
-    read -p "エアギャップから$POOL_OPCERT_FILENAMEをBPのcnodeディレクトリにコピーしたらハッシュ値を表示します" < /dev/tty
+    read -p "エアギャップから $POOL_OPCERT_FILENAME をBPのcnodeディレクトリにコピーし、Enterを押下してハッシュ値を確認してください" < /dev/tty
 
     clear
     while :
@@ -1528,7 +1528,7 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
         echo '------------------------------------------------------------------------'
         echo -e "${FG_MAGENTA}ガバナンスアクション-SPO投票${NC}"
         echo
-        echo -e "投票には投票対象のガバナンスアクションIDが必要です"
+        echo -e "gov-stateからSPO投票可能なガバナンスアクションを表示します"
         echo -e "https://cardanoscan.io/govActions"
         echo -e "https://gov.tools/governance_actions"
         echo
@@ -1703,13 +1703,44 @@ filecheck(){
   echo $file_CHK
 }
 
- transrate_jp(){
+transrate_jp(){
       local translate="MDgxNGQ0YzItZjg3Yi0wY2Q4LTk0ZWUtYzQxMTBlM2Y4ZTVkOmZ4"
       local dapk=$(echo $translate | base64 -d)
       local question_str_jp_response=$(curl -sX POST "https://api-free.deepl.com/v2/translate" -H "Authorization: DeepL-Auth-Key $dapk" -d "text=$1" -d "target_lang=JA")
       question_str_jp_text=$(echo $question_str_jp_response | jq -r ".translations[0].text")
       echo $question_str_jp_text
   }
+
+download_anchor(){
+  local src_url=$1
+  local out_file=$2
+  local cid=""
+  local urls=()
+
+  rm -f "$out_file"
+
+  if [[ "$src_url" == ipfs* ]]; then
+    cid="${src_url#ipfs://}"
+    urls+=("https://ipfs.io/ipfs/${cid}")
+    urls+=("https://dweb.link/ipfs/${cid}")
+    urls+=("https://w3s.link/ipfs/${cid}")
+    urls+=("https://gateway.pinata.cloud/ipfs/${cid}")
+    urls+=("https://nftstorage.link/ipfs/${cid}")
+  else
+    urls+=("$src_url")
+  fi
+
+  for url in "${urls[@]}"; do
+    wget -q "$url" -O "$out_file"
+    if [ -s "$out_file" ]; then
+      echo "$url"
+      return 0
+    fi
+  done
+
+  rm -f "$out_file"
+  return 1
+}
 
 
 create_airgap_script(){
@@ -2043,31 +2074,91 @@ choose_proposal(){
   while :
   do
     echo
-    echo "投票するガバナンスアクションIDを入力してください"
-    read -p "GovアクションID(bech32/HEX/TxID) : > " governance_id
-    echo
-    echo "ガバナンスアクション情報呼び出し..."
-    if [[ ${#governance_id} -ge 64 ]]; then
-      if [[ "$governance_id" == gov_action* ]]; then
-        governance_id_bech32=$governance_id
-        governance_id_hex=$(/usr/local/bin/bech32 <<< $governance_id)
-      else
-        governance_id_hex=$governance_id
+    if [ "$voter_type" == "SPO" ]; then
+      echo "ガバナンスアクション一覧を取得中..."
+      gov_state_json=$(cardano-cli conway query gov-state ${NODE_NETWORK})
+      local spo_available_type=("NoConfidence" "NewCommittee" "HardForkInitiation" "UpdateCommittee" "InfoAction")
+      mapfile -t proposal_list < <(echo "$gov_state_json" | jq -r --argjson now "$current_epoch" '
+        .proposals
+        | to_entries[]
+        | .value as $v
+        | select($v.expiresAfter >= $now)
+        | select($v.proposalProcedure.govAction.tag as $tag | ["NoConfidence","NewCommittee","HardForkInitiation","UpdateCommittee","InfoAction"] | index($tag))
+        | "\($v.actionId.txId)|\($v.actionId.govActionIx)|\($v.proposalProcedure.govAction.tag)|\($v.expiresAfter)|\($v.proposedIn)|\($v.proposalProcedure.anchor.url)"')
+
+      if [ ${#proposal_list[@]} -eq 0 ]; then
+        printf "\n${FG_RED}SPO投票可能なガバナンスアクションが見つかりませんでした${NC}\n"
+        select_rtn
       fi
-      if [[ ${#governance_id_hex} -eq 66 ]]; then
-        governance_id_hex="${governance_id_hex:0:-2}00"
-        governance_id_bech32=$(/usr/local/bin/bech32 gov_action <<< $governance_id_hex)
-        governance_id_tx="${governance_id_hex%00}"
-      else
-        governance_id_bech32=$(/usr/local/bin/bech32 gov_action <<< "${governance_id_hex}00")
-        governance_id_tx=$governance_id_hex
+
+      echo
+      echo "投票可能なガバナンスアクション一覧:"
+      echo "------------------------------------------------------------------------------------"
+      local GRAY='\e[90m'
+      for i in "${!proposal_list[@]}"; do
+        local anchor_title="(title unavailable)"
+        local anchor_title_jp="(タイトル取得失敗)"
+        IFS='|' read -r tx_id action_ix proposal_tag expires_after proposed_in anchor_url <<< "${proposal_list[$i]}"
+        tmp_anchor="${governance_dir}/anchor_${tx_id}_${action_ix}.json"
+        if download_anchor "$anchor_url" "$tmp_anchor" >/dev/null; then
+          anchor_title=$(cat "$tmp_anchor" | jq .body.title | tr -d '"')
+          if [ -n "$anchor_title" ]; then
+            anchor_title_jp=$(transrate_jp "$anchor_title")
+          fi
+        fi
+        rm -f "$tmp_anchor"
+        printf "[%s] %s\n" "$((i+1))" "$anchor_title_jp"
+        printf "${GRAY}     %s${NC}\n" "$anchor_title"
+        printf "${GRAY}     txId:%s ix:%s %s (開始:%s / 終了:%s)${NC}\n" "$tx_id" "$action_ix" "$proposal_tag" "$proposed_in" "$expires_after"
+      done
+      echo "------------------------------------------------------------------------------------"
+      echo
+      read -p "投票する番号を入力してください : > " select_no
+      if ! [[ "$select_no" =~ ^[0-9]+$ ]] || [ "$select_no" -lt 1 ] || [ "$select_no" -gt ${#proposal_list[@]} ]; then
+        printf "\n${FG_RED}入力番号が不正です。再度入力してください${NC}\n"
+        continue
       fi
-      vote_proposal=
-      vote_proposal=$(cardano-cli conway query gov-state ${NODE_NETWORK} | jq -r --arg govActionId ${governance_id_tx} '.proposals | to_entries[] | select(.value.actionId.txId | contains($govActionId)) | .value')
+
+      IFS='|' read -r governance_id_tx governance_action_index proposal_type expiresAfter proposedIn <<< "${proposal_list[$((select_no-1))]}"
+      governance_action_index=${governance_action_index:-0}
+      governance_action_index_hex=$(printf "%02x" "$governance_action_index")
+      governance_id_hex="${governance_id_tx}${governance_action_index_hex}"
+      governance_id_bech32=$(/usr/local/bin/bech32 gov_action <<< "$governance_id_hex")
+      vote_proposal=$(echo "$gov_state_json" | jq -r --arg txid "$governance_id_tx" --argjson ix "$governance_action_index" '.proposals | to_entries[] | select(.value.actionId.txId==$txid and .value.actionId.govActionIx==$ix) | .value')
+    else
+      echo "投票するガバナンスアクションIDを入力してください"
+      read -p "GovアクションID(bech32/HEX/TxID) : > " governance_id
+      echo
+      echo "ガバナンスアクション情報呼び出し..."
+      if [[ ${#governance_id} -ge 64 ]]; then
+        if [[ "$governance_id" == gov_action* ]]; then
+          governance_id_hex=$(/usr/local/bin/bech32 <<< $governance_id)
+        else
+          governance_id_hex=$governance_id
+        fi
+
+        if [[ ${#governance_id_hex} -eq 66 ]]; then
+          governance_id_tx="${governance_id_hex:0:64}"
+          governance_action_index_hex="${governance_id_hex:64:2}"
+          governance_action_index=$((16#${governance_action_index_hex}))
+        else
+          governance_id_tx=$governance_id_hex
+          governance_action_index=0
+          governance_action_index_hex="00"
+        fi
+
+        governance_id_hex="${governance_id_tx}${governance_action_index_hex}"
+        governance_id_bech32=$(/usr/local/bin/bech32 gov_action <<< "$governance_id_hex")
+        vote_proposal=
+        vote_proposal=$(cardano-cli conway query gov-state ${NODE_NETWORK} | jq -r --arg txid "$governance_id_tx" --argjson ix "$governance_action_index" '.proposals | to_entries[] | select(.value.actionId.txId==$txid and .value.actionId.govActionIx==$ix) | .value')
+      else
+        printf "\n${FG_RED}64文字以上で指定してください${NC}\n"
+        continue
+      fi
+    fi
       
       if [[ -n "$vote_proposal" ]]; then
         #echo $vote_proposal | jq .
-
         local spo_available_type=("NoConfidence" "NewCommittee" "HardForkInitiation" "UpdateCommittee" "InfoAction")
         local expiresAfter=$(echo $vote_proposal | jq .expiresAfter)
         local proposedIn=$(echo $vote_proposal | jq .proposedIn)
@@ -2078,24 +2169,27 @@ choose_proposal(){
         local proposal_type=$(echo $vote_proposal | jq .proposalProcedure.govAction.tag | tr -d '"')
         spo_voters=$(echo $vote_proposal | jq .stakePoolVotes)
 
-        if [[ "$anchor_url" == ipfs* ]]; then
-          anchor_url=$(echo ${anchor_url} | sed 's|ipfs://|https://ipfs.io/ipfs/|')
-        fi
         #anchorダウンロード
-        wget -q $anchor_url -O ${governance_dir}/${governance_id_tx}.json
-        #データ整合性
-        download_anchorhash=$(b2sum -l 256 ${governance_dir}/${governance_id_tx}.json | awk '{ print $1 }')
+        anchor_file="${governance_dir}/${governance_id_tx}.json"
+        if download_anchor "$anchor_url" "$anchor_file" >/dev/null; then
+          #データ整合性
+          download_anchorhash=$(b2sum -l 256 "$anchor_file" | awk '{ print $1 }')
+        else
+          download_anchorhash=""
+          printf "\n${FG_RED}アンカーURLの取得に失敗しました${NC}\n"
+          printf "${FG_YELLOW}URL: %s${NC}\n" "$anchor_url"
+        fi
 
         if [[ "$expiresAfter" -ge "$current_epoch" ]]; then
-          if [[ "$onchain_anchorhash" != "$download_anchorhash" ]]; then
+          if [[ -n "$download_anchorhash" && "$onchain_anchorhash" != "$download_anchorhash" ]]; then
             printf "\n${FG_RED}データハッシュとオンチェーンハッシュ値が異なります${NC}\n"
             printf "最新の提案内容をご確認の上投票してください\n\n"
             echo
           fi
           if [ "$voter_type" == "DRep" ] || { [ "$voter_type" == "SPO" ] && [[ " ${spo_available_type[@]} " =~ " $proposal_type " ]]; }; then
-            local anchor_data=$(cat ${governance_dir}/${governance_id_tx}.json)
-            local anchor_title=$(echo $anchor_data | jq .body.title | tr -d '"')
-            local anchor_abstract=$(echo $anchor_data | jq .body.abstract | tr -d '"')
+            local anchor_data=$(cat "$anchor_file" 2>/dev/null)
+            local anchor_title=$(echo "$anchor_data" | jq .body.title | tr -d '"')
+            local anchor_abstract=$(echo "$anchor_data" | jq .body.abstract | tr -d '"')
             #local anchor_rationale=$(echo $anchor_data | jq .body.rationale | tr -d '"')
             local anchor_title_jp=$(transrate_jp "$anchor_title")
             local anchor_abstract_jp=$(transrate_jp "$anchor_abstract")
@@ -2103,12 +2197,17 @@ choose_proposal(){
             echo "------------------------------------------------------------------------------------"
             printf "%13s ${FG_GREEN}%-80s${NC}\n" "ID(Bech32):" "$governance_id_bech32"
             printf "%13s ${FG_GREEN}%-80s${NC}\n\n" "ID(txId):" "$governance_id_tx"
+            printf "%13s ${FG_GREEN}%-80s${NC}\n\n" "ID(index):" "$governance_action_index"
             printf "%15s %-s\n" "提案:" "$anchor_title"
             printf "%13s ${FG_CYAN}%-s${NC}\n\n" "" "$anchor_title_jp"
             printf "%15s %-s\n" "概要:" "$anchor_abstract"
             printf "%13s ${FG_CYAN}%-s${NC}\n\n" "" "$anchor_abstract_jp"
             printf "%17s ${FG_GREEN}%-s${NC}\n\n" "提案種別:" "$proposal_type"
-            printf "%13s ${FG_YELLOW}%-s${NC}\n" "Data-Hash:" "$download_anchorhash"
+            if [[ -n "$download_anchorhash" ]]; then
+              printf "%13s ${FG_YELLOW}%-s${NC}\n" "Data-Hash:" "$download_anchorhash"
+            else
+              printf "%13s ${FG_YELLOW}%-s${NC}\n" "Data-Hash:" "取得失敗"
+            fi
             printf "%13s ${FG_YELLOW}%-s${NC}\n\n" "Onchain-Hash:" "$onchain_anchorhash"
             printf "%18s ${FG_GREEN}%-5s${NC} %11s ${FG_YELLOW}%-5s${NC} %11s %-5s\n" "開始エポック:" "$proposedIn" "終了エポック:" "$expiresAfter" "保証金:" "${proposal_deposit} ADA"
             echo "------------------------------------------------------------------------------------"
@@ -2123,9 +2222,6 @@ choose_proposal(){
         echo
         printf "\n${FG_RED}オンチェーンにガバナンスIDが見つかりません。正しいガバナンスIDを入力してください${NC}\n"
       fi
-    else
-      printf "\n${FG_RED}64文字以上で指定してください${NC}\n"
-    fi
   done
 }
 
@@ -2184,6 +2280,154 @@ proposal_vote(){
   printf "%13s ${FG_GREEN}%-s${NC}\n" "投票者:" "$poolname"
   printf "%12s ${FG_GREEN}%-s${NC}\n" "回答:" "$choose_answer"
   echo
+  anchor_url=""
+  anchor_data_hash=""
+  if [ "$voter_type" == "SPO" ]; then
+    echo "投票理由を追加しますか？"
+    echo
+    echo "[1] 追加する　[2] 追加しない"
+    yes_no
+    if [ "$?" -eq 0 ]; then
+      echo
+      echo "投票理由の作成方法を選択してください"
+      echo
+      echo "[1] Blockfrost IPFSで作成する"
+      echo "[2] 任意のURLを入力する"
+      read -n 1 -p "番号を入力してください : > " reason_mode
+      echo
+      if [ "$reason_mode" == "2" ]; then
+        while :
+        do
+          read -p "Anchor URL : > " anchor_url
+          if [ -z "$anchor_url" ]; then
+            echo "URLが未入力のため再入力してください"
+            continue
+          fi
+          if [[ "$anchor_url" != https://* ]]; then
+            echo "URLはhttpsから始まる形式で入力してください"
+            continue
+          fi
+          temp_anchor_file="$NODE_HOME/governance/manual_anchor_${governance_id_tx}.json"
+          if download_anchor "$anchor_url" "$temp_anchor_file" >/dev/null; then
+            anchor_data_hash=$(cardano-cli hash anchor-data --file-text "$temp_anchor_file")
+            rm -f "$temp_anchor_file"
+            break
+          else
+            echo "指定URLからデータを取得できませんでした。再入力してください"
+            rm -f "$temp_anchor_file"
+            continue
+          fi
+          break
+        done
+      elif [ "$reason_mode" != "1" ]; then
+        echo "入力が不正です。投票理由の追加をスキップしました"
+        anchor_url=""
+        anchor_data_hash=""
+      fi
+
+      if [ "$reason_mode" == "1" ]; then
+      echo
+      echo -e "${FG_YELLOW}※ 投票理由はあらかじめ作成した文章を貼り付けてください${NC}"
+      echo "※ 投票理由は単行入力です (改行で確定)"
+      echo "※ Blockfrost IPFSのPROJECT_IDが無い場合は https://blockfrost.io/ で作成してください"
+      echo
+      read -r -p "投票理由を入力してください : > " comment_input
+
+      echo
+      read -p "Blockfrost PROJECT_ID : > " project_id
+      echo
+
+      if [ -n "$comment_input" ] && [ -n "$project_id" ]; then
+        comment_json=$(printf "%s" "$comment_input" | jq -Rs .)
+        reason_file="$NODE_HOME/governance/vote_reason_${governance_id_tx}.json"
+        cat > "$reason_file" << EOF
+{
+  "@context": {
+    "CIP100": "https://github.com/cardano-foundation/CIPs/blob/master/CIP-0100/README.md#",
+    "hashAlgorithm": "CIP100:hashAlgorithm",
+    "body": {
+      "@id": "CIP100:body",
+      "@context": {
+        "references": {
+          "@id": "CIP100:references",
+          "@container": "@set",
+          "@context": {
+            "GovernanceMetadata": "CIP100:GovernanceMetadataReference",
+            "Other": "CIP100:OtherReference",
+            "label": "CIP100:reference-label",
+            "uri": "CIP100:reference-uri",
+            "referenceHash": {
+              "@id": "CIP100:referenceHash",
+              "@context": {
+                "hashDigest": "CIP100:hashDigest",
+                "hashAlgorithm": "CIP100:hashAlgorithm"
+              }
+            }
+          }
+        },
+        "comment": "CIP100:comment",
+        "externalUpdates": {
+          "@id": "CIP100:externalUpdates",
+          "@context": {
+            "title": "CIP100:update-title",
+            "uri": "CIP100:uri"
+          }
+        }
+      }
+    },
+    "authors": {
+      "@id": "CIP100:authors",
+      "@container": "@set",
+      "@context": {
+        "name": "http://xmlns.com/foaf/0.1/name",
+        "witness": {
+          "@id": "CIP100:witness",
+          "@context": {
+            "witnessAlgorithm": "CIP100:witnessAlgorithm",
+            "publicKey": "CIP100:publicKey",
+            "signature": "CIP100:signature"
+          }
+        }
+      }
+    }
+  },
+  "authors": [],
+  "body": {
+    "comment": $comment_json
+  },
+  "hashAlgorithm": "blake2b-256"
+}
+EOF
+
+        echo "IPFSへアップロード中..."
+        upload_resp="$NODE_HOME/governance/ipfs_upload_${governance_id_tx}.json"
+        http_code=$(curl -s -o "$upload_resp" -w "%{http_code}" "https://ipfs.blockfrost.io/api/v0/ipfs/add" \
+          -X POST \
+          -H "project_id: ${project_id}" \
+          -F "file=@${reason_file}")
+
+        echo "IPFSレスポンス:"
+        cat "$upload_resp"
+        echo
+
+        if [ "$http_code" == "200" ]; then
+          ipfs_hash=$(cat "$upload_resp" | jq -r ".ipfs_hash")
+          if [ -n "$ipfs_hash" ] && [ "$ipfs_hash" != "null" ]; then
+            anchor_url="https://ipfs.blockfrost.dev/ipfs/${ipfs_hash}"
+            anchor_data_hash=$(cardano-cli hash anchor-data --file-text "$reason_file")
+            echo "IPFSアップロード成功"
+          else
+            echo "IPFSアップロードの戻り値が不正です"
+          fi
+        else
+          echo "IPFSアップロードに失敗しました (HTTP ${http_code})"
+        fi
+      else
+        echo "投票理由またはPROJECT_IDが未入力のためスキップしました"
+      fi
+      fi
+    fi
+  fi
   echo "この回答で投票ファイルを作成しますか？"
   echo
   echo "[1] 作成する　[2] キャンセル"
@@ -2208,18 +2452,28 @@ sleep 2
 cat > $NODE_HOME/create_votetx_script << EOF
 #!/bin/bash
 voter_type=$voter_type
+anchor_url="$anchor_url"
+anchor_data_hash="$anchor_data_hash"
 mkdir -p \$NODE_HOME/governance
 if [[ "\$voter_type" == "SPO" ]]; then
   chmod u+rwx $COLDKEYS_DIR
 fi
+
 echo
 printf "%15s ${FG_GREEN}%-s${NC}\n" "アクションID:" "$governance_id_tx"
+printf "%15s ${FG_GREEN}%-s${NC}\n" "アクションIndex:" "$governance_action_index"
 printf "%15s ${FG_GREEN}%-s${NC}\n" "投票:" "$vote_value_flag"
+if [[ -n "\$anchor_url" ]]; then
+  printf "%15s ${FG_GREEN}%-s${NC}\n" "Anchor URL:" "\$anchor_url"
+  printf "%15s ${FG_GREEN}%-s${NC}\n" "Anchor Hash:" "\$anchor_data_hash"
+fi
 echo
 cardano-cli conway governance vote create \
 --${vote_value_flag} \
 --governance-action-tx-id $governance_id_tx \
---governance-action-index "0" \
+--governance-action-index "$governance_action_index" \
+${anchor_url:+--anchor-url "\$anchor_url"} \
+${anchor_data_hash:+--anchor-data-hash "\$anchor_data_hash"} \
 ${coldkey_flag} \
 --out-file \$NODE_HOME/governance/${voter_type}_voted_${governance_id_tx}
 
@@ -2746,5 +3000,3 @@ if [[ ${new_poolid_file} == "false" || ${new_poolid_bech32_file} == "false" ]]; 
 fi
 
 main;
-
-
