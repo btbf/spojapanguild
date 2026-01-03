@@ -1,8 +1,8 @@
-# **cardano-db-sync + PostgreSQL セットアップ**
+# **カルダノIndexerセットアップ**
 
 本ドキュメントは、`cardano-db-sync` と `PostgreSQL` を Linux 環境で構築するための手順です。Midnight バリデーター用途で preview テストネットで構成しております。
 
-## **1. カルダノノードセットアップ**
+## **カルダノノードセットアップ**
 
 ### 事前準備
 
@@ -189,7 +189,7 @@ glive
 ```
 ![](../images/spokit/16.jpg)
 
-## **1. PostgreSQLセットアップ**
+## **PostgreSQLセットアップ**
 
 ### **PostgreSQLインストール**
 
@@ -258,7 +258,7 @@ sudo systemctl restart postgresql
 ```
 
 
-## **2. cardano-db-syncセットアップ**
+## **cardano-db-syncセットアップ**
 
 ### **依存関係インストール**
 
@@ -554,7 +554,7 @@ sudo systemctl enable cardano-db-sync
 sudo systemctl start cardano-db-sync
 ```
 
-## **3. 動作確認**
+## **動作確認**
 
 ```bash
 sudo systemctl status cardano-db-sync

@@ -160,6 +160,12 @@ nav:
         - '・ Glacier Drop請求手続き': './operation/midnight-glacier-drop.md'
       - 'Linuxコマンド集':
         - '・ 各種コマンド': './operation/linux-commands.md'
+    - 'Midnightバリデータ':
+      - '構築マニュアル概要': './midnight/index.md'
+      - 'カルダノIndexerセットアップ': './midnight/db-sync-setup.md'
+      - 'SPOバリデータ登録': './midnight/register-spo.md'
+      - 'Midnightノードセットアップ': './midnight/setup-midnight-node.md'
+      - 'ノードオプション一覧': './midnight/node-options.md'
     - 'SJGラーニング': './learning.md'
     - 'よくある質問':
       - '運用編':
