@@ -247,3 +247,13 @@ curl -s -L -X POST -H "Content-Type: application/json" -d "{
 }
 ```
 
+!!! note "isvaild:falseと表示されている場合の確認事項"
+
+    登録完了直後に`isVaild:false`と表示されている場合は以下のことを確認してください。
+
+    - カルダノステークプールの有効ステーク(Active Stake)  
+      **SPOKITの場合**：`spokit` > 「プール情報管理」> 「ブロック生成状態チェック」> 有効ステーク値  
+      **Cardanoscanの場合**:　自身のPoolIDを検索し、Active Stakeの値確認
+    
+    - ActiveStake反映タイミング (n + 2エポック)  
+      **反映待機期間**：Previewテストネット約2日、メインネット約10日後に反映します。

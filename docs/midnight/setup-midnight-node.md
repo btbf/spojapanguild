@@ -58,7 +58,7 @@ User=${USER}
 WorkingDirectory=${HOME}/midnight
 EnvironmentFile=${HOME}/midnight/.env
 
-ExecStart="/home/btbf/midnight/midnight-node"
+ExecStart="/home/${USER}/midnight/midnight-node"
 
 KillSignal=SIGINT
 RestartKillSignal=SIGINT
@@ -136,7 +136,8 @@ LiveView & Block-Monitorダウンロード
 cd $HOME/midnight
 wget -O ./LiveView.sh  https://raw.githubusercontent.com/btbf/Midnight-Live-View/refs/heads/main/LiveView.sh
 wget -O ./simple_block_monitor.sh  https://raw.githubusercontent.com/btbf/Midnight-Live-View/refs/heads/main/simple_block_monitor.sh
-chmod +x LiveView.sh simple_block_monitor.sh
+wget -O ./midnight-status.sh https://raw.githubusercontent.com/btbf/Midnight-Live-View/refs/heads/main/midnight-status.sh
+chmod +x LiveView.sh simple_block_monitor.sh midnight-status.sh
 ```
 
 依存関係インストール
@@ -161,6 +162,7 @@ sudo wget https://raw.githubusercontent.com/tmuxinator/tmuxinator/master/complet
 
 tmuxパネル設定ファイルDL
 ```bash { py title="ボックス内のコピーボタンでコピーして実行してください" }
+mkdir -p $HOME/.config/tmuxinator
 cat > $HOME/.config/tmuxinator/midnight-monitor.yml << EOF 
 ---
 name: midnight-monitor

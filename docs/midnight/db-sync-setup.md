@@ -167,6 +167,10 @@ SSHポート設定
 
 ### ノードインストール
 
+```{ py title="実行コマンド" }
+spokit pool
+```
+
 ノードインストールを選択して ++enter++
 ![](../images/spokit/11.jpg)
 
@@ -310,6 +314,16 @@ make
 make check
 sudo make install
 ```
+
+ライブラリキャッシュ更新
+```
+sudo ldconfig
+```
+確認
+```
+ldconfig -p | grep libsecp256k1
+```
+> OK
 
 **blstインストール**
 
@@ -487,7 +501,7 @@ wget https://book.world.dev.cardano.org/environments/${NODE_CONFIG}/db-sync-conf
 
 設定ファイル修正
 ```
-sed -i $$NODE_HOME/db-sync-config.json \
+sed -i $NODE_HOME/db-sync-config.json \
     -e 's!"NodeConfigFile": "config.json"!"NodeConfigFile": "'${NODE_CONFIG}'-config.json"!'
 ```
 
