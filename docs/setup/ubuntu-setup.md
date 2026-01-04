@@ -133,6 +133,13 @@ sudo sshd -t
 ```bash
 sudo sshd -T | grep -iE 'passwordauthentication|kbdinteractiveauthentication|permitrootlogin|port'
 ```
+``` { .yaml .no-copy }
+port xxxxx
+permitrootlogin no
+passwordauthentication no
+kbdinteractiveauthentication no
+gatewayports no
+```
 
 問題がなければ、SSHサービスを再起動します。
 ```bash
@@ -160,6 +167,8 @@ sudo systemctl restart ssh
 SSHポートを許可します。
 ```bash
 SSH_PORT=$(sudo sshd -T | awk '$1=="port"{print $2}')
+```
+```bash
 echo "有効なSSHポート: ${SSH_PORT}"
 ```
 
@@ -238,8 +247,9 @@ echo 'tmpfs /run/shm tmpfs ro,noexec,nosuid 0 0' | sudo tee -a /etc/fstab
 
 追記の確認をします。
 ```bash
-tail -n 5 /etc/fstab
+tail -n 1 /etc/fstab
 ```
+> `tmpfs /run/shm tmpfs ro,noexec,nosuid 0 0`が最終行に入力されていることを確認します。
 
 ## **8. Fail2banのインストール**
 
@@ -248,8 +258,9 @@ tail -n 5 /etc/fstab
     特定のIPアドレスから、指定された時間内に一定数のログイン失敗が検知された場合、Fail2banはそのIPアドレスからのアクセスをブロックします。
 
 ```bash
-sudo apt install fail2ban -y
+sudo apt install nano fail2ban -y
 ```
+> `nano`エディタも未インストールなのでインストールしておきます。
 
 SSHログインを監視する設定ファイルを開きます。
 ```bash
@@ -357,11 +368,13 @@ sudo systemctl reload-or-restart chronyd.service
     ```
 
 
-## **補足：SSH2段階認証（任意・上級者向け）**
+## **補足：SSH2段階認証（任意作業・上級者向け）**
 
 !!! danger "注意"
     本設定は必須ではありません。  
-    本設定は、クラウド上の本番サーバー（VPS など）で、公開鍵認証・fail2ban 等を適切に設定した上で、さらなる防御層を追加したい場合の選択肢です。
+    ただし、本手順を実施したサーバーでは、SSHログインに2FAを要求します（= `Google Authenticator` 未設定ユーザーはログインできません）。  
+    本番サーバー（VPS 等）で適用する場合は、必ず復旧手段（クラウドコンソール等）と予備セッションを確保してから実施してください。
+    
 
 ??? info "`Google Authenticator`を用いたSSH2段階設定（任意）"
     システムを更新して`libpam-google-authenticator`をインストールします。
@@ -385,7 +398,8 @@ sudo systemctl reload-or-restart chronyd.service
             その下に緊急時のスクラッチコードが表示されますので、忘れずに書き留めておいて下さい。  
             スマートフォンでGoogle認証システムアプリを開き、QRコードを読み取り2段階認証を機能させてください。
 
-        - `認証トークンを時間ベースにしたいですか？`に対して「`y`」を入力し、Enter押下するとQRコードとsecret keyが表示されるのでスクリーンショットで保存してください。
+        - `認証トークンを時間ベースにしたいですか？`に対して「`y`」を入力します。
+        > 表示される `secret key` / `スクラッチコード` は、スクリーンショットではなく安全な保管方法（オフライン保管等）で保存してください。
         ``` { .yaml .no-copy }
         Do you want authentication tokens to be time-based (y/n) : y
         ```
@@ -440,25 +454,60 @@ sudo systemctl reload-or-restart chronyd.service
         Do you want to enable rate-limiting? (y/n) : y
         ```
 
-    `Google Authenticator PAM`を有効化します。
+    PAMの設定（※ SSH 専用・OTP 必須構成）
+    > 本手順では `/etc/pam.d/sshd` の `@include common-auth` を無効化し、`pam_google_authenticator.so` を必須認証として設定します。
+
     ```bash
-    grep -q '^auth required pam_google_authenticator.so' /etc/pam.d/sshd \
-      || sudo sed -i '/^@include common-auth$/a auth required pam_google_authenticator.so nullok' /etc/pam.d/sshd
+    sudo sed -i '/pam_google_authenticator\.so/d' /etc/pam.d/sshd
     ```
 
-    `@include common-auth`の直下に追加されていることを確認します。
+    `@include common-auth`をコメントアウト
     ```bash
-    grep -n '^auth required pam_google_authenticator\.so' /etc/pam.d/sshd
-    grep -n -A1 '^@include common-auth$' /etc/pam.d/sshd
+    sudo sed -i -E 's/^[[:space:]]*@include[[:space:]]+common-auth[[:space:]]*$/# @include common-auth/' /etc/pam.d/sshd
+    ```
+
+    追記位置の前提に依存せず末尾へ追加
+    ```bash
+    echo 'auth required pam_google_authenticator.so' | sudo tee -a /etc/pam.d/sshd > /dev/null
+    ```
+
+    確認
+    ```bash
+    grep -n -E 'common-auth|pam_google_authenticator' /etc/pam.d/sshd
+    ```
+    ``` { .yaml .no-copy }
+    4:# @include common-auth
+    56:auth required pam_google_authenticator.so
     ```
 
     `02-2fa.conf`ファイルに設定します。
     ```bash
-    sudo tee /etc/ssh/sshd_config.d/02-2fa.conf > /dev/null << EOF
-    KbdInteractiveAuthentication yes
+    sudo tee /etc/ssh/sshd_config.d/02-2fa.conf > /dev/null << 'EOF'
     UsePAM yes
+    KbdInteractiveAuthentication yes
     AuthenticationMethods publickey,keyboard-interactive
+    PasswordAuthentication no
     EOF
+    ```
+    > `AuthenticationMethods publickey,keyboard-interactive` は、「公開鍵認証 かつ ワンタイムパスワード認証」の両方を要求します。
+
+    `KbdInteractiveAuthentication no` の存在を確認します。
+    ```bash
+    sudo grep -RIn --color=auto \
+      -E '^\s*KbdInteractiveAuthentication\s+no\b' \
+      /etc/ssh/sshd_config /etc/ssh/sshd_config.d 2>/dev/null
+    ```
+    ``` { .yaml .no-copy }
+    /etc/ssh/sshd_config:61:KbdInteractiveAuthentication no
+    /etc/ssh/sshd_config.d/01-custom-ssh.conf:2:KbdInteractiveAuthentication no
+    ```
+
+    `sshd_config` と `01-custom-ssh.conf` にある `KbdInteractiveAuthentication no` を「無効化」します（後続の `02-2fa.conf` の `yes` を確実に有効にするため）。
+    ```bash
+    sudo sed -i \
+      -e 's/^[[:space:]]*KbdInteractiveAuthentication[[:space:]]\+no.*$/# KbdInteractiveAuthentication no/' \
+      /etc/ssh/sshd_config \
+      /etc/ssh/sshd_config.d/01-custom-ssh.conf
     ```
 
     構文チェックし、リロードします。
@@ -469,42 +518,88 @@ sudo systemctl reload-or-restart chronyd.service
     sudo systemctl reload ssh
     ```
 
-    ### **補足：`SSH 2FA`の必須化設定**
-
-    !!! warning "重要"
-        この手順を実施すると、`Google Authenticator`未設定のユーザーは、SSHログインできなくなります。  
-        必ず以下を満たしてから実施してください。
-
-        - 対象ユーザー全員が `google-authenticator`の初期設定を完了している  
-        - 公開鍵認証（`publickey`）による SSH ログインが正常に行える  
-        - 予備の SSH セッションを開いた状態で作業している  
-
-    必須化するために`nullok`を削除します。
+    グローバル設定の実効値を確認します。
     ```bash
-    sudo sed -i \
-      's/^auth required pam_google_authenticator\.so nullok$/auth required pam_google_authenticator.so/' \
-      /etc/pam.d/sshd
+    sudo sshd -T | egrep -i 'usepam|kbdinteractiveauthentication|authenticationmethods|passwordauthentication'
+    ```
+    ``` { .yaml .no-copy }
+    usepam yes
+    passwordauthentication no
+    kbdinteractiveauthentication yes
+    authenticationmethods publickey,keyboard-interactive
     ```
 
-    設定内容の確認をします。
-    ```bash
-    grep -n '^auth required pam_google_authenticator\.so' /etc/pam.d/sshd
-    ```
-    > `5:auth required pam_google_authenticator.so`であることを確認
+    ### **最終確認（必須）**
 
-    構文をチェックします。
+    既存の SSH セッションは切断せず、**別ターミナルから新規接続**を行い、以下を必ず確認してください。
+
+    - 公開鍵認証が成功すること
+    - 続いてワンタイムパスワード（OTP）が要求されること
+    - 正しいコードでログインできること
+
+    以下の実効値が表示されていれば、設定は正しく反映されています。
+
+
+    ## **SSH 2FA（Google Authenticator）完全クリーンアップ**
+
+    SSH 側：2FA 強制を解除
+    ```bash
+    sudo mv /etc/ssh/sshd_config.d/02-2fa.conf \
+        /etc/ssh/sshd_config.d/02-2fa.conf.bak
+    ```
     ```bash
     sudo sshd -t
     ```
-
-    SSHサービスの再読み込みをします。
     ```bash
     sudo systemctl reload ssh
     ```
 
-    !!! tip "運用上のポイント"
-        - 緊急時はスクラッチコードでログイン可能
-        - `.google_authenticator`ファイルは必ずバックアップを保持
-        - 本番環境では`nullok`削除を推奨（完全な2FA強制）
+    確認します。
+    ```bash
+    sudo sshd -T | egrep -i 'authenticationmethods|kbdinteractiveauthentication'
+    ```
+    ``` { .yaml .no-copy } 
+    usepam yes
+    passwordauthentication no
+    kbdinteractiveauthentication yes
+    authenticationmethods any
+    ```
+    > `kbdinteractiveauthentication yes` が表示されていても、`authenticationmethods any` の場合、OTP は要求されません。
+
+    PAM 側：Google Authenticator を削除
+    ```bash
+    sudo sed -i '/pam_google_authenticator\.so/d' /etc/pam.d/sshd
+    ```
+    ```bash
+    sudo sed -i -E 's/^#\s*@include\s+common-auth/@include common-auth/' /etc/pam.d/sshd
+    ```
+
+    確認します。
+    ```bash
+    grep -n -E 'common-auth|pam_google_authenticator' /etc/pam.d/sshd
+    ```
+    ``` { .yaml .no-copy } 
+    4:@include common-auth
+    ``` 
+
+    反映 & 確認
+    ```bash
+    sudo sshd -t
+    ```
+    ```bash
+    sudo systemctl reload ssh
+    ```
+    > 別ターミナルから新規 SSH 接続し、OTP が要求されないことを確認
+
+    完全クリーンアップします。
+    ```bash
+    sudo apt remove libpam-google-authenticator
+    ```
+    ```bash
+    sudo apt autoremove
+    ```
+    ```bash
+    rm -f ~/.google_authenticator
+    ```
 
 ---
