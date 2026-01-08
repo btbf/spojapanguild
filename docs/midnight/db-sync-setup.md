@@ -193,6 +193,11 @@ spokit pool
 「`ノードインストール`」を選択して ++enter++
 > キーボードの`↑`と`↓`でカーソルを移動できます。
 
+```{ py title="実行コマンド" }
+spokit pool
+```
+
+ノードインストールを選択して ++enter++
 ![](../images/spokit/11.jpg)
 
 「`はい`」を選択して ++enter++
@@ -374,7 +379,10 @@ sudo make install
 ```bash
 echo "/usr/local/lib" | sudo tee /etc/ld.so.conf.d/local-lib.conf
 sudo ldconfig
-ldconfig -p | grep -i secp256k1
+```
+確認
+```bash
+ldconfig -p | grep libsecp256k1
 ```
 ```{ .yaml .no-copy py title="戻り値"} 
 libsecp256k1.so.2 (libc6,x86-64) => /usr/local/lib/libsecp256k1.so.2
@@ -548,7 +556,7 @@ git revision cb61094c82254464fc9de777225e04d154d9c782
 
     - ネットワーク：Preview
     - エポック：1165
-    - ブロック高：391050l1
+    - ブロック高：3910501
     - DLサイズ：約 3.58 GB
     
 ```bash

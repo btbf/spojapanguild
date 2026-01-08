@@ -57,9 +57,7 @@ Type=simple
 User=${USER}
 WorkingDirectory=${HOME}/midnight
 EnvironmentFile=${HOME}/midnight/.env
-
 ExecStart="${HOME}/midnight/midnight-node"
-
 KillSignal=SIGINT
 RestartKillSignal=SIGINT
 TimeoutStopSec=300
@@ -94,10 +92,10 @@ Midnightノード動作確認
 sudo systemctl status midnight-node
 ```
 ```{ .yaml .no-copy py title="戻り値　Active: active"} 
-● cardano-db-sync.service - Cardano DB Sync
-     Loaded: loaded (/etc/systemd/system/cardano-db-sync.service; enabled; vendor preset: enabled)
+● midnight-node.service - Midnight node service
+     Loaded: loaded (/etc/systemd/system/midnight-node.service; enabled; vendor preset: enabled)
      Active: active (running) since Tue 2025-12-30 07:18:14 UTC; 4h 42min ago
-   Main PID: 212117 (startDbSync.sh)
+   Main PID: 212117 (midnight-node)
       Tasks: 18 (limit: 18679)
      Memory: 3.0G
         CPU: 3h 3min 55.713s
@@ -136,7 +134,8 @@ LiveView & Block-Monitorダウンロード
 cd $HOME/midnight
 wget -O ./LiveView.sh  https://raw.githubusercontent.com/btbf/Midnight-Live-View/refs/heads/main/LiveView.sh
 wget -O ./simple_block_monitor.sh  https://raw.githubusercontent.com/btbf/Midnight-Live-View/refs/heads/main/simple_block_monitor.sh
-chmod +x LiveView.sh simple_block_monitor.sh
+wget -O ./midnight-status.sh https://raw.githubusercontent.com/btbf/Midnight-Live-View/refs/heads/main/midnight-status.sh
+chmod +x LiveView.sh simple_block_monitor.sh midnight-status.sh
 ```
 
 依存関係インストール
@@ -161,6 +160,7 @@ sudo wget https://raw.githubusercontent.com/tmuxinator/tmuxinator/master/complet
 
 tmuxパネル設定ファイルDL
 ```bash { py title="全てコピーして実行してください" }
+mkdir -p $HOME/.config/tmuxinator
 cat > $HOME/.config/tmuxinator/midnight-monitor.yml << EOF 
 ---
 name: midnight-monitor

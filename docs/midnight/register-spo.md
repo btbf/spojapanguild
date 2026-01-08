@@ -3,9 +3,7 @@
 
 ## **midnight-nodeインストール**
 
-midnight-nodeダウンロード
-
-環境変数設定
+### **環境変数設定**
 
 !!! tip "設定"
 
@@ -15,6 +13,8 @@ midnight-nodeダウンロード
         grep -q '^export MIDNIGHT_NETWORK=' "$HOME/.bashrc" || printf '\nexport MIDNIGHT_NETWORK=testnet-02\n' >> "$HOME/.bashrc"
         source "$HOME/.bashrc"
         ```
+
+### **midnight-nodeダウンロード**
 
 === "Preview(テストネット)"
 
@@ -29,7 +29,7 @@ midnight-node解凍
 gunzip -c midnight-node0.12.0.gz > midnight-node && rm midnight-node0.12.0.gz
 ```
 
-```  bash
+``` bash
 chmod +x midnight-node
 sudo cp midnight-node /usr/local/bin/midnight-node
 ```
@@ -49,13 +49,13 @@ wget -q --show-progress https://spojapanguild.net/node_config/midnight/${MIDNIGH
 wget -q --show-progress https://spojapanguild.net/node_config/midnight/${MIDNIGHT_NETWORK}/addresses.json -O ${MIDNIGHT_NETWORK}-addresses.json
 ```
 
-!!! important "ファイル転送"
+    !!! important "ファイル転送"
 
-    以下のファイルをエアギャップの`$HOME/midnight`ディレクトリにコピーします。
-    ```mermaid
-    graph LR
-        A[Preview テストネット] -->|**midnight-node**| B[エアギャップ];
-    ``` 
+        以下のファイルをエアギャップの`$HOME/midnight`ディレクトリにコピーします。
+        ```mermaid
+        graph LR
+            A[Preview テストネット] -->|**midnight-node**| B[エアギャップ];
+        ``` 
 
 === "エアギャップ"
 
@@ -128,16 +128,16 @@ cardano-cli conway address build \
     --out-file $HOME/midnight/midnight-payment.addr
 ```
 
-!!! important "ファイル転送"
+    !!! important "ファイル転送"
 
-    エアギャップで生成した以下をサーバーの`$HOME/midnight`にコピーします。
+        エアギャップで生成した以下をサーバーの`$HOME/midnight`にコピーします。
 
-    - `data`
-    - `midnight-payment.addr`
-    - `partner-chains-public-keys.json`
-    > $HOME/midnight/
+        - `data`
+        - `midnight-payment.addr`
+        - `partner-chains-public-keys.json`
+        > $HOME/midnight/
 
-=== "エアギャップ"
+=== "Preview(テストネット)"
 
 [tADA Faucet](https://docs.cardano.org/cardano-testnets/tools/faucet){target="_blank" rel="noopener"}から`tADA`を以下のエンタープライズアドレスに送金します。  
 
@@ -312,4 +312,13 @@ curl -s -L -X POST -H "Content-Type: application/json" -d "{
 }
 ```
 
----
+!!! note "isvaild:falseと表示されている場合の確認事項"
+
+    登録完了直後に`isVaild:false`と表示されている場合は以下のことを確認してください。
+
+    - カルダノステークプールの有効ステーク(Active Stake)  
+      **SPOKITの場合**：`spokit` > 「プール情報管理」> 「ブロック生成状態チェック」> 有効ステーク値  
+      **Cardanoscanの場合**:　自身のPoolIDを検索し、Active Stakeの値確認
+    
+    - ActiveStake反映タイミング (n + 2エポック)  
+      **反映待機期間**：Previewテストネット約2日、メインネット約10日後に反映します。
