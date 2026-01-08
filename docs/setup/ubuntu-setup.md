@@ -242,14 +242,14 @@ sudo dpkg-reconfigure --priority=low unattended-upgrades
 
 以下の設定を`/etc/fstab`の最終行に追記します。
 ```bash
-echo 'tmpfs /run/shm tmpfs ro,noexec,nosuid 0 0' | sudo tee -a /etc/fstab
+echo 'tmpfs /dev/shm tmpfs ro,noexec,nosuid 0 0' | sudo tee -a /etc/fstab
 ```
 
 追記の確認をします。
 ```bash
 tail -n 1 /etc/fstab
 ```
-> `tmpfs /run/shm tmpfs ro,noexec,nosuid 0 0`が最終行に入力されていることを確認します。
+> `tmpfs /dev/shm tmpfs ro,noexec,nosuid 0 0`が最終行に入力されていることを確認します。
 
 ## **8. Fail2banのインストール**
 

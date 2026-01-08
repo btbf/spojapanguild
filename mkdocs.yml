@@ -162,7 +162,7 @@ nav:
         - '・ 各種コマンド': './operation/linux-commands.md'
     - 'Midnightバリデータ':
       - '構築マニュアル概要': './midnight/index.md'
-      - 'カルダノIndexerセットアップ': './midnight/db-sync-setup.md'
+      - 'Cardanoインデクサーセットアップ': './midnight/db-sync-setup.md'
       - 'SPOバリデータ登録': './midnight/register-spo.md'
       - 'Midnightノードセットアップ': './midnight/setup-midnight-node.md'
       - 'ノードオプション一覧': './midnight/node-options.md'
