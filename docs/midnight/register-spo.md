@@ -4,10 +4,24 @@
 ## **midnight-nodeインストール**
 
 midnight-nodeダウンロード
+
+環境変数設定
+
+!!! tip "設定"
+
+    === "Preview(テストネット)"
+
+        ```bash
+        grep -q '^export MIDNIGHT_NETWORK=' "$HOME/.bashrc" || printf '\nexport MIDNIGHT_NETWORK=testnet-02\n' >> "$HOME/.bashrc"
+        source "$HOME/.bashrc"
+        ```
+
+=== "Preview(テストネット)"
+
 ``` bash
 mkdir -p $HOME/midnight
 cd $HOME/midnight
-wget -q --show-progress https://spojapanguild.net/node_config/midnight/testnet-02/midnight-node0.12.0.gz
+wget -q --show-progress https://spojapanguild.net/node_config/midnight/${MIDNIGHT_NETWORK}/midnight-node0.12.0.gz
 ```
 
 midnight-node解凍
@@ -17,31 +31,63 @@ gunzip -c midnight-node0.12.0.gz > midnight-node && rm midnight-node0.12.0.gz
 
 ```  bash
 chmod +x midnight-node
+sudo cp midnight-node /usr/local/bin/midnight-node
 ```
 
 バージョン確認
 ``` bash
-./midnight-node --version
+midnight-node --version
 ```
 > midnight-node 0.12.0
-
 
 
 設定ファイルダウンロード
 ``` bash
 cd $HOME/midnight
-wget -q --show-progress https://spojapanguild.net/node_config/midnight/testnet-02/pc-chain-config.json
-wget -q --show-progress https://spojapanguild.net/node_config/midnight/testnet-02/chain-spec.json
-wget -q --show-progress https://spojapanguild.net/node_config/midnight/testnet-02/addresses.json
+wget -q --show-progress https://spojapanguild.net/node_config/midnight/${MIDNIGHT_NETWORK}/pc-chain-config.json -O ${MIDNIGHT_NETWORK}-pc-chain-config.json
+wget -q --show-progress https://spojapanguild.net/node_config/midnight/${MIDNIGHT_NETWORK}/chain-spec.json -O ${MIDNIGHT_NETWORK}-chain-spec.json
+wget -q --show-progress https://spojapanguild.net/node_config/midnight/${MIDNIGHT_NETWORK}/addresses.json -O ${MIDNIGHT_NETWORK}-addresses.json
 ```
+
+!!! important "ファイル転送"
+
+    以下のファイルをエアギャップの`$HOME/midnight`ディレクトリにコピーします。
+    ```mermaid
+    graph LR
+        A[Preview テストネット] -->|**midnight-node**| B[エアギャップ];
+    ``` 
+
+=== "エアギャップ"
+
+    ```bash
+    grep -q '^export MIDNIGHT_NETWORK=' "$HOME/.bashrc" || printf '\nexport MIDNIGHT_NETWORK=testnet-02\n' >> "$HOME/.bashrc"
+    source "$HOME/.bashrc"
+    ```
+
+    ```bash
+    mkdir -p $HOME/midnight
+    ```
+    ```bash
+    cd $HOME/midnight
+    chmod +x midnight-node
+    sudo cp midnight-node /usr/local/bin/midnight-node
+    ```
+    ```bash
+    midnight-node --version
+    ```
+    > midnight-node 0.12.0
 
 
 ## **パートナーチェーンキー生成**
+
+=== "エアギャップ"
+
 ``` bash
-CFG_PRESET=testnet-02 ./midnight-node wizards generate-keys
+cd $HOME/midnight
+CFG_PRESET=${MIDNIGHT_NETWORK} midnight-node wizards generate-keys
 ```
 キー保存パス指定でそのまま ++enter++ 
-``` { .yaml .no-copy py title="ウィザート表示"} 
+``` bash { .yaml .no-copy py title="ウィザード表示"} 
 This 🧙 wizard will generate the following keys and save them to your node's keystore:
 →  an ECDSA Cross-chain key
 →  an ED25519 Grandpa key
@@ -52,7 +98,7 @@ It will also generate a network key for your node if needed.
 ```
 
 `$HOME/midnight`配下に`./data`が作成されます
-``` { .yaml .no-copy py title="キーファイル構成"} 
+``` bash { .yaml .no-copy py title="キーファイル構成"} 
 data/
 └── chains
     └── undeployed
@@ -71,41 +117,40 @@ mv ./data/chains/undeployed/ ./data/chains/partner_chains_template
 
 ## **バリデーター登録**
 
-### **ステークプールキーコピー**
-
-!!! hint "ステークプールキーコピー"
-    Previewテストネットにある以下のファイルを当サーバーの`$HOME/midnight`にコピーする
-
-    - `~/cold-keys/node.skey`
-    - `~/cnode/payment.skey`
-    - `~/cnode/payment.vkey`
-
-`node.skey`をリネームする
-``` bash
-cd $HOME/midnight
-mv node.skey cold.skey
-```
+=== "エアギャップ"
 
 ### **エンタープライズアドレス作成**
 ``` bash
-cd $HOME/midnight
+cd $NODE_HOME
 cardano-cli conway address build \
+    $NODE_NETWORK \
     --payment-verification-key-file payment.vkey \
-    --out-file midnight-payment.addr \
-    $NODE_NETWORK
+    --out-file $HOME/midnight/midnight-payment.addr
 ```
 
-以下のエンタープライズアドレスにtADAを送金する [tADA Faucet](https://docs.cardano.org/cardano-testnets/tools/faucet)
+!!! important "ファイル転送"
+
+    エアギャップで生成した以下をサーバーの`$HOME/midnight`にコピーします。
+
+    - `data`
+    - `midnight-payment.addr`
+    - `partner-chains-public-keys.json`
+    > $HOME/midnight/
+
+=== "エアギャップ"
+
+[tADA Faucet](https://docs.cardano.org/cardano-testnets/tools/faucet){target="_blank" rel="noopener"}から`tADA`を以下のエンタープライズアドレスに送金します。  
 
 ``` bash
+cd $HOME/midnight
 echo $(cat midnight-payment.addr)
 ```
 ![](../images/midnight-node/register1-5.jpg)
 
-入金を確認する
+入金を確認します。
 ``` bash
 cardano-cli conway query utxo \
-    --address $(cat midnight-payment.addr) \
+    --address $(cat $HOME/midnight/midnight-payment.addr) \
     $NODE_NETWORK \
     --output-text
 ```
@@ -116,104 +161,124 @@ cardano-cli conway query utxo \
 731a0f97f31aacdd10b7345065bf05a79194a72184c4a3a7d922913da4554714     0        10000000000 lovelace + TxOutDatumNone
 ```
 
-### **登録ウィザート1**
+`$HOME/cold-keys`ディレクトリのロック解除
+``` bash
+chmod u+rwx $HOME/cold-keys
+```
+
+!!! tip "ヒント"
+    3つの登録ウィザードが表示されますのでそれぞれ入力します。
+
+### **登録ウィザード1**
 ``` bash
 cd $HOME/midnight
-CFG_PRESET=testnet-02 ./midnight-node wizards register1
+CFG_PRESET=${MIDNIGHT_NETWORK} midnight-node wizards register1
 ```
-Ogmios protocolで `https` を選択後 ++enter++
+
+Ogmios protocolでは、 `https` を選択して ++enter++
 ``` {.yaml .no-copy}
   http
 > https
 ```
 ![](../images/midnight-node/register1-1.jpg)
 
-
-Ogmios hostnameに以下のエンドポイントを入力後 ++enter++
-```
-ogmios.testnet-02.midnight.network
+Ogmios hostnameでは、以下のエンドポイントを入力して ++enter++
+```bash
+ogmios.${MIDNIGHT_NETWORK}.midnight.network
 ```
 ![](../images/midnight-node/register1-2.jpg)
 
-Ogmios port に `443` を入力後 ++enter++
-```
+Ogmios portでは、 `443` を入力して ++enter++
+```bash
 443
 ```
 ![](../images/midnight-node/register1-3.jpg)
 
-`payment.vkey` 指定でそのまま ++enter++ 
+`payment.vkey`のPATHを入力して ++enter++ 
+```bash
+$NODE_HOME/payment.vkey
+```
 ![](../images/midnight-node/register1-4.jpg)
 
-
-UTxO選択でそのまま ++enter++ 
+UTxOの選択ではそのまま ++enter++ 
 ![](../images/midnight-node/register1-6.jpg)
 
-戻り値(register2コマンド)をすべて ++copy++ 
+戻り値(register2コマンド)をすべて ++copy++ します。
 ![](../images/midnight-node/register1-7.jpg)
-
 
 
 ### **登録ウィザード2**
 
-そのまま 貼り付け して ++enter++
+コピーしたコマンドを貼り付けて ++enter++
 ![](../images/midnight-node/register1-8.jpg)
 
-`cold.skey` 指定でそのまま ++enter++ 
+`node.skey`のPATHを入力して ++enter++ 
+```bash
+$HOME/cold-keys/node.skey
+```
 ![](../images/midnight-node/register2-1.jpg)
 
-戻り値(register3コマンド)をすべて ++copy++ 
+戻り値(register3コマンド)をすべて ++copy++ します。
 ![](../images/midnight-node/register2-2.jpg)
 
 
-### **登録ウィザート3**
+### **登録ウィザード3**
 
-そのまま 貼り付け して ++enter++
+コピーしたコマンドを貼り付けて ++enter++
 ![](../images/midnight-node/register2-3.jpg)
 
-`payment.skey` 指定でそのまま ++enter++ 
+`payment.skey`のPATHを入力して ++enter++ 
+```bash
+$NODE_HOME/payment.skey
+```
 ![](../images/midnight-node/register3-1.jpg)
 
-Ogmios protocolで `https` を選択後 ++enter++
+Ogmios protocolでは `https` を選択して ++enter++
 ``` {.yaml .no-copy}
   http
 > https
 ```
 ![](../images/midnight-node/register1-1.jpg)
 
-
-Ogmios hostnameに以下のエンドポイントを入力後 ++enter++
-```
-ogmios.testnet-02.midnight.network
+Ogmios hostnameでは以下のエンドポイントを入力して ++enter++
+```bash
+ogmios.${MIDNIGHT_NETWORK}.midnight.network
 ```
 ![](../images/midnight-node/register1-2.jpg)
 
-Ogmios port に `443` を入力後 ++enter++
-```
+Ogmios portでは `443` を入力して ++enter++
+```bash
 443
 ```
 ![](../images/midnight-node/register1-3.jpg)
 
-`Show registration status?(Y/n)`が表示されたら `n` を入力して ++enter++ 
+`Show registration status?(Y/n)`が表示されたら `n` を入力後 ++enter++ 
 ![](../images/midnight-node/register3-2.jpg)
 
+`$HOME/cold-keys`ディレクトリのロック
+``` bash
+chmod a-rwx $HOME/cold-keys
+```
 
 
 ## **オンチェーン登録確認**
 
+=== "Preview(テストネット)"
+
 エポック確認
-``` bash { py title="ボックス内のコピーボタンでコピーして実行してください" }
+``` bash { py title="全てコピーして実行してください" }
 NEXT_EPOCH=$(curl -s -L -X POST -H "Content-Type: application/json" -d '{
   "jsonrpc": "2.0",
   "method": "sidechain_getStatus",
   "params": [],
   "id": 1
-}' https://rpc.testnet-02.midnight.network \
+}' https://rpc.${MIDNIGHT_NETWORK}.midnight.network \
 | jq '.result.mainchain.epoch + 2')
 echo $NEXT_EPOCH
 ```
 
 登録確認
-``` bash { py title="ボックス内のコピーボタンでコピーして実行してください" }
+``` bash { py title="全てコピーして実行してください" }
 SIDECHAIN_KEY=$(jq -r '.sidechain_pub_key' ${HOME}/midnight/partner-chains-public-keys.json)
 
 curl -s -L -X POST -H "Content-Type: application/json" -d "{
@@ -221,7 +286,7 @@ curl -s -L -X POST -H "Content-Type: application/json" -d "{
   \"method\": \"sidechain_getAriadneParameters\",
   \"params\": [$NEXT_EPOCH],
   \"id\": 1
-}" https://rpc.testnet-02.midnight.network \
+}" https://rpc.${MIDNIGHT_NETWORK}.midnight.network \
 | jq --arg key "$SIDECHAIN_KEY" '
   .result.candidateRegistrations
   | to_entries[]
@@ -247,3 +312,4 @@ curl -s -L -X POST -H "Content-Type: application/json" -d "{
 }
 ```
 
+---
