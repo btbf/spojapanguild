@@ -193,10 +193,6 @@ spokit pool
 「`ノードインストール`」を選択して ++enter++
 > キーボードの`↑`と`↓`でカーソルを移動できます。
 
-```{ py title="実行コマンド" }
-spokit pool
-```
-
 ノードインストールを選択して ++enter++
 ![](../images/spokit/11.jpg)
 

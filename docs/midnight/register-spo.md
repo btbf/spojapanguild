@@ -49,13 +49,13 @@ wget -q --show-progress https://spojapanguild.net/node_config/midnight/${MIDNIGH
 wget -q --show-progress https://spojapanguild.net/node_config/midnight/${MIDNIGHT_NETWORK}/addresses.json -O ${MIDNIGHT_NETWORK}-addresses.json
 ```
 
-    !!! important "ファイル転送"
+!!! important "ファイル転送"
 
-        以下のファイルをエアギャップの`$HOME/midnight`ディレクトリにコピーします。
-        ```mermaid
-        graph LR
-            A[Preview テストネット] -->|**midnight-node**| B[エアギャップ];
-        ``` 
+    以下のファイルをエアギャップの`$HOME/midnight`ディレクトリにコピーします。
+    ```mermaid
+    graph LR
+        A[Preview テストネット] -->|**midnight-node**| B[エアギャップ];
+    ``` 
 
 === "エアギャップ"
 
@@ -128,14 +128,18 @@ cardano-cli conway address build \
     --out-file $HOME/midnight/midnight-payment.addr
 ```
 
-    !!! important "ファイル転送"
+!!! important "ファイル転送"
 
-        エアギャップで生成した以下をサーバーの`$HOME/midnight`にコピーします。
+    エアギャップから以下をサーバーの`$HOME/midnight`にコピーします。
 
-        - `data`
-        - `midnight-payment.addr`
-        - `partner-chains-public-keys.json`
-        > $HOME/midnight/
+    - `data`
+    - `midnight-payment.addr`
+    - `partner-chains-public-keys.json`
+    > $HOME/midnight/
+    
+    - `payment.skey`
+    > $NODE_HOME
+
 
 === "Preview(テストネット)"
 
