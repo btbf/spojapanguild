@@ -64,6 +64,7 @@ gtool
 **エアギャップマシンに環境変数を追加する**
 ```
 echo alias airgap="'cd $HOME/cnode && [ -f airgap-set.tar.gz ] && tar -xOzf airgap-set.tar.gz airgap_script | bash -s verify || echo "airgap-set.tar.gz が見つかりません"'" >> $HOME/.bashrc
+source $HOME/.bashrc
 ```
 
 !!! bug "既知の不具合"

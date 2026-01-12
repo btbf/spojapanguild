@@ -1,7 +1,6 @@
-# **Cardanoインデクサーのセットアップ**
+# **Cardanoインデクサ用サーバー構築**
 
-本ドキュメントは、`cardano-db-sync` と `PostgreSQL` を Linux 環境で構築するための手順です。  
-Midnight バリデーター用途で preview テストネットで構成しております。
+本ドキュメントは、Cardanoインデクサ用サーバー（`cardano-db-sync` と `PostgreSQL`） を構築するための手順です。  
 
 ### **事前準備**
 
@@ -105,7 +104,7 @@ Midnight バリデーター用途で preview テストネットで構成して�
 ### **1-1. 初期設定**
 
 !!! tip "パスワード入力について"
-    管理者権限パスワードを求められた場合は、設定したパスワードを入力してください。
+    管理者権限パスワードを求められた場合は、ユーザー作成時に設定したパスワードを入力してください。
 
 `SPOKIT`を導入して初期設定からノードインストールまでを行います。
 ```bash
@@ -261,45 +260,91 @@ sudo apt -y install postgresql-17 postgresql-server-dev-17 postgresql-contrib li
 依存関係インストール
 
 ```bash
-sudo apt install git jq bc automake tmux nano rsync htop curl build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ wget libncursesw5 libtool autoconf liblmdb-dev -y
+sudo apt install git jq bc automake tmux nano rsync htop curl build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ wget libncursesw5 libtool autoconf liblmdb-dev openssl prometheus-node-exporter -y
 ```
 
 ### **2-2. PostgreSQL 初期設定**
 
-PostgreSQL用の自身のsuを作成
+接続用`.pgpass`作成
 ```bash
-sudo -u postgres psql -c "CREATE ROLE \"$(whoami)\" LOGIN SUPERUSER;"
+if [ ! -f "$HOME/.pgpass" ]; then
+DBSYNC_USER="$(whoami)"
+DBSYNC_PASS="$(uuidgen | tr -d '-' | head -c 16)"
+DBSYNC_HOST="$(curl -s https://api.ipify.org)"
+cat <<EOF > $HOME/.pgpass
+/var/run/postgresql:5432:cexplorer:*:*
+${DBSYNC_HOST}$:5432:cexplorer:${DBSYNC_USER}:${DBSYNC_PASS}
+EOF
 ```
+
+パーミッション変更
+```
+chmod 600 $HOME/.pgpass
+```
+
+!!! tip ".pgpassファイルについて"
+    このファイルはpostgreSQLに接続するためのユーザーIDとランダムパスワードが記載されたファイルのため、バックアップを推奨します。 
+
+PostgreSQL用のアカウントを作成
+```bash
+sudo -u postgres psql -c "CREATE ROLE \"$(whoami)\" LOGIN SUPERUSER PASSWORD '${DBSYNC_PASS}';"
+```
+> 戻り値：CREATE ROLE
 
 db-sync用テーブル作成
 ```bash
 psql postgres -c "CREATE DATABASE cexplorer;"
+``` 
+> 戻り値：CREATE DATABASE
+
+
+SSL作成
+!!! tip "SSL/TSL通信必須"
+    メインネットではPostgreSQLを外部サーバーで稼働させる場合、SSL/TSL通信に対応している必要があります。
+
+サーバー証明書作成
+```
+cd $HOME
+openssl req -new -x509 -days 3650 -nodes -keyout server.key -out server.crt -subj "/CN=postgresql"
 ```
 
-.pgpass作成
-```bash
-cat <<EOF > $NODE_HOME/.pgpass
-/var/run/postgresql:5432:cexplorer:*:*
-EOF
-chmod 600 $NODE_HOME/.pgpass
+権限・パス再配置
 ```
+sudo mkdir -p /etc/postgresql/ssl
+```
+```
+sudo mv server.key server.crt /etc/postgresql/ssl/
+```
+```
+sudo chown postgres:postgres /etc/postgresql/ssl/server.key /etc/postgresql/ssl/server.crt
+```
+```
+sudo chmod 600 /etc/postgresql/ssl/server.key
+```
+```
+sudo chmod 644 /etc/postgresql/ssl/server.crt
+```
+
+
 
 postgresqlパフォーマンス設定
 
 !!! tip "設定概要"
     - cardano-db-sync / Midnight-node 専用チューニング
-    - TCPオーバヘッド回避およびスループット向上の為、UNIXソケット待ち受け起動限定
 
 ```bash
 sudo sed -i /etc/postgresql/17/main/postgresql.conf \
+    -e "s|ssl_cert_file = '.*'|ssl_cert_file = '/etc/postgresql/ssl/server.crt'|" \
+    -e "s|ssl_key_file = '.*'|ssl_key_file  = '/etc/postgresql/ssl/server.key'|" \
+    -e "s/^#\?listen_addresses *= *.*/listen_addresses = '*'/" \
+    -e "s/^#\?listen_addresses *= *.*/listen_addresses = '*'/"
     -e 's!#synchronous_commit = on!synchronous_commit = off!' \
     -e 's!shared_buffers = 128MB!shared_buffers = 2GB!' \
     -e 's!#effective_cache_size = 4GB!effective_cache_size = 8GB!' \
     -e 's!#work_mem = 4MB!work_mem = 16MB!' \
     -e 's!#maintenance_work_mem = 64MB!maintenance_work_mem = 512MB!' \
     -e 's!max_wal_size = 1GB!max_wal_size = 4GB!' \
-    -e 's!min_wal_size = 80MB!min_wal_size = 1GB!' \
-    -e "s/^#listen_addresses = 'localhost'/listen_addresses = ''/"
+    -e 's!min_wal_size = 80MB!min_wal_size = 1GB!'
 ```
 
 postgresql再起動
@@ -493,7 +538,7 @@ grep -q '^with-compiler:' cabal.project.local 2>/dev/null \
 ビルド
 ```bash
 cabal update
-cabal build all -v0 2>&1 | tee build-all.log
+cabal build all -v1 2>&1 | tee build-all.log
 if [ ${PIPESTATUS[0]} -ne 0 ]; then
   echo "cabal build all failed. See build-all.log for details."
   exit 1
@@ -560,13 +605,15 @@ cd $NODE_HOME
 curl -LO https://spojapanguild.net/db-sync/preview/db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz
 ```
 
+チェックサムファイルダウンロード
+```bash
+curl -LO https://spojapanguild.net/db-sync/preview/db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz.sha256sum
+```
+
+
 ファイル検証
 ```bash
-cd $NODE_HOME
-sha256sum db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz \
-  > db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz.sha256
-
-sha256sum -c db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz.sha256
+sha256sum -c db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz.sha256sum
 ```
 > db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz: OK
 
@@ -703,7 +750,7 @@ db-syncが同期するまでお待ち下さい
 ---------------------
  99.9999
 ```
-> `100`となれば完全同期しています。
+> 計算上`100`にならないので`99.9999`で完全同期しています。
 
 スナップショット削除
 ```bash
