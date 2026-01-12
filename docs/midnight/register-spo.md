@@ -1,9 +1,195 @@
 
-# **SPO Midnightバリデーター登録**
+# **Midnight-node用サーバ構築**
 
-## **midnight-nodeインストール**
+本ドキュメントは、Midnightバリデーターサーバで行うMidnight-node用サーバ構築とSPOバリデータ登録の手順です。  
 
-### **環境変数設定**
+## **事前準備**
+
+??? tip "ローカル環境での事前準備"
+
+    SSH接続でログインする場合は、事前にローカル環境でSSH認証キーを作成してください。
+
+    === "Windowsの場合"
+        **1. 管理者モードでターミナルを起動します。**  
+
+        `Win + X` を押下し、ターミナル（管理者）を選択し、SSHクライアントの有無を確認します。  
+        ```powershell
+        Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Client*'
+        ```
+        > `State : Installed`であれば問題ありません。
+
+        ??? tip "`State : NotPresent`の場合"
+
+            以下のコマンドで追加してください。
+            ```powershell
+            Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+            ```
+        
+        **2. SSH鍵生成**  
+        ```powershell
+        mkdir ~/.ssh -Force
+        ssh-keygen -t ed25519 -N "" -C "ssh_connect" -f ~/.ssh/ssh_ed25519
+        ```
+        
+        **3. 公開鍵ファイル名の変更**
+        ```powershell
+        cd ~/.ssh
+        mv ssh_ed25519.pub authorized_keys
+        ```
+
+
+    === "Macの場合"
+        **1. ターミナルを起動します。**  
+
+        `⌘ + Space（Command + Space）`を押下し、「`terminal`」と入力し、Enterを押下します。
+
+        **2. SSH鍵生成**
+        ```bash
+        mkdir -p ~/.ssh
+        ssh-keygen -t ed25519 -N "" -C "ssh_connect" -f ~/.ssh/ssh_ed25519
+        ```
+
+        **3. 公開鍵ファイル名の変更**
+        ```bash
+        cd ~/.ssh
+        mv ssh_ed25519.pub authorized_keys
+        ```
+
+    !!! danger "注意"
+        以下の鍵は絶対に紛失しないでください。  
+        紛失するとサーバーへ接続できなくなります。  
+
+        `ssh_ed25519` （秘密鍵）  
+        `authorized_keys` （公開鍵）
+
+!!! info "サーバーでの事前準備"
+    日常運用では`root`アカウントを使用せず、sudo権限を付与した一般ユーザーで操作します。
+
+    新しいユーザーを作成します。  
+    > 任意のアルファベット文字を入力してください。  
+    > この例では`cardano` ユーザーとして以降進めます。
+
+    ```bash
+    adduser cardano
+    ```
+
+    ``` { .yaml .no-copy }
+    New password:           # パスワードを設定
+    Retype new password:    # 確認のため再入力
+
+    Enter the new value, or press ENTER for the default
+            Full Name []:   # フルネーム等の情報を設定（不要であればブランクでも問題ありません）
+            Room Number []:
+            Work Phone []:
+            Home Phone []:
+            Other []:
+    Is the information correct? [Y/n] : y
+    ```
+
+    `cardano`にsudo権限を付与します。
+    ```bash
+    usermod -aG sudo cardano
+    ```
+
+    rootからログアウトします。
+    ```bash
+    exit
+    ```
+
+    !!! tip "ヒント"
+        ターミナルソフトのユーザー名とパスワードを上記で作成したユーザー名とパスワードに書き換えて再接続します。
+
+## **1. SPOKIT導入設定**
+
+### **1-1. 初期設定**
+
+!!! tip "パスワード入力について"
+    管理者権限パスワードを求められた場合は、ユーザー作成時に設定したパスワードを入力してください。
+
+`SPOKIT`を導入しUbuntuセキュリティ設定のみを行います。
+```bash
+wget -qO- https://spokit.spojapanguild.net/install.sh | bash
+```
+
+
+セットアップノードタイプ（リレー）を選択して ++enter++
+![](../images/spokit/2.jpg)
+
+接続ネットワーク (Preview-Testnet) を選択して ++enter++
+![](../images/spokit/3-preview.jpg)
+
+作業ディレクトリパス指定　そのまま ++enter++
+![](../images/spokit/4.jpg)
+
+セットアップ内容に問題なければ ++enter++
+![](../images/spokit/5.jpg)
+
+環境設定読み込み  
+赤枠に表示されているコマンドをコピーして実行  
+![](../images/spokit/6.jpg)
+
+
+### **1-2. Ubuntuセキュリティ設定**
+
+!!! Question "Ubuntuセキュリティ設定モードについて"
+    このモードでは、Cardanoノード実行に推奨されるUbuntuセキュリティ設定が含まれています。  
+    ４～９については選択制となっておりますので、環境に応じて設定してください。
+
+``` bash { py title="実行コマンド" }
+spokit ubuntu
+```
+
+Ubuntuセキュリティ設定ウィザート  
+１～４は自動インストール・有効化されます。
+
+
+はい を選択して ++enter++  
+![](../images/spokit/7.jpg)
+
+chronyインストール・設定
+> システム時刻を正確かつ安定して同期するための時刻同期デーモンです。
+
+はい を選択して ++enter++  
+![](../images/spokit/8.jpg)
+
+SSH設定  
+> リモートサーバを安全に操作・管理するための通信プロトコル
+
+SSH鍵認証用のauthorized_keysファイルをローカルからサーバーに転送する写真を追加し、差し替え予定
+
+はい を選択して ++enter++  
+![](../images/spokit/9-1.jpg)
+
+> rootログイン可否設定
+
+![](../images/spokit/9-2.jpg)
+
+SSHポート設定
+> セキュリティを高めるためにはポート番号を変更してください
+
+![](../images/spokit/9-3.jpg)
+
+> ランダムな番号を割り当てるかカスタムで任意の番号を指定してください
+
+![](../images/spokit/9-4.jpg)
+
+> Ubuntu内部ファイアウォールを使用する場合は、はい を選択して ++enter++ 
+
+![](../images/spokit/10.jpg)
+
+> <font color="red">↓ここの注意事項をよく読んでください</font>
+
+![](../images/spokit/10-1.jpg)
+
+
+不要なディレクトリを削除する
+```
+rm -rf $HOME/cnode
+```
+
+## **2. midnight-nodeインストール**
+
+### **2-1. 環境変数設定**
 
 !!! tip "設定"
 
@@ -14,7 +200,7 @@
         source "$HOME/.bashrc"
         ```
 
-### **midnight-nodeダウンロード**
+### **2-2. midnight-nodeダウンロード**
 
 === "Preview(テストネット)"
 
@@ -78,7 +264,7 @@ wget -q --show-progress https://spojapanguild.net/node_config/midnight/${MIDNIGH
     > midnight-node 0.12.0
 
 
-## **パートナーチェーンキー生成**
+## **3.パートナーチェーンキー生成**
 
 === "エアギャップ"
 
@@ -115,11 +301,11 @@ data/
 mv ./data/chains/undeployed/ ./data/chains/partner_chains_template
 ```
 
-## **バリデーター登録**
+## **4. バリデーター登録**
 
 === "エアギャップ"
 
-### **エンタープライズアドレス作成**
+### **4-1. エンタープライズアドレス作成**
 ``` bash
 cd $NODE_HOME
 cardano-cli conway address build \
@@ -173,7 +359,7 @@ chmod u+rwx $HOME/cold-keys
 !!! tip "ヒント"
     3つの登録ウィザードが表示されますのでそれぞれ入力します。
 
-### **登録ウィザード1**
+### **4-2. 登録ウィザード1**
 ``` bash
 cd $HOME/midnight
 CFG_PRESET=${MIDNIGHT_NETWORK} midnight-node wizards register1
@@ -211,7 +397,7 @@ UTxOの選択ではそのまま ++enter++
 ![](../images/midnight-node/register1-7.jpg)
 
 
-### **登録ウィザード2**
+### **4-3. 登録ウィザード2**
 
 コピーしたコマンドを貼り付けて ++enter++
 ![](../images/midnight-node/register1-8.jpg)
@@ -226,7 +412,7 @@ $HOME/cold-keys/node.skey
 ![](../images/midnight-node/register2-2.jpg)
 
 
-### **登録ウィザード3**
+### **4-4. 登録ウィザード3**
 
 コピーしたコマンドを貼り付けて ++enter++
 ![](../images/midnight-node/register2-3.jpg)
@@ -265,7 +451,7 @@ chmod a-rwx $HOME/cold-keys
 ```
 
 
-## **オンチェーン登録確認**
+## **5. オンチェーン登録確認**
 
 === "Preview(テストネット)"
 
