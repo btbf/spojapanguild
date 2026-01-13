@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="4.1.0"
+TOOL_VERSION="4.1.1"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -1706,9 +1706,23 @@ filecheck(){
 transrate_jp(){
       local translate="MDgxNGQ0YzItZjg3Yi0wY2Q4LTk0ZWUtYzQxMTBlM2Y4ZTVkOmZ4"
       local dapk=$(echo $translate | base64 -d)
-      local question_str_jp_response=$(curl -sX POST "https://api-free.deepl.com/v2/translate" -H "Authorization: DeepL-Auth-Key $dapk" -d "text=$1" -d "target_lang=JA")
-      question_str_jp_text=$(echo $question_str_jp_response | jq -r ".translations[0].text")
-      echo $question_str_jp_text
+      local question_str_jp_response=""
+      local question_str_jp_text=""
+      local response_file=""
+      response_file=$(mktemp)
+      curl -sS --connect-timeout 3 --max-time 3 -X POST "https://api-free.deepl.com/v2/translate" \
+        -H "Authorization: DeepL-Auth-Key $dapk" \
+        --data-urlencode "text=$1" \
+        -d "target_lang=JA" \
+        -o "$response_file"
+      question_str_jp_response=$(cat "$response_file" 2>/dev/null)
+      rm -f "$response_file"
+      question_str_jp_text=$(echo "$question_str_jp_response" | jq -r ".translations[0].text // empty")
+      if [ -n "$question_str_jp_text" ]; then
+        echo "$question_str_jp_text"
+      else
+        echo "$1"
+      fi
   }
 
 download_anchor(){
@@ -1722,16 +1736,14 @@ download_anchor(){
   if [[ "$src_url" == ipfs* ]]; then
     cid="${src_url#ipfs://}"
     urls+=("https://ipfs.io/ipfs/${cid}")
-    urls+=("https://dweb.link/ipfs/${cid}")
-    urls+=("https://w3s.link/ipfs/${cid}")
+    urls+=("https://ipfs.filebase.io/ipfs/${cid}")
     urls+=("https://gateway.pinata.cloud/ipfs/${cid}")
-    urls+=("https://nftstorage.link/ipfs/${cid}")
   else
     urls+=("$src_url")
   fi
 
   for url in "${urls[@]}"; do
-    wget -q "$url" -O "$out_file"
+    curl -sS --connect-timeout 3 --max-time 3 -o "$out_file" "$url" || true
     if [ -s "$out_file" ]; then
       echo "$url"
       return 0
@@ -2100,11 +2112,15 @@ choose_proposal(){
         local anchor_title_jp="(タイトル取得失敗)"
         IFS='|' read -r tx_id action_ix proposal_tag expires_after proposed_in anchor_url <<< "${proposal_list[$i]}"
         tmp_anchor="${governance_dir}/anchor_${tx_id}_${action_ix}.json"
+        local anchor_fail_marker="${governance_dir}/anchor_fail_${tx_id}_${action_ix}"
         if download_anchor "$anchor_url" "$tmp_anchor" >/dev/null; then
           anchor_title=$(cat "$tmp_anchor" | jq .body.title | tr -d '"')
           if [ -n "$anchor_title" ]; then
             anchor_title_jp=$(transrate_jp "$anchor_title")
           fi
+          rm -f "$anchor_fail_marker"
+        else
+          touch "$anchor_fail_marker"
         fi
         rm -f "$tmp_anchor"
         printf "[%s] %s\n" "$((i+1))" "$anchor_title_jp"
@@ -2171,13 +2187,20 @@ choose_proposal(){
 
         #anchorダウンロード
         anchor_file="${governance_dir}/${governance_id_tx}.json"
-        if download_anchor "$anchor_url" "$anchor_file" >/dev/null; then
-          #データ整合性
-          download_anchorhash=$(b2sum -l 256 "$anchor_file" | awk '{ print $1 }')
-        else
+        local anchor_fail_marker="${governance_dir}/anchor_fail_${governance_id_tx}_${governance_action_index}"
+        if [ -f "$anchor_fail_marker" ]; then
           download_anchorhash=""
-          printf "\n${FG_RED}アンカーURLの取得に失敗しました${NC}\n"
-          printf "${FG_YELLOW}URL: %s${NC}\n" "$anchor_url"
+        else
+          if download_anchor "$anchor_url" "$anchor_file" >/dev/null; then
+            #データ整合性
+            download_anchorhash=$(b2sum -l 256 "$anchor_file" | awk '{ print $1 }')
+            rm -f "$anchor_fail_marker"
+          else
+            download_anchorhash=""
+            touch "$anchor_fail_marker"
+            printf "\n${FG_RED}アンカーURLの取得に失敗しました${NC}\n"
+            printf "${FG_YELLOW}URL: %s${NC}\n" "$anchor_url"
+          fi
         fi
 
         if [[ "$expiresAfter" -ge "$current_epoch" ]]; then
@@ -2286,8 +2309,8 @@ proposal_vote(){
     echo "投票理由を追加しますか？"
     echo
     echo "[1] 追加する　[2] 追加しない"
-    yes_no
-    if [ "$?" -eq 0 ]; then
+    read -n 1 -p "番号を入力してください : > " add_reason
+    if [ "$add_reason" -eq 1 ]; then
       echo
       echo "投票理由の作成方法を選択してください"
       echo
@@ -2428,6 +2451,8 @@ EOF
       fi
     fi
   fi
+  echo
+  echo
   echo "この回答で投票ファイルを作成しますか？"
   echo
   echo "[1] 作成する　[2] キャンセル"
