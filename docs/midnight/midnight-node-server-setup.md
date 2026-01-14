@@ -5,6 +5,8 @@
 
 ## **事前準備**
 
+本マニュアルでは**エアギャップマシン**と**Midnightサーバー**を使用して手順を進めていきます。
+
 === "Midnightサーバー"
 
 !!! info "サーバーでの事前準備"
@@ -51,7 +53,7 @@
 !!! tip "パスワード入力について"
     管理者権限パスワードを求められた場合は、ユーザー作成時に設定したパスワードを入力してください。
 
-1. `SPOKIT`を導入して初期設定からノードインストールまで行います。
+1. `SPOKIT`を導入して{==**Ubuntuセキュリティ設定**==}のみ行います。
 ```bash
 wget -qO- https://spokit.spojapanguild.net/install.sh | bash
 ```
@@ -159,18 +161,20 @@ cardano-cli conway address key-gen \
   --verification-key-file midnight-payment.vkey \
   --signing-key-file midnight-payment.skey
 ```
+!!! danger "midnight-paymentペアキーについて"
+    セキュリティを考慮して、ここで生成したmidnight-paymentペアキーはカルダノステークプールに紐づくpaymentペアキーとは別のものになります。別途バックアップを推奨します。
 
 ### **3-2. パートナーチェーン用鍵の生成**
 
 !!! important "ファイル転送"
 
-    Midnightサーバーで取得した以下をエアギャップの`$HOME/midnight`ディレクトリへコピーします。
+    Midnightサーバーで取得した以下のファイル郡をエアギャップの`$HOME/midnight`ディレクトリへコピーします。
 
     - `addresses.json`
     - `chain-spec.json`
     - `midnight-node`
     - `pc-chain-config.json`
-    > $HOME/midnight/
+
 
 
 === "エアギャップ"
@@ -189,7 +193,7 @@ cardano-cli conway address key-gen \
 CFG_PRESET=${MIDNIGHT_NETWORK} ./midnight-node wizards generate-keys
 ```
 鍵は現在の`$HOME/midnight`ディレクトリに保存するのでそのまま ++enter++ 
-``` bash { .yaml .no-copy py title="ウィザード表示"} 
+``` bash { .yaml .no-copy py title="ウィザード表示参考"} 
 This 🧙 wizard will generate the following keys and save them to your node's keystore:
 →  an ECDSA Cross-chain key
 →  an ED25519 Grandpa key
@@ -240,8 +244,7 @@ cardano-cli conway address build \
     - `midnight-payment.vkey`
     - `partner-chains-public-keys.json`
     - `pc-resources-config.json`
-    > $HOME/midnight/
-
+    
 === "Midnightサーバー"
 
 [tADA Faucet](https://docs.cardano.org/cardano-testnets/tools/faucet){target="_blank" rel="noopener"}から`tADA`を以下のエンタープライズアドレスに送金します。  

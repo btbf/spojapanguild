@@ -100,6 +100,7 @@
 
 
 ## **1. SPOKIT導入設定**
+当ツールはUbuntuセキュリティ設定からcardano-nodeインストールなど、{==**ノーコマンドで Cardano ステークプールの構築・管理を行える Cardano SPO Tool Kit です**==}
 
 ### **1-1. 初期設定**
 
