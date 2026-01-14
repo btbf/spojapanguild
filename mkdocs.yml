@@ -160,12 +160,12 @@ nav:
         - '・ Glacier Drop請求手続き': './operation/midnight-glacier-drop.md'
       - 'Linuxコマンド集':
         - '・ 各種コマンド': './operation/linux-commands.md'
-    - 'Midnightバリデータ':
-      - '構築マニュアル概要': './midnight/index.md'
-      - 'Cardanoインデクサ用サーバ構築': './midnight/db-sync-setup.md'
-      - 'Midnightノード用サーバ構築': './midnight/register-spo.md'
-      - 'Midnightノード起動': './midnight/setup-midnight-node.md'
-      - 'ノードオプション一覧': './midnight/node-options.md'
+    - 'Midnightバリデーター':
+      - 'はじめに': './midnight/index.md'
+      - 'Cardanoインデクサーサーバー構築': './midnight/cardano-indexer-setup.md'
+      - 'Midnightノード稼働サーバー構築': './midnight/midnight-node-server-setup.md'
+      - 'Midnightノード起動': './midnight/start-midnight-node.md'
+      - 'Midnightノードオプション一覧': './midnight/midnight-node-options.md'
     - 'SJGラーニング': './learning.md'
     - 'よくある質問':
       - '運用編':

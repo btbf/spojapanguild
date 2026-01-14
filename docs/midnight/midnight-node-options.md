@@ -1,4 +1,4 @@
-# **Midnight-node 起動パラメター一覧**
+# **Midnight-node パラメーター一覧**
 
 === "English"
 
