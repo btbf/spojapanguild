@@ -1,6 +1,6 @@
-# **Cardanoインデクサ用サーバー構築**
+# **Cardanoインデクサーサーバー構築**
 
-本ドキュメントは、Cardanoインデクサ用サーバー（`cardano-db-sync` と `PostgreSQL`） を構築するための手順です。  
+本ドキュメントは、Cardanoインデクサーサーバー（`cardano-node` 、 `cardano-db-sync` 、 `PostgreSQL`） を構築するための手順です。  
 
 ### **事前準備**
 
@@ -96,7 +96,7 @@
     ```
 
     !!! tip "ヒント"
-        ターミナルソフトのユーザー名とパスワードを上記で作成したユーザー名とパスワードに書き換えて再接続します。
+        ターミナルソフトの接続ユーザーを、上記で作成した**ユーザー名（`cardano`）およびパスワード**に変更して再接続してください。
 
 
 ## **1. SPOKIT導入設定**
@@ -106,117 +106,59 @@
 !!! tip "パスワード入力について"
     管理者権限パスワードを求められた場合は、ユーザー作成時に設定したパスワードを入力してください。
 
-`SPOKIT`を導入して初期設定からノードインストールまでを行います。
+1. `SPOKIT`を導入して初期設定からノードインストールまで行います。
 ```bash
 wget -qO- https://spokit.spojapanguild.net/install.sh | bash
 ```
+> キーボードの`↑`と`↓`、`←`と`→`でカーソルを移動できます。
 
+2. セットアップノードタイプでは「**`リレー`**」を選択して ++enter++
+![](../images/spokit/1_Preview-SPOKIT-Initial-Settings.png)
 
-セットアップノードタイプ（リレー）を選択して ++enter++
-![](../images/spokit/2.jpg)
+3. 接続ネットワークでは「**`Preview-Testnet`**」を選択して ++enter++
+![](../images/spokit/2_Preview-SPOKIT-Initial-Settings.png)
 
-接続ネットワーク (Preview-Testnet) を選択して ++enter++
-![](../images/spokit/3-preview.jpg)
+4. 作業ディレクトリPATHは、デフォルトを指定するのでそのまま ++enter++
 
-作業ディレクトリパス指定　そのまま ++enter++
-![](../images/spokit/4.jpg)
+5. 「**`はい`**」を選択し、 ++enter++
 
-セットアップ内容に問題なければ ++enter++
-![](../images/spokit/5.jpg)
-
-環境設定読み込み  
-赤枠に表示されているコマンドをコピーして実行  
-![](../images/spokit/6.jpg)
-
+6. 「**`source`**」コマンドを必ず実行してください。  
+![](../images/spokit/3_Preview-SPOKIT-Initial-Settings.png)
 
 ### **1-2. Ubuntuセキュリティ設定**
 
 !!! Question "Ubuntuセキュリティ設定モードについて"
     このモードでは、Cardanoノード実行に推奨されるUbuntuセキュリティ設定が含まれています。  
-    ４～９については選択制となっておりますので、環境に応じて設定してください。
 
+1. 以下のコマンドを実行します。
 ``` bash { py title="実行コマンド" }
 spokit ubuntu
-```
-
-Ubuntuセキュリティ設定ウィザート  
-１～４は自動インストール・有効化されます。
-
-
-はい を選択して ++enter++  
-![](../images/spokit/7.jpg)
-
-chronyインストール・設定
-> システム時刻を正確かつ安定して同期するための時刻同期デーモンです。
-
-はい を選択して ++enter++  
-![](../images/spokit/8.jpg)
-
-SSH設定  
-> リモートサーバを安全に操作・管理するための通信プロトコル
-
-SSH鍵認証用のauthorized_keysファイルをローカルからサーバーに転送する写真を追加し、差し替え予定
-
-はい を選択して ++enter++  
-![](../images/spokit/9-1.jpg)
-
-> rootログイン可否設定
-
-![](../images/spokit/9-2.jpg)
-
-SSHポート設定
-> セキュリティを高めるためにはポート番号を変更してください
-
-![](../images/spokit/9-3.jpg)
-
-> ランダムな番号を割り当てるかカスタムで任意の番号を指定してください
-
-![](../images/spokit/9-4.jpg)
-
-> Ubuntu内部ファイアウォールを使用する場合は、はい を選択して ++enter++ 
-
-![](../images/spokit/10.jpg)
-
-> <font color="red">↓ここの注意事項をよく読んでください</font>
-
-![](../images/spokit/10-1.jpg)
-
+``` 
+> 「`Enter...`」と表示されたら Enter キーを押下し、以降はスクリプトの指示に従って設定してください。  
+> デフォルトは「`はい`」を選択します。  
 
 ### **1-3. ノードインストール**
 
-プール構築するため以下のコマンドを実行してください。
+1. プール構築するため以下のコマンドを実行します。
 ``` bash { py title="実行コマンド" }
 spokit pool
 ```
 
-「`ノードインストール`」を選択して ++enter++
-> キーボードの`↑`と`↓`でカーソルを移動できます。
+2. 「`ノードインストール`」を選択して ++enter++
+![](../images/spokit/1_Preview-SPOKIT-Node-Install.png)
 
-ノードインストールを選択して ++enter++
-![](../images/spokit/11.jpg)
+3. 以降はノードのポート番号設定まで進め、添付画像のように、最終行に 「`> 戻る`」 が表示される状態になるまで待機します。  
+![](../images/spokit/2_Preview-SPOKIT-Node-Install.png)
 
-「`はい`」を選択して ++enter++
-![](../images/spokit/12.jpg)
+4. 「`> 戻る`」が表示されたら ++enter++ を押下後、「`[q] 終了`」を選択し、SPOKITウィザードを閉じます。  
 
-ノード起動ポート番号の指定  
-表示されたランダムな数字またはカスタムで任意の数字をノードポート番号に割り当てできます。
-![](../images/spokit/13.jpg)
-
-「`> 戻る`」が最終行に表示されるまで待ちます。
-
-ここでは依存関係インストールからチェーン同期までを自動実行しています。  
-ノードが最新ブロックと同期するまでお待ち下さい。
-![](../images/spokit/14.jpg)
-![](../images/spokit/15.jpg)
-
-「`> 戻る`」が表示されたら ++enter++ を押下後、「`[q] 終了`」を選択し、SPOKITウィザードを閉じます。  
-
-以下コマンドで、Cardanoノードのライブモニターを表示できます。
+5. 以下のコマンドを実行し、Cardano ノードの起動状態を確認します。
 ```bash
 glive
 ```
-![](../images/spokit/16.jpg)
-
+![](../images/spokit/Preview-gLiveView.png)
+> gLive が表示されていれば、ノードは正常に起動しています。  
+> [preview.cardanoscan](https://preview.cardanoscan.io/){target="_blank" rel="noopener"}などのエクスプローラーでエポックやスロットを確認することもできます。
 
 !!! tip "ヒント"
     gliveを閉じたらブラケットモード無効化を反映させるために一度ターミナルを閉じて、その後再接続してください。
@@ -265,42 +207,49 @@ sudo apt install git jq bc automake tmux nano rsync htop curl build-essential pk
 
 ### **2-2. PostgreSQL 初期設定**
 
-接続用`.pgpass`作成
+接続用`.pgpass.restore`と`.pgpass`の作成
 ```bash
-if [ ! -f "$HOME/.pgpass" ]; then
 DBSYNC_USER="$(whoami)"
 DBSYNC_PASS="$(uuidgen | tr -d '-' | head -c 16)"
-DBSYNC_HOST="$(curl -s https://api.ipify.org)"
-cat <<EOF > $HOME/.pgpass
+
+cat <<EOF > "$HOME/.pgpass.restore"
 /var/run/postgresql:5432:cexplorer:*:*
-${DBSYNC_HOST}$:5432:cexplorer:${DBSYNC_USER}:${DBSYNC_PASS}
 EOF
+
+chmod 600 "$HOME/.pgpass.restore"
+```
+```bash
+DBSYNC_HOST="$(curl -s https://api.ipify.org)"
+
+cat <<EOF > "$HOME/.pgpass"
+${DBSYNC_HOST}:5432:cexplorer:${DBSYNC_USER}:${DBSYNC_PASS}
+EOF
+
+chmod 600 "$HOME/.pgpass"
 ```
 
-パーミッション変更
-```
-chmod 600 $HOME/.pgpass
-```
-
-!!! tip ".pgpassファイルについて"
-    このファイルはpostgreSQLに接続するためのユーザーIDとランダムパスワードが記載されたファイルのため、バックアップを推奨します。 
+!!! warning "`.pgpass`と`.pgpass.restore`ファイルについて"
+    postgreSQLに接続するためのユーザーIDとランダムパスワードが記載されたファイルのため、バックアップを推奨します。
 
 PostgreSQL用のアカウントを作成
 ```bash
-sudo -u postgres psql -c "CREATE ROLE \"$(whoami)\" LOGIN SUPERUSER PASSWORD '${DBSYNC_PASS}';"
+sudo -u postgres psql -c "CREATE ROLE \"${DBSYNC_USER}\" LOGIN SUPERUSER PASSWORD '${DBSYNC_PASS}';"
 ```
-> 戻り値：CREATE ROLE
+```{ .yaml .no-copy py title="戻り値"} 
+CREATE ROLE
+```
 
 db-sync用テーブル作成
 ```bash
-psql postgres -c "CREATE DATABASE cexplorer;"
+sudo -u postgres psql -d postgres -c "CREATE DATABASE cexplorer;"
 ``` 
-> 戻り値：CREATE DATABASE
-
+```{ .yaml .no-copy py title="戻り値"} 
+CREATE DATABASE
+```
 
 SSL作成
-!!! tip "SSL/TSL通信必須"
-    メインネットではPostgreSQLを外部サーバーで稼働させる場合、SSL/TSL通信に対応している必要があります。
+!!! tip "SSL/TLS 通信について"
+    PostgreSQL を外部サーバーで利用する場合、**SSL/TLS 通信が必須**です。
 
 サーバー証明書作成
 ```
@@ -325,8 +274,6 @@ sudo chmod 600 /etc/postgresql/ssl/server.key
 sudo chmod 644 /etc/postgresql/ssl/server.crt
 ```
 
-
-
 postgresqlパフォーマンス設定
 
 !!! tip "設定概要"
@@ -337,8 +284,7 @@ sudo sed -i /etc/postgresql/17/main/postgresql.conf \
     -e "s|ssl_cert_file = '.*'|ssl_cert_file = '/etc/postgresql/ssl/server.crt'|" \
     -e "s|ssl_key_file = '.*'|ssl_key_file  = '/etc/postgresql/ssl/server.key'|" \
     -e "s/^#\?listen_addresses *= *.*/listen_addresses = '*'/" \
-    -e "s/^#\?listen_addresses *= *.*/listen_addresses = '*'/"
-    -e 's!#synchronous_commit = on!synchronous_commit = off!' \
+    -e "s|^#\?[[:space:]]*synchronous_commit[[:space:]]*=.*|synchronous_commit = off|" \
     -e 's!shared_buffers = 128MB!shared_buffers = 2GB!' \
     -e 's!#effective_cache_size = 4GB!effective_cache_size = 8GB!' \
     -e 's!#work_mem = 4MB!work_mem = 16MB!' \
@@ -350,6 +296,17 @@ sudo sed -i /etc/postgresql/17/main/postgresql.conf \
 postgresql再起動
 ```bash
 sudo systemctl restart postgresql
+```
+
+設定値確認
+```bash
+sudo -u postgres psql -tAc "SHOW config_file; SHOW listen_addresses; SHOW synchronous_commit; SHOW shared_buffers;"
+```
+```{ .yaml .no-copy py title="戻り値"} 
+/etc/postgresql/17/main/postgresql.conf
+*
+off
+2GB
 ```
 
 
@@ -517,6 +474,30 @@ The Glorious Glasgow Haskell Compilation System, version 9.6.7
 ```
 
 ### **3-2. db-syncインストール**
+
+<!--
+!!! tip "メモリ不足（SIGKILL）の場合の対処"
+    Previewのサーバースペックではビルド中に SIGKILL（メモリ不足）が出る可能性もありますので、事前に `swap` を追加しておきます。
+
+    ```bash
+    sudo bash -c 'set -e
+    fallocate -l 8G /swapfile
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon /swapfile'
+    ```
+    ```bash
+    grep -q '^/swapfile ' /etc/fstab || echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+    ```
+
+    状態確認：
+    ```bash
+    swapon --show
+    free -h
+    ```
+-->
+
+インストール
 ```bash
 cd ~/git
 git clone https://github.com/intersectmbo/cardano-db-sync
@@ -538,27 +519,15 @@ grep -q '^with-compiler:' cabal.project.local 2>/dev/null \
 ビルド
 ```bash
 cabal update
-cabal build all -v1 2>&1 | tee build-all.log
-if [ ${PIPESTATUS[0]} -ne 0 ]; then
-  echo "cabal build all failed. See build-all.log for details."
-  exit 1
-fi
+cabal build all
 ```
 
 db-sync バイナリーファイルコピー
 ```bash
 mkdir -p ~/.local/bin
-
-BIN="$(cabal list-bin exe:cardano-db-sync)"
-
-if [ ! -f "$BIN" ]; then
-  echo "cardano-db-sync の実行ファイルが存在しません: $BIN"
-  echo "exe のビルドを再実行します（メモリ不足の環境では失敗する場合があります）。"
-  cabal build exe:cardano-db-sync || exit 1
-  BIN="$(cabal list-bin exe:cardano-db-sync)"
-fi
-
-cp -p "$BIN" ~/.local/bin/
+cp -p \
+  "$(find . -name cardano-db-sync -executable -type f)" \
+  ~/.local/bin/
 ```
 
 バージョン確認
@@ -569,27 +538,6 @@ cardano-db-sync --version
 cardano-db-sync 13.6.0.5 - linux-x86_64 - ghc-9.6  
 git revision cb61094c82254464fc9de777225e04d154d9c782
 ```
-
-!!! tip "メモリ不足（SIGKILL）が出た場合の対処"
-    ビルド中に SIGKILL（メモリ不足）が出る場合は、swap を追加して再実行してください。
-
-    ```bash
-    sudo bash -c '
-    fallocate -l 8G /swapfile
-    chmod 600 /swapfile
-    mkswap /swapfile
-    swapon /swapfile
-    '
-    ```
-    ```bash
-    grep -q '^/swapfile ' /etc/fstab || echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
-    ```
-
-    状態確認：
-    ```bash
-    swapon --show
-    free -h
-    ```
 
 ### **3-3. スナップショットのダウンロード**
 
@@ -602,35 +550,34 @@ git revision cb61094c82254464fc9de777225e04d154d9c782
     
 ```bash
 cd $NODE_HOME
-curl -LO https://spojapanguild.net/db-sync/preview/db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz
+curl -LO https://spojapanguild.net/db-sync/${NODE_CONFIG}/db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz
 ```
 
 チェックサムファイルダウンロード
 ```bash
-curl -LO https://spojapanguild.net/db-sync/preview/db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz.sha256sum
+curl -LO https://spojapanguild.net/db-sync/${NODE_CONFIG}/db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz.sha256sum
 ```
-
 
 ファイル検証
 ```bash
 sha256sum -c db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz.sha256sum
 ```
-> db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz: OK
+```{ .yaml .no-copy py title="戻り値"} 
+db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz: OK
+```
 
 スナップショット復元
 ```bash
 mkdir -p $NODE_HOME/ledger-state
 cd ~/git/cardano-db-sync
-PGPASSFILE=$NODE_HOME/.pgpass scripts/postgresql-setup.sh --restore-snapshot $NODE_HOME/db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz $NODE_HOME/ledger-state
+PGPASSFILE=$HOME/.pgpass.restore scripts/postgresql-setup.sh --restore-snapshot $NODE_HOME/db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz $NODE_HOME/ledger-state
 ```
-
-```{ .yaml .no-copy} 
-~~~
+```{ .yaml .no-copy py title="戻り値"} 
 db/4135.dat.gz
 100700514-355a474701.lstate.gz
 All good!
 ```
-> 復元には数十分を要します。
+> 復元には 数十分程度かかる場合があります。
 
 TMUXセッションを閉じます。
 ```bash
@@ -660,7 +607,7 @@ sed -i $NODE_HOME/${NODE_CONFIG}-db-sync-config.json \
 ```bash
 cat > $NODE_HOME/startDbSync.sh << EOF 
 #!/bin/bash
-PGPASSFILE=$NODE_HOME/.pgpass
+PGPASSFILE=$HOME/.pgpass.restore
 export PGPASSFILE
 $HOME/.local/bin/cardano-db-sync \\
 --config $NODE_HOME/${NODE_CONFIG}-db-sync-config.json \\
@@ -712,7 +659,7 @@ sudo chmod 644 /etc/systemd/system/cardano-db-sync.service
 
 systemd有効化
 ``` bash
-sudo bash -c 'systemctl daemon-reload && systemctl enable --now cardano-db-sync'
+sudo systemctl daemon-reload && sudo systemctl enable --now cardano-db-sync
 ```
 
 ### **3-5. 動作確認**
@@ -722,11 +669,11 @@ sudo systemctl status cardano-db-sync --no-pager
 ```{ .yaml .no-copy py title="戻り値"} 
 ● cardano-db-sync.service - Cardano DB Sync
      Loaded: loaded (/etc/systemd/system/cardano-db-sync.service; enabled; vendor preset: enabled)
-     Active: active (running) since Tue 2025-12-30 07:18:14 UTC; 4h 42min ago
-   Main PID: 212117 (startDbSync.sh)
-      Tasks: 18 (limit: 18679)
-     Memory: 3.0G
-        CPU: 3h 3min 55.713s
+     Active: active (running) since Tue 2026-01-13 14:06:17 CET; 20s ago
+   Main PID: 203020 (startDbSync.sh)
+      Tasks: 16 (limit: 9386)
+     Memory: 713.7M
+        CPU: 8.336s
 ```
 > `Active: active`であること
 
@@ -757,11 +704,11 @@ db-syncが同期するまでお待ち下さい
 rm -f $NODE_HOME/db-sync-snapshot-schema-*-block-*-x86_64.*
 ```
 
-以上でCardanoインデクサーのセットアップが完了しました。
-
 !!! tip "db-syncのログ確認"
     ```bash
     sudo journalctl -u cardano-db-sync -f
     ```
+
+以上でCardanoインデクサーのセットアップが完了しました。
 
 ---

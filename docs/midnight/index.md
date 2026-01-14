@@ -1,7 +1,26 @@
-# **Midnightバリデータセットアップマニュアル**
+# **Midnightバリデーターセットアップマニュアル**
 
-!!! Abstract "本マニュアルについて"
-    本マニュアルは、Midnight メインネットでの本番運用を前提として、要求される高いマシンスペック水準および各コンポーネント間のセキュリティ要件に対応し、Midnight バリデーター全体のセットアップ構成を `systemd` ベースで設計しています。
+本マニュアルは、{==**Midnight メインネット環境における本番運用を想定**==}し、  
+要求される{==**高水準のマシンスペックおよび各コンポーネント間のセキュリティ要件**==}に対応するため、  
+{==**Midnight バリデーター全体のセットアップ構成を systemd ベースで設計・定義**==}しています。  
+
+## **前提条件**
+
+本マニュアルを実施する前に、**Cardano Preview ネットワーク**において、
+Cardano ステークプールの構築からブロック生成までの一連の作業を完了していることを前提とします。
+
+!!! tip "ヒント"
+    プール構築後は、[Preview tADA Faucet](https://docs.cardano.org/cardano-testnets/tools/faucet){target="_blank" rel="noopener"}を利用して委任を行ってください。
+
+- [カルダノステークプール構築ガイド](../setup/index.md)
+- [SPOKIT](https://github.com/btbf/spokit)  
+  > SPOKIT は、ノーコマンドで Cardano ステークプールの構築・管理を行える **Cardano SPO Tool Kit** です。
+
+対象ネットワーク別の必要サーバー台数は以下のとおりです。  
+
+- **Preview**：4 台  
+- **Mainnet**：5 台
+
 
 ## **Midnightネットワーク別の環境対応表**
 
@@ -11,89 +30,217 @@
 | midnight-preview(近日移行) | node-0.18.0 | 24.04 | glibc 2.39 |
 
 !!! info "midnight-node `v0.12.0`について"
-    midnight-node `v0.12.0`バイナリは単独公開されておらず、独自に`midnight-node-docker`から抽出したものとなります。Midnightから`preview`テストネットへの移行アナウンスがあり次第、リポジトリ公開中の `v0.18.0`へ移行します。
+    midnight-node `v0.12.0`バイナリは単独公開されておらず、独自に`midnight-node-docker`から抽出したものとなります。  
 
-
-## **前提条件**
-
-!!! hint "ヒント"
-    - Linux (Ubuntu 22.04 ) 
-    - Cardano preview テストネットプール登録とブロック生成  
-      (プール構築は[手動マニュアル](../setup/index.md)か[SPOKIT](https://github.com/btbf/spokit)をご利用ください)
-    - 必要サーバー台数 テストネット4機　メインネット5機 
+    Midnightから`Preview`への移行アナウンスがあり次第、リポジトリ公開中の `v0.18.0`へ移行します。
 
 ## **推奨構成**
 
-### **Previewテストネット**
+### **Preview**
 
-**Cardanoノード**：
-
-| 役割 | サービス | CPU | メモリ | ストレージ | 備考 |
-| --- | --- | --- | --- | --- | --- |
-| ブロック生成ノード | cardano-node | ≥4 core | ≥8GB | ≥100GB SSD |  |
-| リレーノード | cardano-node | ≥4 core | ≥8GB | ≥100GB SSD |  |
-
-**Cardanoインデクサーサーバ**：
+**Cardanoノード稼働サーバー**：
 
 | 役割 | サービス | CPU | メモリ | ストレージ | 備考 |
 | --- | --- | --- | --- | --- | --- |
-| DB基盤 | cardano-db-sync + PostgreSQL | ≥4 core | ≥8GB | ≥100GB SSD | Relay / Midnight BPと同一リージョン |
+| **ブロック生成ノード** | cardano-node | ≥4 vCPU | ≥8 GB | ≥100 GB SSD |  |
+| **リレーノード** | cardano-node | ≥4 vCPU | ≥8 GB | ≥100 GB SSD |  |
 
-**Midnightノード専用サーバ**：
+**Cardanoインデクサーサーバー**：
 
 | 役割 | サービス | CPU | メモリ | ストレージ | 備考 |
 | --- | --- | --- | --- | --- | --- |
-| Midnight BP | midnight-node | ≥4 core | ≥8GB | ≥100GB SSD | PostgreSQLと同一リージョン |
+| **DB基盤** | cardano-node + cardano-db-sync + PostgreSQL | ≥4 vCPU | ≥16 GB | ≥100 GB SSD | Relay / Midnight BP と同一リージョン |
+
+**Midnightノード稼働サーバー**：
+
+| 役割 | サービス | CPU | メモリ | ストレージ | 備考 |
+| --- | --- | --- | --- | --- | --- |
+| **Midnight ブロック生成ノード** | midnight-node | ≥4 vCPU | ≥8 GB | ≥100 GB SSD | PostgreSQL と同一リージョン |
 
 
-??? hint "Mainnet(参考)"
+??? tip "Mainnet(参考)"
 
-    **Cardano構成**：
+    **Cardanoノード稼働サーバー**：
 
     | 役割 | サービス | CPU | メモリ | ストレージ | 備考 |
     | --- | --- | --- | --- | --- | --- |
-    | ブロック生成ノード | cardano-node | ≥4 core | 32GB | 350GB SSD |  |
-    | リレーノード-1 | cardano-node | ≥4 core | 32GB | 350GB SSD |  |
-    | リレーノード-2 | cardano-node | ≥4 core | 32GB | 350GB SSD | 冗長用 |
+    | **ブロック生成ノード** | cardano-node | ≥4 vCPU | 32 GB | 350 GB SSD |  |
+    | **リレーノード-1** | cardano-node | ≥4 vCPU | 32 GB | 350 GB SSD |  |
+    | **リレーノード-2** | cardano-node | ≥4 vCPU | 32 GB | 350 GB SSD | 冗長用 |
 
-    **Cardanoインデクサーサーバ**：
+    **Cardanoインデクサーサーバー**：
 
     | 役割 | サービス | CPU | メモリ | ストレージ | IOPS | 備考 |
     | --- | --- | --- | --- | --- | --- | --- |
-    | DB基盤 | cardano-db-sync + PostgreSQL | 4〜8 core | ≥64GB | 1TB NVMe SSD 推奨（最低700GB） | 60k IOPS 以上 | Relay / Midnight BPと同一リージョン |
+    | **DB基盤** | cardano-node + cardano-db-sync + PostgreSQL | 4〜8 vCPU | ≥64 GB | 1 TB NVMe SSD 推奨（最低 700 GB） | ≥60k IOPS | Relay / Midnight BP と同一リージョン |
 
-    **Midnightブロック生成ノード専用**：
+    **Midnightノード稼働サーバー**：
 
     | 役割 | サービス | CPU | メモリ | ストレージ | 備考 |
     | --- | --- | --- | --- | --- | --- |
-    | Midnight BP | midnight-node | 4〜8 core | 32GB | 200〜500GB SSD | PostgreSQLと同一リージョン |
+    | **Midnight ブロック生成ノード** | midnight-node | 4〜8 vCPU | 32 GB | 200〜500 GB SSD | PostgreSQL と同一リージョン |
 
 
-## **セットアップ構成**
-カルダノステークプールサーバー構成
+## **システム全体構成図**
+
 ```mermaid
 flowchart BT
-    a2[リレー1] & a3[リレー2] <--> a4[Cardanoネットワーク]
-    subgraph ide1[プール]
-        subgraph BP
-            a1[BP]
+
+    %% =========================
+    %% Midnight Validator
+    %% =========================
+    subgraph mv[Midnightバリデーター]
+        direction TB
+
+        subgraph idx[インデクサーサーバー]
+            cn[cardano-node]
+            dbs[cardano-db-sync]
+            pg[(PostgreSQL)]
+
+            %% Indexer internal (P2P / local)
+            cn <--> dbs
+            dbs <--> pg
         end
-            a1[BP] <--> a2[リレー1] & a3[リレー2]
+
+        subgraph mnbox[Midnightサーバー]
+            mn[midnight-node]
+        end
+
+        %% midnight-node reads indexed state
+        mn <--> pg
     end
-    c1[PC] --> ide1
-    c1[PC] --> エアギャップ
+
+
+    %% =========================
+    %% Stake Pool - Preview (Single Relay)
+    %% =========================
+    net[Cardanoネットワーク]
+
+    subgraph pool[Cardano ステークプール]
+        direction TB
+
+        %% Single Relay node
+        subgraph relay_box[リレーサーバー]
+            r1[リレー1]
+        end
+
+        %% Block Producer
+        subgraph bpgrp[ブロック生成サーバー]
+            bp[ブロック生成ノード]
+        end
+
+        %% P2P inside pool
+        bp <--> r1
+    end
+
+    %% P2P to Cardano network
+    r1 <--> net
+
+
+    %% =========================
+    %% Operator PC
+    %% =========================
+    pc[PC（SSH / オンライン）]
+
+    %% SSH access paths (operation only)
+    pc -.->|SSH| r1
+    pc -.->|SSH| bp
+    pc -.->|SSH| mn
+    pc -.->|SSH| cn
+
+
+    %% =========================
+    %% Air-gapped Offline Machine
+    %% =========================
+    ag[エアギャップ（オフライン）]
+
+    %% Physical offline transfer ONLY
+    pc -. "物理オフライン媒体（生成された秘密鍵／署名済みファイル等）" .-> ag
 ```
 
-Midnightバリデータサーバ構成
-```mermaid
-flowchart TD
-    subgraph ide1[Cardanoインデクサー]
-      a1[Cardano-node] <--> a2[cardano-db-sync] <--> a3[(postgreSQL)]
-    end
-    subgraph ide2[Midnightサーバ]
-      a4[Midnight-node] <--> a3[(postgreSQL)]
-    end
-```
-Ogmios はパートナーチェーン登録時のみ必要となるため、ローカル運用セットアップには含めずパブリックエンドポイントを使用します。
+??? info "Mainnet"
+    ```mermaid
+    flowchart BT
+
+        %% =========================
+        %% Midnight Validator
+        %% =========================
+        subgraph mv[Midnightバリデーター]
+            direction TB
+
+            subgraph idx[インデクサーサーバー]
+                cn[cardano-node]
+                dbs[cardano-db-sync]
+                pg[(PostgreSQL)]
+
+                %% Indexer internal (P2P / local)
+                cn <--> dbs
+                dbs <--> pg
+            end
+
+            subgraph mnbox[Midnightサーバー]
+                mn[midnight-node]
+            end
+
+            %% midnight-node reads indexed state
+            mn <--> pg
+        end
+
+
+        %% =========================
+        %% Stake Pool - Mainnet (Two Relays)
+        %% =========================
+        net[Cardanoネットワーク]
+
+        subgraph pool[Cardano ステークプール]
+            direction TB
+
+            %% Relay nodes
+            subgraph relay1_box[リレーサーバー]
+                r1[リレー1]
+            end
+
+            subgraph relay2_box[リレーサーバー]
+                r2[リレー2]
+            end
+
+            %% Block Producer
+            subgraph bpgrp[ブロック生成サーバー]
+                bp[ブロック生成ノード]
+            end
+
+            %% P2P inside pool
+            bp <--> r1
+            bp <--> r2
+        end
+
+        %% P2P to Cardano network
+        r1 <--> net
+        r2 <--> net
+
+
+        %% =========================
+        %% Operator PC
+        %% =========================
+        pc[PC（SSH / オンライン）]
+
+        %% SSH access paths (operation only)
+        pc -.->|SSH| r1
+        pc -.->|SSH| r2
+        pc -.->|SSH| bp
+        pc -.->|SSH| mn
+        pc -.->|SSH| cn
+
+
+        %% =========================
+        %% Air-gapped Offline Machine
+        %% =========================
+        ag[エアギャップ（オフライン）]
+
+        %% Physical offline transfer ONLY
+        pc -. "物理オフライン媒体（生成された秘密鍵／署名済みファイル等）" .-> ag
+    ```
+
+> 本マニュアルでは、`Ogmios`はパートナーチェーン登録時のみ必要となるため、ローカル運用セットアップには含めずパブリックエンドポイントを使用します。
 
 ---
