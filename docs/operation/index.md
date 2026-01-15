@@ -1,0 +1,166 @@
+# **プール運用マニュアル**
+このマニュアルは、Cardanoステークプールの運用に必要なパラメーター、鍵ファイルの役割、日々の運用タスク、重要な注意点を体系的にまとめたものです。  
+実践的で安全な運用ができるように構成されています。
+
+!!! tip "サポート"
+    運用に関する質問や不明点があれば、Discordの[SPO JAPAN GUILD](https://discord.gg/U3gU54c){target="_blank" rel="noopener"}コミュニティに参加し、現役SPOに相談できます。
+
+
+## **パラメーターの理解**
+主要なパラメーター一覧：
+
+| 項目      | 値        | 用途        |
+| :---------- | :----------- | :----------- |
+| **stakeAddressDeposit** | `2 ADA` | ステークキー登録時に必要な保証金 |
+| **stakePoolDeposit** | `500 ADA` | プール登録時に必要な保証金 |
+| **stakePoolTargetNum(`K`)** | `500` | 飽和閾値設定用（理想的なプール数） |
+| **poolPledgeInfluence(`a0`)** | `0.3` | 誓約（pledge）が報酬に与える影響係数 |
+| **minPoolCost** | `170 ADA` | プールが設定できる最小固定費 |
+| **maxTxSize** | `16384` | トランザクションの最大サイズ |
+| **maxBlockBodySize** | `90112` | ブロック本体の最大サイズ |
+| **epochLength** | `432000` | 1エポック内のスロット数 |
+| **slotLength** | `1` | 1スロットの長さ（秒） |
+| **activeSlotsCoeff** | `0.05` | ブロック生成が可能とみなされるアクティブスロット係数 |
+| **slotsPerKESPeriod** | `129600` | 1回分のKES有効期間（スロット数） |
+| **maxKESEvolutions** | `62` | KESを進化（evolve）できる回数の上限 |
+
+
+## **スロットの理解**
+- スロット（Slot） = ジェネシスからの通算スロット番号  
+- スロットエポック（Slot epoch） = エポック内でのスロット番号  
+- 1スロット＝1秒（slotLength）  
+- 1エポック＝432,000スロット(epochLength)  
+  → 432,000 / 60 = 7200分 / 60 = 120時間 / 24 = 5日
+
+
+## **ブロック生成スロットリーダー**
+スロットリーダーは、委任量（ステーク量）に応じた確率で、各スロットごとにランダムに決定されます。  
+1エポック内で、ブロック生成が可能なスロットは約5％です。（432,000 * 0.05 = 21,600スロット）  
+
+1エポックで「1ブロック」期待値を得るための委任量の目安：
+> ※実際には乱数により前後します。
+
+- 1M ADA： 約60%  
+- 2M ADA： 約85%  
+- 3M ADA： 約95%  
+
+スロットリーダーはプール間で調整されず、複数プールが同じスロットに選ばれることがあるため、以下のバトルが発生します。
+
+!!! info "バトル"
+    !!! tip "**通称：スロットバトル（SlotBattle / Stolen）**"
+        スロットバトルとは、複数のプールに同じスロットが割り当てられた時に発生する現象です。  
+        Cardanoでは、1スロットにつき1ブロックしか採用されないため、どのプールのブロックが選ばれるかをVRFのランダム値で決定します。  
+        各プールが生成するVRF値を比較し、最も値が小さいプールのブロックが採用されます。  
+        VRFの比較は完全にランダムであるため、ステーク量による優位性はなく、運次第で結果が決まります。
+
+    !!! tip "**通称：ハイトバトル（HeightBattle / Ghosted）**"
+        数秒以内に複数のプールがブロックを生成した場合に発生する競合。  
+        伝播のタイミング差により複数のブロックが同時にネットワーク上に現れ、VRF値の比較によって採用ブロックが決定されます。（ランダム性があり、ステーク量の優位はありません）
+
+
+## **KES**
+!!! tip "説明"
+
+    KESは、**`Key Evolving Signatures`**の略です。  
+
+    ブロック生成に使用する署名鍵で、過去の署名を後から書き換えられないよう鍵を一定期間ごとに進化（evolve）させる仕組みになっています。  
+    メインネットでは、**129,600スロット（`slotsPerKESPeriod`） × 62回（`maxKESEvolutions`） = 8,035,200秒（約93日）**が1つのKES鍵の有効期間であり、期限前に新しいKESを作成して更新する必要があります。
+
+
+## **VRF**
+!!! tip "説明"
+
+    VRFは、**`Verifiable Random Function`**の略です。  
+
+    Ouroboros Praosでは、VRFキーを使って **各スロットでプールがスロットリーダーに選ばれるかどうかをランダムかつ検証可能な方法で判定** します。  
+    Praosではスロットリーダーのスケジュールが非公開で、ノードは**VRFキー（オペレーショナル証明書に含まれる検証鍵）**を使って、**そのスロットで正当にブロック生成権を得たことを証明**します。
+
+
+## **各種鍵ファイルの役割と保管場所**
+
+
+### **証明書および鍵ファイルの詳細**
+:lock:・・・ロック必須・再作成不可・紛失不可  
+:arrows_clockwise:・・・更新時書き換え・再作成可能  
+🔴・・・BP起動で使用  
+🔷・・・ブロックログで使用
+
+!!! warning "鍵ファイルバックアップについて"
+    :lock:マークが付いたファイルは、プール運営において極めて重要な鍵ファイルです。  
+    これらを紛失・破損するとプール運営を継続できなくなったり、報酬や資金を引き出せなくなります。  
+    **必ず複数のUSBメディアなどに冗長化・分散保管し、安全にバックアップしてください。**  
+
+| ファイル      | 用途                          | 推奨保管場所 | 重要度 |
+| ----------- | ------------------------------------ | ---------------- | :------: | 
+| **payment.vkey**       | paymentアドレス公開鍵  | エアギャップ ／ USB | :lock: |
+| **payment.skey**       | paymentアドレス秘密鍵 | エアギャップ ／ USB | :lock: |
+| **stake.vkey**      | ステークアドレス公開鍵  | エアギャップ ／ USB | :lock: |
+| **stake.skey**      | ステークアドレス秘密鍵  | エアギャップ ／ USB | :lock: |
+| **vrf.vkey**🔷    | VRF公開鍵 | **BP** ／ エアギャップ ／ USB | :lock: |
+| **vrf.skey**🔴    | VRF秘密鍵 | **BP** ／ エアギャップ ／ USB | :lock: |
+| **node.vkey**    | コールド公開鍵 | エアギャップ ／ USB | :lock: |
+| **node.skey**    | コールド秘密鍵 | エアギャップ ／ USB | :lock: |
+| **myCalidusKey.vkey**       | Calidus公開鍵  | エアギャップ ／ USB | :lock: |
+| **myCalidusKey.skey**       | Calidus秘密鍵 | **BP** ／ エアギャップ ／ USB | :lock: |
+| **payment.addr**    | paymentアドレスファイル | **BP** ／ エアギャップ ／ USB | :arrows_clockwise: |
+| **stake.addr**       | ステークアドレスファイル | **BP** ／ エアギャップ ／ USB | :arrows_clockwise: |
+| **kes.vkey**    | KES公開鍵 | エアギャップ ／ USB | :arrows_clockwise: |
+| **kes.skey**🔴    | KES秘密鍵 | **BP** ／ エアギャップ ／ USB | :arrows_clockwise: |
+| **node.cert**🔴    | プール運用証明書 | **BP** ／ エアギャップ ／ USB | :arrows_clockwise: |
+| **pool.cert**    | プール登録証明書 | エアギャップ ／ USB | :arrows_clockwise: |
+| **node.counter**    | カウンターファイル | エアギャップ ／ USB | :arrows_clockwise: |
+| **Calidus-MnemonicsKey.json**    | Calidusニーモニックファイル | エアギャップ ／ USB | :arrows_clockwise: |
+| **myCalidusRegistrationMetadata.json**    | Calidus登録メタデータファイル | エアギャップ ／ USB | :arrows_clockwise: |
+
+> Calidus関連ファイル（`myCalidusKey.vkey`、`myCalidusKey.skey`、`Calidus-MnemonicsKey.json`、`myCalidusRegistrationMetadata.json`）は、[Calidusキー生成](../operation/calidus-key-generation.md)を実施した場合に作成されるファイルです。  
+> Calidusを利用しない場合、本ファイル群は存在しません。
+
+
+### **ノード起動用の設定ファイル**
+| ファイル      | 用途                          |
+| ----------- | ------------------------------------ |
+| **mainnet-byron-genesis.json**       | Byron設定ファイル  |
+| **mainnet-shelley-genesis.json**       | Shelley設定ファイル |
+| **mainnet-alonzo-genesis.json**      | Alonzo設定ファイル  |
+| **mainnet-conway-genesis.json**      | Conway設定ファイル  |
+| **mainnet-config.json**      | ノード設定ファイル  |
+| **mainnet-topology.json**    | トポロジーファイル |
+
+
+### **スクリプトファイルおよびその他のファイル**
+| ファイル      | 用途                          | 推奨保管場所 | 重要度 |
+| ----------- | ------------------------------------ | ---------------- | :------: | 
+| **startRelayNode1.sh**       | リレー用ノード起動スクリプト  | リレー | :arrows_clockwise: |
+| **startBlockProducingNode.sh**       | BP用ノード起動スクリプト | BP | :arrows_clockwise: |
+| **gLiveView.sh**      | ノードGUI用スクリプト  | リレー/BP | :arrows_clockwise: |
+| **params.json**      | パラメーターファイル  | BP | :arrows_clockwise: |
+| **poolMetaData.json**      | プールメタデータファイル  | BP | :arrows_clockwise: |
+| **poolMetaDataHash.txt**      | poolMetaData.jsonハッシュ値ファイル  | BP | :arrows_clockwise: |
+| **fullUtxo.out**    | UTXO出力ファイル | 使用後削除可 | - |
+| **balance.out**    | ウォレット残高出力ファイル | 使用後削除可 | - |
+| **tx.tmp**    | 仮トランザクションファイル | 使用後削除可 | - |
+| **tx.raw**    | トランザクションファイル | 使用後削除可 | - |
+| **tx.signed**       | トランザクション署名付きファイル | 使用後削除可 | - |
+
+
+## **運用タスクチェックリスト**
+!!! note "各作業"
+    !!! info "**日次作業**"
+        - ノード稼働状況チェック(Grafana等)
+        - ブロック生成ステータスの確認
+
+    !!! info "**エポック毎作業**"
+        - 次エポックのブロック生成スケジュール確認  
+        （**320,000 スロットを超えてからエポック終了までに確認**）
+
+    !!! info "**3か月毎作業**"
+        - [KESの更新](../operation/kes-update.md)（KES鍵の再生成および証明書更新）
+
+    !!! info "**不定期作業**"
+        - Ubuntuパッケージアップデート
+        - ノードアップデート
+        - サードパーティ製アプリ（CNCLI、gLiveView 等）のアップデート
+        - サーバー障害対応
+        - プール設定変更等
+
+---

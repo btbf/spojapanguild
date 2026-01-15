@@ -1,7 +1,4 @@
----
-status: new
----
-#　SPO Block Notify移行マニュアル
+# **SPOBlockNotify移行手順**
 
 !!! note "このマニュアルについて"
 
@@ -27,7 +24,7 @@ status: new
 以下は現在のインストール状況に合わせて選択してください。
 
 ??? danger "旧ブロック生成ステータス通知 v.1.x.xからのアップデート"
-    ## 旧ブロック生成ステータス通知 v.1.x.xからのアップデート
+    ## **1. 旧ブロック生成ステータス通知 v.1.x.xからのアップデート**
 
     パッケージを更新する
     ```bash
@@ -57,7 +54,7 @@ status: new
     pip3 install --upgrade watchdog pytz python-dateutil requests discordwebhook slackweb i18nice
     ```
 
-    ### 1. サービスファイル修正
+    ### **1-1. サービスファイル修正**
 
     サービスを停止する
     ```
@@ -256,7 +253,7 @@ status: new
     sudo systemctl enable cnode-blocknotify.service
     ```
 
-    ### 2.SPO Block Notify設定
+    ### **1-2. SPO Block Notify設定**
 
     依存関係インストール
 
@@ -306,15 +303,15 @@ status: new
         | ----------- |---------| ------------------------------------ |
         | `pool_ticker`      | ex.) SJG | プールティッカー名を入力する  |
         | `notify_language` | 英語:`en`<br>日本語:`ja`| 通知言語を入力する |
-        | `notify_timezone`   | Asia/Tokyo<br>[タイムゾーン一覧](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568) | お住いの[タイムゾーン](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568)を指定する |
+        | `notify_timezone`   | Asia/Tokyo<br>[タイムゾーン一覧](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568){target="_blank" rel="noopener"} | お住いの[タイムゾーン](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568){target="_blank" rel="noopener"}を指定する |
         | `notify_platform`   | `Line`<br>`Discord`<br>`Slack`<br>`Telegram` | 通知先プラットフォームを指定する<br> (複数指定は無効) |
         | `notify_level`   |全て:`All`<br>Confirm以外:`ExceptCofirm`<br>Missのみ:`OnlyMissed`  | 通知基準を設定する |
         | `nextepoch_leader_date`   |概要のみ:`SummaryOnly`<br>概要と日付:`SummaryDate` | 次エポックスケジュール日時の通知有無<br>次エポックスケジュール日付一覧を通知に流したくない場合は`SummaryOnly`を記載してください |
-        | `line_notify_token`     |[LINE設定の(8)](#__tabbed_1_1)で発行したトークンID | Line Notifyトークンを入力する |
-        | `discord_webhook_url`   |[Discord設定の(7)](#__tabbed_1_2)で発行したウェブフックURL| DiscordウェブフックURLを入力する |
-        | `slack_webhook_url`   |[Slack設定の(4)](#__tabbed_1_4)で発行したWebhook URL| SlackウェブフックURLを入力する |
-        | `telegram_token`   |[Telegram設定の(5)](#__tabbed_1_3)で発行したAPIトークン | Telegram APIトークンを入力する |
-        | `telegram_id`   |[Telegram設定の(9)](#__tabbed_1_3)で表示されたChat id| Telegram ChatIDを入力する |
+        | `line_notify_token`     |[LINE設定の(8)](../setup/blocknotify-setup.md/#__tabbed_1_1)で発行したトークンID | Line Notifyトークンを入力する |
+        | `discord_webhook_url`   |[Discord設定の(7)](../setup/blocknotify-setup.md/#__tabbed_1_2)で発行したウェブフックURL| DiscordウェブフックURLを入力する |
+        | `slack_webhook_url`   |[Slack設定の(4)](../setup/blocknotify-setup.md/#__tabbed_1_4)で発行したWebhook URL| SlackウェブフックURLを入力する |
+        | `telegram_token`   |[Telegram設定の(5)](../setup/blocknotify-setup.md/#__tabbed_1_3)で発行したAPIトークン | Telegram APIトークンを入力する |
+        | `telegram_id`   |[Telegram設定の(9)](../setup/blocknotify-setup.md/#__tabbed_1_3)で表示されたChat id| Telegram ChatIDを入力する |
         | `node_home` |ex.)`/home/usr/cnode`| node_homeディレクトリパスを入力する |
         | `guild_db_dir` |ex.)`%(node_home)s/guild-db/blocklog/`| guild-dbのパスを入力する<br>`%(node_home)s`は変数のため変更しないでください |
         | `shelley_genesis` |ex.)`%(node_home)s/files/shelley-genesis.json`| shelley_genesisのファイルパスを入力する<br>`%(node_home)s`は変数のため変更しないでください |
@@ -325,7 +322,7 @@ status: new
     python3 $NODE_HOME/scripts/block-notify/block_notify.py version
     ```
 
-    ### 3.サービス起動
+    ### **1-3. サービス起動**
     !!! note "サービス起動について"
 
         * `cncli`および`logmonitor`は`cnode-node.service`に紐づいて起動します
@@ -338,7 +335,7 @@ status: new
 
 
 
-    ### 4.サービス起動確認
+    ### **1-4. サービス起動確認**
 
     便利なエイリアス設定
     !!! hint "エイリアス設定"
@@ -435,14 +432,14 @@ status: new
 
             Ctrl+cで閉じます
 
-    ### 5. 旧ファイル削除
+    ### **1-5. 旧ファイル削除**
     ```
     rm $NODE_HOME/guild-db/blocklog/block_check.py $NODE_HOME/guild-db/blocklog/send.txt
     ```
 
 
 ??? danger "SPO Block Notify v.2.1.2/v2.1.3からのアップデート"
-    ## SPO Block Notify v.2.1.2/v2.1.3からのアップデート
+    ## **2. SPO Block Notify v.2.1.2/v2.1.3からのアップデート**
 
     パッケージを更新する
     ```bash
@@ -472,7 +469,7 @@ status: new
     pip3 install --upgrade watchdog pytz python-dateutil requests discordwebhook slackweb i18nice
     ```
 
-    ### 1. サービスファイル修正
+    ### **2-1. サービスファイル修正**
 
     サービスを停止する
     ```
@@ -518,7 +515,7 @@ status: new
     ```
 
 
-    ### 2.SPO Block Notify再設定
+    ### **2-2. SPO Block Notify再設定**
 
     `.env`バックアップ
     ```
@@ -571,15 +568,15 @@ status: new
         | ----------- |---------| ------------------------------------ |
         | `pool_ticker`      | ex.) SJG | プールティッカー名を入力する  |
         | `notify_language` | 英語:`en`<br>日本語:`ja`| 通知言語を入力する |
-        | `notify_timezone`   | Asia/Tokyo<br>[タイムゾーン一覧](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568) | お住いの[タイムゾーン](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568)を指定する |
+        | `notify_timezone`   | Asia/Tokyo<br>[タイムゾーン一覧](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568){target="_blank" rel="noopener"} | お住いの[タイムゾーン](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568){target="_blank" rel="noopener"}を指定する |
         | `notify_platform`   | `Line`<br>`Discord`<br>`Slack`<br>`Telegram` | 通知先プラットフォームを指定する<br> (複数指定は無効) |
         | `notify_level`   |全て:`All`<br>Confirm以外:`ExceptCofirm`<br>Missのみ:`OnlyMissed`  | 通知基準を設定する |
         | `nextepoch_leader_date`   |概要のみ:`SummaryOnly`<br>概要と日付:`SummaryDate` | 次エポックスケジュール日時の通知有無<br>次エポックスケジュール日付一覧を通知に流したくない場合は`SummaryOnly`を記載してください |
-        | `line_notify_token`     |[LINE設定の(8)](#__tabbed_1_1)で発行したトークンID | Line Notifyトークンを入力する |
-        | `discord_webhook_url`   |[Discord設定の(7)](#__tabbed_1_2)で発行したウェブフックURL| DiscordウェブフックURLを入力する |
-        | `slack_webhook_url`   |[Slack設定の(4)](#__tabbed_1_4)で発行したWebhook URL| SlackウェブフックURLを入力する |
-        | `telegram_token`   |[Telegram設定の(5)](#__tabbed_1_3)で発行したAPIトークン | Telegram APIトークンを入力する |
-        | `telegram_id`   |[Telegram設定の(9)](#__tabbed_1_3)で表示されたChat id| Telegram ChatIDを入力する |
+        | `line_notify_token`     |[LINE設定の(8)](../setup/blocknotify-setup.md/#__tabbed_1_1)で発行したトークンID | Line Notifyトークンを入力する |
+        | `discord_webhook_url`   |[Discord設定の(7)](../setup/blocknotify-setup.md/#__tabbed_1_2)で発行したウェブフックURL| DiscordウェブフックURLを入力する |
+        | `slack_webhook_url`   |[Slack設定の(4)](../setup/blocknotify-setup.md/#__tabbed_1_4)で発行したWebhook URL| SlackウェブフックURLを入力する |
+        | `telegram_token`   |[Telegram設定の(5)](../setup/blocknotify-setup.md/#__tabbed_1_3)で発行したAPIトークン | Telegram APIトークンを入力する |
+        | `telegram_id`   |[Telegram設定の(9)](../setup/blocknotify-setup.md/#__tabbed_1_3)で表示されたChat id| Telegram ChatIDを入力する |
         | `node_home` |ex.)`/home/usr/cnode`| node_homeディレクトリパスを入力する |
         | `guild_db_dir` |ex.)`%(node_home)s/guild-db/blocklog/`| guild-dbのパスを入力する<br>`%(node_home)s`は変数のため変更しないでください |
         | `shelley_genesis` |ex.)`%(node_home)s/files/shelley-genesis.json`| shelley_genesisのファイルパスを入力する<br>`%(node_home)s`は変数のため変更しないでください |
@@ -590,7 +587,7 @@ status: new
     python3 $NODE_HOME/scripts/block-notify/block_notify.py version
     ```
 
-    ### 3.サービス起動
+    ### **2-3. サービス起動**
     !!! note "サービス起動について"
 
         * `cncli`および`logmonitor`は`cnode-node.service`に紐づいて起動します
@@ -678,12 +675,12 @@ status: new
             Ctrl+cで閉じます
 
 ??? danger "旧ブロック生成ステータス通知 未導入からのインストール"
-    ## 旧ブロック生成ステータス通知 未導入からのインストール
+    ## **3. 旧ブロック生成ステータス通知 未導入からのインストール**
 
     !!! danger "前提条件"
         TMUX起動のブロックログが導入済みでかつ旧ブロック生成ステータス通知が未導入の場合
 
-    ### 1. サービスファイル修正
+    ### **3-1. サービスファイル修正**
 
     サービスを停止する
     ```
@@ -849,7 +846,8 @@ status: new
     sudo systemctl start cnode-logmonitor.service
     ```
 
-    ### 2.SPO Block Notify設定
+    ### **3-2. SPO Block Notify設定**
 
-    [11.SPO BlockNotify設定](../setup/11-blocknotify-setup.md)を実施してください。
+    [SPO BlockNotify設定](../setup/blocknotify-setup.md)を実施してください。
 
+---

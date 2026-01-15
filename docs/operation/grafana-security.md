@@ -1,12 +1,12 @@
-# Grafanaセキュリティ強化設定
+# **Grafanaセキュリティ強化**
 
 !!! note "概要"
     このマニュアルではGrafanaのリモートアクセスセキュリティを強化するためHTTPS化とリバースプロキシの導入設定を行います。
 
 
-## ■事前確認
+## **事前確認**
 
-以下の手順は、[9.監視ツールセットアップ](../setup/9-monitoring-tools-setup.md)でGrafanaを導入した既存のリレーサーバーで実施可能です。
+以下の手順は、[監視ツール設定](../setup/monitoring-setup.md)でGrafanaを導入した既存のリレーサーバーで実施可能です。
 
 ～作業の流れ～
 
@@ -21,7 +21,7 @@
 !!! warning "作業前の注意事項"
     以下の文章をよく読みながら進めてください。コマンドの実行忘れ・コマンドコピーミスなどに十分注意してください。
 
-## 1.ドメイン(サブドメイン)を取得する
+## **1. ドメイン(サブドメイン)を取得する**
 
 !!! hint "確認"
     ホームページなどの運用ですでに独自ドメインを取得済みの場合はそちらを使用出来ます。独自ドメインをお持ちでない方は無料ダイナミックDNSでドメインを取得できます。
@@ -40,7 +40,7 @@
 
 === "独自ドメインを持っていない方"
 
-    [DDNS Now](https://ddns.kuku.lu/)で無料のドメインを取得します。
+    [DDNS Now](https://ddns.kuku.lu/){target="_blank" rel="noopener"}で無料のドメインを取得します。
     DDNS Nowは完全無料・定期通知不要・サービス保障稼働率100%など、使いやすいDDNSサービスです。ただしサブドメインなどは設定できません。1アカウント1ドメイン
     
     **ドメイン(アカウント)を取得する**  
@@ -58,7 +58,7 @@
 
 
 
-## 2.nginxをインストールする
+## **2. nginxをインストールする**
 ```
 sudo apt install nginx -y
 ```
@@ -92,7 +92,7 @@ sudo ufw reload
     ![](../images/grafana-security/1-5.png)
 
 
-`xxxx.bbb.com`を[[1.ドメイン(サブドメイン)を取得する]](#1)で取得したドメイン(サブドメイン)に置き換えて実行する
+`xxxx.bbb.com`を[[1.ドメイン(サブドメイン)を取得する]](../operation/grafana-security.md/#1)で取得したドメイン(サブドメイン)に置き換えて実行する
 
 ```
 domain=xxxx.bbb.com
@@ -131,7 +131,7 @@ sudo systemctl restart nginx
 sudo rm /etc/nginx/sites-enabled/default
 ```
 
-## 3.certbotをインストールする
+## **3. certbotをインストールする**
 ```
 sudo snap install core; sudo snap refresh core
 ```
@@ -188,7 +188,7 @@ sudo ln -s /snap/bin/certbot /usr/bin/certbot
 ```
 
 
-## 4.無料SSL証明書(Let’s Encrypt)を取得する
+## **4. 無料SSL証明書(Let’s Encrypt)を取得する**
 ```
 sudo certbot --nginx
 ```
@@ -219,10 +219,10 @@ sudo certbot --nginx
     ドメインでアクセスした際のURL欄において、httpの後にsがついているかどうかをチェックしてください。
 
 
-## 5.nginx設定変更
+## **5. nginx設定変更**
 
 1.websocketを有効にする  
-`xxxx.bbb.com`を[[1.ドメイン(サブドメイン)を取得する]](#1)で取得したドメイン(サブドメイン)に置き換えて実行する
+`xxxx.bbb.com`を[[1.ドメイン(サブドメイン)を取得する]](../operation/grafana-security.md/#1)で取得したドメイン(サブドメイン)に置き換えて実行する
 ```
 domain=xxxx.bbb.com
 ```
@@ -319,7 +319,7 @@ nginxを再起動する
 sudo systemctl restart nginx
 ```
 
-## 6.SSL証明書自動更新
+## **6. SSL証明書自動更新**
 
 1.SSL証明書自動更新タイマー確認  
 このプログラムでSSL証明書が自動更新されます。
@@ -366,3 +366,5 @@ xxxx ALL=NOPASSWD: /bin/systemctl
 
 
 追記したら保存して閉じる
+
+---

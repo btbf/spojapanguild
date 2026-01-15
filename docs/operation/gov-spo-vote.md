@@ -1,3 +1,5 @@
+# **ガバナンスアクション（SPO投票）**
+
 !!! info "概要"
     - この投票手順はガバナンスアクションのSPO投票のみに使用できます。
     - SJG Toolに実装しているコマンドとは異なりますが実行結果は同じです。
@@ -5,8 +7,10 @@
     - トランザクション手数料はpayment.addrから引き落とされます。プール誓約を下回らないようご注意ください。
 
     ガバナンスアクション確認サイト  
-    [https://cardanoscan.io/govActions](https://cardanoscan.io/govActions)  
-    [https://gov.tools/governance_actions](https://gov.tools/governance_actions)
+    [https://adastat.net/governances](https://adastat.net/governances){target="_blank" rel="noopener"}  
+    [https://beta.cexplorer.io/gov/action](https://beta.cexplorer.io/gov/action){target="_blank" rel="noopener"}  
+    [https://cardanoscan.io/govActions](https://cardanoscan.io/govActions){target="_blank" rel="noopener"}  
+    [https://gov.tools/governance_actions](https://gov.tools/governance_actions){target="_blank" rel="noopener"}
 
 
 === "BP/エアギャップ"
@@ -16,7 +20,7 @@
     ```
 
 
-## 1.投票ファイル作成
+## **1. 投票ファイル作成**
 
 !!! tip "投票例"  
     ガバナンスアクショントランザクションID:`59fd353253eb177e2104e8f23ea4c63e3d32ef95c7865d03e90d3884424dc1db`に対して
@@ -66,7 +70,7 @@ sha256sum $NODE_HOME/governance/vote.file
 ```
 
 
-## 2.トランザクションファイル作成
+## **2. トランザクションファイル作成**
 === "BP"
 
     payment.addrの残高を取得する
@@ -133,7 +137,7 @@ sha256sum $NODE_HOME/governance/vote-tx.raw
 sha256sum $NODE_HOME/governance/vote-tx.raw
 ```
 
-## 3.署名ファイル作成
+## **3. 署名ファイル作成**
 === "エアギャップ"
     ```
     cardano-cli conway transaction sign \
@@ -166,7 +170,7 @@ sha256sum $NODE_HOME/governance/vote-tx.signed
 sha256sum $NODE_HOME/governance/vote-tx.signed
 ```
 
-## 4.投票トランザクション送信
+## **4. 投票トランザクション送信**
 === "BP"
     ```
     cd $NODE_HOME
@@ -174,3 +178,5 @@ sha256sum $NODE_HOME/governance/vote-tx.signed
     --tx-file $NODE_HOME/governance/vote-tx.signed \
     $NODE_NETWORK
     ```
+
+---

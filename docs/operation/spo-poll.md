@@ -1,4 +1,4 @@
-# カルダノ財団SPO投票マニュアル
+# **カルダノ財団SPO投票マニュアル**
 
 !!! note "概要"
     * 投票トランザクション [fae7bda85acb99c513aeab5f86986047b6f6cbd33a8e11f11c5005513a054dc8](https://jp.cexplorer.io/tx/fae7bda85acb99c513aeab5f86986047b6f6cbd33a8e11f11c5005513a054dc8/metadata#data)
@@ -9,7 +9,7 @@
     * CIP-0094に対応したcardano-cli(v8.0.0-untested または v8.0.0)が必要です
     * 投票は初回１回のみが有効です。
 
-## 1.SJG TOOLで投票する
+## **1. SJG TOOLで投票する**
 
 !!! Question "SJG TOOL投票仕様"
     * 投票データに簡易メッセージを添付可能！  
@@ -36,7 +36,7 @@ CIP-0094ダッシュボードで自身の投票を確認してみましょう！
 
 以上です。
 
-## 2.CLIコマンドで投票する
+## **2. CLIコマンドで投票する**
 !!! Warning "CLIコマンド投票仕様"
     * 投票データ簡易メッセージ添付には対応していません。添付したい場合は各自でメタデータファイルを編集するかSJGTOOLを利用してください。
 
@@ -185,8 +185,10 @@ BPでトランザクションを送信します
 curl -sX POST "https://api.koios.rest/api/v1/tx_metadata" -H "accept: application/json" -H "content-type: application/json"  -d "{\"_tx_hashes\":[\"${submit_txHash}\"]}" | jq .
 ```
 
-### 投票確認
+### **2-1. 投票確認**
 CIP-0094ダッシュボードで自身の投票を確認してみましょう！  
 Adastat.net [[Mainnet]](https://adastat.net/polls) / Cardanoscan.io [[Mainnet]](https://cardanoscan.io/spo-polls/)
 
 以上です。
+
+---

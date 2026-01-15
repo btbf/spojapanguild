@@ -1,8 +1,16 @@
-# 変更履歴
+# **更新履歴**
+
+## 2026/1/15　ver.13.9.0
+!!! note ""
+    * [**Midnightバリデータセットアップマニュアル**](midnight/index.md)追加
+    * [**Mithril Signerノードの設定・更新**](operation/mithril-client.md)追加
+    * [**エアギャップ環境構築リニューアル**](setup/air-gapped-setup.md)
+    * [**Ubuntu初期設定手順一部変更**](setup/ubuntu-setup.md)
+    * [**SJG TOOL v4.1.1リリース**](operation/sjg-tool-setup.md)
 
 ## 2025/11/28　ver. 13.8.9
 !!! note ""
-    * [**SJG TOOL v4.0.2リリース**](operation/tool.md)
+    * [**SJG TOOL v4.0.2リリース**](operation/sjg-tool-setup.md)
     * Grafanaセキュリティ設定 proxy_pass 名前解決修正
 
 ## 2025/11/27　ver. 13.8.8
@@ -24,7 +32,7 @@
 
 ## 2025/11/3　ver. 13.8.5
 !!! note ""
-    * [**SJG TOOL v4.0.0リリース**](operation/tool.md)
+    * [**SJG TOOL v4.0.0リリース**](operation/sjg-tool-setup.md)
     * 軽微な修正
 
 ## 2025/10/31　ver. 13.8.4
@@ -35,17 +43,17 @@
 !!! note ""
     * cardano-node v10.5.1対応
     * [**ノードアップデート手順**](operation/node-update.md)更新
-    * [**SJG TOOL v3.9.7リリース**](operation/tool.md)
+    * [**SJG TOOL v3.9.7リリース**](operation/sjg-tool-setup.md)
 
 ## 2025/08/17　ver. 13.8.2
 !!! note ""
     * [Glacier Drop SPO請求手続き手順追加](operation/midnight-glacier-drop.md)
-    * [**SJG TOOL v3.9.6リリース**](operation/tool.md)
+    * [**SJG TOOL v3.9.6リリース**](operation/sjg-tool-setup.md)
 
 ## 2025/07/03　ver. 13.8.1
 !!! note ""
     * Calidus Pool Key設定手順修正
-    * [**SJG TOOL v3.9.5リリース**](operation/tool.md)
+    * [**SJG TOOL v3.9.5リリース**](operation/sjg-tool-setup.md)
     * 軽微な修正
 
 ## 2025/05/26　ver. 13.8.0
@@ -53,7 +61,7 @@
     * cardano-node v10.4.1対応
     * `query utxo`コマンドの修正 `--output-text`固定化と`--out-file`指定
     * [**ノードアップデート手順**](operation/node-update.md)更新
-    * [**SJG TOOL v3.9.4リリース**](operation/tool.md)
+    * [**SJG TOOL v3.9.4リリース**](operation/sjg-tool-setup.md)
     * 軽微な修正
 
 ## 2025/05/12　ver. 13.7.1
@@ -78,7 +86,7 @@
     * cardano-node v10.2.1対応
     * [**ノードアップデート手順**](operation/node-update.md)更新
     * [**Calidus Pool Keys発行マニュアル**](operation/calidus.md)追加
-    * [**SJG TOOL v3.9.3リリース**](operation/tool.md)
+    * [**SJG TOOL v3.9.3リリース**](operation/sjg-tool-setup.md)
     * 軽微な修正
 
 ## 2025/01/08　ver. 13.5.2
@@ -106,7 +114,7 @@
 ## 2024/09/28　ver. 13.4.3
 !!! note ""
     * `cardano-cli conway`対応
-    * [**SJG TOOL v3.8.0リリース**](operation/tool.md) SPO投票実装
+    * [**SJG TOOL v3.8.0リリース**](operation/sjg-tool-setup.md) SPO投票実装
 
 ## 2024/09/03　ver. 13.4.2
 !!! note ""
@@ -117,13 +125,13 @@
 !!! note ""
     * トランザクション仮ファイル作成コマンドフォーマットを修正
     * 手数料算出コマンドフォーマットを修正
-    * [**SJG TOOL v3.7.5リリース**](operation/tool.md)
+    * [**SJG TOOL v3.7.5リリース**](operation/sjg-tool-setup.md)
 
 ## 2024/08/05　ver. 13.4.0
 !!! note ""
     * cardano-node v9.1.0対応
     * [**ノードアップデート手順**](operation/node-update.md)更新
-    * [**SJG TOOL v3.7.4リリース**](operation/tool.md)
+    * [**SJG TOOL v3.7.4リリース**](operation/sjg-tool-setup.md)
     * 軽微な修正
 
 ## 2024/06/29　ver. 13.3.2
@@ -140,7 +148,7 @@
     sed -i 's/alias cnreload="kill -HUP $(pidof cardano-node)"/alias cnreload="pkill -HUP cardano-node"/g' $HOME/.bashrc
     source $HOME/.bashrc
     ```
-    * [**SJG TOOL v3.7.3リリース**](operation/tool.md)  
+    * [**SJG TOOL v3.7.3リリース**](operation/sjg-tool-setup.md)  
     * 軽微な修正
 
 
@@ -213,7 +221,7 @@
 
     * [**Grafanaアラート設定**](operation/grafana-alert.md) Grafana最新バージョン対応
 
-    * [**SJG TOOL v3.7.0リリース**](operation/tool.md#364)
+    * [**SJG TOOL v3.7.0リリース**](operation/sjg-tool-setup.md#364)
         * CLI 8.17.0.0対応
         * ディスク空き容量とDB容量表示追加
     
@@ -234,7 +242,7 @@
 
 ## 2023/11/29　ver. 12.9.2
 !!! note ""
-    * [SJG TOOL v3.6.4リリース](operation/tool.md#364)
+    * [SJG TOOL v3.6.4リリース](operation/sjg-tool-setup.md#364)
     * プールIDファイル名変更  
       stakepoolid_hex → pool.id  
       stakepoolid_bech32 → pool.id-bech32
@@ -414,7 +422,7 @@
     * Cardano-node1.35.4対応
     * prometheus-node-exporter1.5.0アップデート手順追加  
         ([9.監視ツールセットアップ](setup/9-monitoring-tools-setup.md)、[ノードアップデート](operation/node-update.md))
-    * [エアギャップマシン作成](setup/air-gap-guid.md) ページ新設。Version7対応
+    * [エアギャップマシン作成](setup/air-gap-guide.md) ページ新設。Version7対応
     * [1.Ubuntu初期設定](setup/1-ubuntu-setup.md)ファイアウォール設定の一部を変更  
         (設定が必要な各ページ([3-リレー/BPの接続](setup/3-relay-bp-setup.md)、[9.監視ツールセットアップ](setup/9-monitoring-tools-setup.md))へ移動)
     * リレー2台目以降の設定手順を各ページに追加
@@ -437,7 +445,7 @@
 
 !!! note ""
     * [9.監視ツールセットアップ](setup/9-monitoring-tools-setup.md) (項目9のJSONファイルを変更)
-    * [SPO JAPAN GUILD TOOL](operation/tool.md) v3.3.0 リリース
+    * [SPO JAPAN GUILD TOOL](operation/sjg-tool-setup.md) v3.3.0 リリース
 
 ## 2022/08/28　ver. 12.3.4
 
@@ -483,9 +491,9 @@
 
 ## 2022/05/10　ver. 12.0
 !!! note ""
-    * [エアギャップマシン作成手順](setup/air-gap-guid.md)を追加  
+    * [エアギャップマシン作成手順](setup/air-gap-guide.md)を追加  
     * [Linuxコマンド集](operation/command.md)を追加
-    * [SJG Tool](operation/tool.md)のバージョンアップ
+    * [SJG Tool](operation/sjg-tool-setup.md)のバージョンアップ
     * その他軽微な修正
     
 
@@ -498,7 +506,7 @@
 
 ## 2022/04/14　ver. 11.3
 !!! note ""
-    * [SPO JAPAN GUILD TOOL](operation/tool.md)をリリース
+    * [SPO JAPAN GUILD TOOL](operation/sjg-tool-setup.md)をリリース
 
 ## 2022/04/07　ver. 11.2
 !!! note ""
@@ -517,3 +525,5 @@
 ## 2022/03/01　ver. 10.0
 !!! note ""
     * カルダノステークプール構築手順日本語翻訳を刷新し、「SPO JAPAN GUILD DOCS」として生まれ変わりました！
+
+---

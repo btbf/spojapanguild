@@ -1,4 +1,4 @@
-# **プール情報(pool.cert)の更新**
+# **運用証明書(pool.cert)の更新**
 
 !!! summary "概要"
     * 誓約、固定手数料、変動手数料、リレー情報、メタデータを変更する場合に実施します。
@@ -106,8 +106,6 @@
 
 **登録証明書トランザクションを作成する**
 
-複数のリレーノードを設定する場合は [複数のリレーノードを構成する記述方法](../setup/7-register-stakepool.md#poolcert) を参考にパラメーターを指定して下さい。  
-
 !!! notice "注意"
     以下は参考コードです。ご自身のプール設定値に変更してください  
     例）  
@@ -134,7 +132,9 @@
         $NODE_NETWORK \
         --pool-relay-ipv4 ***.***.***.*** \
         --pool-relay-port 6000 \
-        --metadata-url https://xxx.xxx.xxx/poolMetaData.json \
+        --pool-relay-ipv4 ***.***.***.*** \
+        --pool-relay-port 6000 \
+        --metadata-url https://xxx.github.io/xxx/poolMetaData.json \
         --metadata-hash $(cat poolMetaDataHash.txt) \
         --out-file pool.cert
     ```
@@ -291,3 +291,5 @@ build-rawトランザクションコマンドを実行します。
         $NODE_NETWORK
     ```
     > Transacsion Successfully submittedと表示されれば成功
+
+---

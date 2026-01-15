@@ -11,7 +11,8 @@
 !!! danger "注意事項"
     * P2Pへの切り替えは設定ファイルを変更するため、ノードを停止してから作業します。
     * 以下の手順はリレーノード用です。BPには適用しないでください。
-## **1.ノードバージョン確認**
+
+## **1. ノードバージョン確認**
 
 ```
 cardano-node version
@@ -26,7 +27,7 @@ sudo systemctl stop cardano-node
 ```
 
 
-## **2.設定ファイル変更**
+## **2. 設定ファイル変更**
 
 mainnet-config.jsonにP2Pフラグを追記する
 === "ノード8.1.2の場合"
@@ -45,7 +46,7 @@ mainnet-config.jsonにP2Pフラグを追記する
 mv $NODE_HOME/mainnet-topology.json $NODE_HOME/mainnet-topology-non2p2.json
 ```
 
-## **3.新トポロジーファイル作成**
+## **3. 新トポロジーファイル作成**
 実行前に `+`をクリックして注釈を確認してください。  
 `localRoots`には常にHot接続にしたい接続先を記入します。
 
@@ -214,7 +215,7 @@ cat $NODE_HOME/mainnet-topology.json | jq .
 sudo systemctl start cardano-node
 ```
 
-## **5.トポロジーアップデータ修正**
+## **5. トポロジーアップデータ修正**
 relay-topology_pull.sh内容変更  
 mainnet-topology.json上書き防止のため、生成ファイルをリネームします。
 ```
@@ -228,7 +229,7 @@ sed -i $NODE_HOME/relay-topology_pull.sh \
     Cronに設定している、トポロジーアップデータサーバーへの生存通知はしばらく継続して下さい。  
     廃止時期は別途ご案内致します。
 
-## **6.トポロジーリロード設定**
+## **6. トポロジーリロード設定**
 リロード用環境変数を追加
 ```
 echo alias cnreload='"pkill -HUP cardano-node"' >> $HOME/.bashrc
@@ -265,3 +266,5 @@ Peerアナリティクスについて
 !!! hint "ノード間の距離について"
     P2Pモードで最適な接続先と接続するとは言え、距離の多様性(近・中・遠距離)は維持されます。  
     インターネットルーティングの変更、接続性の部分的な喪失、物理的なインフラ障害により接続が失われた場合、ノードの一部または全部が他のより長い距離のウォーム接続を維持していれば、それらをホット接続に迅速に昇格させて回復できます。
+
+---
