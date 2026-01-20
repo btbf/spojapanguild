@@ -11,22 +11,19 @@
 
 ## **方針**
 !!! note "前提"
-    エアギャップ環境としての安全性を確保するため、本マニュアルでは、USBブートにより Ubuntu 24.04 を物理マシンへネイティブインストール し、{==**既存OSを削除した単一OS構成**==}で運用することを前提とします。
-
-    Liveブート、デュアルブート構成、ならびに ホストOSに依存するあらゆる仮想化・コンテナ実行環境（ハイパーバイザー型および OS レベル仮想化を含む）は、永続性やセキュリティ境界を保証できないため、本マニュアルでは採用しません。
+    エアギャップ環境としての安全性を確保するため、本マニュアルではUSBブートにより **`Ubuntu 24.04`** をインストールし、{==**既存OSを削除した単一OS構成で運用することを前提**==}とします。  
+    Liveブート、デュアルブート、および仮想環境（VirtualBox等）は、永続性やホストOSへの依存が残るため、本マニュアルでは採用しません。
 
 
 ## **エアギャップマシンの構築手順**
 !!! danger "注意点"
-    Ubuntuインストール対象のエアギャップマシンはインストール中もネットワークに繋がないでください
+    USBメディアの作成環境と、作成したUSBで実際にUbuntuを起動する環境は、まったく別の作業です。  
+    これらを混同しないよう、次のように区別してください。
 
-    準備バソコンは2台です。  
-
-    - **起動用USB作成PC**  
+    - **USB作成用PC**  
     Windows／macOS／Intel Mac／Apple Silicon Mac いずれでも可（ISOファイルの書き込み専用）
-    - **Ubuntuインストール対象エアギャップPC**  
-    UbuntuをインストールするPC（既存OSが消去されても問題ないPC / x86_64）  
-    **推奨スペック**：CPU2コア以上、RAM4GB以上、ディスク25GB以上
+    - **USB起動対象PC**  
+    UbuntuをインストールするPC（既存OSが消去されても問題ないPC / x86_64）
 
 
 ### **1. Ubuntu Desktopイメージの取得**
@@ -311,67 +308,3 @@ systemctl status bluetooth --no-pager
 以上の設定によりエアギャップ環境の構築が完了しました。
 
 ---
-
-### 4. 旧エアギャップからの移行
-
-旧エアギャップ（VirtualBox等）から移行する場合の手順です。
-
-#### 4-1. 環境変数の設定
-```
-echo 'export NODE_HOME="$HOME/cnode"' >> ~/.bashrc
-echo 'export NODE_NETWORK="--mainnet"' >> ~/.bashrc
-echo 'export CARDANO_NODE_NETWORK_ID=mainnet' >> ~/.bashrc
-echo alias airgap="'cd $HOME/cnode && [ -f airgap-set.tar.gz ] && tar -xOzf airgap-set.tar.gz airgap_script | bash -s verify || echo "airgap-set.tar.gz が見つかりません"'" >> $HOME/.bashrc
-
-source ~/.bashrc
-mkdir -p ${NODE_HOME}
-```
-
-??? テストネットの場合はこちら
-    === "Preview"
-        ```
-        echo 'export NODE_HOME="$HOME/cnode"' >> $HOME/.bashrc
-        echo 'export NODE_NETWORK="--testnet-magic 2"' >> $HOME/.bashrc
-        echo 'export CARDANO_NODE_NETWORK_ID=2' >> $HOME/.bashrc
-        echo alias airgap="'cd $HOME/cnode && [ -f airgap-set.tar.gz ] && tar -xOzf airgap-set.tar.gz airgap_script | bash -s verify || echo "airgap-set.tar.gz が見つかりません"'" >> $HOME/.bashrc
-
-        source $HOME/.bashrc
-        mkdir -p ${NODE_HOME}
-        ```
-
-    === "PreProd"
-        ```
-        echo 'export NODE_HOME="$HOME/cnode"' >> $HOME/.bashrc
-        echo 'export NODE_NETWORK="--testnet-magic 1"' >> $HOME/.bashrc
-        echo 'export CARDANO_NODE_NETWORK_ID=1' >> $HOME/.bashrc
-        echo alias airgap="'cd $HOME/cnode && [ -f airgap-set.tar.gz ] && tar -xOzf airgap-set.tar.gz airgap_script | bash -s verify || echo "airgap-set.tar.gz が見つかりません"'" >> $HOME/.bashrc
-
-        source $HOME/.bashrc
-        mkdir -p ${NODE_HOME}
-        ```
-
-#### 4-2. ファイルの移動
-
-**パーミッション変更**
-=== "VirtualBox側"
-```
-chmod u+rx $HOME/cold-keys
-```
-
-**ディレクトリコピー**  
-VirtualBox側から以下のディレクトリをコピーして新エアギャップの$HOME直下に移動してください。
-
-($HOMEは/home/<user>ディレクトリを指します)  
-
-- $HOME/cnode  
-- $HOME/cold-kes  
-
-**パーミッション変更**
-=== "新エアギャップ側"
-```
-chmod a-rx $HOME/cold-keys
-```
-
-#### 4-3. CLIインストール
-
-[cardano-cliバイナリーファイルコピー](../operation/node-update.md#4-エアギャップアップデート)を参照してください

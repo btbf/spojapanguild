@@ -693,7 +693,6 @@ Guild Liveviewを起動します。
 echo 'export NODE_HOME="$HOME/cnode"' >> ~/.bashrc
 echo 'export NODE_NETWORK="--mainnet"' >> ~/.bashrc
 echo 'export CARDANO_NODE_NETWORK_ID=mainnet' >> ~/.bashrc
-echo alias airgap="'cd $HOME/cnode && [ -f airgap-set.tar.gz ] && tar -xOzf airgap-set.tar.gz airgap_script | bash -s verify || echo "airgap-set.tar.gz が見つかりません"'" >> $HOME/.bashrc
 
 source ~/.bashrc
 mkdir -p ${NODE_HOME}
