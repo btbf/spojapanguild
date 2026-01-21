@@ -35,7 +35,7 @@
     ホスト名：任意のサブドメイン名  
     TYPE：A  
     VALUE(値):リレーサーバーIPアドレス  
-    ![](../images/grafana-security/1-1.png)
+    ![](../../images/grafana-security/1-1.png)
     
 
 === "独自ドメインを持っていない方"
@@ -47,14 +47,14 @@
     ここで取得したサブドメインがGrafanaのURLになります。
     
     例）grafana-abc.f5.si  
-    ![](../images/grafana-security/1-2.png)
+    ![](../../images/grafana-security/1-2.png)
 
     **詳細設定からDNSのAレコードを設定する**  
     「Aレコード(IPv4アドレス)」欄にGrafanaを導入しているサーバーのIPアドレスを入力して「設定を変更する」をクリックしてください
-    ![](../images/grafana-security/1-3.png)
+    ![](../../images/grafana-security/1-3.png)
 
     **登録情報確認**  
-    ![](../images/grafana-security/1-4.png)
+    ![](../../images/grafana-security/1-4.png)
 
 
 
@@ -89,7 +89,7 @@ sudo ufw reload
 !!! success "確認"
     ローカルブラウザから `http://リレーIPアドレス` にアクセスして  
     Nginx Welcomeページが表示されればOK！  
-    ![](../images/grafana-security/1-5.png)
+    ![](../../images/grafana-security/1-5.png)
 
 
 `xxxx.bbb.com`を[[1.ドメイン(サブドメイン)を取得する]](../operation/grafana-security.md/#1)で取得したドメイン(サブドメイン)に置き換えて実行する
@@ -197,21 +197,21 @@ sudo certbot --nginx
 
 1. 任意のメールアドレスの登録  
 ここで登録したメールアドレスにSSL証明書更新前・期限切れ情報の通知が届きます。  
-![](../images/grafana-security/1-6.png)
+![](../../images/grafana-security/1-6.png)
 
 2. Let's Encryptサービス利用規約への同意確認  
-![](../images/grafana-security/1-7.png)
+![](../../images/grafana-security/1-7.png)
 
 3. キャンペーンメール登録確認(不要ならN)  
-![](../images/grafana-security/1-8.png)
+![](../../images/grafana-security/1-8.png)
 
 4. SSL証明書登録ドメインの確認  
 `1:`にご自身のドメインが表示されていることを確認し、`1`を入力  
-![](../images/grafana-security/1-9.png)
+![](../../images/grafana-security/1-9.png)
 
 5. SSL証明書取得確認  
 `This certificate expires on`は取得したSSL証明書の有効期限なので覚えておきましょう！  
-![](../images/grafana-security/1-10.png)  
+![](../../images/grafana-security/1-10.png)  
 `Congratulations!`が表示されていれば署名書取得成功です！
 
 !!! success "確認"
@@ -249,7 +249,7 @@ sudo nano /etc/nginx/sites-enabled/$domain.conf
 ```
 
 編集後参考）  
-![](../images/grafana-security/1-11.png) 
+![](../../images/grafana-security/1-11.png) 
 
 
 追記したら保存して閉じる
@@ -263,7 +263,7 @@ sudo nano /etc/nginx/nginx.conf
 
 `SSL Settings`の `TLSv1`と` TLSv1.1`を削除する  
 編集後参考）  
-![](../images/grafana-security/1-12.png) 
+![](../../images/grafana-security/1-12.png) 
 
 
 続けて、以下の文を全てコピーして`include /etc/nginx/site-enabled/*;`の後に追記する  
@@ -291,7 +291,7 @@ sudo nano /etc/nginx/nginx.conf
 
 赤枠の `}` の位置に注意してください。  
 編集後参考） 
-![](../images/grafana-security/1-13.png) 
+![](../../images/grafana-security/1-13.png) 
 
 
 追記したら保存して閉じる
@@ -362,7 +362,7 @@ xxxx ALL=NOPASSWD: /bin/systemctl
 > このまま追記しないでください。xxxxをユーザー名に書き換えてください
 
 編集後参考） 
-![](../images/grafana-security/1-14.png) 
+![](../../images/grafana-security/1-14.png) 
 
 
 追記したら保存して閉じる

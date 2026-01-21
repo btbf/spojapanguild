@@ -18,10 +18,10 @@
         ??? tip "R-Login 推奨設定"
 
             **カラー設定**  
-            <img src=../images/r-login-setting2.png width="500px">
+            <img src=../../images/r-login-setting2.png width="500px">
             
             **接続状態維持設定**  
-            <img src=../images/r-login-setting.png width="500px">
+            <img src=../../images/r-login-setting.png width="500px">
 
     !!! info "Terminal（macOS 標準ターミナル）"
         macOSに標準搭載されているターミナルアプリです。  

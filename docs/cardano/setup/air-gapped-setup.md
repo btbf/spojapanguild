@@ -20,7 +20,7 @@
 !!! danger "注意点"
     Ubuntuインストール対象のエアギャップマシンはインストール中もネットワークに繋がないでください
 
-    準備バソコンは2台です。  
+    準備パソコンは、2台です。  
 
     - **起動用USB作成PC**  
     Windows／macOS／Intel Mac／Apple Silicon Mac いずれでも可（ISOファイルの書き込み専用）
@@ -116,82 +116,82 @@ USBブートディスクを作成します。
 > Ubuntuが起動しない場合は、コンピューターを再起動してください。  
 > その際Windowsでは主に`F12`、Macだと`Option`または`Alt`キーを押し続けてください。
 
-![](../images/airgap/ubuntu-desktop-24.04.3/1_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/1_ubuntu-24.04.3-install.png)
 
 #### **3-1. インストーラーのセットアップ**
 ※ 以降の画像は一例であり、環境によって表示が異なる場合があります。  
 
 1. 言語を選択。  
-![](../images/airgap/ubuntu-desktop-24.04.3/2_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/2_ubuntu-24.04.3-install.png)
 
 2. アクセシビリティ設定は選択せず、「`次`」を選択します。  
-![](../images/airgap/ubuntu-desktop-24.04.3/3_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/3_ubuntu-24.04.3-install.png)
 
 3. 使用しているキーボードレイアウトを選択します。  
-![](../images/airgap/ubuntu-desktop-24.04.3/4_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/4_ubuntu-24.04.3-install.png)
 
 4. 「`今はインターネットに接続しない`」を選択します。  
-![](../images/airgap/ubuntu-desktop-24.04.3/5_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/5_ubuntu-24.04.3-install.png)
 
 5. 「`Ubuntuをインストール`」を選択します。  
-![](../images/airgap/ubuntu-desktop-24.04.3/6_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/6_ubuntu-24.04.3-install.png)
 
 6. 対話型インストール「`対話式インストール`」を選択します。  
-![](../images/airgap/ubuntu-desktop-24.04.3/7_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/7_ubuntu-24.04.3-install.png)
 
 7. 「`規定の選択`」を選択します。  
-![](../images/airgap/ubuntu-desktop-24.04.3/8_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/8_ubuntu-24.04.3-install.png)
 
 8. 不要なドライバやバイナリを最小化するため、サードパーティ製ソフトウェアはインストールしません。  
-![](../images/airgap/ubuntu-desktop-24.04.3/9_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/9_ubuntu-24.04.3-install.png)
 
 #### **3-2. ディスクのセットアップ**
 1. 「`ディスクを削除してUbuntuをインストールする`」を選択します。
-![](../images/airgap/ubuntu-desktop-24.04.3/10_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/10_ubuntu-24.04.3-install.png)
 
 2. ユーザー名とパスワードを設定します。  
-![](../images/airgap/ubuntu-desktop-24.04.3/11_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/11_ubuntu-24.04.3-install.png)
 > コンピューター名の末尾は自動で入力されます。  
 
 3. タイムゾーンの選択をします。
-![](../images/airgap/ubuntu-desktop-24.04.3/12_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/12_ubuntu-24.04.3-install.png)
 
 4. インストールの準備が完了したので確認し、「`インストール`」を選択します。  
-![](../images/airgap/ubuntu-desktop-24.04.3/13_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/13_ubuntu-24.04.3-install.png)
 
 #### **3-3. インストールの完了**
 1. インストール完了画面を待機し、完了後「`今すぐ再起動`」を選択します。
-![](../images/airgap/ubuntu-desktop-24.04.3/14_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/14_ubuntu-24.04.3-install.png)
 
 2. USBを取り外すため「`Enter`」を押下してください。  
 「`Enter`」を押下後、すぐUSBを抜いてください。  
-![](../images/airgap/ubuntu-desktop-24.04.3/15_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/15_ubuntu-24.04.3-install.png)
 
 3. ログイン画面でパスワードを入力します。
-![](../images/airgap/ubuntu-desktop-24.04.3/16_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/16_ubuntu-24.04.3-install.png)
 
 #### **3-4. 追加設定**
 1. 以下の画面が表示されたら右上の「`次へ`」を選択します。  
-![](../images/airgap/ubuntu-desktop-24.04.3/17_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/17_ubuntu-24.04.3-install.png)
 
 2. 「`Skip for now`」が選択されていることを確認し、右上の「`スキップ`」を選択します。  
-![](../images/airgap/ubuntu-desktop-24.04.3/18_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/18_ubuntu-24.04.3-install.png)
 
 3. 「`いいえ、システムデータを共有しません`」を選択し、右上の「`次へ`」を選択します。  
-![](../images/airgap/ubuntu-desktop-24.04.3/19_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/19_ubuntu-24.04.3-install.png)
 
 4. 右上の「`完了`」を選択します。  
-![](../images/airgap/ubuntu-desktop-24.04.3/20_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/20_ubuntu-24.04.3-install.png)
 
 5. 追加設定が完了しました。    
-![](../images/airgap/ubuntu-desktop-24.04.3/21_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/21_ubuntu-24.04.3-install.png)
 
 #### **3-5. ターミナルの設定**
 1. ターミナルの設定をするため左下のアイコンを選択し、「`端末`」アイコンを選択します。  
-![](../images/airgap/ubuntu-desktop-24.04.3/22_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/22_ubuntu-24.04.3-install.png)
 
 2. ターミナルを右クリックして、「`ダッシュボードにピン留め`」を選択します。  
-![](../images/airgap/ubuntu-desktop-24.04.3/23_ubuntu-24.04.3-install.png)
+![](../../images/airgap/ubuntu-desktop-24.04.3/23_ubuntu-24.04.3-install.png)
 
 #### **3-6. 各種設定**
 1. ブラケットモードの無効化設定をします。  
@@ -307,16 +307,14 @@ systemctl status bluetooth --no-pager
      Active: inactive (dead)
 ```
 
-
 以上の設定によりエアギャップ環境の構築が完了しました。
 
----
 
-### 4. 旧エアギャップからの移行
+### **4. 旧エアギャップからの移行**
 
 旧エアギャップ（VirtualBox等）から移行する場合の手順です。
 
-#### 4-1. 環境変数の設定
+#### **4-1. 環境変数の設定**
 ```
 echo 'export NODE_HOME="$HOME/cnode"' >> ~/.bashrc
 echo 'export NODE_NETWORK="--mainnet"' >> ~/.bashrc
@@ -350,7 +348,7 @@ mkdir -p ${NODE_HOME}
         mkdir -p ${NODE_HOME}
         ```
 
-#### 4-2. ファイルの移動
+#### **4-2. ファイルの移動**
 
 **パーミッション変更**
 === "VirtualBox側"
@@ -364,7 +362,7 @@ VirtualBox側から以下のディレクトリをコピーして新エアギャ�
 ($HOMEは/home/<user>ディレクトリを指します)  
 
 - $HOME/cnode  
-- $HOME/cold-kes  
+- $HOME/cold-keys  
 
 **パーミッション変更**
 === "新エアギャップ側"
@@ -372,6 +370,8 @@ VirtualBox側から以下のディレクトリをコピーして新エアギャ�
 chmod a-rx $HOME/cold-keys
 ```
 
-#### 4-3. CLIインストール
+#### **4-3. cardano-cliのインストール**
 
-[cardano-cliバイナリーファイルコピー](../operation/node-update.md#4-エアギャップアップデート)を参照してください
+[バイナリーファイルコピー](../operation/node-update.md#4-1)を参照してください。
+
+---

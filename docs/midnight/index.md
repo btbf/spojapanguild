@@ -9,9 +9,9 @@
 本マニュアルを実施する前に、**エアギャップマシン環境構築**と**Cardano Preview ネットワーク**において、
 Cardano ステークプールの構築からブロック生成までの一連の作業を完了していることを前提とします。
 
-- [エアギャップ環境構築](../setup/air-gapped-setup/)
-- [カルダノステークプール構築ガイド](../setup/index.md)
-- [SPOKIT](https://github.com/btbf/spokit)  
+- [エアギャップ環境構築](../cardano/setup/air-gapped-setup/)
+- [カルダノステークプール構築ガイド](../cardano/setup/index.md)
+- [SPOKIT](https://github.com/btbf/spokit){target="_blank" rel="noopener"}  
   > SPOKIT は、ノーコマンドで Cardano ステークプールの構築・管理を行える **Cardano SPO Tool Kit** です。
 
 !!! tip "ヒント"

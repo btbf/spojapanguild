@@ -25,7 +25,7 @@ sudo apt update -y && sudo apt upgrade -y
 通知の基準となるアラートルールを作成します。  
 
 1.「左サイドメニュー」→「Alerting」の右の矢印→「Alert rules」→「New alert rule」の順にクリックする
-![](../images/grafana-alert/1-0.png)
+![](../../images/grafana-alert/1-0.png)
 
 ### **2-1. ノードスロット監視**
 
@@ -35,12 +35,12 @@ sudo apt update -y && sudo apt upgrade -y
 * ④:`alias`が選択されていることを確認
 * ⑤:監視するノード名を選択
 * ⑥:`Use query`をクリック
-![](../images/grafana-alert/1-1.png)
+![](../../images/grafana-alert/1-1.png)
 
 * ⑦:`B`のゴミ箱マークをクリック
 * ⑧:`C`のゴミ箱マークをクリック
 * ⑨:`Add expression`をクリックし、`Classic_condition`を選択
-![](../images/grafana-alert/1-2.png)
+![](../../images/grafana-alert/1-2.png)
 
 * ⑩:`last() / A / HAS NO VALUE`選択
 * ⑪:`Set as alert condition`をクリックし、`Alert condition`の表示に変える
@@ -49,20 +49,20 @@ sudo apt update -y && sudo apt upgrade -y
 * ⑭:`20s`を入力
 * ⑮:`Alerting`を選択
 * ⑯:`Alerting`を選択
-![](../images/grafana-alert/1-3.png)
+![](../../images/grafana-alert/1-3.png)
 
 * ⑰:`Add custom annotaion`を選択
 * ⑱:`検知内容`を入力
 * ⑲:フィールドに検知メッセージを入力
 例）`Relay1のスロットを取得出来ませんでした。ノード起動状態を確認してください`
 * ⑳:ページ上部の`Save rule and exit`を選択
-![](../images/grafana-alert/1-4.png)
+![](../../images/grafana-alert/1-4.png)
 
 
 残りの全てのノードのスロット監視を設定する  
 
 上記で作成したルールをコピーする
-![](../images/grafana-alert/1-5.png)
+![](../../images/grafana-alert/1-5.png)
 
 * ①を書き換える
 * ②:`Metrics Browser`を書き換える  
@@ -77,7 +77,7 @@ sudo apt update -y && sudo apt upgrade -y
 
 ### **2-2. BP→リレー接続監視**
 上記で作成したルールをコピーする
-![](../images/grafana-alert/1-5.png)
+![](../../images/grafana-alert/1-5.png)
 
 * ①:`BPリレー接続監視`など任意のルール名に書き換える
 * ②:`Metrics Browser`を`cardano_node_metrics_peers_connectedPeers_int{alias="block-producing-node"}`に置き換える
@@ -90,7 +90,7 @@ sudo apt update -y && sudo apt upgrade -y
 
 ### **2-3. チェーン密度監視**
 上記で作成したルールをコピーする
-![](../images/grafana-alert/1-5.png)
+![](../../images/grafana-alert/1-5.png)
 
 * ①:`チェーン密度監視`など任意のルール名に書き換える
 * ②:`Metrics Browser`を`cardano_node_metrics_density_real{alias="relaynode1"} * 100`に置き換える
@@ -103,7 +103,7 @@ sudo apt update -y && sudo apt upgrade -y
 
 ### **2-4. ノードタイム監視**
 上記で作成したルールをコピーする
-![](../images/grafana-alert/1-5.png)
+![](../../images/grafana-alert/1-5.png)
 
 * ①:`Relay1-ノードタイム監視`など任意のルール名に書き換える
 * ②:`Metrics Browser`を`node_timex_maxerror_seconds{alias="relaynode1"} * 1000`に置き換える 
@@ -118,7 +118,7 @@ sudo apt update -y && sudo apt upgrade -y
 残り全てのノードのノードタイム監視を設定する  
 
 上記で作成したルールをコピーする
-![](../images/grafana-alert/1-5.png)
+![](../../images/grafana-alert/1-5.png)
 
 * ①を書き換える
 * ②:`Metrics Browser`を書き換える  
@@ -131,7 +131,7 @@ sudo apt update -y && sudo apt upgrade -y
 
 ### **2-5. KES残り日数監視**
 上記で作成したルールをコピーする
-![](../images/grafana-alert/1-5.png)
+![](../../images/grafana-alert/1-5.png)
 
 * ①:`BP-KES残り日数監視`など任意のルール名に書き換える
 * ②:`Metrics Browser`を`(cardano_node_metrics_remainingKESPeriods_int * 1.5)`に置き換える
@@ -144,7 +144,7 @@ sudo apt update -y && sudo apt upgrade -y
 
 ### **2-6. ディスク使用率監視**
 上記で作成したルールをコピーする
-![](../images/grafana-alert/1-5.png)
+![](../../images/grafana-alert/1-5.png)
 
 * ①:`Relay1-ディスク使用率監視`など任意のルール名に書き換える
 * ②:`Metrics Browser`を`1 - node_filesystem_avail_bytes / node_filesystem_size_bytes{alias="relaynode1",mountpoint="/"}`に置き換える 
@@ -159,7 +159,7 @@ sudo apt update -y && sudo apt upgrade -y
 残り全てのノードのディスク使用率監視を設定する  
 
 上記で作成したルールをコピーする
-![](../images/grafana-alert/1-5.png)
+![](../../images/grafana-alert/1-5.png)
 
 * ①を書き換える
 * ②:`Metrics Browser`を書き換える  
@@ -181,7 +181,7 @@ sudo apt update -y && sudo apt upgrade -y
 ## **4. 通知テンプレート設定**
 
 * 「Contact points」をクリックし「Add template」をクリック
-![](../images/grafana-alert/1-6.png)
+![](../../images/grafana-alert/1-6.png)
 
 * 任意のテンプレート名`SJG`を入力し、以下のテンプレートデータを入力
 ```
@@ -197,13 +197,13 @@ sudo apt update -y && sudo apt upgrade -y
 {{ template "myalert" .}} {{ end }}{{ end }}
 {{ end }}
 ```
-![](../images/grafana-alert/1-7.png)
+![](../../images/grafana-alert/1-7.png)
 
 * 「Save tempelate」をクリック 
 
 ## **5. 通知先設定**
 * 「Add contact point」をクリック
-![](../images/grafana-alert/1-8.png)
+![](../../images/grafana-alert/1-8.png)
 
 通知先を指定する
 
@@ -222,7 +222,7 @@ sudo apt update -y && sudo apt upgrade -y
     * Slack→Text Body
     * Telegram→Message
 
-![](../images/grafana-alert/1-9.png)
+![](../../images/grafana-alert/1-9.png)
 
 
 * 「Save contact point」をクリック
@@ -232,14 +232,14 @@ sudo apt update -y && sudo apt upgrade -y
 
 
 * 「Notification policies」→「Edit」をクリック
-![](../images/grafana-alert/1-10.png)
+![](../../images/grafana-alert/1-10.png)
 
 * `Self-Alert`を選択
 * `Group by`に`grafana_folder`と`alertname`を指定
 * `Group interval`→ `1 Minutes`に設定
 * `Repeat interval`→ `10 Minutes`に設定
 * 「Update default policy」をクリック
-![](../images/grafana-alert/1-11.png)
+![](../../images/grafana-alert/1-11.png)
 
 
 
