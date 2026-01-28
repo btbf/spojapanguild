@@ -190,12 +190,12 @@ nav:
     - 'Midnight':
       - 'バリデーター':
         - '・ 概要': './midnight/index.md'
-        - '構築':
-          - '・ Cardanoインデクサーサーバー構築': './midnight/setup/cardano-indexer-setup.md'
-          - '・ Midnightノード稼働サーバー構築': './midnight/setup/midnight-node-server-setup.md'
-          - '・ Midnightノード起動': './midnight/setup/start-midnight-node.md'
-        - '一覧':
-          - '・ Midnightノードオプション一覧': './midnight/operation/midnight-node-options.md'
+        # - '構築':
+          # - '・ Cardanoインデクサーサーバー構築': './midnight/setup/cardano-indexer-setup.md'
+          # - '・ Midnightノード稼働サーバー構築': './midnight/setup/midnight-node-server-setup.md'
+          # - '・ Midnightノード起動': './midnight/setup/start-midnight-node.md'
+        # - '一覧':
+          # - '・ Midnightノードオプション一覧': './midnight/operation/midnight-node-options.md'
       # - 'エアドロップ申請':
         # - '・ Glacier Drop': './midnight/midnight-glacier-drop.md'
     - 'SPO JAPAN GUILD':
