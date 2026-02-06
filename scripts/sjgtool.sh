@@ -3,7 +3,7 @@
 # 入力値チェック/セット
 #
 
-TOOL_VERSION="4.1.1"
+TOOL_VERSION="4.1.2"
 COLDKEYS_DIR='$HOME/cold-keys'
 
 # General exit handler
@@ -1536,7 +1536,8 @@ read -n 1 -p "メニュー番号を入力してください : >" patch
         echo -e "1.No-confidence(不信任案)"
         echo -e "2.New Committee(委員会更新)"
         echo -e "3.Hard-fork(ハードフォーク)"
-        echo -e "4.Info Action(情報)"
+        echo -e "4.Parameter Changes(セキュリティパラメータ更新) ${FG_RED}セキュリティパラメータを含む提案のみ${NC}"
+        echo -e "5.Info Action(情報)"
         echo
         echo -e "${FG_YELLOW}投票にはTx手数料がかかります${NC}(手数料はpayment.addrから引き落とされます)"
         echo '------------------------------------------------------------------------'
@@ -2089,13 +2090,19 @@ choose_proposal(){
     if [ "$voter_type" == "SPO" ]; then
       echo "ガバナンスアクション一覧を取得中..."
       gov_state_json=$(cardano-cli conway query gov-state ${NODE_NETWORK})
-      local spo_available_type=("NoConfidence" "NewCommittee" "HardForkInitiation" "UpdateCommittee" "InfoAction")
+      local spo_available_type=("NoConfidence" "NewCommittee" "HardForkInitiation" "UpdateCommittee" "ParameterChange" "InfoAction")
       mapfile -t proposal_list < <(echo "$gov_state_json" | jq -r --argjson now "$current_epoch" '
+        def security_keys:
+          ["maxBlockBodySize","maxTxSize","maxBlockHeaderSize","maxValueSize","maxBlockExecutionUnits","txFeePerByte","txFeeFixed"];
+        def has_security_params:
+          [ .proposalProcedure.govAction.contents[]? | objects | keys[] ] as $keys
+          | any($keys[]; (security_keys | index(.)));
         .proposals
         | to_entries[]
         | .value as $v
         | select($v.expiresAfter >= $now)
-        | select($v.proposalProcedure.govAction.tag as $tag | ["NoConfidence","NewCommittee","HardForkInitiation","UpdateCommittee","InfoAction"] | index($tag))
+        | select($v.proposalProcedure.govAction.tag as $tag | ["NoConfidence","NewCommittee","HardForkInitiation","UpdateCommittee","ParameterChange","InfoAction"] | index($tag))
+        | select($v.proposalProcedure.govAction.tag != "ParameterChange" or ($v | has_security_params))
         | "\($v.actionId.txId)|\($v.actionId.govActionIx)|\($v.proposalProcedure.govAction.tag)|\($v.expiresAfter)|\($v.proposedIn)|\($v.proposalProcedure.anchor.url)"')
 
       if [ ${#proposal_list[@]} -eq 0 ]; then
@@ -2123,7 +2130,7 @@ choose_proposal(){
           touch "$anchor_fail_marker"
         fi
         rm -f "$tmp_anchor"
-        printf "[%s] %s\n" "$((i+1))" "$anchor_title_jp"
+        printf "[%s] %s \e[30;42m%s${NC}\n" "$((i+1))" "$anchor_title_jp" "$proposal_tag"
         printf "${GRAY}     %s${NC}\n" "$anchor_title"
         printf "${GRAY}     txId:%s ix:%s %s (開始:%s / 終了:%s)${NC}\n" "$tx_id" "$action_ix" "$proposal_tag" "$proposed_in" "$expires_after"
       done
@@ -2175,7 +2182,7 @@ choose_proposal(){
       
       if [[ -n "$vote_proposal" ]]; then
         #echo $vote_proposal | jq .
-        local spo_available_type=("NoConfidence" "NewCommittee" "HardForkInitiation" "UpdateCommittee" "InfoAction")
+        local spo_available_type=("NoConfidence" "NewCommittee" "HardForkInitiation" "UpdateCommittee" "ParameterChange" "InfoAction")
         local expiresAfter=$(echo $vote_proposal | jq .expiresAfter)
         local proposedIn=$(echo $vote_proposal | jq .proposedIn)
         local deposit=$(echo $vote_proposal | jq .proposalProcedure.deposit)
