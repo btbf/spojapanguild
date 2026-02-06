@@ -6,15 +6,16 @@
 
 ## **前提条件**
 
-本マニュアルを実施する前に、**Cardano Preview ネットワーク**において、
+本マニュアルを実施する前に、**エアギャップマシン環境構築**と**Cardano Preview ネットワーク**において、
 Cardano ステークプールの構築からブロック生成までの一連の作業を完了していることを前提とします。
 
-!!! tip "ヒント"
-    プール構築後は、[Preview tADA Faucet](https://docs.cardano.org/cardano-testnets/tools/faucet){target="_blank" rel="noopener"}を利用して委任を行ってください。
-
+- [エアギャップ環境構築](../setup/air-gapped-setup/)
 - [カルダノステークプール構築ガイド](../setup/index.md)
 - [SPOKIT](https://github.com/btbf/spokit)  
   > SPOKIT は、ノーコマンドで Cardano ステークプールの構築・管理を行える **Cardano SPO Tool Kit** です。
+
+!!! tip "ヒント"
+    プール構築後は、[Preview tADA Faucet](https://docs.cardano.org/cardano-testnets/tools/faucet){target="_blank" rel="noopener"}を利用してプール委任を行ってください。
 
 対象ネットワーク別の必要サーバー台数は以下のとおりです。  
 
