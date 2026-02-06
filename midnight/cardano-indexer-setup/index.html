@@ -1,0 +1,4323 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="SPO JAPAN GUILD監修のステークプール構築ガイド。私たちは日本におけるステークプール構築を促進しカルダノ分散化に貢献してまいります。">
+      
+      
+      
+        <link rel="canonical" href="https://docs.spojapanguild.net/midnight/cardano-indexer-setup/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../midnight-node-server-setup/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0+insiders-4.53.18">
+    
+    
+      
+        <title>Cardanoインデクサーサーバー構築 - SPO JAPAN GUILD DOCS</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.df281a37.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+JP:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Noto Sans JP";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-R9C48XMXE5"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-R9C48XMXE5",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-R9C48XMXE5",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>if("undefined"!=typeof __md_analytics){var consent=__md_get("__consent");consent&&consent.analytics&&__md_analytics()}</script>
+  
+
+    
+    
+  
+  
+    
+  
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="SPO JAPAN GUILD DOCS - Cardanoインデクサーサーバー構築" />
+  <meta property="og:description" content="SPO JAPAN GUILD監修のステークプール構築ガイド。私たちは日本におけるステークプール構築を促進しカルダノ分散化に貢献してまいります。" />
+  <meta property="og:url" content="https://docs.spojapanguild.net/midnight/cardano-indexer-setup/" />
+  <meta property="og:image" content="https://docs.spojapanguild.net/images/ogp-image.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SPO JAPAN GUILD DOCS - Cardanoインデクサーサーバー構築" />
+  <meta name="twitter:description" content="SPO JAPAN GUILD監修のステークプール構築ガイド。私たちは日本におけるステークプール構築を促進しカルダノ分散化に貢献してまいります。" />
+  <meta name="twitter:image" content="https://docs.spojapanguild.net/images/sjg-docs-card.png" />
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cardano" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href="../.." title="SPO JAPAN GUILD DOCS" class="md-header__button md-logo" aria-label="SPO JAPAN GUILD DOCS" data-md-component="logo">
+      
+  <img src="../../images/logo-white.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SPO JAPAN GUILD DOCS
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Cardanoインデクサーサーバー構築
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="cyan" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="共有" aria-label="共有" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/btbf/spojapanguild" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    btbf/spojapanguild
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="タブ" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../.." class="md-tabs__link">
+          
+  
+  
+  HOME
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../setup/" class="md-tabs__link">
+          
+  
+  
+  プール構築マニュアル
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../operation/" class="md-tabs__link">
+          
+  
+  
+  プール運用マニュアル
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  Midnightバリデーター
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../learning/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  SJGラーニング
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../faq/node/" class="md-tabs__link">
+          
+  
+  
+  よくある質問
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="SPO JAPAN GUILD DOCS" class="md-nav__button md-logo" aria-label="SPO JAPAN GUILD DOCS" data-md-component="logo">
+      
+  <img src="../../images/logo-white.png" alt="logo">
+
+    </a>
+    SPO JAPAN GUILD DOCS
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/btbf/spojapanguild" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    btbf/spojapanguild
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HOME
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    HOME
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    はじめに
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プール構築マニュアル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プール運用マニュアル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SJGラーニング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelogs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    更新履歴
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    貢献者
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/donation-credit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    寄付とクレジット
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プール構築マニュアル
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    プール構築マニュアル
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プール構築マニュアル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プール構築
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    プール構築
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/air-gapped-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. エアギャップ環境構築
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/ubuntu-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Ubuntu初期設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/node-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. ノードセットアップ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/relay-bp-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. リレー/BP接続設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/bp-key-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. BP用キー生成
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/address-generate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. アドレス生成
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/stake-address-register/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. ステークアドレス登録
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/stake-pool-register/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8. ステークプール登録
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/final-checks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9. 最終チェック
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/monitoring-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10. 監視ツール設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/blocklog-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11. ブロックログ設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/blocknotify-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12. SPO BlockNotify設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/spo-newsletter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SPOニュースレター登録
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/donation-credit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    寄付とクレジット
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プール運用マニュアル
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    プール運用マニュアル
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プール運用マニュアル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プール運用
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    プール運用
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/kes-update/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ KESの更新
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/cert-update/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ 運用証明書の更新
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/withdrawal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ 資金引き出し
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/calidus-key-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ Calidusキー生成
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/pool-retire/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ プール廃止処理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ノード管理
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ノード管理
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/node-update/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ ノードアップデート
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--new"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/mithril-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ DB同期(Mithril)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/add-relay/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ リレーノード増設
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/bp-port-change/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ BPポート変更
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    サーバー管理
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    サーバー管理
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/ubuntu22-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ Ubuntu22.04移行
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4_2" id="__nav_3_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ サーバー移行
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ・ サーバー移行
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/relay-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ リレーサーバー移行
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/bp-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ BPサーバー移行
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    運用ツール
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    運用ツール
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/sjg-tool-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ SJGツール導入設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/sftp-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ SFTPソフト設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5_3" id="__nav_3_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ Grafana追加設定
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ・ Grafana追加設定
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/grafana-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ Grafanaセキュリティ強化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/grafana-alert/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ Grafanaアラート設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/grafana-repo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ Grafanaリポジトリ変更
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/blocknotify-reinstall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ SPOBlockNotify移行手順
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ガバナンス
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ガバナンス
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/gov-spo-vote/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ ガバナンスアクションSPO投票
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/catalyst-voting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ カタリスト有権者登録
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mithril関連
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Mithril関連
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/mithril-signer-node-setup-and-updates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ Mithril Signerノードの設定、更新
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Midnight関連
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Midnight関連
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/midnight-glacier-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ Glacier Drop請求手続き
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_9" id="__nav_3_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linuxコマンド集
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Linuxコマンド集
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/linux-commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ 各種コマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Midnightバリデーター
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Midnightバリデーター
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    はじめに
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cardanoインデクサーサーバー構築
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cardanoインデクサーサーバー構築
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        事前準備
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-spokit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. SPOKIT導入設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. SPOKIT導入設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-1. 初期設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-2-ubuntu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-2. Ubuntuセキュリティ設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-3. ノードインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. PostgreSQLの設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. PostgreSQLの設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#2-1-postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2-1. PostgreSQLインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-2-postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2-2. PostgreSQL 初期設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-cardano-db-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. cardano-db-syncの設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. cardano-db-syncの設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#3-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3-1. 依存関係インストール
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3-1. 依存関係インストール">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#libsodium" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        libsodiumインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#secp256k1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secp256k1インストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        blstインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ghcup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GHCUPインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-2-db-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3-2. db-syncインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3-3. スナップショットのダウンロード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-4-db-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3-4. db-sync環境設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3-5. 動作確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../midnight-node-server-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Midnightノード稼働サーバー構築
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../start-midnight-node/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Midnightノード起動
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../midnight-node-options/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Midnightノードオプション一覧
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SJGラーニング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    よくある質問
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    よくある質問
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_1" id="__nav_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    運用編
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    運用編
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/node/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ ノード関連
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/blocklog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ ブロックログ関連
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ ノード監視関連
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        事前準備
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-spokit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. SPOKIT導入設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. SPOKIT導入設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-1. 初期設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-2-ubuntu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-2. Ubuntuセキュリティ設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-3. ノードインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. PostgreSQLの設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. PostgreSQLの設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#2-1-postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2-1. PostgreSQLインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-2-postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2-2. PostgreSQL 初期設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-cardano-db-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. cardano-db-syncの設定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. cardano-db-syncの設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#3-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3-1. 依存関係インストール
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3-1. 依存関係インストール">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#libsodium" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        libsodiumインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#secp256k1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secp256k1インストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        blstインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ghcup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GHCUPインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-2-db-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3-2. db-syncインストール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3-3. スナップショットのダウンロード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-4-db-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3-4. db-sync環境設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3-5. 動作確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="cardano"><strong>Cardanoインデクサーサーバー構築</strong><a class="headerlink" href="#cardano" title="Permanent link">&para;</a></h1>
+<p>本ドキュメントは、Cardanoインデクサーサーバー（<code>cardano-node</code> 、 <code>cardano-db-sync</code> 、 <code>PostgreSQL</code>） を構築するための手順です。  </p>
+<h3 id="_1"><strong>事前準備</strong><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
+<details class="tip">
+<summary>ローカル環境での事前準備</summary>
+<p>SSH接続でログインする場合は、事前にローカル環境でSSH認証キーを作成してください。</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Windowsの場合</label><label for="__tabbed_1_2">Macの場合</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><strong>1. 管理者モードでターミナルを起動します。</strong>  </p>
+<p><code>Win + X</code> を押下し、ターミナル（管理者）を選択し、SSHクライアントの有無を確認します。<br />
+<div class="highlight"><pre><span></span><code><span class="nb">Get-WindowsCapability</span> <span class="n">-Online</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="n">Name</span> <span class="o">-like</span> <span class="s1">&#39;OpenSSH.Client*&#39;</span>
+</code></pre></div></p>
+<blockquote>
+<p><code>State : Installed</code>であれば問題ありません。</p>
+</blockquote>
+<details class="tip">
+<summary><code>State : NotPresent</code>の場合</summary>
+<p>以下のコマンドで追加してください。
+<div class="highlight"><pre><span></span><code><span class="nb">Add-WindowsCapability</span> <span class="n">-Online</span> <span class="n">-Name</span> <span class="n">OpenSSH</span><span class="p">.</span><span class="n">Client</span><span class="p">~~~~</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span><span class="p">.</span><span class="n">0</span>
+</code></pre></div></p>
+</details>
+<p><strong>2. SSH鍵生成</strong><br />
+<div class="highlight"><pre><span></span><code><span class="n">mkdir</span> <span class="p">~/.</span><span class="n">ssh</span> <span class="n">-Force</span>
+<span class="n">ssh-keygen</span> <span class="n">-t</span> <span class="n">ed25519</span> <span class="n">-N</span> <span class="s2">&quot;&quot;</span> <span class="n">-C</span> <span class="s2">&quot;ssh_connect&quot;</span> <span class="o">-f</span> <span class="p">~/.</span><span class="n">ssh</span><span class="p">/</span><span class="n">ssh_ed25519</span>
+</code></pre></div></p>
+<p><strong>3. 公開鍵ファイル名の変更</strong>
+<div class="highlight"><pre><span></span><code><span class="nb">cd </span><span class="p">~/.</span><span class="n">ssh</span>
+<span class="nb">mv </span><span class="n">ssh_ed25519</span><span class="p">.</span><span class="n">pub</span> <span class="n">authorized_keys</span>
+</code></pre></div></p>
+</div>
+<div class="tabbed-block">
+<p><strong>1. ターミナルを起動します。</strong>  </p>
+<p><code>⌘ + Space（Command + Space）</code>を押下し、「<code>terminal</code>」と入力し、Enterを押下します。</p>
+<p><strong>2. SSH鍵生成</strong>
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.ssh
+ssh-keygen<span class="w"> </span>-t<span class="w"> </span>ed25519<span class="w"> </span>-N<span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span>-C<span class="w"> </span><span class="s2">&quot;ssh_connect&quot;</span><span class="w"> </span>-f<span class="w"> </span>~/.ssh/ssh_ed25519
+</code></pre></div></p>
+<p><strong>3. 公開鍵ファイル名の変更</strong>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>~/.ssh
+mv<span class="w"> </span>ssh_ed25519.pub<span class="w"> </span>authorized_keys
+</code></pre></div></p>
+</div>
+</div>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">注意</p>
+<p>以下の鍵は絶対に紛失しないでください。<br />
+紛失するとサーバーへ接続できなくなります。  </p>
+<p><code>ssh_ed25519</code> （秘密鍵）<br />
+<code>authorized_keys</code> （公開鍵）</p>
+</div>
+</details>
+<div class="admonition info">
+<p class="admonition-title">サーバーでの事前準備</p>
+<p>日常運用では<code>root</code>アカウントを使用せず、sudo権限を付与した一般ユーザーで操作します。</p>
+<p>新しいユーザーを作成します。  </p>
+<blockquote>
+<p>任意のアルファベット文字を入力してください。<br />
+この例では<code>cardano</code> ユーザーとして以降進めます。</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code>adduser<span class="w"> </span>cardano
+</code></pre></div>
+<div class="no-copy highlight"><pre><span></span><code><span class="nt">New password</span><span class="p">:</span><span class="w">           </span><span class="c1"># パスワードを設定</span>
+<span class="nt">Retype new password</span><span class="p">:</span><span class="w">    </span><span class="c1"># 確認のため再入力</span>
+
+<span class="l l-Scalar l-Scalar-Plain">Enter the new value, or press ENTER for the default</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">Full Name []</span><span class="p p-Indicator">:</span><span class="w">   </span><span class="c1"># フルネーム等の情報を設定（不要であればブランクでも問題ありません）</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">Room Number []</span><span class="p p-Indicator">:</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">Work Phone []</span><span class="p p-Indicator">:</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">Home Phone []</span><span class="p p-Indicator">:</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">Other []</span><span class="p p-Indicator">:</span>
+<span class="l l-Scalar l-Scalar-Plain">Is the information correct? [Y/n]</span><span class="w"> </span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">y</span>
+</code></pre></div>
+<p><code>cardano</code>にsudo権限を付与します。
+<div class="highlight"><pre><span></span><code>usermod<span class="w"> </span>-aG<span class="w"> </span>sudo<span class="w"> </span>cardano
+</code></pre></div></p>
+<p>rootからログアウトします。
+<div class="highlight"><pre><span></span><code><span class="nb">exit</span>
+</code></pre></div></p>
+<div class="admonition tip">
+<p class="admonition-title">ヒント</p>
+<p>ターミナルソフトの接続ユーザーを、上記で作成した<strong>ユーザー名（<code>cardano</code>）およびパスワード</strong>に変更して再接続してください。</p>
+</div>
+</div>
+<h2 id="1-spokit"><strong>1. SPOKIT導入設定</strong><a class="headerlink" href="#1-spokit" title="Permanent link">&para;</a></h2>
+<p>当ツールはUbuntuセキュリティ設定からcardano-nodeインストールなど、<mark class="critic"><strong>ノーコマンドで Cardano ステークプールの構築・管理を行える Cardano SPO Tool Kit です</strong></mark></p>
+<h3 id="1-1"><strong>1-1. 初期設定</strong><a class="headerlink" href="#1-1" title="Permanent link">&para;</a></h3>
+<div class="admonition tip">
+<p class="admonition-title">パスワード入力について</p>
+<p>管理者権限パスワードを求められた場合は、ユーザー作成時に設定したパスワードを入力してください。</p>
+</div>
+<ol>
+<li>
+<p><code>SPOKIT</code>を導入して初期設定からノードインストールまで行います。
+<div class="highlight"><pre><span></span><code>wget<span class="w"> </span>-qO-<span class="w"> </span>https://spokit.spojapanguild.net/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>bash
+</code></pre></div></p>
+<blockquote>
+<p>キーボードの<code>↑</code>と<code>↓</code>、<code>←</code>と<code>→</code>でカーソルを移動できます。</p>
+</blockquote>
+</li>
+<li>
+<p>セットアップノードタイプでは「<strong><code>リレー</code></strong>」を選択して <span class="keys"><kbd class="key-enter">Enter</kbd></span>
+<img alt="" src="../../images/spokit/1_Preview-SPOKIT-Initial-Settings.png" /></p>
+</li>
+<li>
+<p>接続ネットワークでは「<strong><code>Preview-Testnet</code></strong>」を選択して <span class="keys"><kbd class="key-enter">Enter</kbd></span>
+<img alt="" src="../../images/spokit/2_Preview-SPOKIT-Initial-Settings.png" /></p>
+</li>
+<li>
+<p>作業ディレクトリPATHは、デフォルトを指定するのでそのまま <span class="keys"><kbd class="key-enter">Enter</kbd></span></p>
+</li>
+<li>
+<p>「<strong><code>はい</code></strong>」を選択し、 <span class="keys"><kbd class="key-enter">Enter</kbd></span></p>
+</li>
+<li>
+<p>「<strong><code>source</code></strong>」コマンドを必ず実行してください。<br />
+<img alt="" src="../../images/spokit/3_Preview-SPOKIT-Initial-Settings.png" /></p>
+</li>
+</ol>
+<h3 id="1-2-ubuntu"><strong>1-2. Ubuntuセキュリティ設定</strong><a class="headerlink" href="#1-2-ubuntu" title="Permanent link">&para;</a></h3>
+<div class="admonition question">
+<p class="admonition-title">Ubuntuセキュリティ設定モードについて</p>
+<p>このモードでは、Cardanoノード実行に推奨されるUbuntuセキュリティ設定が含まれています。  </p>
+</div>
+<ol>
+<li>以下のコマンドを実行します。
+<div class="highlight"><span class="filename">実行コマンド</span><pre><span></span><code>spokit<span class="w"> </span>ubuntu
+</code></pre></div><blockquote>
+<p>「<code>Enter...</code>」と表示されたら Enter キーを押下し、以降はスクリプトの指示に従って設定してください。<br />
+デフォルトは「<code>はい</code>」を選択します。  </p>
+</blockquote>
+</li>
+</ol>
+<h3 id="1-3"><strong>1-3. ノードインストール</strong><a class="headerlink" href="#1-3" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>プール構築するため以下のコマンドを実行します。
+<div class="highlight"><span class="filename">実行コマンド</span><pre><span></span><code>spokit<span class="w"> </span>pool
+</code></pre></div></p>
+</li>
+<li>
+<p>「<code>ノードインストール</code>」を選択して <span class="keys"><kbd class="key-enter">Enter</kbd></span>
+<img alt="" src="../../images/spokit/1_Preview-SPOKIT-Node-Install.png" /></p>
+</li>
+<li>
+<p>以降はノードのポート番号設定まで進め、添付画像のように、最終行に 「<code>&gt; 戻る</code>」 が表示される状態になるまで待機します。<br />
+<img alt="" src="../../images/spokit/2_Preview-SPOKIT-Node-Install.png" /></p>
+</li>
+<li>
+<p>「<code>&gt; 戻る</code>」が表示されたら <span class="keys"><kbd class="key-enter">Enter</kbd></span> を押下後、「<code>[q] 終了</code>」を選択し、SPOKITウィザードを閉じます。  </p>
+</li>
+<li>
+<p>以下のコマンドを実行し、Cardano ノードの起動状態を確認します。
+<div class="highlight"><pre><span></span><code>glive
+</code></pre></div>
+<img alt="" src="../../images/spokit/Preview-gLiveView.png" /></p>
+<blockquote>
+<p>gLive が表示されていれば、ノードは正常に起動しています。<br />
+<a href="https://preview.cardanoscan.io/" rel="noopener" target="_blank">preview.cardanoscan</a>などのエクスプローラーでエポックやスロットを確認することもできます。</p>
+</blockquote>
+</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">ヒント</p>
+<p>gliveを閉じたらブラケットモード無効化を反映させるために一度ターミナルを閉じて、その後再接続してください。</p>
+<div class="highlight"><pre><span></span><code><span class="nb">exit</span>
+</code></pre></div>
+</div>
+<h2 id="2-postgresql"><strong>2. PostgreSQLの設定</strong><a class="headerlink" href="#2-postgresql" title="Permanent link">&para;</a></h2>
+<h3 id="2-1-postgresql"><strong>2-1. PostgreSQLインストール</strong><a class="headerlink" href="#2-1-postgresql" title="Permanent link">&para;</a></h3>
+<p>PostgreSQL 17 を使用します。<br />
+順に実行してください。</p>
+<p><div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>update
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>curl<span class="w"> </span>ca-certificates
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>install<span class="w"> </span>-d<span class="w"> </span>/usr/share/postgresql-common/pgdg
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>curl<span class="w"> </span>-s<span class="w"> </span>-o<span class="w"> </span>/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc<span class="w"> </span>--fail<span class="w"> </span>https://www.postgresql.org/media/keys/ACCC4CF8.asc
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;echo &quot;deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] \</span>
+<span class="s1">  https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main&quot; \</span>
+<span class="s1">  &gt; /etc/apt/sources.list.d/pgdg.list&#39;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>update
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>postgresql-17<span class="w"> </span>postgresql-server-dev-17<span class="w"> </span>postgresql-contrib<span class="w"> </span>libghc-hdbc-postgresql-dev
+</code></pre></div></p>
+<p>依存関係インストール</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>git<span class="w"> </span>jq<span class="w"> </span>bc<span class="w"> </span>automake<span class="w"> </span>tmux<span class="w"> </span>nano<span class="w"> </span>rsync<span class="w"> </span>htop<span class="w"> </span>curl<span class="w"> </span>build-essential<span class="w"> </span>pkg-config<span class="w"> </span>libffi-dev<span class="w"> </span>libgmp-dev<span class="w"> </span>libssl-dev<span class="w"> </span>libtinfo-dev<span class="w"> </span>libsystemd-dev<span class="w"> </span>zlib1g-dev<span class="w"> </span>make<span class="w"> </span>g++<span class="w"> </span>wget<span class="w"> </span>libncursesw5<span class="w"> </span>libtool<span class="w"> </span>autoconf<span class="w"> </span>liblmdb-dev<span class="w"> </span>openssl<span class="w"> </span>prometheus-node-exporter<span class="w"> </span>-y
+</code></pre></div>
+<h3 id="2-2-postgresql"><strong>2-2. PostgreSQL 初期設定</strong><a class="headerlink" href="#2-2-postgresql" title="Permanent link">&para;</a></h3>
+<p>接続用<code>.pgpass.restore</code>と<code>.pgpass</code>の作成
+<div class="highlight"><pre><span></span><code><span class="nv">DBSYNC_USER</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>whoami<span class="k">)</span><span class="s2">&quot;</span>
+<span class="nv">DBSYNC_PASS</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>uuidgen<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;-&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-c<span class="w"> </span><span class="m">16</span><span class="k">)</span><span class="s2">&quot;</span>
+
+cat<span class="w"> </span><span class="s">&lt;&lt;EOF &gt; &quot;$HOME/.pgpass.restore&quot;</span>
+<span class="s">/var/run/postgresql:5432:cexplorer:*:*</span>
+<span class="s">EOF</span>
+
+chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/.pgpass.restore&quot;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nv">DBSYNC_HOST</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>curl<span class="w"> </span>-s<span class="w"> </span>https://api.ipify.org<span class="k">)</span><span class="s2">&quot;</span>
+
+cat<span class="w"> </span><span class="s">&lt;&lt;EOF &gt; &quot;$HOME/.pgpass&quot;</span>
+<span class="s">${DBSYNC_HOST}:5432:cexplorer:${DBSYNC_USER}:${DBSYNC_PASS}</span>
+<span class="s">EOF</span>
+
+chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/.pgpass&quot;</span>
+</code></pre></div></p>
+<div class="admonition warning">
+<p class="admonition-title"><code>.pgpass</code>と<code>.pgpass.restore</code>ファイルについて</p>
+<p>postgreSQLに接続するためのユーザーIDとランダムパスワードが記載されたファイルのため、バックアップを推奨します。</p>
+</div>
+<p>PostgreSQL用のアカウントを作成
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;CREATE ROLE \&quot;</span><span class="si">${</span><span class="nv">DBSYNC_USER</span><span class="si">}</span><span class="s2">\&quot; LOGIN SUPERUSER PASSWORD &#39;</span><span class="si">${</span><span class="nv">DBSYNC_PASS</span><span class="si">}</span><span class="s2">&#39;;&quot;</span>
+</code></pre></div>
+<div class="no-copy highlight"><span class="filename">戻り値</span><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">CREATE ROLE</span>
+</code></pre></div></p>
+<p>db-sync用テーブル作成
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-d<span class="w"> </span>postgres<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;CREATE DATABASE cexplorer;&quot;</span>
+</code></pre></div>
+<div class="no-copy highlight"><span class="filename">戻り値</span><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">CREATE DATABASE</span>
+</code></pre></div></p>
+<p>SSL作成</p>
+<div class="admonition tip">
+<p class="admonition-title">SSL/TLS 通信について</p>
+<p>PostgreSQL を外部サーバーで利用する場合、<strong>SSL/TLS 通信が必須</strong>です。</p>
+</div>
+<p>サーバー証明書作成
+<div class="highlight"><pre><span></span><code>cd $HOME
+openssl req -new -x509 -days 3650 -nodes -keyout server.key -out server.crt -subj &quot;/CN=postgresql&quot;
+</code></pre></div></p>
+<p>権限・パス再配置
+<div class="highlight"><pre><span></span><code>sudo mkdir -p /etc/postgresql/ssl
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sudo mv server.key server.crt /etc/postgresql/ssl/
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sudo chown postgres:postgres /etc/postgresql/ssl/server.key /etc/postgresql/ssl/server.crt
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sudo chmod 600 /etc/postgresql/ssl/server.key
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sudo chmod 644 /etc/postgresql/ssl/server.crt
+</code></pre></div></p>
+<p>postgresqlパフォーマンス設定</p>
+<div class="admonition tip">
+<p class="admonition-title">設定概要</p>
+<ul>
+<li>cardano-db-sync / Midnight-node 専用チューニング</li>
+</ul>
+</div>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span>/etc/postgresql/17/main/postgresql.conf<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="s2">&quot;s|ssl_cert_file = &#39;.*&#39;|ssl_cert_file = &#39;/etc/postgresql/ssl/server.crt&#39;|&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="s2">&quot;s|ssl_key_file = &#39;.*&#39;|ssl_key_file  = &#39;/etc/postgresql/ssl/server.key&#39;|&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="s2">&quot;s/^#\?listen_addresses *= *.*/listen_addresses = &#39;*&#39;/&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="s2">&quot;s|^#\?[[:space:]]*synchronous_commit[[:space:]]*=.*|synchronous_commit = off|&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="s1">&#39;s!shared_buffers = 128MB!shared_buffers = 2GB!&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="s1">&#39;s!#effective_cache_size = 4GB!effective_cache_size = 8GB!&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="s1">&#39;s!#work_mem = 4MB!work_mem = 16MB!&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="s1">&#39;s!#maintenance_work_mem = 64MB!maintenance_work_mem = 512MB!&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="s1">&#39;s!max_wal_size = 1GB!max_wal_size = 4GB!&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="s1">&#39;s!min_wal_size = 80MB!min_wal_size = 1GB!&#39;</span>
+</code></pre></div>
+<p>postgresql再起動
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>postgresql
+</code></pre></div></p>
+<p>設定値確認
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-tAc<span class="w"> </span><span class="s2">&quot;SHOW config_file; SHOW listen_addresses; SHOW synchronous_commit; SHOW shared_buffers;&quot;</span>
+</code></pre></div>
+<div class="no-copy highlight"><span class="filename">戻り値</span><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">/etc/postgresql/17/main/postgresql.conf</span>
+<span class="l l-Scalar l-Scalar-Plain">*</span>
+<span class="l l-Scalar l-Scalar-Plain">off</span>
+<span class="l l-Scalar l-Scalar-Plain">2GB</span>
+</code></pre></div></p>
+<h2 id="3-cardano-db-sync"><strong>3. cardano-db-syncの設定</strong><a class="headerlink" href="#3-cardano-db-sync" title="Permanent link">&para;</a></h2>
+<h3 id="3-1"><strong>3-1. 依存関係インストール</strong><a class="headerlink" href="#3-1" title="Permanent link">&para;</a></h3>
+<p>TMUXセッションを展開
+<div class="highlight"><pre><span></span><code>tmux<span class="w"> </span>new<span class="w"> </span>-s<span class="w"> </span>build
+</code></pre></div></p>
+<h4 id="libsodium"><strong>libsodiumインストール</strong><a class="headerlink" href="#libsodium" title="Permanent link">&para;</a></h4>
+<p>リビジョンの取得
+<div class="highlight"><pre><span></span><code><span class="nv">REV</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-sL<span class="w"> </span>https://github.com/input-output-hk/iohk-nix/releases/latest/download/INFO<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;$1 == &quot;debian.libsodium-vrf.deb&quot; { rev = gensub(/.*-(.*)\.deb/, &quot;\\1&quot;, &quot;g&quot;, $2); print rev }&#39;</span><span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="nv">$REV</span>
+</code></pre></div></p>
+<p>ダウンロード
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="nv">$HOME</span>/git
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/IntersectMBO/libsodium
+<span class="nb">cd</span><span class="w"> </span>libsodium
+git<span class="w"> </span>checkout<span class="w"> </span><span class="nv">$REV</span>
+</code></pre></div></p>
+<p>ビルド
+<div class="highlight"><pre><span></span><code>./autogen.sh
+sleep<span class="w"> </span><span class="m">1</span>
+./configure
+make
+make<span class="w"> </span>check
+sudo<span class="w"> </span>make<span class="w"> </span>install
+</code></pre></div></p>
+<h4 id="secp256k1"><strong>Secp256k1インストール</strong><a class="headerlink" href="#secp256k1" title="Permanent link">&para;</a></h4>
+<p>リビジョンの取得
+<div class="highlight"><pre><span></span><code><span class="nv">REV</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-L<span class="w"> </span>https://github.com/input-output-hk/iohk-nix/releases/latest/download/INFO<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;$1 == &quot;debian.libsecp256k1.deb&quot; { rev = gensub(/.*-(.*)\.deb/, &quot;\\1&quot;, &quot;g&quot;, $2); print rev }&#39;</span><span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="nv">$REV</span>
+</code></pre></div></p>
+<p>ダウンロード
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="nv">$HOME</span>/git
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/bitcoin-core/secp256k1
+<span class="nb">cd</span><span class="w"> </span>secp256k1
+git<span class="w"> </span>checkout<span class="w"> </span><span class="nv">$REV</span>
+</code></pre></div></p>
+<p>ビルド
+<div class="highlight"><pre><span></span><code>./autogen.sh
+sleep<span class="w"> </span><span class="m">1</span>
+./configure<span class="w"> </span>--enable-module-schnorrsig<span class="w"> </span>--enable-experimental
+make
+make<span class="w"> </span>check
+sudo<span class="w"> </span>make<span class="w"> </span>install
+</code></pre></div></p>
+<p>動的リンカ設定
+<div class="highlight"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;/usr/local/lib&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/ld.so.conf.d/local-lib.conf
+sudo<span class="w"> </span>ldconfig
+</code></pre></div>
+確認
+<div class="highlight"><pre><span></span><code>ldconfig<span class="w"> </span>-p<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>libsecp256k1
+</code></pre></div>
+<div class="no-copy highlight"><span class="filename">戻り値</span><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">libsecp256k1.so.2 (libc6,x86-64) =&gt; /usr/local/lib/libsecp256k1.so.2</span>
+<span class="l l-Scalar l-Scalar-Plain">libsecp256k1.so (libc6,x86-64) =&gt; /usr/local/lib/libsecp256k1.so</span>
+</code></pre></div></p>
+<h4 id="blst"><strong>blstインストール</strong><a class="headerlink" href="#blst" title="Permanent link">&para;</a></h4>
+<p>リビジョンの取得
+<div class="highlight"><pre><span></span><code><span class="nv">REV</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-L<span class="w"> </span>https://github.com/input-output-hk/iohk-nix/releases/latest/download/INFO<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;$1 == &quot;debian.libblst.deb&quot; { rev = gensub(/.*-(.*)\.deb/, &quot;\\1&quot;, &quot;g&quot;, $2); print rev }&#39;</span><span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="nv">$REV</span>
+</code></pre></div></p>
+<p>ダウンロード
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="nv">$HOME</span>/git
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/supranational/blst
+<span class="nb">cd</span><span class="w"> </span>blst
+git<span class="w"> </span>checkout<span class="w"> </span>v<span class="nv">$REV</span>
+</code></pre></div></p>
+<p>ビルド
+<div class="highlight"><pre><span></span><code>./build.sh
+</code></pre></div></p>
+<p>インストール
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>libblst.pc<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">prefix=/usr/local</span>
+<span class="s">exec_prefix=\${prefix}</span>
+<span class="s">libdir=\${exec_prefix}/lib</span>
+<span class="s">includedir=\${prefix}/include</span>
+
+<span class="s">Name: libblst</span>
+<span class="s">Description: Multilingual BLS12-381 signature library</span>
+<span class="s">URL: https://github.com/supranational/blst</span>
+<span class="s">Version: 0.3.10</span>
+<span class="s">Cflags: -I\${includedir}</span>
+<span class="s">Libs: -L\${libdir} -lblst</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>cp<span class="w"> </span>libblst.pc<span class="w"> </span>/usr/local/lib/pkgconfig/
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>cp<span class="w"> </span>bindings/blst_aux.h<span class="w"> </span>bindings/blst.h<span class="w"> </span>bindings/blst.hpp<span class="w">  </span>/usr/local/include/
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>cp<span class="w"> </span>libblst.a<span class="w"> </span>/usr/local/lib
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>chmod<span class="w"> </span><span class="nv">u</span><span class="o">=</span>rw,go<span class="o">=</span>r<span class="w"> </span>/usr/local/<span class="o">{</span>lib/<span class="o">{</span>libblst.a,pkgconfig/libblst.pc<span class="o">}</span>,include/<span class="o">{</span>blst.<span class="o">{</span>h,hpp<span class="o">}</span>,blst_aux.h<span class="o">}}</span>
+</code></pre></div></p>
+<h4 id="ghcup"><strong>GHCUPインストール</strong><a class="headerlink" href="#ghcup" title="Permanent link">&para;</a></h4>
+<p>インストール変数設定
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="nv">$HOME</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">BOOTSTRAP_HASKELL_GHC_VERSION</span><span class="o">=</span><span class="m">9</span>.6.7
+<span class="nb">export</span><span class="w"> </span><span class="nv">BOOTSTRAP_HASKELL_CABAL_VERSION</span><span class="o">=</span><span class="m">3</span>.12.1.0
+<span class="nb">export</span><span class="w"> </span><span class="nv">BOOTSTRAP_HASKELL_NO_UPGRADE</span><span class="o">=</span><span class="m">1</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">BOOTSTRAP_HASKELL_NONINTERACTIVE</span><span class="o">=</span><span class="m">1</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">BOOTSTRAP_HASKELL_INSTALL_STACK</span><span class="o">=</span><span class="m">1</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">BOOTSTRAP_HASKELL_ADJUST_BASHRC</span><span class="o">=</span><span class="m">1</span>
+<span class="nb">unset</span><span class="w"> </span>BOOTSTRAP_HASKELL_INSTALL_HLS
+</code></pre></div></p>
+<p>インストール
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>--proto<span class="w"> </span><span class="s1">&#39;=https&#39;</span><span class="w"> </span>--tlsv1.2<span class="w"> </span>-sSf<span class="w"> </span>https://get-ghcup.haskell.org<span class="w"> </span><span class="p">|</span><span class="w"> </span>bash
+</code></pre></div></p>
+<p>バージョン確認
+<div class="highlight"><pre><span></span><code><span class="nb">source</span><span class="w"> </span>~/.bashrc
+cabal<span class="w"> </span>update
+cabal<span class="w"> </span>--version
+ghc<span class="w"> </span>--version
+</code></pre></div>
+<div class="no-copy highlight"><span class="filename">戻り値</span><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">$ cabal --version</span>
+<span class="l l-Scalar l-Scalar-Plain">cabal-install version 3.12.1.0</span>
+<span class="l l-Scalar l-Scalar-Plain">compiled using version 3.12.1.0 of the Cabal library</span><span class="w"> </span>
+
+<span class="l l-Scalar l-Scalar-Plain">$ ghc --version</span>
+<span class="l l-Scalar l-Scalar-Plain">The Glorious Glasgow Haskell Compilation System, version 9.6.7</span>
+</code></pre></div></p>
+<h3 id="3-2-db-sync"><strong>3-2. db-syncインストール</strong><a class="headerlink" href="#3-2-db-sync" title="Permanent link">&para;</a></h3>
+<!--
+!!! tip "メモリ不足（SIGKILL）の場合の対処"
+    Previewのサーバースペックではビルド中に SIGKILL（メモリ不足）が出る可能性もありますので、事前に `swap` を追加しておきます。
+
+    <div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;set -e</span>
+<span class="s1">fallocate -l 8G /swapfile</span>
+<span class="s1">chmod 600 /swapfile</span>
+<span class="s1">mkswap /swapfile</span>
+<span class="s1">swapon /swapfile&#39;</span>
+</code></pre></div>
+    <div class="highlight"><pre><span></span><code>grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">&#39;^/swapfile &#39;</span><span class="w"> </span>/etc/fstab<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;/swapfile none swap sw 0 0&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>/etc/fstab
+</code></pre></div>
+
+    状態確認：
+    <div class="highlight"><pre><span></span><code>swapon<span class="w"> </span>--show
+free<span class="w"> </span>-h
+</code></pre></div>
+-->
+
+<p>インストール
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>~/git
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/intersectmbo/cardano-db-sync
+<span class="nb">cd</span><span class="w"> </span>cardano-db-sync
+</code></pre></div></p>
+<p>最新リポジトリの適用
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>fetch<span class="w"> </span>--tags<span class="w"> </span>--all
+git<span class="w"> </span>checkout<span class="w"> </span>tags/13.6.0.5
+</code></pre></div></p>
+<p>ビルドGHCバージョンの明示
+<div class="highlight"><pre><span></span><code>grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">&#39;^with-compiler:&#39;</span><span class="w"> </span>cabal.project.local<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;with-compiler: ghc-9.6.7&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>cabal.project.local
+</code></pre></div></p>
+<p>ビルド
+<div class="highlight"><pre><span></span><code>cabal<span class="w"> </span>update
+cabal<span class="w"> </span>build<span class="w"> </span>all
+</code></pre></div></p>
+<p>db-sync バイナリーファイルコピー
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.local/bin
+cp<span class="w"> </span>-p<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;</span><span class="k">$(</span>find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span>cardano-db-sync<span class="w"> </span>-executable<span class="w"> </span>-type<span class="w"> </span>f<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>~/.local/bin/
+</code></pre></div></p>
+<p>バージョン確認
+<div class="highlight"><pre><span></span><code>cardano-db-sync<span class="w"> </span>--version
+</code></pre></div>
+<div class="no-copy highlight"><span class="filename">戻り値</span><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">cardano-db-sync 13.6.0.5 - linux-x86_64 - ghc-9.6</span><span class="w">  </span>
+<span class="l l-Scalar l-Scalar-Plain">git revision cb61094c82254464fc9de777225e04d154d9c782</span>
+</code></pre></div></p>
+<h3 id="3-3"><strong>3-3. スナップショットのダウンロード</strong><a class="headerlink" href="#3-3" title="Permanent link">&para;</a></h3>
+<div class="admonition hint">
+<p class="admonition-title">cardano-db-syncスナップショット詳細</p>
+<ul>
+<li>ネットワーク：Preview</li>
+<li>エポック：1165</li>
+<li>ブロック高：3910501</li>
+<li>DLサイズ：約 3.58 GB</li>
+</ul>
+</div>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="nv">$NODE_HOME</span>
+curl<span class="w"> </span>-LO<span class="w"> </span>https://spojapanguild.net/db-sync/<span class="si">${</span><span class="nv">NODE_CONFIG</span><span class="si">}</span>/db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz
+</code></pre></div>
+<p>チェックサムファイルダウンロード
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-LO<span class="w"> </span>https://spojapanguild.net/db-sync/<span class="si">${</span><span class="nv">NODE_CONFIG</span><span class="si">}</span>/db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz.sha256sum
+</code></pre></div></p>
+<p>ファイル検証
+<div class="highlight"><pre><span></span><code>sha256sum<span class="w"> </span>-c<span class="w"> </span>db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz.sha256sum
+</code></pre></div>
+<div class="no-copy highlight"><span class="filename">戻り値</span><pre><span></span><code><span class="nt">db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OK</span>
+</code></pre></div></p>
+<p>スナップショット復元
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span><span class="nv">$NODE_HOME</span>/ledger-state
+<span class="nb">cd</span><span class="w"> </span>~/git/cardano-db-sync
+<span class="nv">PGPASSFILE</span><span class="o">=</span><span class="nv">$HOME</span>/.pgpass.restore<span class="w"> </span>scripts/postgresql-setup.sh<span class="w"> </span>--restore-snapshot<span class="w"> </span><span class="nv">$NODE_HOME</span>/db-sync-snapshot-schema-13.6-block-3910501-x86_64.tgz<span class="w"> </span><span class="nv">$NODE_HOME</span>/ledger-state
+</code></pre></div>
+<div class="no-copy highlight"><span class="filename">戻り値</span><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">db/4135.dat.gz</span>
+<span class="l l-Scalar l-Scalar-Plain">100700514-355a474701.lstate.gz</span>
+<span class="l l-Scalar l-Scalar-Plain">All good!</span>
+</code></pre></div></p>
+<blockquote>
+<p>復元には 数十分程度かかる場合があります。</p>
+</blockquote>
+<p>TMUXセッションを閉じます。
+<div class="highlight"><pre><span></span><code><span class="nb">exit</span>
+</code></pre></div></p>
+<h3 id="3-4-db-sync"><strong>3-4. db-sync環境設定</strong><a class="headerlink" href="#3-4-db-sync" title="Permanent link">&para;</a></h3>
+<p>Schemaシンボリックリンク作成
+<div class="highlight"><pre><span></span><code>ln<span class="w"> </span>-s<span class="w"> </span>~/git/cardano-db-sync/schema<span class="w"> </span><span class="nv">$NODE_HOME</span>
+</code></pre></div></p>
+<p>設定ファイルダウンロード
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="nv">$NODE_HOME</span>
+wget<span class="w"> </span>-q<span class="w"> </span>https://book.world.dev.cardano.org/environments/<span class="si">${</span><span class="nv">NODE_CONFIG</span><span class="si">}</span>/db-sync-config.json<span class="w"> </span>-O<span class="w"> </span><span class="si">${</span><span class="nv">NODE_CONFIG</span><span class="si">}</span>-db-sync-config.json
+</code></pre></div></p>
+<p>設定ファイル修正
+<div class="highlight"><pre><span></span><code>sed<span class="w"> </span>-i<span class="w"> </span><span class="nv">$NODE_HOME</span>/<span class="si">${</span><span class="nv">NODE_CONFIG</span><span class="si">}</span>-db-sync-config.json<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="s1">&#39;s!&quot;NodeConfigFile&quot;: &quot;config.json&quot;!&quot;NodeConfigFile&quot;: &quot;&#39;</span><span class="si">${</span><span class="nv">NODE_CONFIG</span><span class="si">}</span><span class="s1">&#39;-config.json&quot;!&#39;</span>
+</code></pre></div></p>
+<p>起動スクリプト作成
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span><span class="nv">$NODE_HOME</span>/startDbSync.sh<span class="w"> </span><span class="s">&lt;&lt; EOF </span>
+<span class="s">#!/bin/bash</span>
+<span class="s">PGPASSFILE=$HOME/.pgpass.restore</span>
+<span class="s">export PGPASSFILE</span>
+<span class="s">$HOME/.local/bin/cardano-db-sync \\</span>
+<span class="s">--config $NODE_HOME/${NODE_CONFIG}-db-sync-config.json \\</span>
+<span class="s">--socket-path $NODE_HOME/db/socket \\</span>
+<span class="s">--state-dir $NODE_HOME/ledger-state \\</span>
+<span class="s">--schema-dir $NODE_HOME/schema/</span>
+<span class="s">EOF</span>
+</code></pre></div></p>
+<p>権限設定
+<div class="highlight"><pre><span></span><code>chmod<span class="w"> </span><span class="m">755</span><span class="w"> </span><span class="nv">$NODE_HOME</span>/startDbSync.sh
+</code></pre></div></p>
+<p>db-sync　systemdサービス化 (任意)</p>
+<div class="highlight"><span class="filename">全てコピーして実行してください</span><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span><span class="nv">$NODE_HOME</span>/cardano-db-sync.service<span class="w"> </span><span class="s">&lt;&lt; EOF </span>
+<span class="s">[Unit]</span>
+<span class="s">Description=Cardano DB Sync</span>
+<span class="s">After=network.target postgresql.service</span>
+
+<span class="s">[Service]</span>
+<span class="s">Type=simple</span>
+<span class="s">User=${USER}</span>
+<span class="s">WorkingDirectory=${NODE_HOME}</span>
+<span class="s">ExecStart=/bin/bash -l -c &quot;exec ${NODE_HOME}/startDbSync.sh&quot;</span>
+<span class="s">KillSignal=SIGINT</span>
+<span class="s">RestartKillSignal=SIGINT</span>
+<span class="s">TimeoutStopSec=300</span>
+<span class="s">LimitNOFILE=32768</span>
+<span class="s">Restart=always</span>
+<span class="s">RestartSec=5</span>
+<span class="s">StandardOutput=syslog</span>
+<span class="s">StandardError=syslog</span>
+<span class="s">SyslogIdentifier=db-sync</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=multi-user.target</span>
+<span class="s">EOF</span>
+</code></pre></div>
+<p><div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>cp<span class="w"> </span><span class="nv">$NODE_HOME</span>/cardano-db-sync.service<span class="w"> </span>/etc/systemd/system/cardano-db-sync.service
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>chmod<span class="w"> </span><span class="m">644</span><span class="w"> </span>/etc/systemd/system/cardano-db-sync.service
+</code></pre></div></p>
+<p>systemd有効化
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>cardano-db-sync
+</code></pre></div></p>
+<h3 id="3-5"><strong>3-5. 動作確認</strong><a class="headerlink" href="#3-5" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>cardano-db-sync<span class="w"> </span>--no-pager
+</code></pre></div>
+<div class="no-copy highlight"><span class="filename">戻り値</span><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">● cardano-db-sync.service - Cardano DB Sync</span>
+<span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">Loaded</span><span class="nt">: loaded (/etc/systemd/system/cardano-db-sync.service; enabled; vendor preset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">enabled)</span>
+<span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">Active</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">active (running) since Tue 2026-01-13 14:06:17 CET; 20s ago</span>
+<span class="w">   </span><span class="l l-Scalar l-Scalar-Plain">Main PID</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">203020 (startDbSync.sh)</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">Tasks</span><span class="nt">: 16 (limit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9386)</span>
+<span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">Memory</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">713.7M</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">CPU</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8.336s</span>
+</code></pre></div></p>
+<blockquote>
+<p><code>Active: active</code>であること</p>
+</blockquote>
+<p>チェーン同期確認
+<div class="highlight"><span class="filename">ボックス内のコピーボタンでコピーして実行してください</span><pre><span></span><code>sudo<span class="w"> </span>-u<span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-d<span class="w"> </span>cexplorer<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">SELECT 100 * (</span>
+<span class="s2">  EXTRACT(EPOCH FROM (MAX(time) AT TIME ZONE &#39;UTC&#39;)) -</span>
+<span class="s2">  EXTRACT(EPOCH FROM (MIN(time) AT TIME ZONE &#39;UTC&#39;))</span>
+<span class="s2">) / (</span>
+<span class="s2">  EXTRACT(EPOCH FROM (NOW() AT TIME ZONE &#39;UTC&#39;)) -</span>
+<span class="s2">  EXTRACT(EPOCH FROM (MIN(time) AT TIME ZONE &#39;UTC&#39;))</span>
+<span class="s2">) AS sync_percent</span>
+<span class="s2">FROM public.block;</span>
+<span class="s2">&quot;</span>
+</code></pre></div></p>
+<p>db-syncが同期するまでお待ち下さい
+<div class="no-copy highlight"><span class="filename">戻り値</span><pre><span></span><code><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">sync_percent</span><span class="w">     </span>
+<span class="l l-Scalar l-Scalar-Plain">---------------------</span>
+<span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">99.9999</span>
+</code></pre></div></p>
+<blockquote>
+<p>計算上<code>100</code>にならないので<code>99.9999</code>で完全同期しています。</p>
+</blockquote>
+<p>スナップショット削除
+<div class="highlight"><pre><span></span><code>rm<span class="w"> </span>-f<span class="w"> </span><span class="nv">$NODE_HOME</span>/db-sync-snapshot-schema-*-block-*-x86_64.*
+</code></pre></div></p>
+<div class="admonition tip">
+<p class="admonition-title">db-syncのログ確認</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>cardano-db-sync<span class="w"> </span>-f
+</code></pre></div>
+</div>
+<p>以上でCardanoインデクサーのセットアップが完了しました。</p>
+<hr />
+
+
+
+
+
+
+
+  
+    
+  
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="最終更新日">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月6日 01:54:31 UTC">2026年2月6日 01:54:31</span>
+  </span>
+
+    
+    
+    
+    
+  </aside>
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  ページトップへ戻る
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="フッター" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="前: はじめに">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                前
+              </span>
+              <div class="md-ellipsis">
+                はじめに
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../midnight-node-server-setup/" class="md-footer__link md-footer__link--next" aria-label="次: Midnightノード稼働サーバー構築">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                次
+              </span>
+              <div class="md-ellipsis">
+                Midnightノード稼働サーバー構築
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2020 - 2025 CARDANO COMMUNITY SPO JAPAN GUILD
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+      <div class="md-consent" data-md-component="consent" id="__consent" hidden>
+        <div class="md-consent__overlay"></div>
+        <aside class="md-consent__inner">
+          <form class="md-consent__form md-grid md-typeset" name="consent">
+            
+
+
+  
+
+
+<h4>Cookieの使用許諾</h4>
+<p>当サイトは、ドキュメントの効果測定や利用者確認のため、クッキーを使用しGoogle アナリティクスによるトラフィックの分析を行っています。 ご同意いただける場合は「Accept」をクリックしてください。</p>
+<input class="md-toggle" type="checkbox" id="__settings" >
+<div class="md-consent__settings">
+  <ul class="task-list">
+    
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="github" checked>
+      <span class="task-list-indicator"></span>
+      GitHub
+    </label>
+  </li>
+
+      
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="analytics" checked>
+      <span class="task-list-indicator"></span>
+      Google Analytics
+    </label>
+  </li>
+
+      
+    
+  </ul>
+</div>
+<div class="md-consent__controls">
+  
+    
+      <button class="md-button md-button--primary">同意</button>
+    
+    
+    
+  
+    
+    
+    
+      <label class="md-button" for="__settings">サイトの設定</label>
+    
+  
+</div>
+          </form>
+        </aside>
+      </div>
+      <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.tabs.link", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.instant", "navigation.tracking", "navigation.footer", "navigation.path", "navigation.expand", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.26099bd0.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.9d1edc04.min.js"></script>
+      
+    
+  </body>
+</html>

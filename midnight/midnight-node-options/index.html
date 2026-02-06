@@ -1,0 +1,5065 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="SPO JAPAN GUILD監修のステークプール構築ガイド。私たちは日本におけるステークプール構築を促進しカルダノ分散化に貢献してまいります。">
+      
+      
+      
+        <link rel="canonical" href="https://docs.spojapanguild.net/midnight/midnight-node-options/">
+      
+      
+        <link rel="prev" href="../start-midnight-node/">
+      
+      
+        <link rel="next" href="../../learning/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0+insiders-4.53.18">
+    
+    
+      
+        <title>Midnightノードオプション一覧 - SPO JAPAN GUILD DOCS</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.df281a37.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+JP:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Noto Sans JP";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-R9C48XMXE5"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-R9C48XMXE5",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-R9C48XMXE5",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>if("undefined"!=typeof __md_analytics){var consent=__md_get("__consent");consent&&consent.analytics&&__md_analytics()}</script>
+  
+
+    
+    
+  
+  
+    
+  
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="SPO JAPAN GUILD DOCS - Midnightノードオプション一覧" />
+  <meta property="og:description" content="SPO JAPAN GUILD監修のステークプール構築ガイド。私たちは日本におけるステークプール構築を促進しカルダノ分散化に貢献してまいります。" />
+  <meta property="og:url" content="https://docs.spojapanguild.net/midnight/midnight-node-options/" />
+  <meta property="og:image" content="https://docs.spojapanguild.net/images/ogp-image.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SPO JAPAN GUILD DOCS - Midnightノードオプション一覧" />
+  <meta name="twitter:description" content="SPO JAPAN GUILD監修のステークプール構築ガイド。私たちは日本におけるステークプール構築を促進しカルダノ分散化に貢献してまいります。" />
+  <meta name="twitter:image" content="https://docs.spojapanguild.net/images/sjg-docs-card.png" />
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#midnight-node" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href="../.." title="SPO JAPAN GUILD DOCS" class="md-header__button md-logo" aria-label="SPO JAPAN GUILD DOCS" data-md-component="logo">
+      
+  <img src="../../images/logo-white.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SPO JAPAN GUILD DOCS
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Midnightノードオプション一覧
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="cyan" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="共有" aria-label="共有" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/btbf/spojapanguild" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    btbf/spojapanguild
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="タブ" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../.." class="md-tabs__link">
+          
+  
+  
+  HOME
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../setup/" class="md-tabs__link">
+          
+  
+  
+  プール構築マニュアル
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../operation/" class="md-tabs__link">
+          
+  
+  
+  プール運用マニュアル
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  Midnightバリデーター
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../learning/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  SJGラーニング
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../faq/node/" class="md-tabs__link">
+          
+  
+  
+  よくある質問
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="SPO JAPAN GUILD DOCS" class="md-nav__button md-logo" aria-label="SPO JAPAN GUILD DOCS" data-md-component="logo">
+      
+  <img src="../../images/logo-white.png" alt="logo">
+
+    </a>
+    SPO JAPAN GUILD DOCS
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/btbf/spojapanguild" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    btbf/spojapanguild
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HOME
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    HOME
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    はじめに
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プール構築マニュアル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プール運用マニュアル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SJGラーニング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelogs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    更新履歴
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    貢献者
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/donation-credit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    寄付とクレジット
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プール構築マニュアル
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    プール構築マニュアル
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プール構築マニュアル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プール構築
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    プール構築
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/air-gapped-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. エアギャップ環境構築
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/ubuntu-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Ubuntu初期設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/node-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. ノードセットアップ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/relay-bp-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. リレー/BP接続設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/bp-key-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. BP用キー生成
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/address-generate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. アドレス生成
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/stake-address-register/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. ステークアドレス登録
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/stake-pool-register/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8. ステークプール登録
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/final-checks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9. 最終チェック
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/monitoring-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10. 監視ツール設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/blocklog-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11. ブロックログ設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/blocknotify-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12. SPO BlockNotify設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/spo-newsletter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SPOニュースレター登録
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/donation-credit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    寄付とクレジット
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プール運用マニュアル
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    プール運用マニュアル
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プール運用マニュアル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    プール運用
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    プール運用
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/kes-update/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ KESの更新
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/cert-update/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ 運用証明書の更新
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/withdrawal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ 資金引き出し
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/calidus-key-generation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ Calidusキー生成
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/pool-retire/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ プール廃止処理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ノード管理
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ノード管理
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/node-update/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ ノードアップデート
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--new"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/mithril-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ DB同期(Mithril)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/add-relay/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ リレーノード増設
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/bp-port-change/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ BPポート変更
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    サーバー管理
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    サーバー管理
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/ubuntu22-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ Ubuntu22.04移行
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4_2" id="__nav_3_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ サーバー移行
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ・ サーバー移行
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/relay-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ リレーサーバー移行
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/bp-migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ BPサーバー移行
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    運用ツール
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    運用ツール
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/sjg-tool-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ SJGツール導入設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/sftp-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ SFTPソフト設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5_3" id="__nav_3_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ Grafana追加設定
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ・ Grafana追加設定
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/grafana-security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ Grafanaセキュリティ強化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/grafana-alert/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ Grafanaアラート設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/grafana-repo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ Grafanaリポジトリ変更
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/blocknotify-reinstall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ SPOBlockNotify移行手順
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ガバナンス
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ガバナンス
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/gov-spo-vote/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ ガバナンスアクションSPO投票
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/catalyst-voting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ カタリスト有権者登録
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mithril関連
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Mithril関連
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/mithril-signer-node-setup-and-updates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ Mithril Signerノードの設定、更新
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Midnight関連
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Midnight関連
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/midnight-glacier-drop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ Glacier Drop請求手続き
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_9" id="__nav_3_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linuxコマンド集
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Linuxコマンド集
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operation/linux-commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ 各種コマンド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Midnightバリデーター
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Midnightバリデーター
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    はじめに
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cardano-indexer-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cardanoインデクサーサーバー構築
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../midnight-node-server-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Midnightノード稼働サーバー構築
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../start-midnight-node/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Midnightノード起動
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Midnightノードオプション一覧
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SJGラーニング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    よくある質問
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    よくある質問
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_1" id="__nav_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    運用編
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    運用編
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/node/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ ノード関連
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/blocklog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ ブロックログ関連
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ・ ノード監視関連
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="midnight-node"><strong>Midnight-node パラメーター一覧</strong><a class="headerlink" href="#midnight-node" title="Permanent link">&para;</a></h1>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">English</label><label for="__tabbed_1_2">日本語</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>./midnight-node --help
+The `run` command used to run a node
+
+Usage: midnight-node [OPTIONS]
+
+--validator
+    Enable validator mode.
+
+    The node will be started with the authority role and actively participate in any consensus task that it can (e.g. depending on availability of local keys).
+
+--no-grandpa
+    Disable GRANDPA.
+
+    Disables voter when running in validator mode, otherwise disable the GRANDPA observer.
+
+--rpc-external
+    Listen to all RPC interfaces (default: local).
+
+    Not all RPC methods are safe to be exposed publicly.
+
+    Use an RPC proxy server to filter out dangerous methods. More details: &lt;https://docs.substrate.io/build/remote-procedure-calls/#public-rpc-interfaces&gt;.
+
+    Use `--unsafe-rpc-external` to suppress the warning if you understand the risks.
+
+--unsafe-rpc-external
+    Listen to all RPC interfaces.
+
+    Same as `--rpc-external`.
+
+--rpc-methods &lt;METHOD SET&gt;
+    RPC methods to expose.
+
+    [default: auto]
+
+    Possible values:
+    - auto:   Expose every RPC method only when RPC is listening on `localhost`, otherwise serve only safe RPC methods
+    - safe:   Allow only a safe subset of RPC methods
+    - unsafe: Expose every RPC method (even potentially unsafe ones)
+
+--rpc-rate-limit &lt;RPC_RATE_LIMIT&gt;
+    RPC rate limiting (calls/minute) for each connection.
+
+    This is disabled by default.
+
+    For example `--rpc-rate-limit 10` will maximum allow 10 calls per minute per connection.
+
+--rpc-rate-limit-whitelisted-ips &lt;RPC_RATE_LIMIT_WHITELISTED_IPS&gt;...
+    Disable RPC rate limiting for certain ip addresses.
+
+    Each IP address must be in CIDR notation such as `1.2.3.4/24`.
+
+--rpc-rate-limit-trust-proxy-headers
+    Trust proxy headers for disable rate limiting.
+
+    By default the rpc server will not trust headers such `X-Real-IP`, `X-Forwarded-For` and `Forwarded` and this option will make the rpc server to trust these headers.
+
+    For instance this may be secure if the rpc server is behind a reverse proxy and that the proxy always sets these headers.
+
+--rpc-max-request-size &lt;RPC_MAX_REQUEST_SIZE&gt;
+    Set the maximum RPC request payload size for both HTTP and WS in megabytes
+
+    [default: 15]
+
+--rpc-max-response-size &lt;RPC_MAX_RESPONSE_SIZE&gt;
+    Set the maximum RPC response payload size for both HTTP and WS in megabytes
+
+    [default: 15]
+
+--rpc-max-subscriptions-per-connection &lt;RPC_MAX_SUBSCRIPTIONS_PER_CONNECTION&gt;
+    Set the maximum concurrent subscriptions per connection
+
+    [default: 1024]
+
+--rpc-port &lt;PORT&gt;
+    Specify JSON-RPC server TCP port
+
+--experimental-rpc-endpoint &lt;EXPERIMENTAL_RPC_ENDPOINT&gt;...
+    EXPERIMENTAL: Specify the JSON-RPC server interface and this option which can be enabled
+    several times if you want expose several RPC interfaces with different configurations.
+
+    The format for this option is:
+    `--experimental-rpc-endpoint&quot; listen-addr=&lt;ip:port&gt;,&lt;key=value&gt;,...&quot;` where each option is
+    separated by a comma and `listen-addr` is the only required param.
+
+    The following options are available:
+    • listen-addr: The socket address (ip:port) to listen on. Be careful to not expose the
+        server to the public internet unless you know what you&#39;re doing. (required)
+    • disable-batch-requests: Disable batch requests (optional)
+    • max-connections: The maximum number of concurrent connections that the server will
+        accept (optional)
+    • max-request-size: The maximum size of a request body in megabytes (optional)
+    • max-response-size: The maximum size of a response body in megabytes (optional)
+    • max-subscriptions-per-connection: The maximum number of subscriptions per connection
+        (optional)
+    • max-buffer-capacity-per-connection: The maximum buffer capacity per connection
+        (optional)
+    • max-batch-request-len: The maximum number of requests in a batch (optional)
+    • cors: The CORS allowed origins, this can enabled more than once (optional)
+    • methods: Which RPC methods to allow, valid values are &quot;safe&quot;, &quot;unsafe&quot; and &quot;auto&quot;
+        (optional)
+    • optional: If the listen address is optional i.e the interface is not required to be
+        available For example this may be useful if some platforms doesn&#39;t support ipv6
+        (optional)
+    • rate-limit: The rate limit in calls per minute for each connection (optional)
+    • rate-limit-trust-proxy-headers: Trust proxy headers for disable rate limiting (optional)
+    • rate-limit-whitelisted-ips: Disable rate limiting for certain ip addresses, this can be
+    enabled more than once (optional)  • retry-random-port: If the port is already in use,
+    retry with a random port (optional)
+
+    Use with care, this flag is unstable and subject to change.
+
+--rpc-max-connections &lt;COUNT&gt;
+    Maximum number of RPC server connections
+
+    [default: 100]
+
+--rpc-message-buffer-capacity-per-connection &lt;RPC_MESSAGE_BUFFER_CAPACITY_PER_CONNECTION&gt;
+    The number of messages the RPC server is allowed to keep in memory.
+
+    If the buffer becomes full then the server will not process new messages until the connected client start reading the underlying messages.
+
+    This applies per connection which includes both JSON-RPC methods calls and subscriptions.
+
+    [default: 64]
+
+--rpc-disable-batch-requests
+    Disable RPC batch requests
+
+--rpc-max-batch-request-len &lt;LEN&gt;
+    Limit the max length per RPC batch request
+
+--rpc-cors &lt;ORIGINS&gt;
+    Specify browser *origins* allowed to access the HTTP &amp; WS RPC servers.
+
+    A comma-separated list of origins (protocol://domain or special `null` value). Value of `all` will disable origin validation. Default is to allow localhost and &lt;https://polkadot.js.org&gt; origins.
+    When running in `--dev` mode the default is to allow all origins.
+
+--name &lt;NAME&gt;
+    The human-readable name for this node.
+
+    It&#39;s used as network node name.
+
+--no-telemetry
+    Disable connecting to the Substrate telemetry server.
+
+    Telemetry is on by default on global chains.
+
+--telemetry-url &lt;URL VERBOSITY&gt;
+    The URL of the telemetry server to connect to.
+
+    This flag can be passed multiple times as a means to specify multiple telemetry endpoints. Verbosity levels range from 0-9, with 0 denoting the least verbosity.
+
+    Expected format is &#39;URL VERBOSITY&#39;, e.g. `--telemetry-url &#39;wss://foo/bar 0&#39;`.
+
+--prometheus-port &lt;PORT&gt;
+    Specify Prometheus exporter TCP Port
+
+--prometheus-external
+    Expose Prometheus exporter on all interfaces.
+
+    Default is local.
+
+--no-prometheus
+    Do not expose a Prometheus exporter endpoint.
+
+    Prometheus metric endpoint is enabled by default.
+
+--max-runtime-instances &lt;MAX_RUNTIME_INSTANCES&gt;
+    The size of the instances cache for each runtime [max: 32].
+
+    Values higher than 32 are illegal.
+
+    [default: 8]
+
+--runtime-cache-size &lt;RUNTIME_CACHE_SIZE&gt;
+    Maximum number of different runtimes that can be cached
+
+    [default: 2]
+
+--offchain-worker &lt;ENABLED&gt;
+    Execute offchain workers on every block
+
+    [default: when-authority]
+
+    Possible values:
+    - always:         Always have offchain worker enabled
+    - never:          Never enable the offchain worker
+    - when-authority: Only enable the offchain worker when running as a validator (or collator, if this is a parachain node)
+
+--enable-offchain-indexing &lt;ENABLE_OFFCHAIN_INDEXING&gt;
+    Enable offchain indexing API.
+
+    Allows the runtime to write directly to offchain workers DB during block import.
+
+    [default: false]
+    [possible values: true, false]
+
+--chain &lt;CHAIN_SPEC&gt;
+    Specify the chain specification.
+
+    It can be one of the predefined ones (dev, local, or staging) or it can be a path to a file with the chainspec (such as one exported by the `build-spec` subcommand).
+
+--dev
+    Specify the development chain.
+
+    This flag sets `--chain=dev`, `--force-authoring`, `--rpc-cors=all`, `--alice`, and `--tmp` flags, unless explicitly overridden. It also disables local peer discovery (see --no-mdns and
+    --discover-local)
+
+-d, --base-path &lt;PATH&gt;
+        Specify custom base path
+
+-l, --log &lt;LOG_PATTERN&gt;...
+    Sets a custom logging filter (syntax: `&lt;target&gt;=&lt;level&gt;`).
+
+    Log levels (least to most verbose) are `error`, `warn`, `info`, `debug`, and `trace`.
+
+    By default, all targets log `info`. The global log level can be set with `-l&lt;level&gt;`.
+
+    Multiple `&lt;target&gt;=&lt;level&gt;` entries can be specified and separated by a comma.
+
+    *Example*: `--log error,sync=debug,grandpa=warn`. Sets Global log level to `error`, sets `sync` target to debug and grandpa target to `warn`.
+
+--detailed-log-output
+    Enable detailed log output.
+
+    Includes displaying the log target, log level and thread name.
+
+    This is automatically enabled when something is logged with any higher level than `info`.
+
+--disable-log-color
+    Disable log color output
+
+--enable-log-reloading
+    Enable feature to dynamically update and reload the log filter.
+
+    Be aware that enabling this feature can lead to a performance decrease up to factor six or more. Depending on the global logging level the performance decrease changes.
+
+    The `system_addLogFilter` and `system_resetLogFilter` RPCs will have no effect with this option not being set.
+
+--tracing-targets &lt;TARGETS&gt;
+    Sets a custom profiling filter.
+
+    Syntax is the same as for logging (`--log`).
+
+--tracing-receiver &lt;RECEIVER&gt;
+    Receiver to process tracing messages
+
+    [default: log]
+
+    Possible values:
+    - log: Output the tracing records using the log
+
+--state-pruning &lt;PRUNING_MODE&gt;
+    Specify the state pruning mode.
+
+    This mode specifies when the block&#39;s state (ie, storage) should be pruned (ie, removed) from the database. This setting can only be set on the first creation of the database. Every subsequent run
+    will load the pruning mode from the database and will error if the stored mode doesn&#39;t match this CLI value. It is fine to drop this CLI flag for subsequent runs. The only exception is that
+    `NUMBER` can change between subsequent runs (increasing it will not lead to restoring pruned state).
+
+    Possible values:
+
+    - archive: Keep the data of all blocks.
+
+    - archive-canonical: Keep only the data of finalized blocks.
+
+    - NUMBER: Keep the data of the last NUMBER of finalized blocks.
+
+    [default: 256]
+
+--blocks-pruning &lt;PRUNING_MODE&gt;
+    Specify the blocks pruning mode.
+
+    This mode specifies when the block&#39;s body (including justifications) should be pruned (ie, removed) from the database.
+
+    Possible values:
+
+    - archive: Keep the data of all blocks.
+
+    - archive-canonical: Keep only the data of finalized blocks.
+
+    - NUMBER: Keep the data of the last NUMBER of finalized blocks.
+
+    [default: archive-canonical]
+
+--database &lt;DB&gt;
+    Select database backend to use
+
+    Possible values:
+    - paritydb:              ParityDb. &lt;https://github.com/paritytech/parity-db/&gt;
+    - auto:                  Detect whether there is an existing database. Use it, if there is, if not, create new instance of ParityDb
+    - paritydb-experimental: ParityDb. &lt;https://github.com/paritytech/parity-db/&gt;
+
+--db-cache &lt;MiB&gt;
+    Limit the memory the database cache can use
+
+--wasm-execution &lt;METHOD&gt;
+    Method for executing Wasm runtime code
+
+    [default: compiled]
+
+    Possible values:
+    - interpreted-i-know-what-i-do: Uses an interpreter which now is deprecated
+    - compiled:                     Uses a compiled runtime
+
+--wasmtime-instantiation-strategy &lt;STRATEGY&gt;
+    The WASM instantiation method to use.
+
+    Only has an effect when `wasm-execution` is set to `compiled`. The copy-on-write strategies are only supported on Linux. If the copy-on-write variant of a strategy is unsupported the executor will
+    fall back to the non-CoW equivalent. The fastest (and the default) strategy available is `pooling-copy-on-write`. The `legacy-instance-reuse` strategy is deprecated and will be removed in the
+    future. It should only be used in case of issues with the default instantiation strategy.
+
+    [default: pooling-copy-on-write]
+
+    Possible values:
+    - pooling-copy-on-write:           Pool the instances to avoid initializing everything from scratch on each instantiation. Use copy-on-write memory when possible
+    - recreate-instance-copy-on-write: Recreate the instance from scratch on every instantiation. Use copy-on-write memory when possible
+    - pooling:                         Pool the instances to avoid initializing everything from scratch on each instantiation
+    - recreate-instance:               Recreate the instance from scratch on every instantiation. Very slow
+
+--wasm-runtime-overrides &lt;PATH&gt;
+    Specify the path where local WASM runtimes are stored.
+
+    These runtimes will override on-chain runtimes when the version matches.
+
+--execution-syncing &lt;STRATEGY&gt;
+    Runtime execution strategy for importing blocks during initial sync
+
+    Possible values:
+    - native:           Execute with native build (if available, WebAssembly otherwise)
+    - wasm:             Only execute with the WebAssembly build
+    - both:             Execute with both native (where available) and WebAssembly builds
+    - native-else-wasm: Execute with the native build if possible; if it fails, then execute with WebAssembly
+
+--execution-import-block &lt;STRATEGY&gt;
+    Runtime execution strategy for general block import (including locally authored blocks)
+
+    Possible values:
+    - native:           Execute with native build (if available, WebAssembly otherwise)
+    - wasm:             Only execute with the WebAssembly build
+    - both:             Execute with both native (where available) and WebAssembly builds
+    - native-else-wasm: Execute with the native build if possible; if it fails, then execute with WebAssembly
+
+--execution-block-construction &lt;STRATEGY&gt;
+    Runtime execution strategy for constructing blocks
+
+    Possible values:
+    - native:           Execute with native build (if available, WebAssembly otherwise)
+    - wasm:             Only execute with the WebAssembly build
+    - both:             Execute with both native (where available) and WebAssembly builds
+    - native-else-wasm: Execute with the native build if possible; if it fails, then execute with WebAssembly
+
+--execution-offchain-worker &lt;STRATEGY&gt;
+    Runtime execution strategy for offchain workers
+
+    Possible values:
+    - native:           Execute with native build (if available, WebAssembly otherwise)
+    - wasm:             Only execute with the WebAssembly build
+    - both:             Execute with both native (where available) and WebAssembly builds
+    - native-else-wasm: Execute with the native build if possible; if it fails, then execute with WebAssembly
+
+--execution-other &lt;STRATEGY&gt;
+    Runtime execution strategy when not syncing, importing or constructing blocks
+
+    Possible values:
+    - native:           Execute with native build (if available, WebAssembly otherwise)
+    - wasm:             Only execute with the WebAssembly build
+    - both:             Execute with both native (where available) and WebAssembly builds
+    - native-else-wasm: Execute with the native build if possible; if it fails, then execute with WebAssembly
+
+--execution &lt;STRATEGY&gt;
+    The execution strategy that should be used by all execution contexts
+
+    Possible values:
+    - native:           Execute with native build (if available, WebAssembly otherwise)
+    - wasm:             Only execute with the WebAssembly build
+    - both:             Execute with both native (where available) and WebAssembly builds
+    - native-else-wasm: Execute with the native build if possible; if it fails, then execute with WebAssembly
+
+--trie-cache-size &lt;Bytes&gt;
+    Specify the state cache size.
+
+    Providing `0` will disable the cache.
+
+    [default: 67108864]
+
+--state-cache-size &lt;STATE_CACHE_SIZE&gt;
+    DEPRECATED: switch to `--trie-cache-size`
+
+--bootnodes &lt;ADDR&gt;...
+    Specify a list of bootnodes
+
+--reserved-nodes &lt;ADDR&gt;...
+    Specify a list of reserved node addresses
+
+--reserved-only
+    Whether to only synchronize the chain with reserved nodes.
+
+    Also disables automatic peer discovery. TCP connections might still be established with non-reserved nodes. In particular, if you are a validator your node might still connect to other validator
+    nodes and collator nodes regardless of whether they are defined as reserved nodes.
+
+--public-addr &lt;PUBLIC_ADDR&gt;...
+    Public address that other nodes will use to connect to this node.
+
+    This can be used if there&#39;s a proxy in front of this node.
+
+--listen-addr &lt;LISTEN_ADDR&gt;...
+    Listen on this multiaddress.
+
+    By default: If `--validator` is passed: `/ip4/0.0.0.0/tcp/&lt;port&gt;` and `/ip6/[::]/tcp/&lt;port&gt;`. Otherwise: `/ip4/0.0.0.0/tcp/&lt;port&gt;/ws` and `/ip6/[::]/tcp/&lt;port&gt;/ws`.
+
+--port &lt;PORT&gt;
+    Specify p2p protocol TCP port
+
+--no-private-ip
+    Always forbid connecting to private IPv4/IPv6 addresses.
+
+    The option doesn&#39;t apply to addresses passed with `--reserved-nodes` or `--bootnodes`. Enabled by default for chains marked as &quot;live&quot; in their chain specifications.
+
+    Address allocation for private networks is specified by [RFC1918](https://tools.ietf.org/html/rfc1918)).
+
+--allow-private-ip
+    Always accept connecting to private IPv4/IPv6 addresses.
+
+    Enabled by default for chains marked as &quot;local&quot; in their chain specifications, or when `--dev` is passed.
+
+    Address allocation for private networks is specified by [RFC1918](https://tools.ietf.org/html/rfc1918)).
+
+--out-peers &lt;COUNT&gt;
+    Number of outgoing connections we&#39;re trying to maintain
+
+    [default: 8]
+
+--in-peers &lt;COUNT&gt;
+    Maximum number of inbound full nodes peers
+
+    [default: 32]
+
+--in-peers-light &lt;COUNT&gt;
+    Maximum number of inbound light nodes peers
+
+    [default: 100]
+
+--no-mdns
+    Disable mDNS discovery (default: true).
+
+    By default, the network will use mDNS to discover other nodes on the local network. This disables it. Automatically implied when using --dev.
+
+--max-parallel-downloads &lt;COUNT&gt;
+    Maximum number of peers from which to ask for the same blocks in parallel.
+
+    This allows downloading announced blocks from multiple peers. Decrease to save traffic and risk increased latency.
+
+    [default: 5]
+
+--node-key &lt;KEY&gt;
+    Secret key to use for p2p networking.
+
+    The value is a string that is parsed according to the choice of `--node-key-type` as follows:
+
+    - `ed25519`: the value is parsed as a hex-encoded Ed25519 32 byte secret key (64 hex chars)
+
+    The value of this option takes precedence over `--node-key-file`.
+
+    WARNING: Secrets provided as command-line arguments are easily exposed. Use of this option should be limited to development and testing. To use an externally managed secret key, use
+    `--node-key-file` instead.
+
+--node-key-type &lt;TYPE&gt;
+    Crypto primitive to use for p2p networking.
+
+    The secret key of the node is obtained as follows:
+
+    - If the `--node-key` option is given, the value is parsed as a secret key according to the type. See the documentation for `--node-key`.
+
+    - If the `--node-key-file` option is given, the secret key is read from the specified file. See the documentation for `--node-key-file`.
+
+    - Otherwise, the secret key is read from a file with a predetermined, type-specific name from the chain-specific network config directory inside the base directory specified by `--base-dir`. If
+    this file does not exist, it is created with a newly generated secret key of the chosen type.
+
+    The node&#39;s secret key determines the corresponding public key and hence the node&#39;s peer ID in the context of libp2p.
+
+    [default: ed25519]
+
+    Possible values:
+    - ed25519: Use ed25519
+
+--node-key-file &lt;FILE&gt;
+    File from which to read the node&#39;s secret key to use for p2p networking.
+
+    The contents of the file are parsed according to the choice of `--node-key-type` as follows:
+
+    - `ed25519`: the file must contain an unencoded 32 byte or hex encoded Ed25519 secret key.
+
+    If the file does not exist, it is created with a newly generated secret key of the chosen type.
+
+--unsafe-force-node-key-generation
+    Forces key generation if node-key-file file does not exist.
+
+    This is an unsafe feature for production networks, because as an active authority other authorities may depend on your node having a stable identity and they might not being able to reach you if
+    your identity changes after entering the active set.
+
+    For minimal node downtime if no custom `node-key-file` argument is provided the network-key is usually persisted accross nodes restarts, in the `network` folder from directory provided in
+    `--base-path`
+
+    Warning!! If you ever run the node with this argument, make sure you remove it for the subsequent restarts.
+
+--discover-local
+    Enable peer discovery on local networks.
+
+    By default this option is `true` for `--dev` or when the chain type is `Local`/`Development` and false otherwise.
+
+--kademlia-disjoint-query-paths
+    Require iterative Kademlia DHT queries to use disjoint paths.
+
+    Disjoint paths increase resiliency in the presence of potentially adversarial nodes.
+
+    See the S/Kademlia paper for more information on the high level design as well as its security improvements.
+
+--kademlia-replication-factor &lt;KADEMLIA_REPLICATION_FACTOR&gt;
+    Kademlia replication factor.
+
+    Determines to how many closest peers a record is replicated to.
+
+    Discovery mechanism requires successful replication to all `kademlia_replication_factor` peers to consider record successfully put.
+
+    [default: 20]
+
+--ipfs-server
+    Join the IPFS network and serve transactions over bitswap protocol
+
+--sync &lt;SYNC_MODE&gt;
+    Blockchain syncing mode.
+
+    [default: full]
+
+    Possible values:
+    - full:        Full sync. Download and verify all blocks
+    - fast:        Download blocks without executing them. Download latest state with proofs
+    - fast-unsafe: Download blocks without executing them. Download latest state without proofs
+    - warp:        Prove finality and download the latest state
+
+--max-blocks-per-request &lt;COUNT&gt;
+    Maximum number of blocks per request.
+
+    Try reducing this number from the default value if you have a slow network connection and observe block requests timing out.
+
+    [default: 64]
+
+--network-backend &lt;NETWORK_BACKEND&gt;
+    Network backend used for P2P networking.
+
+    litep2p network backend is considered experimental and isn&#39;t as stable as the libp2p
+    network backend.
+
+    [default: libp2p]
+
+    Possible values:
+    - libp2p:  Use libp2p for P2P networking
+    - litep2p: Use litep2p for P2P networking
+
+--pool-limit &lt;COUNT&gt;
+    Maximum number of transactions in the transaction pool
+
+    [default: 8192]
+
+--pool-kbytes &lt;COUNT&gt;
+    Maximum number of kilobytes of all transactions stored in the pool
+
+    [default: 20480]
+
+--tx-ban-seconds &lt;SECONDS&gt;
+    How long a transaction is banned for.
+
+    If it is considered invalid. Defaults to 1800s.
+
+--keystore-path &lt;PATH&gt;
+    Specify custom keystore path
+
+--password-interactive
+    Use interactive shell for entering the password used by the keystore
+
+--password &lt;PASSWORD&gt;
+    Password used by the keystore.
+
+    This allows appending an extra user-defined secret to the seed.
+
+--password-filename &lt;PATH&gt;
+    File that contains the password used by the keystore
+
+--alice
+    Shortcut for `--name Alice --validator`.
+
+    Session keys for `Alice` are added to keystore.
+
+--bob
+    Shortcut for `--name Bob --validator`.
+
+    Session keys for `Bob` are added to keystore.
+
+--charlie
+    Shortcut for `--name Charlie --validator`.
+
+    Session keys for `Charlie` are added to keystore.
+
+--dave
+    Shortcut for `--name Dave --validator`.
+
+    Session keys for `Dave` are added to keystore.
+
+--eve
+    Shortcut for `--name Eve --validator`.
+
+    Session keys for `Eve` are added to keystore.
+
+--ferdie
+    Shortcut for `--name Ferdie --validator`.
+
+    Session keys for `Ferdie` are added to keystore.
+
+--one
+    Shortcut for `--name One --validator`.
+
+    Session keys for `One` are added to keystore.
+
+--two
+    Shortcut for `--name Two --validator`.
+
+    Session keys for `Two` are added to keystore.
+
+--force-authoring
+    Enable authoring even when offline
+
+--tmp
+    Run a temporary node.
+
+    A temporary directory will be created to store the configuration and will be deleted at the end of the process.
+
+    Note: the directory is random per process execution. This directory is used as base path which includes: database, node key and keystore.
+
+    When `--dev` is given and no explicit `--base-path`, this option is implied.
+
+-h, --help
+        Print help (see a summary with &#39;-h&#39;)
+
+================================================================================
+ChainSpecCfg
+================================================================================
+
+NAME:          genesis_utxo
+HELP:          chain-spec generation: partner chain parameter for genesis_utxo
+TYPE:          Option &lt; UtxoId &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+NAME:          addresses_json
+HELP:          This file is an output of the partner-chains-cli provided by partnerchains.
+            It&#39;s required to provide configuration at runtime for the node.
+TYPE:          Option &lt; String &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+================================================================================
+MetaCfg
+================================================================================
+
+NAME:          cfg_preset
+HELP:          Use a preset of default config values
+TYPE:          Option &lt; CfgPreset &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+NAME:          show_config
+HELP:          Show configuration on startup
+TYPE:          bool
+DEFAULT:       false
+SOURCES:       default
+CURRENT_VALUE: false
+
+NAME:          show_secrets
+HELP:          Show secrets in configuration
+TYPE:          bool
+DEFAULT:       false
+SOURCES:       default
+CURRENT_VALUE: false
+
+================================================================================
+MidnightCfg
+================================================================================
+
+NAME:          wipe_chain_state
+HELP:          On start-up, wipe the chain
+TYPE:          bool
+DEFAULT:       false
+SOURCES:       default
+CURRENT_VALUE: false
+
+NAME:          seed_phrase
+HELP:          Seed for key to be inserted to the keystore for this node&#39;s authoring functions.
+            This automatically generates the required key triple of (`aura`, `grandpa`, `cross_chain`).
+TYPE:          Option &lt; String &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+NAME:          use_main_chain_follower_mock
+HELP:          Mock ariadne parameters
+TYPE:          bool
+DEFAULT:       false
+SOURCES:       default
+CURRENT_VALUE: false
+
+NAME:          main_chain_follower_mock_registrations_file
+HELP:          Required if use_main_chain_follower_mock is true
+            Used in the sidechains library
+TYPE:          Option &lt; String &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+NAME:          mc__first_epoch_timestamp_millis
+HELP:          see partner-chains EpochConfig
+TYPE:          u64
+DEFAULT:       1666656000000
+SOURCES:       default
+CURRENT_VALUE: 1666656000000
+
+NAME:          mc__first_epoch_number
+HELP:          see partner-chains EpochConfig
+TYPE:          u32
+DEFAULT:       0
+SOURCES:       default
+CURRENT_VALUE: 0
+
+NAME:          mc__epoch_duration_millis
+HELP:          see partner-chains EpochConfig
+TYPE:          u64
+DEFAULT:       86400000
+SOURCES:       default
+CURRENT_VALUE: 86400000
+
+NAME:          mc__first_slot_number
+HELP:          see partner-chains EpochConfig
+TYPE:          u64
+DEFAULT:       0
+SOURCES:       default
+CURRENT_VALUE: 0
+
+NAME:          db_sync_postgres_connection_string
+HELP:          see partner-chains ConnectionConfig
+TYPE:          Option &lt; String &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+NAME:          cardano_security_parameter
+HELP:          see partner-chains CandidateDataSourceCacheConfig and DbSyncBlockDataSourceConfig
+TYPE:          Option &lt; u32 &gt;
+DEFAULT:       432
+SOURCES:       default
+CURRENT_VALUE: 432
+
+NAME:          cardano_active_slots_coeff
+HELP:          see partner-chains DbSyncBlockDataSourceConfig
+TYPE:          Option &lt; f64 &gt;
+DEFAULT:       0.05
+SOURCES:       default
+CURRENT_VALUE: 0.05
+
+NAME:          block_stability_margin
+HELP:          see partner-chains DbSyncBlockDataSourceConfig
+TYPE:          Option &lt; u32 &gt;
+DEFAULT:       0
+SOURCES:       default
+CURRENT_VALUE: 0
+
+NAME:          proposed_wasm_file
+HELP:          An optional proposal of a new runtime file for the Midnight runtime.
+            The spec version and code hash will be extracted from this file, otherwise, the default path will be used.
+            If not in the default path, the node will not vote in favor of a WASM to promote for a runtime upgrade
+TYPE:          Option &lt; String &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+NAME:          storage_cache_size
+HELP:          Size of ledger storage cache (number of nodes)
+TYPE:          usize
+DEFAULT:       0
+SOURCES:       default
+CURRENT_VALUE: 0
+
+================================================================================
+StorageMonitorParamsCfg
+================================================================================
+
+NAME:          threshold
+HELP:          Required available space on database storage
+TYPE:          u64
+DEFAULT:       512
+SOURCES:       default
+CURRENT_VALUE: 512
+
+NAME:          polling_period
+HELP:          How often available space is polled
+TYPE:          u32
+DEFAULT:       5
+SOURCES:       default
+CURRENT_VALUE: 5
+
+================================================================================
+SubstrateCfg
+================================================================================
+
+NAME:          argv
+HELP:          REMOVED: USE &quot;args&quot; INSTEAD
+            The arguments passed to the node, including the binary
+TYPE:          Vec &lt; String &gt;
+DEFAULT:       
+SOURCES:       default
+CURRENT_VALUE: &quot;&quot;
+
+NAME:          args
+HELP:          The arguments passed to the node
+TYPE:          Vec &lt; String &gt;
+DEFAULT:       
+SOURCES:       cli
+CURRENT_VALUE: &quot;--help, &quot;
+
+NAME:          append_args
+HELP:          Extra arguments to append to args
+TYPE:          Vec &lt; String &gt;
+DEFAULT:       
+SOURCES:       default
+CURRENT_VALUE: &quot;&quot;
+
+NAME:          base_path
+HELP:          Optional override for base_path. --base-path in argv takes precedence
+TYPE:          Option &lt; String &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+NAME:          node_key
+HELP:          Optional override for node_key. --node-key in argv takes precedence
+TYPE:          Option &lt; String &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+NAME:          chain
+HELP:          Optional override for chain. --chain in argv takes precedence
+TYPE:          Option &lt; String &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+NAME:          validator
+HELP:          Override for --validator in argv
+TYPE:          bool
+DEFAULT:       false
+SOURCES:       default
+CURRENT_VALUE: false
+
+NAME:          bootnodes
+HELP:          Appends to the list of bootnodes
+TYPE:          Vec &lt; MultiaddrWithPeerId &gt;
+DEFAULT:       
+SOURCES:       default
+CURRENT_VALUE: &quot;&quot;
+
+NAME:          trie_cache_size
+HELP:          Override for --trie_cache_size. --trie-cache-size in argv takes precedence (unless set to default value).
+TYPE:          Option &lt; usize &gt;
+DEFAULT:       0
+SOURCES:       default
+CURRENT_VALUE: 0
+
+CONFIG PRESET: None
+VALIDATION RESULT: Configuration failed to validate: config error: {&quot;errors&quot;:[&quot;db_sync_postgres_connection_string must be defined if ariadne is enabled (i.e. if use_main_chain_follower_mock is false)&quot;],&quot;properties&quot;:{}}
+*note:* To show secret values, set SHOW_SECRETS=1
+
+Midnight blockchain node. Run without &lt;COMMAND&gt; to start the node. To see full config options, run with no args with env-var SHOW_CONFIG=TRUE or run --help
+
+Usage: midnight-node &lt;COMMAND&gt;
+
+Commands:
+key                      Key management cli utilities
+sidechain-params         Returns sidechain parameters
+registration-status      Returns registration status for a given mainchain public key and epoch number. If registration has been included in Cardano block in epoch N, then it should be returned by this
+                        command if epoch greater than N+1 is provided. If this command won&#39;t show your registration after a few minutes after it has been included in a cardano block, you can start
+                        debugging for unsuccessful registration
+ariadne-parameters       Returns ariadne parameters effective at given mainchain epoch number. Parameters are effective two epochs after the block their change is included in
+registration-signatures  Generates registration signatures for partner chains committee candidates
+smart-contracts          Commands for interacting with Partner Chain smart contracts on Cardano
+wizards                  Partner Chains text &quot;wizards&quot; for setting up chain
+build-spec               Build a chain specification
+check-block              Validate blocks
+export-blocks            Export blocks
+export-state             Export the state of a given block into a chain spec
+import-blocks            Import blocks
+purge-chain              Remove the whole chain
+revert                   Revert the chain to a previous state
+benchmark                Sub-commands concerned with benchmarking
+chain-info               Db meta columns information
+help                     Print this message or the help of the given subcommand(s)
+
+Options:
+-h, --help     Print help
+-V, --version  Print version
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>./midnight-node --help
+ノードを起動するために使う `run` コマンド
+
+使用法: midnight-node [OPTIONS]
+
+--validator
+    バリデーターモードを有効にする。
+
+    ノードはオーソリティロールで起動し、可能な限り（例: ローカルキーの可用性に応じて）合意タスクに積極的に参加する。
+
+--no-grandpa
+    GRANDPA を無効化する。
+
+    バリデーターモードでは投票者を無効化し、そうでない場合は GRANDPA オブザーバーを無効化する。
+
+--rpc-external
+    すべての RPC インターフェースで待ち受ける（デフォルト: ローカル）。
+
+    すべての RPC メソッドが安全に公開できるわけではない。
+
+    危険なメソッドを除外するために RPC プロキシサーバーを使用する。詳細: &lt;https://docs.substrate.io/build/remote-procedure-calls/#public-rpc-interfaces&gt;。
+
+    リスクを理解している場合は `--unsafe-rpc-external` で警告を抑制できる。
+
+--unsafe-rpc-external
+    すべての RPC インターフェースで待ち受ける。
+
+    `--rpc-external` と同じ。
+
+--rpc-methods &lt;METHOD SET&gt;
+    公開する RPC メソッド。
+
+    [default: auto]
+
+    可能な値:
+    - auto:   RPC が `localhost` で待ち受ける場合のみすべての RPC メソッドを公開し、それ以外は安全な RPC メソッドのみ提供する
+    - safe:   安全な RPC メソッドのサブセットのみ許可する
+    - unsafe: すべての RPC メソッド（潜在的に安全でないものも含む）を公開する
+
+--rpc-rate-limit &lt;RPC_RATE_LIMIT&gt;
+    各接続ごとの RPC レート制限（呼び出し/分）。
+
+    これはデフォルトで無効。
+
+    例: `--rpc-rate-limit 10` は接続あたり 1 分に最大 10 回の呼び出しのみ許可する。
+
+--rpc-rate-limit-whitelisted-ips &lt;RPC_RATE_LIMIT_WHITELISTED_IPS&gt;...
+    特定の IP アドレスに対する RPC レート制限を無効化する。
+
+    各 IP アドレスは `1.2.3.4/24` のような CIDR 表記である必要がある。
+
+--rpc-rate-limit-trust-proxy-headers
+    レート制限の無効化のためにプロキシヘッダーを信頼する。
+
+    デフォルトでは RPC サーバーは `X-Real-IP`、`X-Forwarded-For`、`Forwarded` などのヘッダーを信頼せず、このオプションを指定すると信頼するようになる。
+
+    例えば、RPC サーバーがリバースプロキシの背後にあり、プロキシが常にこれらのヘッダーを設定する場合に安全である可能性がある。
+
+--rpc-max-request-size &lt;RPC_MAX_REQUEST_SIZE&gt;
+    HTTP と WS の両方で RPC リクエストのペイロード最大サイズをメガバイト単位で設定する
+
+    [default: 15]
+
+--rpc-max-response-size &lt;RPC_MAX_RESPONSE_SIZE&gt;
+    HTTP と WS の両方で RPC レスポンスのペイロード最大サイズをメガバイト単位で設定する
+
+    [default: 15]
+
+--rpc-max-subscriptions-per-connection &lt;RPC_MAX_SUBSCRIPTIONS_PER_CONNECTION&gt;
+    接続あたりの最大同時サブスクリプション数を設定する
+
+    [default: 1024]
+
+--rpc-port &lt;PORT&gt;
+    JSON-RPC サーバーの TCP ポートを指定する
+
+--experimental-rpc-endpoint &lt;EXPERIMENTAL_RPC_ENDPOINT&gt;...
+    実験的: JSON-RPC サーバーのインターフェースを指定する。このオプションは複数回指定でき、異なる設定で複数の RPC インターフェースを公開できる。
+
+    このオプションの形式:
+    `--experimental-rpc-endpoint&quot; listen-addr=&lt;ip:port&gt;,&lt;key=value&gt;,...&quot;`。各オプションはカンマで区切られ、`listen-addr` が唯一の必須パラメータ。
+
+    利用可能なオプション:
+    • listen-addr: 待ち受けるソケットアドレス（ip:port）。よほど理解していない限り、公開インターネットへの公開は避けること。（必須）
+    • disable-batch-requests: バッチリクエストを無効化（任意）
+    • max-connections: サーバーが受け入れる同時接続の最大数（任意）
+    • max-request-size: リクエスト本文の最大サイズ（メガバイト）（任意）
+    • max-response-size: レスポンス本文の最大サイズ（メガバイト）（任意）
+    • max-subscriptions-per-connection: 接続あたりの最大サブスクリプション数（任意）
+    • max-buffer-capacity-per-connection: 接続あたりの最大バッファ容量（任意）
+    • max-batch-request-len: バッチ内のリクエスト最大件数（任意）
+    • cors: 許可する CORS オリジン。この項目は複数回有効化できる（任意）
+    • methods: 許可する RPC メソッド。`safe`、`unsafe`、`auto` が有効（任意）
+    • optional: 待ち受けアドレスが任意、つまりインターフェースが利用できなくてもよい。例: 一部プラットフォームで ipv6 をサポートしない場合に有用（任意）
+    • rate-limit: 各接続の呼び出し/分のレート制限（任意）
+    • rate-limit-trust-proxy-headers: レート制限の無効化のためにプロキシヘッダーを信頼する（任意）
+    • rate-limit-whitelisted-ips: 特定の IP アドレスに対するレート制限を無効化。この項目は複数回有効化できる（任意）
+    • retry-random-port: ポートが既に使用中の場合、ランダムなポートで再試行（任意）
+
+    注意して使用すること。このフラグは不安定で、変更される可能性がある。
+
+--rpc-max-connections &lt;COUNT&gt;
+    RPC サーバー接続の最大数
+
+    [default: 100]
+
+--rpc-message-buffer-capacity-per-connection &lt;RPC_MESSAGE_BUFFER_CAPACITY_PER_CONNECTION&gt;
+    RPC サーバーがメモリ内に保持できるメッセージ数。
+
+    バッファが満杯になると、接続しているクライアントが基盤メッセージを読み始めるまで、新しいメッセージは処理されない。
+
+    これは JSON-RPC のメソッド呼び出しとサブスクリプションの両方を含む接続単位で適用される。
+
+    [default: 64]
+
+--rpc-disable-batch-requests
+    RPC バッチリクエストを無効化する
+
+--rpc-max-batch-request-len &lt;LEN&gt;
+    RPC バッチリクエストの最大長を制限する
+
+--rpc-cors &lt;ORIGINS&gt;
+    HTTP &amp; WS RPC サーバーへのアクセスを許可するブラウザの *origin* を指定する。
+
+    オリジンのカンマ区切りリスト（protocol://domain または特別な `null` 値）。`all` はオリジン検証を無効化する。デフォルトは localhost と &lt;https://polkadot.js.org&gt; のオリジンを許可する。
+    `--dev` モードではデフォルトで全オリジンを許可する。
+
+--name &lt;NAME&gt;
+    このノードの人間が読める名前。
+
+    ネットワーク上のノード名として使用される。
+
+--no-telemetry
+    Substrate テレメトリーサーバーへの接続を無効化する。
+
+    グローバルチェーンではデフォルトでテレメトリーが有効。
+
+--telemetry-url &lt;URL VERBOSITY&gt;
+    接続先のテレメトリーサーバー URL。
+
+    複数回指定して複数のテレメトリーエンドポイントを指定できる。冗長度は 0-9 で、0 が最も低い。
+
+    期待される形式は &#39;URL VERBOSITY&#39;、例: `--telemetry-url &#39;wss://foo/bar 0&#39;`。
+
+--prometheus-port &lt;PORT&gt;
+    Prometheus エクスポーターの TCP ポートを指定する
+
+--prometheus-external
+    すべてのインターフェースで Prometheus エクスポーターを公開する。
+
+    デフォルトはローカル。
+
+--no-prometheus
+    Prometheus エクスポーターエンドポイントを公開しない。
+
+    Prometheus のメトリクスエンドポイントはデフォルトで有効。
+
+--max-runtime-instances &lt;MAX_RUNTIME_INSTANCES&gt;
+    各ランタイムのインスタンスキャッシュサイズ [max: 32]。
+
+    32 を超える値は不正。
+
+    [default: 8]
+
+--runtime-cache-size &lt;RUNTIME_CACHE_SIZE&gt;
+    キャッシュ可能な異なるランタイムの最大数
+
+    [default: 2]
+
+--offchain-worker &lt;ENABLED&gt;
+    各ブロックでオフチェーンワーカーを実行する
+
+    [default: when-authority]
+
+    可能な値:
+    - always:         常にオフチェーンワーカーを有効にする
+    - never:          オフチェーンワーカーを有効にしない
+    - when-authority: バリデーター（または、これはパラチェーンノードならコレーター）として実行している場合のみ有効にする
+
+--enable-offchain-indexing &lt;ENABLE_OFFCHAIN_INDEXING&gt;
+    オフチェーンインデクシング API を有効化する。
+
+    ブロック取り込み中にランタイムがオフチェーンワーカー DB へ直接書き込めるようにする。
+
+    [default: false]
+    [possible values: true, false]
+
+--chain &lt;CHAIN_SPEC&gt;
+    チェーン仕様を指定する。
+
+    事前定義済み（dev、local、staging）のいずれか、または chainspec を含むファイルへのパス（`build-spec` サブコマンドでエクスポートしたものなど）を指定できる。
+
+--dev
+    開発用チェーンを指定する。
+
+    このフラグは明示的に上書きされない限り、`--chain=dev`、`--force-authoring`、`--rpc-cors=all`、`--alice`、`--tmp` を設定する。またローカルピア探索を無効化する（--no-mdns および
+    --discover-local を参照）。
+
+-d, --base-path &lt;PATH&gt;
+        カスタムのベースパスを指定する
+
+-l, --log &lt;LOG_PATTERN&gt;...
+        カスタムのログフィルターを設定する（構文: `&lt;target&gt;=&lt;level&gt;`）。
+
+        ログレベル（低い→高い）は `error`、`warn`、`info`、`debug`、`trace`。
+
+        デフォルトでは全ターゲットが `info`。グローバルログレベルは `-l&lt;level&gt;` で設定できる。
+
+        複数の `&lt;target&gt;=&lt;level&gt;` を指定でき、カンマで区切る。
+
+        *例*: `--log error,sync=debug,grandpa=warn`。グローバルログレベルを `error` にし、`sync` ターゲットを debug、grandpa ターゲットを warn にする。
+
+--detailed-log-output
+    詳細なログ出力を有効化する。
+
+    ログターゲット、ログレベル、スレッド名の表示を含む。
+
+    何かが `info` より高いレベルでログされると自動的に有効になる。
+
+--disable-log-color
+    ログの色出力を無効化する
+
+--enable-log-reloading
+    ログフィルターを動的に更新・再読み込みする機能を有効化する。
+
+    この機能を有効にすると、最大 6 倍以上の性能低下が起きる可能性がある。グローバルログレベルに応じて性能低下の度合いは変わる。
+
+    このオプションが設定されていない場合、`system_addLogFilter` と `system_resetLogFilter` RPC は効果がない。
+
+--tracing-targets &lt;TARGETS&gt;
+    カスタムのプロファイリングフィルターを設定する。
+
+    構文はログ（`--log`）と同じ。
+
+--tracing-receiver &lt;RECEIVER&gt;
+    トレーシングメッセージの受信先
+
+    [default: log]
+
+    可能な値:
+    - log: ログを使ってトレーシングレコードを出力する
+
+--state-pruning &lt;PRUNING_MODE&gt;
+    状態のプルーニングモードを指定する。
+
+    このモードは、ブロックの状態（すなわちストレージ）をいつプルーニング（削除）するかを指定する。この設定はデータベース作成時のみ設定可能。その後の実行では DB に保存されたプルーニングモードが読み込まれ、CLI の値が一致しない場合はエラーになる。以降の実行でこの CLI フラグを外しても問題ない。唯一の例外として、`NUMBER` は後続の実行で変更できる（増やしてもプルーニング済み状態は復元されない）。
+
+    可能な値:
+
+    - archive: すべてのブロックのデータを保持する。
+
+    - archive-canonical: 確定済みブロックのデータのみ保持する。
+
+    - NUMBER: 直近 NUMBER 件の確定済みブロックのデータのみ保持する。
+
+    [default: 256]
+
+--blocks-pruning &lt;PRUNING_MODE&gt;
+    ブロックのプルーニングモードを指定する。
+
+    このモードは、ブロックの本文（justifications を含む）をいつプルーニング（削除）するかを指定する。
+
+    可能な値:
+
+    - archive: すべてのブロックのデータを保持する。
+
+    - archive-canonical: 確定済みブロックのデータのみ保持する。
+
+    - NUMBER: 直近 NUMBER 件の確定済みブロックのデータのみ保持する。
+
+    [default: archive-canonical]
+
+--database &lt;DB&gt;
+    使用するデータベースバックエンドを選択する
+
+    可能な値:
+    - paritydb:              ParityDb。&lt;https://github.com/paritytech/parity-db/&gt;
+    - auto:                  既存のデータベースがあるか検出し、あればそれを使い、なければ新しい ParityDb インスタンスを作成する
+    - paritydb-experimental: ParityDb。&lt;https://github.com/paritytech/parity-db/&gt;
+
+--db-cache &lt;MiB&gt;
+    データベースキャッシュが使用できるメモリを制限する
+
+--wasm-execution &lt;METHOD&gt;
+    Wasm ランタイムコードの実行方法
+
+    [default: compiled]
+
+    可能な値:
+    - interpreted-i-know-what-i-do: 現在は非推奨のインタープリターを使用する
+    - compiled:                     コンパイル済みランタイムを使用する
+
+--wasmtime-instantiation-strategy &lt;STRATEGY&gt;
+    WASM のインスタンス化方法。
+
+    `wasm-execution` が `compiled` のときのみ有効。copy-on-write の戦略は Linux のみでサポートされる。copy-on-write 版の戦略が未サポートの場合、エグゼキューターは非 CoW 版にフォールバックする。利用可能な最速（かつデフォルト）の戦略は `pooling-copy-on-write`。`legacy-instance-reuse` は非推奨で将来削除される。デフォルト戦略に問題がある場合のみ使用すること。
+
+    [default: pooling-copy-on-write]
+
+    可能な値:
+    - pooling-copy-on-write:           各インスタンス化での初期化を避けるためにインスタンスをプールする。可能なら copy-on-write メモリを使用する
+    - recreate-instance-copy-on-write: 各インスタンス化のたびに最初からインスタンスを作成する。可能なら copy-on-write メモリを使用する
+    - pooling:                         各インスタンス化での初期化を避けるためにインスタンスをプールする
+    - recreate-instance:               各インスタンス化のたびに最初からインスタンスを作成する。非常に遅い
+
+--wasm-runtime-overrides &lt;PATH&gt;
+    ローカルの WASM ランタイムを格納するパスを指定する。
+
+    バージョンが一致する場合、これらのランタイムがオンチェーンのランタイムを上書きする。
+
+--execution-syncing &lt;STRATEGY&gt;
+    初期同期時のブロック取り込みにおけるランタイム実行戦略
+
+    可能な値:
+    - native:           ネイティブビルドで実行（利用可能なら、そうでなければ WebAssembly）
+    - wasm:             WebAssembly ビルドのみで実行
+    - both:             ネイティブ（利用可能なら）と WebAssembly の両方で実行
+    - native-else-wasm: 可能ならネイティブビルドで実行し、失敗したら WebAssembly で実行
+
+--execution-import-block &lt;STRATEGY&gt;
+    一般的なブロック取り込み（ローカルで生成したブロックを含む）におけるランタイム実行戦略
+
+    可能な値:
+    - native:           ネイティブビルドで実行（利用可能なら、そうでなければ WebAssembly）
+    - wasm:             WebAssembly ビルドのみで実行
+    - both:             ネイティブ（利用可能なら）と WebAssembly の両方で実行
+    - native-else-wasm: 可能ならネイティブビルドで実行し、失敗したら WebAssembly で実行
+
+--execution-block-construction &lt;STRATEGY&gt;
+    ブロック構築におけるランタイム実行戦略
+
+    可能な値:
+    - native:           ネイティブビルドで実行（利用可能なら、そうでなければ WebAssembly）
+    - wasm:             WebAssembly ビルドのみで実行
+    - both:             ネイティブ（利用可能なら）と WebAssembly の両方で実行
+    - native-else-wasm: 可能ならネイティブビルドで実行し、失敗したら WebAssembly で実行
+
+--execution-offchain-worker &lt;STRATEGY&gt;
+    オフチェーンワーカーにおけるランタイム実行戦略
+
+    可能な値:
+    - native:           ネイティブビルドで実行（利用可能なら、そうでなければ WebAssembly）
+    - wasm:             WebAssembly ビルドのみで実行
+    - both:             ネイティブ（利用可能なら）と WebAssembly の両方で実行
+    - native-else-wasm: 可能ならネイティブビルドで実行し、失敗したら WebAssembly で実行
+
+--execution-other &lt;STRATEGY&gt;
+    同期・取り込み・構築以外でのランタイム実行戦略
+
+    可能な値:
+    - native:           ネイティブビルドで実行（利用可能なら、そうでなければ WebAssembly）
+    - wasm:             WebAssembly ビルドのみで実行
+    - both:             ネイティブ（利用可能なら）と WebAssembly の両方で実行
+    - native-else-wasm: 可能ならネイティブビルドで実行し、失敗したら WebAssembly で実行
+
+--execution &lt;STRATEGY&gt;
+    すべての実行コンテキストで使用する実行戦略
+
+    可能な値:
+    - native:           ネイティブビルドで実行（利用可能なら、そうでなければ WebAssembly）
+    - wasm:             WebAssembly ビルドのみで実行
+    - both:             ネイティブ（利用可能なら）と WebAssembly の両方で実行
+    - native-else-wasm: 可能ならネイティブビルドで実行し、失敗したら WebAssembly で実行
+
+--trie-cache-size &lt;Bytes&gt;
+    状態キャッシュのサイズを指定する。
+
+    `0` を指定するとキャッシュを無効化する。
+
+    [default: 67108864]
+
+--state-cache-size &lt;STATE_CACHE_SIZE&gt;
+    非推奨: `--trie-cache-size` に切り替えること
+
+--bootnodes &lt;ADDR&gt;...
+    ブートノードのリストを指定する
+
+--reserved-nodes &lt;ADDR&gt;...
+    予約ノードアドレスのリストを指定する
+
+--reserved-only
+    予約ノードのみとチェーンを同期するかどうか。
+
+    自動ピア探索も無効化する。TCP 接続は非予約ノードとも確立されうる。特にバリデーターの場合、予約ノードとして定義されているかどうかに関わらず、他のバリデーターノードやコレーター
+    ノードに接続する可能性がある。
+
+--public-addr &lt;PUBLIC_ADDR&gt;...
+    他のノードがこのノードに接続する際に使う公開アドレス。
+
+    このノードの前段にプロキシがある場合に使用できる。
+
+--listen-addr &lt;LISTEN_ADDR&gt;...
+    このマルチアドレスで待ち受ける。
+
+    デフォルト: `--validator` が渡された場合は `/ip4/0.0.0.0/tcp/&lt;port&gt;` と `/ip6/[::]/tcp/&lt;port&gt;`。それ以外は `/ip4/0.0.0.0/tcp/&lt;port&gt;/ws` と `/ip6/[::]/tcp/&lt;port&gt;/ws`。
+
+--port &lt;PORT&gt;
+    p2p プロトコルの TCP ポートを指定する
+
+--no-private-ip
+    常にプライベート IPv4/IPv6 アドレスへの接続を禁止する。
+
+    `--reserved-nodes` または `--bootnodes` で渡されたアドレスには適用されない。チェーン仕様で &quot;live&quot; とマークされたチェーンではデフォルトで有効。
+
+    プライベートネットワークのアドレス割り当ては [RFC1918](https://tools.ietf.org/html/rfc1918)) で規定される。
+
+--allow-private-ip
+    常にプライベート IPv4/IPv6 アドレスへの接続を許可する。
+
+    チェーン仕様で &quot;local&quot; とマークされたチェーン、または `--dev` が指定された場合にデフォルトで有効。
+
+    プライベートネットワークのアドレス割り当ては [RFC1918](https://tools.ietf.org/html/rfc1918)) で規定される。
+
+--out-peers &lt;COUNT&gt;
+    維持しようとする送信接続数
+
+    [default: 8]
+
+--in-peers &lt;COUNT&gt;
+    受信するフルノードピアの最大数
+
+    [default: 32]
+
+--in-peers-light &lt;COUNT&gt;
+    受信するライトノードピアの最大数
+
+    [default: 100]
+
+--no-mdns
+    mDNS 探索を無効化する（デフォルト: true）。
+
+    デフォルトでは、ネットワークはローカルネットワーク上の他ノードを mDNS で探索する。これを無効化する。`--dev` 使用時は自動的に指定される。
+
+--max-parallel-downloads &lt;COUNT&gt;
+    同じブロックを並列に要求するピアの最大数。
+
+    複数ピアから通知されたブロックをダウンロードできる。トラフィックを節約し、遅延が増えるリスクを下げるには値を小さくする。
+
+    [default: 5]
+
+--node-key &lt;KEY&gt;
+    p2p ネットワーキングに使う秘密鍵。
+
+    値は `--node-key-type` の選択に従って次のように解析される:
+
+    - `ed25519`: 値は hex エンコードされた Ed25519 32 バイト秘密鍵（64 hex 文字）として解析される
+
+    このオプションの値は `--node-key-file` より優先される。
+
+    警告: コマンドライン引数として渡した秘密情報は容易に露出する。このオプションの使用は開発やテストに限定すること。外部で管理された秘密鍵を使うには `--node-key-file` を使う。
+
+--node-key-type &lt;TYPE&gt;
+    p2p ネットワーキングに使う暗号プリミティブ。
+
+    ノードの秘密鍵は以下の手順で取得される:
+
+    - `--node-key` オプションが指定された場合、値はそのタイプに従って秘密鍵として解析される。`--node-key` のドキュメント参照。
+
+    - `--node-key-file` オプションが指定された場合、秘密鍵は指定されたファイルから読み込まれる。`--node-key-file` のドキュメント参照。
+
+    - それ以外は、`--base-dir` で指定されたベースディレクトリ内のチェーン固有のネットワーク設定ディレクトリにある、タイプ別の既定ファイル名から秘密鍵を読み込む。このファイルが存在しない場合、選択したタイプの新しい秘密鍵が生成される。
+
+    ノードの秘密鍵は対応する公開鍵を決定し、libp2p の文脈におけるノードのピア ID を決定する。
+
+    [default: ed25519]
+
+    可能な値:
+    - ed25519: ed25519 を使用する
+
+--node-key-file &lt;FILE&gt;
+    p2p ネットワーキングに使うノードの秘密鍵を読み込むファイル。
+
+    ファイルの内容は `--node-key-type` の選択に従って次のように解析される:
+
+    - `ed25519`: ファイルには未エンコードの 32 バイト、または hex エンコードされた Ed25519 秘密鍵が含まれている必要がある。
+
+    ファイルが存在しない場合、選択したタイプの新しい秘密鍵が生成される。
+
+--unsafe-force-node-key-generation
+    node-key-file が存在しない場合に鍵生成を強制する。
+
+    これは本番ネットワークには安全でない機能。アクティブなオーソリティとして、他のオーソリティは安定したアイデンティティに依存する可能性があり、アクティブセットに参加した後に ID が変わると到達できなくなることがある。
+
+    カスタム `node-key-file` 引数が提供されない場合、ネットワークキーは通常、`--base-path` で指定されたディレクトリ内の `network` フォルダーにノード再起動間で保持される。
+
+    警告!! この引数を指定してノードを実行した場合、次回以降の再起動では必ず削除すること。
+
+--discover-local
+    ローカルネットワークでのピア探索を有効化する。
+
+    デフォルトでは、`--dev` が指定された場合、またはチェーンタイプが `Local`/`Development` の場合は `true`、それ以外は false。
+
+--kademlia-disjoint-query-paths
+    反復的な Kademlia DHT クエリで互いに交わらないパスの使用を要求する。
+
+    互いに交わらないパスは、潜在的に敵対的なノードの存在下での回復力を高める。
+
+    高レベル設計とそのセキュリティ改善については S/Kademlia 論文を参照。
+
+--kademlia-replication-factor &lt;KADEMLIA_REPLICATION_FACTOR&gt;
+    Kademlia のレプリケーション係数。
+
+    レコードが最も近いどのピアに複製されるかを決定する。
+
+    Discovery メカニズムは、すべての `kademlia_replication_factor` ピアへの複製が成功した場合のみ、レコードが正常に投入されたとみなす。
+
+    [default: 20]
+
+--ipfs-server
+    IPFS ネットワークに参加し、bitswap プロトコルでトランザクションを提供する
+
+--sync &lt;SYNC_MODE&gt;
+    ブロックチェーンの同期モード。
+
+    [default: full]
+
+    可能な値:
+    - full:        フル同期。すべてのブロックをダウンロードし検証する
+    - fast:        ブロックを実行せずにダウンロードする。証明付きで最新の状態をダウンロードする
+    - fast-unsafe: ブロックを実行せずにダウンロードする。証明なしで最新の状態をダウンロードする
+    - warp:        最終性を証明し、最新の状態をダウンロードする
+
+--max-blocks-per-request &lt;COUNT&gt;
+    1 リクエストあたりの最大ブロック数。
+
+    低速なネットワーク接続でブロックリクエストのタイムアウトが見られる場合、デフォルト値から減らすことを試す。
+
+    [default: 64]
+
+--network-backend &lt;NETWORK_BACKEND&gt;
+    P2P ネットワーキングに使うネットワークバックエンド。
+
+    litep2p ネットワークバックエンドは実験的で、libp2p バックエンドほど安定していない。
+
+    [default: libp2p]
+
+    可能な値:
+    - libp2p:  P2P ネットワーキングに libp2p を使う
+    - litep2p: P2P ネットワーキングに litep2p を使う
+
+--pool-limit &lt;COUNT&gt;
+    トランザクションプール内の最大トランザクション数
+
+    [default: 8192]
+
+--pool-kbytes &lt;COUNT&gt;
+    プールに保存される全トランザクションの最大キロバイト数
+
+    [default: 20480]
+
+--tx-ban-seconds &lt;SECONDS&gt;
+    トランザクションの禁止期間。
+
+    無効と判断された場合。デフォルトは 1800 秒。
+
+--keystore-path &lt;PATH&gt;
+    カスタムのキーストアパスを指定する
+
+--password-interactive
+    キーストアで使うパスワード入力に対話シェルを使う
+
+--password &lt;PASSWORD&gt;
+    キーストアに使うパスワード。
+
+    これによりシードにユーザー定義の追加シークレットを付加できる。
+
+--password-filename &lt;PATH&gt;
+    キーストアに使うパスワードが入ったファイル
+
+--alice
+    `--name Alice --validator` のショートカット。
+
+    `Alice` のセッションキーがキーストアに追加される。
+
+--bob
+    `--name Bob --validator` のショートカット。
+
+    `Bob` のセッションキーがキーストアに追加される。
+
+--charlie
+    `--name Charlie --validator` のショートカット。
+
+    `Charlie` のセッションキーがキーストアに追加される。
+
+--dave
+    `--name Dave --validator` のショートカット。
+
+    `Dave` のセッションキーがキーストアに追加される。
+
+--eve
+    `--name Eve --validator` のショートカット。
+
+    `Eve` のセッションキーがキーストアに追加される。
+
+--ferdie
+    `--name Ferdie --validator` のショートカット。
+
+    `Ferdie` のセッションキーがキーストアに追加される。
+
+--one
+    `--name One --validator` のショートカット。
+
+    `One` のセッションキーがキーストアに追加される。
+
+--two
+    `--name Two --validator` のショートカット。
+
+    `Two` のセッションキーがキーストアに追加される。
+
+--force-authoring
+    オフライン時でもブロック生成を有効にする
+
+--tmp
+    一時ノードとして実行する。
+
+    設定の保存用に一時ディレクトリが作成され、プロセス終了時に削除される。
+
+    注: ディレクトリはプロセス実行ごとにランダム。これはベースパスとして使用され、データベース、ノードキー、キーストアを含む。
+
+    `--dev` が指定され、明示的な `--base-path` がない場合、このオプションが暗黙的に指定される。
+
+-h, --help
+        ヘルプを表示する（&#39;-h&#39; で概要）
+
+================================================================================
+ChainSpecCfg
+================================================================================
+
+NAME:          genesis_utxo
+HELP:          chain-spec 生成: genesis_utxo のためのパートナーチェーンパラメータ
+TYPE:          Option &lt; UtxoId &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+NAME:          addresses_json
+HELP:          partnerchains が提供する partner-chains-cli の出力ファイル。
+            実行時にノードへ設定を提供するために必要。
+TYPE:          Option &lt; String &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+================================================================================
+MetaCfg
+================================================================================
+
+NAME:          cfg_preset
+HELP:          デフォルト設定値のプリセットを使用する
+TYPE:          Option &lt; CfgPreset &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+NAME:          show_config
+HELP:          起動時に設定を表示する
+TYPE:          bool
+DEFAULT:       false
+SOURCES:       default
+CURRENT_VALUE: false
+
+NAME:          show_secrets
+HELP:          設定に含まれる秘密情報を表示する
+TYPE:          bool
+DEFAULT:       false
+SOURCES:       default
+CURRENT_VALUE: false
+
+================================================================================
+MidnightCfg
+================================================================================
+
+NAME:          wipe_chain_state
+HELP:          起動時にチェーンを消去する
+TYPE:          bool
+DEFAULT:       false
+SOURCES:       default
+CURRENT_VALUE: false
+
+NAME:          seed_phrase
+HELP:          このノードのオーサリング機能で使うキーをキーストアに挿入するためのシード。
+            これは必要なキー三つ組（`aura`、`grandpa`、`cross_chain`）を自動生成する。
+TYPE:          Option &lt; String &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+NAME:          use_main_chain_follower_mock
+HELP:          ariadne パラメータのモック
+TYPE:          bool
+DEFAULT:       false
+SOURCES:       default
+CURRENT_VALUE: false
+
+NAME:          main_chain_follower_mock_registrations_file
+HELP:          use_main_chain_follower_mock が true の場合に必要
+            sidechains ライブラリで使用される
+TYPE:          Option &lt; String &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+NAME:          mc__first_epoch_timestamp_millis
+HELP:          partner-chains の EpochConfig を参照
+TYPE:          u64
+DEFAULT:       1666656000000
+SOURCES:       default
+CURRENT_VALUE: 1666656000000
+
+NAME:          mc__first_epoch_number
+HELP:          partner-chains の EpochConfig を参照
+TYPE:          u32
+DEFAULT:       0
+SOURCES:       default
+CURRENT_VALUE: 0
+
+NAME:          mc__epoch_duration_millis
+HELP:          partner-chains の EpochConfig を参照
+TYPE:          u64
+DEFAULT:       86400000
+SOURCES:       default
+CURRENT_VALUE: 86400000
+
+NAME:          mc__first_slot_number
+HELP:          partner-chains の EpochConfig を参照
+TYPE:          u64
+DEFAULT:       0
+SOURCES:       default
+CURRENT_VALUE: 0
+
+NAME:          db_sync_postgres_connection_string
+HELP:          partner-chains の ConnectionConfig を参照
+TYPE:          Option &lt; String &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+NAME:          cardano_security_parameter
+HELP:          partner-chains の CandidateDataSourceCacheConfig と DbSyncBlockDataSourceConfig を参照
+TYPE:          Option &lt; u32 &gt;
+DEFAULT:       432
+SOURCES:       default
+CURRENT_VALUE: 432
+
+NAME:          cardano_active_slots_coeff
+HELP:          partner-chains の DbSyncBlockDataSourceConfig を参照
+TYPE:          Option &lt; f64 &gt;
+DEFAULT:       0.05
+SOURCES:       default
+CURRENT_VALUE: 0.05
+
+NAME:          block_stability_margin
+HELP:          partner-chains の DbSyncBlockDataSourceConfig を参照
+TYPE:          Option &lt; u32 &gt;
+DEFAULT:       0
+SOURCES:       default
+CURRENT_VALUE: 0
+
+NAME:          proposed_wasm_file
+HELP:          Midnight ランタイムの新しいランタイムファイルの任意提案。
+            スペックバージョンとコードハッシュがこのファイルから抽出され、そうでなければデフォルトパスが使用される。
+            デフォルトパスにない場合、ノードはランタイムアップグレードのために昇格すべき WASM に賛成票を投じない
+TYPE:          Option &lt; String &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+NAME:          storage_cache_size
+HELP:          レジャーのストレージキャッシュサイズ（ノード数）
+TYPE:          usize
+DEFAULT:       0
+SOURCES:       default
+CURRENT_VALUE: 0
+
+================================================================================
+StorageMonitorParamsCfg
+================================================================================
+
+NAME:          threshold
+HELP:          データベースストレージの必要な空き容量
+TYPE:          u64
+DEFAULT:       512
+SOURCES:       default
+CURRENT_VALUE: 512
+
+NAME:          polling_period
+HELP:          空き容量をポーリングする頻度
+TYPE:          u32
+DEFAULT:       5
+SOURCES:       default
+CURRENT_VALUE: 5
+
+================================================================================
+SubstrateCfg
+================================================================================
+
+NAME:          argv
+HELP:          削除済み: 代わりに &quot;args&quot; を使用
+            バイナリを含む、ノードに渡される引数
+TYPE:          Vec &lt; String &gt;
+DEFAULT:       
+SOURCES:       default
+CURRENT_VALUE: &quot;&quot;
+
+NAME:          args
+HELP:          ノードに渡される引数
+TYPE:          Vec &lt; String &gt;
+DEFAULT:       
+SOURCES:       cli
+CURRENT_VALUE: &quot;--help, &quot;
+
+NAME:          append_args
+HELP:          args に追加する追加引数
+TYPE:          Vec &lt; String &gt;
+DEFAULT:       
+SOURCES:       default
+CURRENT_VALUE: &quot;&quot;
+
+NAME:          base_path
+HELP:          base_path の任意の上書き。argv の --base-path が優先される
+TYPE:          Option &lt; String &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+NAME:          node_key
+HELP:          node_key の任意の上書き。argv の --node-key が優先される
+TYPE:          Option &lt; String &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+NAME:          chain
+HELP:          chain の任意の上書き。argv の --chain が優先される
+TYPE:          Option &lt; String &gt;
+DEFAULT:       
+SOURCES:       
+CURRENT_VALUE: &lt;unset&gt;
+
+NAME:          validator
+HELP:          argv の --validator の上書き
+TYPE:          bool
+DEFAULT:       false
+SOURCES:       default
+CURRENT_VALUE: false
+
+NAME:          bootnodes
+HELP:          ブートノードのリストに追加する
+TYPE:          Vec &lt; MultiaddrWithPeerId &gt;
+DEFAULT:       
+SOURCES:       default
+CURRENT_VALUE: &quot;&quot;
+
+NAME:          trie_cache_size
+HELP:          --trie_cache_size の上書き。argv の --trie-cache-size が優先される（デフォルト値に設定されない限り）。
+TYPE:          Option &lt; usize &gt;
+DEFAULT:       0
+SOURCES:       default
+CURRENT_VALUE: 0
+
+CONFIG PRESET: None
+VALIDATION RESULT: 設定の検証に失敗: config error: {&quot;errors&quot;:[&quot;ariadne が有効（use_main_chain_follower_mock が false）の場合は db_sync_postgres_connection_string を定義する必要があります&quot;],&quot;properties&quot;:{}}
+*note:* 秘密情報の値を表示するには、SHOW_SECRETS=1 を設定してください
+
+Midnight ブロックチェーンノード。&lt;COMMAND&gt; なしで実行するとノードが起動する。全設定オプションを見るには、引数なしで環境変数 SHOW_CONFIG=TRUE を指定するか --help を実行する
+
+使用法: midnight-node &lt;COMMAND&gt;
+
+コマンド:
+key                      鍵管理 CLI ユーティリティ
+sidechain-params         サイドチェーンのパラメータを返す
+registration-status      指定したメインチェーン公開鍵とエポック番号の登録状況を返す。登録がエポック N の Cardano ブロックに含まれている場合、N+1 より大きいエポックを指定すると返される。数分経っても
+                        登録が表示されない場合は、登録失敗のデバッグを開始できる
+ariadne-parameters       指定したメインチェーンのエポック番号で有効な ariadne パラメータを返す。パラメータは変更が含まれたブロックの 2 エポック後に有効になる
+registration-signatures  パートナーチェーンの委員会候補向け登録署名を生成する
+smart-contracts          Cardano 上の Partner Chain スマートコントラクトとやり取りするためのコマンド
+wizards                  チェーン設定のための Partner Chains テキスト &quot;wizards&quot;
+build-spec               チェーン仕様をビルドする
+check-block              ブロックを検証する
+export-blocks            ブロックをエクスポートする
+export-state             指定したブロックの状態をチェーン仕様にエクスポートする
+import-blocks            ブロックをインポートする
+purge-chain              チェーン全体を削除する
+revert                   チェーンを以前の状態に戻す
+benchmark                ベンチマークに関するサブコマンド
+chain-info               DB メタカラム情報
+help                     このメッセージ、または指定したサブコマンドのヘルプを表示する
+
+オプション:
+-h, --help     ヘルプを表示
+-V, --version  バージョンを表示
+</code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+
+
+
+
+
+
+
+  
+    
+  
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="最終更新日">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="2026年2月6日 01:54:31 UTC">2026年2月6日 01:54:31</span>
+  </span>
+
+    
+    
+    
+    
+  </aside>
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  ページトップへ戻る
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="フッター" >
+        
+          
+          <a href="../start-midnight-node/" class="md-footer__link md-footer__link--prev" aria-label="前: Midnightノード起動">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                前
+              </span>
+              <div class="md-ellipsis">
+                Midnightノード起動
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../learning/" class="md-footer__link md-footer__link--next" aria-label="次: SJGラーニング">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                次
+              </span>
+              <div class="md-ellipsis">
+                SJGラーニング
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2020 - 2025 CARDANO COMMUNITY SPO JAPAN GUILD
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+      <div class="md-consent" data-md-component="consent" id="__consent" hidden>
+        <div class="md-consent__overlay"></div>
+        <aside class="md-consent__inner">
+          <form class="md-consent__form md-grid md-typeset" name="consent">
+            
+
+
+  
+
+
+<h4>Cookieの使用許諾</h4>
+<p>当サイトは、ドキュメントの効果測定や利用者確認のため、クッキーを使用しGoogle アナリティクスによるトラフィックの分析を行っています。 ご同意いただける場合は「Accept」をクリックしてください。</p>
+<input class="md-toggle" type="checkbox" id="__settings" >
+<div class="md-consent__settings">
+  <ul class="task-list">
+    
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="github" checked>
+      <span class="task-list-indicator"></span>
+      GitHub
+    </label>
+  </li>
+
+      
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="analytics" checked>
+      <span class="task-list-indicator"></span>
+      Google Analytics
+    </label>
+  </li>
+
+      
+    
+  </ul>
+</div>
+<div class="md-consent__controls">
+  
+    
+      <button class="md-button md-button--primary">同意</button>
+    
+    
+    
+  
+    
+    
+    
+      <label class="md-button" for="__settings">サイトの設定</label>
+    
+  
+</div>
+          </form>
+        </aside>
+      </div>
+      <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.tabs.link", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.instant", "navigation.tracking", "navigation.footer", "navigation.path", "navigation.expand", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.26099bd0.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.9d1edc04.min.js"></script>
+      
+    
+  </body>
+</html>
