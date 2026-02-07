@@ -1,4 +1,4 @@
-# **Glacier Drop請求手続き**
+# **Glacier Drop**
 
 !!! info "概要"
     - cardano-cli生成のステークアドレスに対応した請求手順となります。

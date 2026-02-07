@@ -245,7 +245,7 @@ sudo journalctl -u midnight-node -f
       - LiveViewノードモニタリング
       - Midnight-Blocklog スケジュール監視モード
 
-![](../images/midnight-node/midnight-monitor.jpg)
+![](../../images/midnight-node/midnight-monitor.jpg)
 
 === "Midnightサーバー"
 

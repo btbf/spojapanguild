@@ -114,17 +114,17 @@ wget -qO- https://spokit.spojapanguild.net/install.sh | bash
 > キーボードの`↑`と`↓`、`←`と`→`でカーソルを移動できます。
 
 2. セットアップノードタイプでは「**`リレー`**」を選択して ++enter++
-![](../images/spokit/1_Preview-SPOKIT-Initial-Settings.png)
+![](../../images/spokit/1_Preview-SPOKIT-Initial-Settings.png)
 
 3. 接続ネットワークでは「**`Preview-Testnet`**」を選択して ++enter++
-![](../images/spokit/2_Preview-SPOKIT-Initial-Settings.png)
+![](../../images/spokit/2_Preview-SPOKIT-Initial-Settings.png)
 
 4. 作業ディレクトリPATHは、デフォルトを指定するのでそのまま ++enter++
 
 5. 「**`はい`**」を選択し、 ++enter++
 
 6. 「**`source`**」コマンドを必ず実行してください。  
-![](../images/spokit/3_Preview-SPOKIT-Initial-Settings.png)
+![](../../images/spokit/3_Preview-SPOKIT-Initial-Settings.png)
 
 ### **1-2. Ubuntuセキュリティ設定**
 
@@ -146,10 +146,10 @@ spokit pool
 ```
 
 2. 「`ノードインストール`」を選択して ++enter++
-![](../images/spokit/1_Preview-SPOKIT-Node-Install.png)
+![](../../images/spokit/1_Preview-SPOKIT-Node-Install.png)
 
 3. 以降はノードのポート番号設定まで進め、添付画像のように、最終行に 「`> 戻る`」 が表示される状態になるまで待機します。  
-![](../images/spokit/2_Preview-SPOKIT-Node-Install.png)
+![](../../images/spokit/2_Preview-SPOKIT-Node-Install.png)
 
 4. 「`> 戻る`」が表示されたら ++enter++ を押下後、「`[q] 終了`」を選択し、SPOKITウィザードを閉じます。  
 
@@ -157,7 +157,7 @@ spokit pool
 ```bash
 glive
 ```
-![](../images/spokit/Preview-gLiveView.png)
+![](../../images/spokit/Preview-gLiveView.png)
 > gLive が表示されていれば、ノードは正常に起動しています。  
 > [preview.cardanoscan](https://preview.cardanoscan.io/){target="_blank" rel="noopener"}などのエクスプローラーでエポックやスロットを確認することもできます。
 

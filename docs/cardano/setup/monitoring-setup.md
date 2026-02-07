@@ -299,7 +299,7 @@ sudo systemctl restart prometheus.service
 15. 「Prometheus」と「Infinity」のプルダウンを選択し`Import`ボタンをクリックします。  
 
 
-![Grafana system health dashboard](../images/grafana-dashboard-sample.png)
+![Grafana system health dashboard](../../images/grafana-dashboard-sample.png)
 
 
 

@@ -652,7 +652,7 @@ Guild Liveviewを起動します。
 ./gLiveView.sh
 ```
 
-![Guild Live View](../images/glive.PNG)
+![Guild Live View](../../images/glive.PNG)
 
 
 !!! hint "GliveView起動ショートカットコード登録"
