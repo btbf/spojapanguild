@@ -29,7 +29,6 @@ theme:
     - navigation.tracking
     - navigation.footer
     - navigation.path
-    - navigation.expand
     - search.suggest
     - search.highlight
     - search.share
@@ -38,7 +37,7 @@ theme:
   icon:
     repo: fontawesome/brands/github
 
-copyright: Copyright &copy; 2020 - 2025 CARDANO COMMUNITY SPO JAPAN GUILD
+copyright: Copyright &copy; 2020 - 2026 CARDANO COMMUNITY SPO JAPAN GUILD
 repo_url: https://github.com/btbf/spojapanguild
 repo_name: btbf/spojapanguild
 
@@ -61,6 +60,13 @@ extra:
 
     cookies:
       analytics: Google Analytics
+  social:
+    - icon: fontawesome/brands/x-twitter
+      link: https://x.com/spojapanguild
+      name: X
+    - icon: fontawesome/solid/house
+      link: https://spojapanguild.net/
+      name: Homepage
 
 
 markdown_extensions:
@@ -98,77 +104,85 @@ extra_css:
 nav:
     - 'HOME':
       - 'はじめに': './index.md'
-      - 'プール構築マニュアル': './setup/index.md'
-      - 'プール運用マニュアル': './operation/index.md'
-      - 'SJGラーニング': ./learning.md
+      - 'Cardano':
+        - 'ステークプール':
+          - '構築概要': './cardano/setup/index.md'
+          - '運用概要': './cardano/operation/index.md'
+        - 'SPOニュースレター登録': './spo-newsletter.md'
+      - 'Midnight':
+        - 'バリデーター': './midnight/index.md'
+      - 'SPO JAPAN GUILD':
+        - 'SJGラーニング': './sjg/learning.md'
+        - '貢献者': './sjg/contributors.md'
+        - '寄付とクレジット': './sjg/donation-credit.md'
       - '更新履歴': './changelogs.md'
-      - '貢献者': './contributors.md'
-      - '寄付とクレジット': './setup/donation-credit.md'
 
-    - 'プール構築マニュアル':
-      - '構築マニュアル': './setup/index.md'
-      - 'プール構築':
-        - '1. エアギャップ環境構築': './setup/air-gapped-setup.md'
-        - '2. Ubuntu初期設定': './setup/ubuntu-setup.md'
-        - '3. ノードセットアップ': './setup/node-setup.md'
-        - '4. リレー/BP接続設定': './setup/relay-bp-setup.md'
-        - '5. BP用キー生成': './setup/bp-key-setup.md'
-        - '6. アドレス生成': './setup/address-generate.md'
-        - '7. ステークアドレス登録': './setup/stake-address-register.md'
-        - '8. ステークプール登録': './setup/stake-pool-register.md'
-        - '9. 最終チェック': './setup/final-checks.md'
-        - '10. 監視ツール設定': './setup/monitoring-setup.md'
-        - '11. ブロックログ設定': './setup/blocklog-setup.md'
-        - '12. SPO BlockNotify設定': './setup/blocknotify-setup.md'
-      - 'SPOニュースレター登録': './setup/spo-newsletter.md'
-      - '寄付とクレジット': './setup/donation-credit.md'
-    - 'プール運用マニュアル':
-      - '運用マニュアル': './operation/index.md'
-      - 'プール運用':
-        - '・ KESの更新': './operation/kes-update.md'
-        - '・ 運用証明書の更新': './operation/cert-update.md'
-        - '・ 資金引き出し': './operation/withdrawal.md'
-        - '・ Calidusキー生成': './operation/calidus-key-generation.md'
-        - '・ プール廃止処理': './operation/pool-retire.md'
-      - 'ノード管理':
-        - '・ ノードアップデート': './operation/node-update.md'
-        - '・ DB同期(Mithril)':  './operation/mithril-client.md'
-        - '・ リレーノード増設': './operation/add-relay.md'
-        - '・ BPポート変更': './operation/bp-port-change.md'
-      - 'サーバー管理':
-        # - '・ サーバー間転送設定':
-        #   - '・ 事前設定': './operation/rsync-ssh.md'
-        #   - '・ ファイル転送手順': './operation/transfer.md'
-        - '・ Ubuntu22.04移行': './operation/ubuntu22-migration.md'
-        - '・ サーバー移行':
-          - '・ リレーサーバー移行': './operation/relay-migration.md'
-          - '・ BPサーバー移行': './operation/bp-migration.md'
-      - '運用ツール':
-        - '・ SJGツール導入設定': './operation/sjg-tool-setup.md'
-        - '・ SFTPソフト設定': './operation/sftp-setup.md'
-        - '・ Grafana追加設定':
-          - '・ Grafanaセキュリティ強化': './operation/grafana-security.md'
-          - '・ Grafanaアラート設定': './operation/grafana-alert.md'
-          - '・ Grafanaリポジトリ変更': './operation/grafana-repo.md'
-        - '・ SPOBlockNotify移行手順': './operation/blocknotify-reinstall.md'
-      - 'ガバナンス':
-          - '・ ガバナンスアクションSPO投票': './operation/gov-spo-vote.md'
-          - '・ カタリスト有権者登録': './operation/catalyst-voting.md'
-      - 'Mithril関連':
-        - '・ Mithril Signerノードの設定、更新': './operation/mithril-signer-node-setup-and-updates.md'
-      - 'Midnight関連':
-        - '・ Glacier Drop請求手続き': './operation/midnight-glacier-drop.md'
-      - 'Linuxコマンド集':
-        - '・ 各種コマンド': './operation/linux-commands.md'
-    - 'Midnightバリデーター':
-      - 'はじめに': './midnight/index.md'
-      - 'Cardanoインデクサーサーバー構築': './midnight/cardano-indexer-setup.md'
-      - 'Midnightノード稼働サーバー構築': './midnight/midnight-node-server-setup.md'
-      - 'Midnightノード起動': './midnight/start-midnight-node.md'
-      - 'Midnightノードオプション一覧': './midnight/midnight-node-options.md'
-    - 'SJGラーニング': './learning.md'
-    - 'よくある質問':
-      - '運用編':
-        - '・ ノード関連': './faq/node.md'
-        - '・ ブロックログ関連': './faq/blocklog.md'
-        - '・ ノード監視関連': './faq/monitoring.md'
+    - 'Cardano':
+      - 'ステークプール構築':
+        - '事前準備': './cardano/setup/index.md'
+        - '1. エアギャップ環境構築': './cardano/setup/air-gapped-setup.md'
+        - '2. Ubuntu初期設定': './cardano/setup/ubuntu-setup.md'
+        - '3. ノードセットアップ': './cardano/setup/node-setup.md'
+        - '4. リレー/BP接続設定': './cardano/setup/relay-bp-setup.md'
+        - '5. BP用キー生成': './cardano/setup/bp-key-setup.md'
+        - '6. アドレス生成': './cardano/setup/address-generate.md'
+        - '7. ステークアドレス登録': './cardano/setup/stake-address-register.md'
+        - '8. ステークプール登録': './cardano/setup/stake-pool-register.md'
+        - '9. 最終チェック': './cardano/setup/final-checks.md'
+        - '10. 監視ツール設定': './cardano/setup/monitoring-setup.md'
+        - '11. ブロックログ設定': './cardano/setup/blocklog-setup.md'
+        - '12. SPO BlockNotify設定': './cardano/setup/blocknotify-setup.md'
+      - 'ステークプール運用':
+        - '概要': './cardano/operation/index.md'
+        - '日常オペレーション':
+          - '・ KESの更新': './cardano/operation/kes-update.md'
+          - '・ ノードアップデート': './cardano/operation/node-update.md'
+          - '・ 資金引き出し': './cardano/operation/withdrawal.md'
+          - '・ 運用証明書の更新': './cardano/operation/cert-update.md'
+        - 'インフラ管理':
+          - '・ リレーノード増設': './cardano/operation/add-relay.md'
+          #- '・ BPポート変更': './cardano/operation/bp-port-change.md'
+          - '・ リレーサーバー移行': './cardano/operation/relay-migration.md'
+          - '・ BPサーバー移行': './cardano/operation/bp-migration.md'
+          #- '・ サーバー間転送設定':
+          #- '・ 事前設定': './cardano/operation/rsync-ssh.md'
+          #- '・ ファイル転送手順': './cardano/operation/transfer.md'
+          - '・ Ubuntu22.04移行': './cardano/operation/ubuntu22-migration.md'
+        - '運用ツール':
+            - '・ Calidusキー': './cardano/operation/calidus-key-generation.md'
+            - '・ Mithril-DB同期': './cardano/operation/mithril-client.md'
+            - '・ SJGツール導入設定': './cardano/operation/sjg-tool-setup.md'
+            - '・ SFTPソフト設定': './cardano/operation/sftp-setup.md'
+            - 'Grafana追加設定':
+              - '・ Grafanaセキュリティ強化': './cardano/operation/grafana-security.md'
+              - '・ Grafanaアラート設定': './cardano/operation/grafana-alert.md'
+              - '・ Grafanaリポジトリ変更': './cardano/operation/grafana-repo.md'
+            - '・ SPOBlockNotify移行手順': './cardano/operation/blocknotify-reinstall.md'
+        - 'ガバナンス':
+          - '・ GA-SPO投票': './cardano/operation/gov-spo-vote.md'
+          - '・ カタリスト有権者登録': './cardano/operation/catalyst-voting.md'
+        - 'プール廃止処理': './cardano/operation/pool-retire.md'
+      - 'Mithril Signerセットアップ': './cardano/operation/mithril-signer-node-setup-and-updates.md'
+      - '各種コマンド一覧': './cardano/operation/linux-commands.md'
+      - 'よくある質問':
+        - '運用編':
+          - '・ ノード関連': './cardano/faq/node.md'
+          - '・ ブロックログ関連': './cardano/faq/blocklog.md'
+          - '・ ノード監視関連': './cardano/faq/monitoring.md'
+
+    - 'Midnight':
+      - 'バリデーター':
+        - '・ 概要': './midnight/index.md'
+        # - '構築':
+          # - '・ Cardanoインデクサーサーバー構築': './midnight/setup/cardano-indexer-setup.md'
+          # - '・ Midnightノード稼働サーバー構築': './midnight/setup/midnight-node-server-setup.md'
+          # - '・ Midnightノード起動': './midnight/setup/start-midnight-node.md'
+        # - '一覧':
+          # - '・ Midnightノードオプション一覧': './midnight/operation/midnight-node-options.md'
+      # - 'エアドロップ申請':
+        # - '・ Glacier Drop': './midnight/midnight-glacier-drop.md'
+    - 'SPO JAPAN GUILD':
+      - 'SJG関連':
+        - '・ SJGラーニング': './sjg/learning.md'
+        - '・ 貢献者': './sjg/contributors.md'
+        - '・ 寄付とクレジット': './sjg/donation-credit.md'

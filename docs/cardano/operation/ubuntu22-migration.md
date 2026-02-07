@@ -260,7 +260,7 @@ download has finished, the process cannot be canceled.
 
 libc6などのサービスを再起動しますか？  
 カーソルキーで`YES`を選択して`ENTER`
-![](../images/ubuntu22-libc6.png)
+![](../../images/ubuntu22-libc6.png)
 
 
 設定ファイル更新の有無  
@@ -284,7 +284,7 @@ Configuration file '/etc/ssh/ssh_config'
 
 新しい設定ファイルの処理方法について  
 `keep the local version currently installed`（インストール済みのローカルバージョンを維持する）が選択された状態で`ENTER`
-![](../images/ubuntu22-chrony.png)
+![](../../images/ubuntu22-chrony.png)
 
 !!! danger "注意"
 
@@ -465,7 +465,7 @@ VirtualBoxのダウンロードサイトにアクセスし、`VirtualBox 7.0.8 p
 ### **6-3. システムアップデート**
 
 - [x] 6-3-1.VirtualBoxのマシン設定からネットワークを有効にする
-![](../images/airgap/airgap0.png)
+![](../../images/airgap/airgap0.png)
 
 - [x] 6-3-2.Ubuntuを起動する
 
@@ -478,19 +478,19 @@ df -h /root
 
 
 - [x] Ubuntu設定から「電源管理」→「ブランクスクリーン」→「しない」に設定
-![](../images/airgap/airgap1.png)
+![](../../images/airgap/airgap1.png)
 
 - [x] アプリケーション一覧から`soft`と検索し、[ソフトウェアとアップデート]を起動
-![](../images/airgap/airgap2.png)
+![](../../images/airgap/airgap2.png)
 
 - [x] [アップデート]タブの長期サポート(LTS)版が選択されていることを確認し、閉じる
-![](../images/airgap/airgap3.png)
+![](../../images/airgap/airgap3.png)
 
 - [x] アプリケーション一覧から`update`と検索し、[ソフトウェアの更新]を起動
-![](../images/airgap/airgap4.png)
+![](../../images/airgap/airgap4.png)
 
 - [x] 「今すぐインストール」をクリック。
-![](../images/airgap/airgap5.png)
+![](../../images/airgap/airgap5.png)
 
 - [x] インストール後再起動を求められたら再起動する。
 
@@ -498,32 +498,32 @@ df -h /root
 ### **6-4. Ubuntuアップグレード**
 
 - [x] 6-4-1.アプリケーション一覧から`update`と検索し、[ソフトウェアの更新]を起動
-![](../images/airgap/airgap4.png)
+![](../../images/airgap/airgap4.png)
 
 - [x] 6-4-2.「アップグレード」をクリックする
-![](../images/airgap/airgap6.png)
+![](../../images/airgap/airgap6.png)
 
 !!! Question "アップグレード"
     表示された内容に沿ってアップグレードしてください。アップグレードには数十分かかります。
 
 - [x] 6-4-3.処理が進むと以下のような画像が表示されます。
-![](../images/airgap/airgap7.png)
+![](../../images/airgap/airgap7.png)
 
-![](../images/airgap/airgap8.png)
+![](../../images/airgap/airgap8.png)
 
 - [x] 6-4-4.FireFoxがインストールされている場合は以下の画像が表示されます。「NEXT」をクリックしてください。
-![](../images/airgap/airgap9.png)
+![](../../images/airgap/airgap9.png)
 
 - [x] 6-4-5.更に処理が進み、サポート外パッケージを削除します
-![](../images/airgap/airgap10.png)
+![](../../images/airgap/airgap10.png)
 
 
 ### **6-5. GuestAddtionsアップグレード**
 
 - [x] 6-5-1.GuestAddtionsをアップグレードする
-![](../images/airgap/airgap11.png)
+![](../../images/airgap/airgap11.png)
 
-![](../images/airgap/airgap12.png)
+![](../../images/airgap/airgap12.png)
 
 
 - [x] 6-5-2.Ubuntuをシャットダウン(電源オフ)する
@@ -532,7 +532,7 @@ df -h /root
 ### **6-6. 最終仕上げ**
 
 - [x] 6-6-1.ネットワークオフ
-![](../images/airgap/airgap13.png)
+![](../../images/airgap/airgap13.png)
 
 - [x] 6-6-2.Ubuntuを起動する
 

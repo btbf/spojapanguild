@@ -18,10 +18,10 @@
         ??? tip "R-Login 推奨設定"
 
             **カラー設定**  
-            <img src=../images/r-login-setting2.png width="500px">
+            <img src=../../images/r-login-setting2.png width="500px">
             
             **接続状態維持設定**  
-            <img src=../images/r-login-setting.png width="500px">
+            <img src=../../images/r-login-setting.png width="500px">
 
     !!! info "Terminal（macOS 標準ターミナル）"
         macOSに標準搭載されているターミナルアプリです。  
@@ -39,31 +39,36 @@
 ### **SSH鍵作成**
 
 === "Windowsの場合"
-    **1. 管理者モードでターミナルを起動します。**  
+    **1. OpenSSH Client の確認**  
 
-    `Win + X` を押下し、ターミナル（管理者）を選択し、SSHクライアントの有無を確認します。  
-    ```powershell
-    Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Client*'
+    SSHクライアントの有無を確認します。  
+    `Win + R` を押下し、`cmd`と入力し、`Enter`
+    ```cmd
+    where ssh
     ```
-    > `State : Installed`であれば問題ありません。
+    > PATHが表示されていること
 
-    ??? tip "`State : NotPresent`の場合"
+    ??? tip "表示されない場合"
 
-        以下のコマンドで追加してください。
-        ```powershell
-        Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+        表示されない場合は、管理者モードで以下を実行してください。  
+        > `Win + R` を押下し、`cmd`と入力後、`Ctrl + Shift + Enter`→「`はい`」を選択
+        ```cmd
+        powershell -Command "Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0"
         ```
+        > 追加後、`where ssh`を実行し、PATHが表示されていることを確認  
+
+        ※ OpenSSH の追加のみ管理者権限が必要です。以降は通常モードの cmd で実行してください。
     
     **2. SSH鍵生成**  
-    ```powershell
-    mkdir ~/.ssh -Force
-    ssh-keygen -t ed25519 -N "" -C "ssh_connect" -f ~/.ssh/ssh_ed25519
+    ```cmd
+    mkdir "%USERPROFILE%\.ssh"
+    ssh-keygen -t ed25519 -N "" -C "ssh_connect" -f "%USERPROFILE%\.ssh\ssh_ed25519"
     ```
     
     **3. 公開鍵ファイル名の変更**
-    ```powershell
-    cd ~/.ssh
-    mv ssh_ed25519.pub authorized_keys
+    ```cmd
+    cd "%USERPROFILE%\.ssh"
+    move ssh_ed25519.pub authorized_keys
     ```
 
 

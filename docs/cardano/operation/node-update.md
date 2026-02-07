@@ -1,6 +1,3 @@
----
-status: new
----
 # **ノードアップデート**
 
 このガイドは ノードバージョン10.5.3に対応しています。  
@@ -94,7 +91,7 @@ status: new
 
 <!--### **更新フローチャート**
 更新フローチャートは、画像をクリックすると別ウィンドウで開きます。
-<a href="../../images/8.7.2-update.png" target=_blank><img src="../../images/8.7.2-update.png"></a>-->
+<a href="../../../images/8.7.2-update.png" target=_blank><img src="../../../images/8.7.2-update.png"></a>-->
 
 
 ## **1. 依存環境アップデート**
@@ -1226,10 +1223,10 @@ sudo systemctl restart cnode-cncli-sync.service
 ??? danger "ブロック生成ステータス通知またはSPO Block Notifyを未導入(更新)していない方"
 
     === "未導入の方で今後も導入予定が無い方"
-        [10-4.サービスファイル作成・登録](../setup/10-blocklog-setup.md#10-4)を再実行してください。（エイリアス設定は不要です）
+        [5. サービスファイル作成・登録](../setup/blocklog-setup.md#5)を再実行してください。（エイリアス設定は不要です）
     
     === "新規導入または更新する方"
-        [SPO Block Notify移行マニュアル](./blocknotify-reinstall.md)から新規導入または更新を実施してください。
+        [SPOBlockNotify移行手順](../operation/blocknotify-reinstall.md)から新規導入または更新を実施してください。
 
 BPノードが完全に同期した後、サービス起動状態を確認する
 

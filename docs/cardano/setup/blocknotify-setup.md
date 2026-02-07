@@ -4,10 +4,10 @@
     最終更新日：2025/3/6  v2.5.0
 
     * ブロックログで表示されるブロック生成結果を任意のソーシャルアプリへ通知します。   
-    ![*](../images/block_notify/image.png)
+    ![*](../../images/block_notify/image.png)
 
     * ブロック生成スケジュールを自動取得し、取得スケジュール一覧を通知します。  
-    ![*](../images/block_notify/auto_leader.png)
+    ![*](../../images/block_notify/auto_leader.png)
 
     * 通知先対応アプリ LINE/Slack/discord/telegram
 
@@ -124,124 +124,124 @@ rm ${bn_release}.tar.gz
 
     * **1.LINEビジネスIDを作成する**  
     LINE Bussiness ID [https://manager.line.biz/](https://manager.line.biz/){target="_blank" rel="noopener"} にアクセスし、お持ちのLINEアカウントでログインするか新規でBussinessIDを作成してください
-    ![*](../images/block_notify/line-message-api0.jpg)
+    ![*](../../images/block_notify/line-message-api0.jpg)
 
     * **2.LINE公式アカウントを作成する**  
-    ![*](../images/block_notify/line-message-api1.jpg)  
-    ![*](../images/block_notify/line-message-api2.jpg)  
+    ![*](../../images/block_notify/line-message-api1.jpg)  
+    ![*](../../images/block_notify/line-message-api2.jpg)  
     
     !!! info ""
         アカウント名：任意の名前  
         運用目的：その他  
         主な使い方：メッセージ配信用  
 
-    ![*](../images/block_notify/line-message-api3.jpg)  
+    ![*](../../images/block_notify/line-message-api3.jpg)  
     LINEヤフー for Bussinessを友だち追加のチェックを外す
-    ![*](../images/block_notify/line-message-api4.jpg)  
+    ![*](../../images/block_notify/line-message-api4.jpg)  
     <br>
     LINE Official Account Managerへをクリックする
-    ![*](../images/block_notify/line-message-api5.jpg)  
+    ![*](../../images/block_notify/line-message-api5.jpg)  
     
     * **3.Messaging APIの設定**  
     <br>
     **右上の「設定を」クリックする**  
-    ![*](../images/block_notify/line-message-api6.jpg)  
+    ![*](../../images/block_notify/line-message-api6.jpg)  
     <br>
     **プロフィール画像を編集するとプールアイコンを設定できます**  
-    ![*](../images/block_notify/line-message-api6-1.jpg)  
+    ![*](../../images/block_notify/line-message-api6-1.jpg)  
     <br>
     **左メニューの「Messaging API」をクリックし、「Messaging APIを利用する」をクリックする**  
-    ![*](../images/block_notify/line-message-api7.jpg)  
+    ![*](../../images/block_notify/line-message-api7.jpg)  
     <br>
     **「プロバイダーを作成」欄に「notify」と入力し、「同意する」をクリック**  
-    ![*](../images/block_notify/line-message-api8.jpg)  
+    ![*](../../images/block_notify/line-message-api8.jpg)  
     <br>
     **空欄のまま「OK」をクリックする**  
-    ![*](../images/block_notify/line-message-api9.jpg)  
+    ![*](../../images/block_notify/line-message-api9.jpg)  
     
     * **4.LINE Developers設定**  
     <br>
-    ![*](../images/block_notify/line-message-api10.jpg)  
+    ![*](../../images/block_notify/line-message-api10.jpg)  
     <br>
     **コンソールにログインする**  
-    ![*](../images/block_notify/line-message-api11.jpg)  
+    ![*](../../images/block_notify/line-message-api11.jpg)  
     <br>
     **プロバイダーから先ほど作成した「notify」をクリックする**  
-    ![*](../images/block_notify/line-message-api12.jpg)  
+    ![*](../../images/block_notify/line-message-api12.jpg)  
     <br>
     **2で作成したLINE公式アカウントをクリックする**  
-    ![*](../images/block_notify/line-message-api13.jpg)  
+    ![*](../../images/block_notify/line-message-api13.jpg)  
     <br>
     **「Messaging API」タブをクリックする**  
-    ![*](../images/block_notify/line-message-api14.jpg)  
+    ![*](../../images/block_notify/line-message-api14.jpg)  
     <br>
     **ページ下部の「チャンネルアクセストークン(長期)」で「実行」をクリックする**  
-    ![*](../images/block_notify/line-message-api15.jpg)  
+    ![*](../../images/block_notify/line-message-api15.jpg)  
     <br>
     **発行されたトークンを控える**  
     （発行されたトークンはいつでも確認することができます）  
     `line_notify_token`の値として使用します  
-    ![*](../images/block_notify/line-message-api16.jpg)  
+    ![*](../../images/block_notify/line-message-api16.jpg)  
     <br>
     **上部に戻り「チャンネル基本設定」をクリックする**  
-    ![*](../images/block_notify/line-message-api17.jpg)  
+    ![*](../../images/block_notify/line-message-api17.jpg)  
     <br>
     **「あなたのユーザーID」を控える**  
     `line_user_id`の値として使用します  
-    ![*](../images/block_notify/line-message-api18.jpg)  
+    ![*](../../images/block_notify/line-message-api18.jpg)  
 
 
 === "Discord"
 
     * 1.サーバーを追加する  
-    ![*](../images/block_notify/3-1-1.jpg)
+    ![*](../../images/block_notify/3-1-1.jpg)
     
     * 2.「オリジナルの作成」を選択する  
-    ![*](../images/block_notify/3-1-2.jpg)
+    ![*](../../images/block_notify/3-1-2.jpg)
     
     * 3.「自分と友達のため」を選択する  
-    ![*](../images/block_notify/3-1-3.jpg)
+    ![*](../../images/block_notify/3-1-3.jpg)
     
     * 4.任意のサーバー名を入力して「新規作成」をクリックする  
-    ![*](../images/block_notify/3-1-4.jpg)
+    ![*](../../images/block_notify/3-1-4.jpg)
     
     * 5.通知したいチャンネルの歯車マークをクリックする  
-    ![*](../images/block_notify/3-1-5.jpg)
+    ![*](../../images/block_notify/3-1-5.jpg)
     
     * 6.「連携サービス」をクリックし、「ウェブフックを作成」をクリックする  
-    ![*](../images/block_notify/3-1-6.jpg)
+    ![*](../../images/block_notify/3-1-6.jpg)
     
     * 7.「ウェブフックURLをコピー」をクリックし、一旦メモ帳などに貼り付ける  
-    ![*](../images/block_notify/3-1-7.jpg)
+    ![*](../../images/block_notify/3-1-7.jpg)
 
 
 === "Telegram"
     * 1.Telegramの検索欄で「@botFather」を検索して認証マーク付きのアカウントをクリックする  
-    ![*](../images/block_notify/4-1-1.jpg)
+    ![*](../../images/block_notify/4-1-1.jpg)
 
     * 2.「START」をクリックする  
-    ![*](../images/block_notify/4-1-2.jpg)
+    ![*](../../images/block_notify/4-1-2.jpg)
 
     * 3.「/newbot」コマンドを入力する  
-    ![*](../images/block_notify/4-1-3.jpg)
+    ![*](../../images/block_notify/4-1-3.jpg)
 
     * 4.任意のbot名を入力する 例）「btbf_bot」最後は必ず`_bot`で終わるようにする  
-    ![*](../images/block_notify/4-1-4.jpg)
+    ![*](../../images/block_notify/4-1-4.jpg)
 
     * 5.緑で隠した部分のAPIトークンをメモ帳に控える  
-    ![*](../images/block_notify/4-1-4.jpg)
+    ![*](../../images/block_notify/4-1-4.jpg)
 
     * 6.赤枠で囲ったbotチャンネルに参加する  
-    ![*](../images/block_notify/4-1-4-1.jpg)
+    ![*](../../images/block_notify/4-1-4-1.jpg)
 
     * 7.検索欄で「@RawDataBot」を検索してクリックする  
-    ![*](../images/block_notify/4-1-5.jpg)
+    ![*](../../images/block_notify/4-1-5.jpg)
 
     * 8.「START」をクリックする  
-    ![*](../images/block_notify/4-1-6.jpg)
+    ![*](../../images/block_notify/4-1-6.jpg)
 
     * 9.「Chat id」をメモ帳に控える  
-    ![*](../images/block_notify/4-1-7.jpg)
+    ![*](../../images/block_notify/4-1-7.jpg)
 
 === "Slack"
     * 1.Slackを起動し、通知用のワークスペースとチャンネルを設定する
@@ -249,13 +249,13 @@ rm ${bn_release}.tar.gz
     * 2.[Incoming Webhook](https://my.slack.com/services/new/incoming-webhook/){target="_blank" rel="noopener"}の設定ページへアクセスする
 
     * 3.通知したいワークスペースとチャンネルを選択する  
-    ![*](../images/block_notify/5-1-1.jpg)
+    ![*](../../images/block_notify/5-1-1.jpg)
 
     * 4.「Webhook URL」をメモ帳に控える  
-    ![*](../images/block_notify/5-1-2.jpg)
+    ![*](../../images/block_notify/5-1-2.jpg)
 
     * 5.ページ下部の「設定を保存する」をクリックする  
-    ![*](../images/block_notify/5-1-3.jpg)
+    ![*](../../images/block_notify/5-1-3.jpg)
 
 ## **3. 通知プログラムの設定**
 

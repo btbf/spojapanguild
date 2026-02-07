@@ -1,17 +1,32 @@
 # **Midnightバリデーターセットアップマニュアル**
 
+!!! info "お知らせ"
+    Midnight公式では、Testnet-02からMōhaluフェーズへの移行期間中の混乱防止および新アーキテクチャとの整合性確保を目的として、バリデータードキュメントを一時的に非公開としています。  
+    これに倣い、SJGにおいても次のフェーズが始まるまで、本ドキュメントを一時的に非公開とします。
+
+
+👉 Mōhalu フェーズに向けた最新の技術仕様、オンボーディングガイド、スケジュール変更を確実に受け取るため、すべての SPO に Midnight Validator Digest への登録を推奨します。
+[https://mpc.midnight.network/midnight-validator-digest](https://mpc.midnight.network/midnight-validator-digest){target="_blank" rel="noopener"}  
+
+👉 他のバリデータやビルダーと交流するには、Midnight Discord に参加してください。
+[https://discord.com/invite/midnightnetwork](https://discord.com/invite/midnightnetwork){target="_blank" rel="noopener"}  
+
+---
+
+<template>
+
 本マニュアルは、{==**Midnight メインネット環境における本番運用を想定**==}し、  
 要求される{==**高水準のマシンスペックおよび各コンポーネント間のセキュリティ要件**==}に対応するため、  
 {==**Midnight バリデーター全体のセットアップ構成を systemd ベースで設計・定義**==}しています。  
 
-## **前提条件**
+<!--## **前提条件**-->
 
 本マニュアルを実施する前に、**エアギャップマシン環境構築**と**Cardano Preview ネットワーク**において、
 Cardano ステークプールの構築からブロック生成までの一連の作業を完了していることを前提とします。
 
-- [エアギャップ環境構築](../setup/air-gapped-setup/)
-- [カルダノステークプール構築ガイド](../setup/index.md)
-- [SPOKIT](https://github.com/btbf/spokit)  
+- [エアギャップ環境構築](../cardano/setup/air-gapped-setup/)
+- [カルダノステークプール構築ガイド](../cardano/setup/index.md)
+- [SPOKIT](https://github.com/btbf/spokit){target="_blank" rel="noopener"}  
   > SPOKIT は、ノーコマンドで Cardano ステークプールの構築・管理を行える **Cardano SPO Tool Kit** です。
 
 !!! tip "ヒント"
@@ -22,8 +37,7 @@ Cardano ステークプールの構築からブロック生成までの一連の
 - **Preview**：4 台  
 - **Mainnet**：5 台
 
-
-## **Midnightネットワーク別の環境対応表**
+<!--## **Midnightネットワーク別の環境対応表**-->
 
 | ネットワーク | ノードバージョン | Ubuntu | 依存関係 |
 | --- | --- | --- | --- |
@@ -35,9 +49,9 @@ Cardano ステークプールの構築からブロック生成までの一連の
 
     Midnightから`Preview`への移行アナウンスがあり次第、リポジトリ公開中の `v0.18.0`へ移行します。
 
-## **推奨構成**
+<!--## **推奨構成**-->
 
-### **Preview**
+<!--### **Preview**-->
 
 **Cardanoノード稼働サーバー**：
 
@@ -82,7 +96,7 @@ Cardano ステークプールの構築からブロック生成までの一連の
     | **Midnight ブロック生成ノード** | midnight-node | 4〜8 vCPU | 32 GB | 200〜500 GB SSD | PostgreSQL と同一リージョン |
 
 
-## **システム全体構成図**
+<!--## **システム全体構成図**-->
 
 ```mermaid
 flowchart BT
@@ -245,3 +259,5 @@ flowchart BT
 > 本マニュアルでは、`Ogmios`はパートナーチェーン登録時のみ必要となるため、ローカル運用セットアップには含めずパブリックエンドポイントを使用します。
 
 ---
+
+</template>
