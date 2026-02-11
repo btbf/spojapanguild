@@ -1,8 +1,5 @@
 **Linuxコマンド集**
 
-!!! hint ""
-    [[AKYO] AKYO🥁](https://cexplorer.io/pool/pool1jsxk3ymqv2gdc6mhqk52544g2aun4zhq5wgx6n32l5s3jlne70n){target="_blank" rel="noopener"} Akyoさんからご提供いただきました。ありがとうございます！
-
 ## **ノード停止**
 ```
 sudo systemctl stop cardano-node

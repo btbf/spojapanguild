@@ -1,25 +1,21 @@
 # **ノードアップデート**
 
-このガイドは ノードバージョン10.5.3に対応しています。  
-最終更新日：2025年11月26日  
-
-!!! danger "必ずお読みください"
-    cardano-node <font color=red><strong>v10.1.4</strong></font>をご利用の方はこのアップデートを<font color=red><strong>実施しない</strong></font>でください！！  
-    先日発生したチェーンフォークの調査継続とバージョン多様性を維持する目的です。
+このガイドは ノードバージョン10.5.4に対応しています。  
+最終更新日：2026年2月11日  
 
 !!! info "バージョン対応表"
     * <font color=red>各依存関係もバージョンアップしてますのでよくお読みになって進めてください</font>
 
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 10.5.3 | 10.11.0.0 | 9.6.7 | 3.12.1.0 | 6.7.0 |
+    | 10.5.4 | 10.11.0.0 | 9.6.7 | 3.12.1.0 | 6.7.0 |
 
     **■アップデートパターンDB再構築有無**
 
     | バージョン | DB再構築有無 | 設定ファイル更新有無 | トポロジーファイル更新有無 |
     | :---------- | :---------- | :---------- | :---------- |
-    | 10.3.1→10.5.3 | あり | 更新あり | 更新なし |
-    | 10.4.1→10.5.3 | なし | 更新あり | 更新なし |
+    | 10.1.4→10.5.4 | あり | 更新あり | 更新なし |
+    | 10.4.1→10.5.4 | なし | 更新あり | 更新なし |
 
     * <font color=red>作業前にブロック生成スケジュールを確認し余裕のある作業をお願いします</font>
     * <font color=green>複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。</font>
@@ -75,7 +71,7 @@
 
     !!! 検証結果
         ■検証環境
-        Ubuntu22.04 / PreProd-Testnet / cardano-node 10.5.3 / cardano-cli 10.11.0.0 / SJG-TOOL 3.9.4  
+        Ubuntu22.04 / PreProd-Testnet / cardano-node 10.5.4 / cardano-cli 10.11.0.0 / SJG-TOOL 4.1.2  
 
         | 検証項目 | 結果 |
         | :---------- | :---------- |
@@ -101,10 +97,6 @@
 current_node=$(cardano-node version | grep cardano-node)
 echo $current_node
 ```
-!!! danger "必ずお読みください"
-    cardano-node <font color=red><strong>v10.1.4</strong></font>をご利用の方はこのアップデートを<font color=red><strong>実施しない</strong></font>でください！！  
-    先日発生したチェーンフォークの調査継続とバージョン多様性を維持する目的です。
-
 
 ### **1-1. システムアップデート**
 
@@ -498,12 +490,12 @@ cncli 6.7.0
     ```
     mkdir $HOME/git/cardano-node2
     cd $HOME/git/cardano-node2
-    wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.5.3/cardano-node-10.5.3-linux.tar.gz
+    wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.5.4/cardano-node-10.5.4-linux.tar.gz
     ```
 
     解凍する
     ```
-    tar zxvf cardano-node-10.5.3-linux.tar.gz ./bin/cardano-node ./bin/cardano-cli ./bin/snapshot-converter
+    tar zxvf cardano-node-10.5.4-linux.tar.gz ./bin/cardano-node ./bin/cardano-cli ./bin/snapshot-converter
     ```
 
     **バージョン確認**
@@ -515,10 +507,10 @@ cncli 6.7.0
     以下の戻り値を確認します。  
     ``` { .yaml .no-copy }
     cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-    6c034ec038d8d276a3595e10e2d38643f09bd1f2
+    b0a12592c4e996b57edf5bc5b9109ecc88c2273f
 
-    cardano-node 10.5.3 - linux-x86_64 - ghc-9.6  
-    6c034ec038d8d276a3595e10e2d38643f09bd1f2
+    cardano-node 10.5.4 - linux-x86_64 - ghc-9.6  
+    b0a12592c4e996b57edf5bc5b9109ecc88c2273f
     ```
 
 
@@ -549,10 +541,10 @@ cncli 6.7.0
     以下の戻り値を確認します。
     ``` { .yaml .no-copy }
     cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-    6c034ec038d8d276a3595e10e2d38643f09bd1f2
+    b0a12592c4e996b57edf5bc5b9109ecc88c2273f
 
-    cardano-node 10.5.3 - linux-x86_64 - ghc-9.6  
-    6c034ec038d8d276a3595e10e2d38643f09bd1f2
+    cardano-node 10.5.4 - linux-x86_64 - ghc-9.6  
+    b0a12592c4e996b57edf5bc5b9109ecc88c2273f
     ```
 
 
@@ -593,7 +585,7 @@ cncli 6.7.0
 
     ```
     git fetch --all --recurse-submodules --tags
-    git checkout tags/10.5.3
+    git checkout tags/10.5.4
     cabal configure --with-compiler=ghc-9.6.7
     ```
 
@@ -617,10 +609,10 @@ cncli 6.7.0
     以下の戻り値を確認します。
     ``` { .yaml .no-copy }
     cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-    6c034ec038d8d276a3595e10e2d38643f09bd1f2
+    b0a12592c4e996b57edf5bc5b9109ecc88c2273f
 
-    cardano-node 10.5.3 - linux-x86_64 - ghc-9.6  
-    6c034ec038d8d276a3595e10e2d38643f09bd1f2
+    cardano-node 10.5.4 - linux-x86_64 - ghc-9.6  
+    b0a12592c4e996b57edf5bc5b9109ecc88c2273f
     ```
 
     **ビルド用TMUXセッションを終了する** 
@@ -655,21 +647,21 @@ cncli 6.7.0
     以下の戻り値を確認します。
     ``` { .yaml .no-copy }
     cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-    6c034ec038d8d276a3595e10e2d38643f09bd1f2
+    b0a12592c4e996b57edf5bc5b9109ecc88c2273f
 
-    cardano-node 10.5.3 - linux-x86_64 - ghc-9.6  
-    6c034ec038d8d276a3595e10e2d38643f09bd1f2
+    cardano-node 10.5.4 - linux-x86_64 - ghc-9.6  
+    b0a12592c4e996b57edf5bc5b9109ecc88c2273f
     ```
 
     ??? warning "10.3.1以下からアップデートする場合はこちらも実施(クリックして開く)"
         **snapshot-converterをダウンロードする**
         ```
         cd $HOME/git/cardano-node2
-        wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.5.3/cardano-node-10.5.3-linux.tar.gz
+        wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.5.4/cardano-node-10.5.4-linux.tar.gz
         ```
         解凍する
         ```
-        tar zxvf cardano-node-10.5.3-linux.tar.gz ./bin/snapshot-converter
+        tar zxvf cardano-node-10.5.4-linux.tar.gz ./bin/snapshot-converter
         ```
 
 ### **2-3. 設定ファイル更新**
@@ -915,8 +907,8 @@ cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config
         設定ファイルダウンロード
         ```
         cd $NODE_HOME
-        wget -q https://spojapanguild.net/node_config/10.5.3/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
-        wget -q https://spojapanguild.net/node_config/10.5.3/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
+        wget -q https://spojapanguild.net/node_config/10.5.4/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
+        wget -q https://spojapanguild.net/node_config/10.5.4/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
         ```
         <!--
         トポロジーファイルに`peerSnapshotFile`パスを設定する
@@ -929,8 +921,8 @@ cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config
         設定ファイルダウンロード
         ```
         cd $NODE_HOME
-        wget -q https://spojapanguild.net/node_config/10.5.3/${NODE_CONFIG}-config-bp.json -O ${NODE_CONFIG}-config.json
-        wget -q https://spojapanguild.net/node_config/10.5.3/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
+        wget -q https://spojapanguild.net/node_config/10.5.4/${NODE_CONFIG}-config-bp.json -O ${NODE_CONFIG}-config.json
+        wget -q https://spojapanguild.net/node_config/10.5.4/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
         ```
 
 ??? warning "10.1.4~10.3.1からアップデートする場合はこちらも実施(クリックして開く)"
@@ -1354,7 +1346,7 @@ cardano-cli version
 以下の戻り値を確認します。  
 ``` { .yaml .no-copy }
 cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-6c034ec038d8d276a3595e10e2d38643f09bd1f2
+b0a12592c4e996b57edf5bc5b9109ecc88c2273f
 ```
 
 
