@@ -60,17 +60,17 @@ wget -qO- https://spokit.spojapanguild.net/install.sh | bash
 > キーボードの`↑`と`↓`、`←`と`→`でカーソルを移動できます。
 
 2. セットアップノードタイプでは「**`リレー`**」を選択して ++enter++
-![](../images/spokit/1_Preview-SPOKIT-Initial-Settings.png)
+![](../../images/spokit/1_Preview-SPOKIT-Initial-Settings.png)
 
 3. 接続ネットワークでは「**`Preview-Testnet`**」を選択して ++enter++
-![](../images/spokit/2_Preview-SPOKIT-Initial-Settings.png)
+![](../../images/spokit/2_Preview-SPOKIT-Initial-Settings.png)
 
 4. 作業ディレクトリPATHは、デフォルトを指定するのでそのまま ++enter++
 
 5. 「**`はい`**」を選択し、 ++enter++
 
 6. 「**`source`**」コマンドを必ず実行してください。  
-![](../images/spokit/3_Preview-SPOKIT-Initial-Settings.png)
+![](../../images/spokit/3_Preview-SPOKIT-Initial-Settings.png)
 
 ### **1-2. Ubuntuセキュリティ設定**
 
@@ -253,7 +253,7 @@ cardano-cli conway address build \
 cd $HOME/midnight
 echo $(cat midnight-payment.addr)
 ```
-![](../images/midnight-node/register1-5.jpg)
+![](../../images/midnight-node/register1-5.jpg)
 
 入金を確認するため、[preview.cardanoscan](https://preview.cardanoscan.io/){target="_blank" rel="noopener"}などのエクスプローラーで支払いアドレスを検索し、tADAが届いていることを確認してください。
 
@@ -266,7 +266,7 @@ echo $(cat midnight-payment.addr)
     以下は、`register1` 実行時に表示される入力項目の**全体像**です。  
     実際の入力は次のセクションを参照し、ここでは流れを把握してください。
 
-    ![](../images/midnight-node/After-executing-wizards-register1.png)
+    ![](../../images/midnight-node/After-executing-wizards-register1.png)
 
     1. 登録ウィザード 1 のコマンド実行
     2. `> Ogmios protocol (http/https)` → `https`
@@ -304,12 +304,12 @@ ogmios.testnet-02.midnight.network
 ```bash
 midnight-payment.vkey
 ```
-![](../images/midnight-node/1_wizards-register1.png)
+![](../../images/midnight-node/1_wizards-register1.png)
 
 6. `? Select UTXO to use for registration`では、そのまま ++enter++ 
 
 7. 出力された`register2`のコマンドを、すべて ++copy++ します。
-![](../images/midnight-node/2_wizards-register1.png)
+![](../../images/midnight-node/2_wizards-register1.png)
 > コピーしたコマンドをメモ帳などに貼り付け保存してください。
 
 ### **4-2. 登録ウィザード 2**
@@ -358,10 +358,10 @@ CFG_PRESET=${MIDNIGHT_NETWORK} ./midnight-node wizards register2 \
 ``` { .yaml .no-copy py title="参考"} 
 /home/$USER/cold-keys/node.skey
 ```
-![](../images/midnight-node/1_wizards-register2-airgap.png)
+![](../../images/midnight-node/1_wizards-register2-airgap.png)
 
 5. 出力された`register3`のコマンドを、すべて ++copy++ します。
-![](../images/midnight-node/2_wizards-register2-airgap.png)
+![](../../images/midnight-node/2_wizards-register2-airgap.png)
 > コピーしたコマンドをメモ帳などに貼り付け保存してください。
 
 6. `$HOME/cold-keys`ディレクトリのロックします。
@@ -410,7 +410,7 @@ CFG_PRESET=${MIDNIGHT_NETWORK} ./midnight-node wizards register3 \
 ```bash
 midnight-payment.skey
 ```
-![](../images/midnight-node/1_wizards-register3.png)
+![](../../images/midnight-node/1_wizards-register3.png)
 
 4. Ogmios protocolでは `https` を選択して ++enter++
 ``` {.yaml .no-copy}
@@ -429,7 +429,7 @@ ogmios.testnet-02.midnight.network
 ```
 
 7. `Show registration status?(Y/n)`が表示されるまで少し待ち、表示されたら `n` を入力後 ++enter++ 
-![](../images/midnight-node/2_wizards-register3.png)
+![](../../images/midnight-node/2_wizards-register3.png)
 
 
 ## **5. オンチェーン登録確認**

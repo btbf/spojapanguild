@@ -14,7 +14,7 @@ cd $NODE_HOME/scripts
 !!! info ""
     プール登録から約12時間~24時間後に「Total Tx」が増加しているか確認する
 
-![](../images/glive-tx.png)
+![](../../images/glive-tx.png)
 
 
 ## **2. Tracemempool無効**

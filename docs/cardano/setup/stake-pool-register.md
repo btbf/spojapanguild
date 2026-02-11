@@ -31,15 +31,15 @@
         * Publicを選択
         * **Create repository**をクリック
 
-        ![](../images/github-pages/github-page0.png)
+        ![](../../images/github-pages/github-page0.png)
 
         4.小さい文字で書かれた"**creating a new file**"をクリックします。  
 
-        ![](../images/github-pages/github-page1.png)
+        ![](../../images/github-pages/github-page1.png)
 
         5.ファイル名を **poolMetaData.json** として入力し **json** コンテンツを貼り付けます。
 
-        ![](../images/git2.png)
+        ![](../../images/git2.png)
 
         
         ```bash
@@ -60,12 +60,12 @@
 
         6.**Commit Changes...**をクリックします。
 
-        ![](../images/github-pages/github-page2.png)
-        ![](../images/github-pages/github-page3.png)
+        ![](../../images/github-pages/github-page2.png)
+        ![](../../images/github-pages/github-page3.png)
 
         7.上部のメニュータブから**Settings**をクリックします
 
-        ![](../images/github-pages/github-page4.png)
+        ![](../../images/github-pages/github-page4.png)
 
         8.GitPages設定
         
@@ -73,7 +73,7 @@
         * Branchのプルダウンから**main** **/root**を選択する
         * **Save**をクリックします
 
-        ![](../images/github-pages/github-page5.png)
+        ![](../../images/github-pages/github-page5.png)
 
         9.URLの生成
 
@@ -81,7 +81,7 @@
         * 上部にこのリポジトリの公開URLが表示されたことを確認します
         * 赤枠のURLをコピーします
 
-        ![](../images/github-pages/github-page6.png)
+        ![](../../images/github-pages/github-page6.png)
 
 
         10.メタデータURLの生成

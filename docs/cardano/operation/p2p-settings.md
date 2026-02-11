@@ -243,7 +243,7 @@ source $HOME/.bashrc
 
 ## **7. gLiveViewの見方**
 P2P専用項目を解説します。  
-![](../images/glive-p2p-1.png)  
+![](../../images/glive-p2p-1.png)  
 
 `Cold` `Warm` `Hot`が適正値に落ち着くまでに数時間かかる場合があります。
 
@@ -259,7 +259,7 @@ P2P専用項目を解説します。
 | `Duplex`    | 接続先/接続元がP2Pで両端でHotで接続状態 | 相互アクティブ接続 |
 
 Peerアナリティクスについて  
-![](../images/glive-p2p-2.png)
+![](../../images/glive-p2p-2.png)
 !!! hint "Peerアナリティクスの変更点"
     P2PモードのOutgoingはノードポートを使用するため、コマンドの特性上全て`In`でカウントされます。
 

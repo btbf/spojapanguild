@@ -1,7 +1,4 @@
-" **Linuxコマンド集**
-
-!!! hint ""
-    [[AKYO] AKYO🥁](https://jp.cexplorer.io/pool/pool1jsxk3ymqv2gdc6mhqk52544g2aun4zhq5wgx6n32l5s3jlne70n) Akyoさんからご提供いただきました。ありがとうございます！
+**Linuxコマンド集**
 
 ## **ノード停止**
 ```

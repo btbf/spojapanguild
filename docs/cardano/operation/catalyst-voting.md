@@ -137,7 +137,7 @@ Rustパッケージアップデート
 
 ### **2-1. SJGTOOL起動**
 
-![](../images/catalyst_vote/catalyst1.jpg)
+![](../../images/catalyst_vote/catalyst1.jpg)
 
 有権者登録の流れ
 

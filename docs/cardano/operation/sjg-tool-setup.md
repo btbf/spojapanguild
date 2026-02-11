@@ -10,7 +10,7 @@
     * Catalyst有権者登録
     * ガバナンス登録・投票
 
-![](../images/sjg-tool-start.png)
+![](../../images/sjg-tool-start.png)
 
 ## **設定**
 

@@ -450,12 +450,12 @@ cd $NODE_HOME/scripts
      
 
 
-![](../images/blocks1.JPG)
+![](../../images/blocks1.JPG)
 
 （ｓ）実績概要---エポック毎のブロック生成実績参照  
 （ｅ）エポック詳細---個別エポックのブロック生成スケジュールおよび生成実績参照
 
-![](../images/blocklog.JPG)
+![](../../images/blocklog.JPG)
 
 ブロックステータス
 
