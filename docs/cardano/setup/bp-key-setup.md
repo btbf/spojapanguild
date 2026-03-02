@@ -3,11 +3,12 @@
 !!! info "事前確認"
     以下の項目を実施する前にBPノードが起動しているか確認してください。
     ```
-    cardano-cli conway query tip --mainnet | grep syncProgress
+    cardano-cli conway query tip ${NODE_NETWORK} | grep syncProgress
     ```
     
     戻り値確認
-    `"syncProgress": "100.00"` 戻り値が99以下の場合は100(最新ブロックまで同期)になるまで待ちましょう。
+    `"syncProgress": "100.00"`  
+    戻り値が99以下の場合は100(最新ブロックまで同期)になるまで待ちましょう。
 
 !!! important "BP起動に必要なファイルとは？"
     ブロックプロデューサーノードでは３つのキーを生成する必要があります。
@@ -21,7 +22,8 @@
 
 !!! quote "KESキーについて"
     \(KES=Key Evolving Signature\)の略  
-    キーを悪用するハッカーからステークプールを保護するために作成され、90日ごとに再生成する必要があります。詳細は運用マニュアルを参照してください
+    キーを悪用するハッカーからステークプールを保護するために作成され、90日ごとに再生成する必要があります。  
+    詳細は運用マニュアルを参照してください。
 
 === "ブロックプロデューサーノード"
     ```bash
@@ -61,13 +63,16 @@
     ```
 
 !!! warning "重要"
-    すべてのキーを別の安全なストレージデバイス(USB)などにバックアップしましょう！複数のバックアップを作成することをおすすめします。
+    すべてのキーを別の安全なストレージデバイス(USB)などにバックアップしましょう！  
+    複数のバックアップを作成することをおすすめします。
 
 ## **3. プール運用証明書の作成**
 
 
 !!! warning "事前確認"
-    ブロックチェーンと完全に同期している必要があります。 同期が途中の場合、正しいslotsPerKESPeriodを取得できません。 あなたのBPノードが完全に同期されたことを確認するには、[Cardano Explorer](https://explorer.cardano.org/ja.html){target="_blank" rel="noopener"}で自身の同期済みエポックとスロットが一致しているかをご確認ください。
+    ブロックチェーンと完全に同期している必要があります。  
+    同期が途中の場合、正しいslotsPerKESPeriodを取得できません。  
+    あなたのBPノードが完全に同期されたことを確認するには、[Cardano Explorer](https://explorer.cardano.org/ja.html){target="_blank" rel="noopener"}で自身の同期済みエポックとスロットが一致しているかをご確認ください。
 
 === "ブロックプロデューサーノード"
 
@@ -97,11 +102,10 @@
     BPの`kes.skey`と`kes.vkey` をエアギャップマシンのcnodeディレクトリにコピーします。
     ``` mermaid
     graph LR
-        A[BP] -->|kes.skey / kes.vkey| B[エアギャップ];
+        A[BP] -->|**kes.skey** / **kes.vkey**| B[エアギャップ];
     ```
 
-
-BPとエアギャップで`kes.vkey`ファイルハッシュを比較する
+BPとエアギャップで`kes.vkey`ファイルハッシュを比較します。
 
 === "ブロックプロデューサーノード"
     ```bash
@@ -110,7 +114,7 @@ BPとエアギャップで`kes.vkey`ファイルハッシュを比較する
     ```
 
 !!! hint ""
-    BPとエアギャップで表示された戻り値を比較して、ハッシュ値が一致していればOK  
+    BPとエアギャップで表示された戻り値を比較して、ハッシュ値が一致していれば問題ありません。
 
 === "エアギャップオフラインマシン"
     ```bash
@@ -121,7 +125,8 @@ BPとエアギャップで`kes.vkey`ファイルハッシュを比較する
 
 
 !!! info "確認"
-    ステークプールオペレータは、プールを実行する権限があることを確認するための運用証明書を発行する必要があります。証明書には、オペレータの署名が含まれプールに関する情報（アドレス、キーなど）が含まれます。
+    ステークプールオペレータは、プールを実行する権限があることを確認するための運用証明書を発行する必要があります。  
+    証明書には、オペレータの署名が含まれプールに関する情報（アドレス、キーなど）が含まれます。
 
 
 
@@ -136,9 +141,9 @@ BPとエアギャップで`kes.vkey`ファイルハッシュを比較する
     > コマンド実行後に、数字入力モードになりますので  
     > そこでBPで算出した`startKesPeriod`の数字を入力します
 
-    入力した数字が戻り値に表示されているか確認し証明書を作成する
+    入力した数字が戻り値に表示されているか確認し証明書を作成します。
     ```
-    echo "入力した数字は$kesです"
+    echo "入力した数字は $kes です"
     ```
 
     ```
@@ -155,11 +160,11 @@ BPとエアギャップで`kes.vkey`ファイルハッシュを比較する
 
     ``` mermaid
     graph LR
-        A[エアギャップ] -->|node.cert| B[BP];
+        A[エアギャップ] -->|**node.cert**| B[BP];
     ```
 
 
-** BPとエアギャップで`node.cert`ファイルハッシュを比較する **
+**BPとエアギャップで`node.cert`ファイルハッシュを比較します。**
 
 === "ブロックプロデューサーノード"
 
@@ -168,8 +173,8 @@ BPとエアギャップで`kes.vkey`ファイルハッシュを比較する
     sha256sum node.cert
     ```
 
-!!! hint ""
-    BPとエアギャップで表示された戻り値を比較して、ハッシュ値が一致していればOK  
+!!! tip "ヒント"
+    BPとエアギャップで表示された戻り値を比較して、ハッシュ値が一致していれば問題ありません。
 
 === "エアギャップオフラインマシン"
 
@@ -202,20 +207,20 @@ BPとエアギャップで`kes.vkey`ファイルハッシュを比較する
 ## **5. BPノードとして再起動**
 
 
-BPノードを一旦停止する  
+BPノードを停止します。
 
 === "ブロックプロデューサーノード"
     ```bash
     sudo systemctl stop cardano-node
     ```
 
-    ノードポート番号を確認する
+    ノードポート番号を確認します。
     ```
     PORT=`grep "PORT=" $NODE_HOME/startBlockProducingNode.sh`
     b_PORT=${PORT#"PORT="}
-    echo "BPポートは${b_PORT}です"
+    echo "BPポートは ${b_PORT} です"
     ```
-    > ↑そのまま実行し、BPのポート番号が表示されることを確認する
+    > ↑そのまま実行し、BPのポート番号が表示されることを確認します。
 
     起動スクリプトにKES、VRF、運用証明書のパスを追記し更新します。
 
@@ -232,7 +237,7 @@ BPノードを一旦停止する
     KES=\${DIRECTORY}/kes.skey
     VRF=\${DIRECTORY}/vrf.skey
     CERT=\${DIRECTORY}/node.cert
-    /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A32m -n4m -F1.5 -H2500M -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG} --shelley-kes-key \${KES} --shelley-vrf-key \${VRF} --shelley-operational-certificate \${CERT}
+    /usr/local/bin/cardano-node run +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A32m -n4m -F1.5 -H2500M -RTS --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG} --shelley-kes-key \${KES} --shelley-vrf-key \${VRF} --shelley-operational-certificate \${CERT}
     EOF
     ```
 
@@ -242,17 +247,18 @@ BPノードを一旦停止する
     sudo systemctl start cardano-node
     ```
 
-    BPとして起動しているか確認する
+    BPとして起動しているか確認します。
 
     ```bash
     cd $NODE_HOME/scripts
     ./gLiveView.sh
     ```
 
-    チェーン同期後にCoreの表示があればOK
+    チェーン同期後にCoreの表示があれば問題ありません。
 
 !!! danger "**注意事項**"
-    ブロックプロデューサーノードを実行するためには、以下の３つのファイルが必要です。このファイルが揃っていない場合や起動時に指定されていない場合はブロックが生成できません。
+    ブロックプロデューサーノードを実行するためには、以下の３つのファイルが必要です。  
+    このファイルが揃っていない場合や起動時に指定されていない場合はブロックが生成できません。
 
     * kes.skey
     * vrf.skey

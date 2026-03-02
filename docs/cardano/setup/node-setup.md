@@ -292,13 +292,14 @@ cardano-cli version
 cardano-node version
 ```
 
-以下の戻り値を確認する  
->cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-b0a12592c4e996b57edf5bc5b9109ecc88c2273f 
+以下の戻り値を確認します。  
+``` { .yaml .no-copy }
+cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
+b0a12592c4e996b57edf5bc5b9109ecc88c2273f
 
->cardano-node 10.5.4 - linux-x86_64 - ghc-9.6  
-b0a12592c4e996b57edf5bc5b9109ecc88c2273f 
-  
+cardano-node 10.5.4 - linux-x86_64 - ghc-9.6  
+b0a12592c4e996b57edf5bc5b9109ecc88c2273f
+```
 
 TMUXセッションを閉じる
 
@@ -401,7 +402,7 @@ source $HOME/.bashrc
     DB_PATH=\${DIRECTORY}/db
     SOCKET_PATH=\${DIRECTORY}/db/socket
     CONFIG=\${DIRECTORY}/${NODE_CONFIG}-config.json
-    /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A16m -F1.5 -H2500M -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
+    /usr/local/bin/cardano-node run +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A16m -F1.5 -H2500M -RTS --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
     EOF
     ```
 
@@ -427,7 +428,7 @@ source $HOME/.bashrc
     DB_PATH=\${DIRECTORY}/db
     SOCKET_PATH=\${DIRECTORY}/db/socket
     CONFIG=\${DIRECTORY}/${NODE_CONFIG}-config.json
-    /usr/local/bin/cardano-node +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A16m -F1.5 -H2500M -RTS run --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
+    /usr/local/bin/cardano-node run +RTS -N --disable-delayed-os-memory-return -I0.1 -Iw300 -A16m -F1.5 -H2500M -RTS --topology \${TOPOLOGY} --database-path \${DB_PATH} --socket-path \${SOCKET_PATH} --host-addr \${HOSTADDR} --port \${PORT} --config \${CONFIG}
     EOF
     ```
 
@@ -483,11 +484,11 @@ Ctrl+C
 
     ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/cardano-node.service << EOF 
-    # The Cardano node service (part of systemd)
+    # The Cardano Node Service (part of systemd)
     # file: /etc/systemd/system/cardano-node.service 
 
     [Unit]
-    Description     = Cardano node service
+    Description     = Cardano Node Service
     Wants           = network-online.target
     After           = network-online.target 
 
@@ -515,11 +516,11 @@ Ctrl+C
 
     ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/cardano-node.service << EOF 
-    # The Cardano node service (part of systemd)
+    # The Cardano Node Service (part of systemd)
     # file: /etc/systemd/system/cardano-node.service 
 
     [Unit]
-    Description     = Cardano node service
+    Description     = Cardano Node Service
     Wants           = network-online.target
     After           = network-online.target 
 
@@ -539,7 +540,7 @@ Ctrl+C
     SyslogIdentifier=cardano-node
 
     [Install]
-    WantedBy	= multi-user.target
+    WantedBy    = multi-user.target
     EOF
     ```
 
