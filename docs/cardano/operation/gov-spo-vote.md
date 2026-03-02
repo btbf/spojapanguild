@@ -40,7 +40,7 @@
     ```
     chmod u+rwx $HOME/cold-keys
     cd $NODE_HOME
-    cardano-cli conway governance vote create \
+    cardano-cli latest governance vote create \
     --no \
     --governance-action-tx-id $gov_id \
     --governance-action-index "0" \
@@ -76,7 +76,7 @@ sha256sum $NODE_HOME/governance/vote.file
     payment.addrの残高を取得する
     ```
     cd $NODE_HOME
-    cardano-cli conway query utxo \
+    cardano-cli latest query utxo \
         --address $(cat payment.addr) \
         $NODE_NETWORK \
         --output-text \
@@ -107,7 +107,7 @@ sha256sum $NODE_HOME/governance/vote.file
 
     ```
     cd $NODE_HOME
-    cardano-cli conway transaction build \
+    cardano-cli latest transaction build \
     $NODE_NETWORK \
     ${tx_in} \
     --change-address $(cat $NODE_HOME/payment.addr) \
@@ -140,7 +140,7 @@ sha256sum $NODE_HOME/governance/vote-tx.raw
 ## **3. 署名ファイル作成**
 === "エアギャップ"
     ```
-    cardano-cli conway transaction sign \
+    cardano-cli latest transaction sign \
     --tx-body-file $NODE_HOME/governance/vote-tx.raw \
     --signing-key-file $HOME/cold-keys/node.skey \
     --signing-key-file $NODE_HOME/payment.skey \
@@ -174,7 +174,7 @@ sha256sum $NODE_HOME/governance/vote-tx.signed
 === "BP"
     ```
     cd $NODE_HOME
-    cardano-cli conway transaction submit \
+    cardano-cli latest transaction submit \
     --tx-file $NODE_HOME/governance/vote-tx.signed \
     $NODE_NETWORK
     ```

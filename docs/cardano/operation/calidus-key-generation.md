@@ -111,7 +111,7 @@
 === "ブロックプロデューサーノード"
     ```bash
     cd $NODE_HOME
-    currentSlot=$(cardano-cli conway query tip $NODE_NETWORK | jq -r '.slot')
+    currentSlot=$(cardano-cli latest query tip $NODE_NETWORK | jq -r '.slot')
     echo Current Slot: $currentSlot
     ```
 
@@ -136,7 +136,7 @@ payment.addrの残高を算出します。
 
 === "ブロックプロデューサーノード"
     ```bash
-    cardano-cli conway query utxo \
+    cardano-cli latest query utxo \
         --address $(cat payment.addr) \
         $NODE_NETWORK \
         --output-text \
@@ -200,7 +200,7 @@ UTXOを算出します
 === "エアギャップ"
     ```bash
     cd $NODE_HOME
-    cardano-cli conway transaction build-raw \
+    cardano-cli latest transaction build-raw \
         ${tx_in} \
         --tx-out $(cat payment.addr)+${tempBalanceAmont} \
         --tx-out ${destinationAddress}+${amountToSend} \
@@ -214,7 +214,7 @@ UTXOを算出します
 
 === "エアギャップ"
     ```bash
-    fee=$(cardano-cli conway transaction calculate-min-fee \
+    fee=$(cardano-cli latest transaction calculate-min-fee \
         --tx-body-file tx.tmp \
         --witness-count 1 \
         --output-text \
@@ -234,7 +234,7 @@ UTXOを算出します
 
 === "エアギャップ"
     ```bash
-    cardano-cli conway transaction build-raw \
+    cardano-cli latest transaction build-raw \
         ${tx_in} \
         --tx-out $(cat payment.addr)+${txOut} \
         --tx-out ${destinationAddress}+${amountToSend} \
@@ -249,7 +249,7 @@ UTXOを算出します
 === "エアギャップ"
     ```bash
     cd $NODE_HOME
-    cardano-cli conway transaction sign \
+    cardano-cli latest transaction sign \
         --tx-body-file tx.raw \
         --signing-key-file payment.skey \
         $NODE_NETWORK \
@@ -273,13 +273,13 @@ UTXOを算出します
     ```
     トランザクションIDを確認する
     ```
-    tx_id=$(cardano-cli conway transaction txid --tx-body-file $NODE_HOME/tx.signed)
+    tx_id=$(cardano-cli latest transaction txid --tx-body-file $NODE_HOME/tx.signed)
     echo TxID:$tx_id
     ```
 
     トランザクションを送信する
     ```bash
-    cardano-cli conway transaction submit \
+    cardano-cli latest transaction submit \
         --tx-file tx.signed \
         $NODE_NETWORK
     ```

@@ -157,7 +157,7 @@ mkdir -p $HOME/midnight
 ```
 ```bash
 cd $HOME/midnight
-cardano-cli conway address key-gen \
+cardano-cli latest address key-gen \
   --verification-key-file midnight-payment.vkey \
   --signing-key-file midnight-payment.skey
 ```
@@ -228,7 +228,7 @@ mv ./data/chains/undeployed/ ./data/chains/partner_chains_template
 エンタープライズアドレスの生成
 ```bash
 cd $HOME/midnight
-cardano-cli conway address build \
+cardano-cli latest address build \
   $NODE_NETWORK \
   --payment-verification-key-file midnight-payment.vkey \
   --out-file midnight-payment.addr
