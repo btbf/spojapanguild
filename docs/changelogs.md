@@ -1,5 +1,21 @@
 # **更新履歴**
 
+## 2026/2/11　ver.13.9.1
+!!! note ""
+    **追加**：  
+    なし
+
+    **変更**：  
+    cardano-node v10.5.3対応 [インストール](./cardano/setup/node-setup.md) / [アップデート](./cardano/operation/node-update.md)  
+    [SSH作成コマンド](./cardano/setup/index.md)
+
+    **リリース**：  
+    [**SJG TOOL v4.1.2リリース**](./cardano/operation/sjg-tool-setup.md)  
+
+    **リニューアル**：  
+    ヘッダー・サイドメニュー構成を [Cardano](./cardano/setup/) / [Midnight](./midnight/index.md) に分類分け
+
+
 ## 2026/1/15　ver.13.9.0
 !!! note ""
     **追加**：  

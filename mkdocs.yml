@@ -162,7 +162,7 @@ nav:
           - '・ GA-SPO投票': './cardano/operation/gov-spo-vote.md'
           - '・ カタリスト有権者登録': './cardano/operation/catalyst-voting.md'
         - 'プール廃止処理': './cardano/operation/pool-retire.md'
-      - 'Mithril Signerセットアップ': './cardano/operation/mithril-signer-node-setup-and-updates.md'
+      - 'Mithril Signer構築': './cardano/operation/mithril-signer-node-setup-and-updates.md'
       - '各種コマンド一覧': './cardano/operation/linux-commands.md'
       - 'よくある質問':
         - '運用編':

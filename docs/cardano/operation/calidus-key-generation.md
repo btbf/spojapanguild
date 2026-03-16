@@ -2,7 +2,7 @@
 
 !!! info "概要"
     - ステークプールの所有権を証明するための署名技術
-    - 既存のCIP-22や少額送金による、プール秘密鍵やvrf秘密鍵を頻繁に使用することなく所有権を証明できます。
+    - 既存のCIP-22や少額送金による、プール秘密鍵やvrf秘密鍵を頻繁に使用することなく所有権を証明可能
     - Cardano対応のライトウォレットにも復元可能でWebベースプラットフォームでも利用可能
     - 今後Calidus Pool Keyに対応した多様なサービスがリリース予定
 
@@ -13,25 +13,25 @@
 
 **ダウンロード**
 === "ブロックプロデューサーノード"  
-    ```
+    ```bash
     signer_release="$(curl -s https://api.github.com/repos/gitmachtl/cardano-signer/releases/latest | jq -r '.tag_name' | sed -e "s/^.\{1\}//")"
     cd $HOME/git
     wget -q https://github.com/gitmachtl/cardano-signer/releases/download/v${signer_release}/cardano-signer-${signer_release}_linux-x64.tar.gz
     ```
-    ```
+    ```bash
     tar -xzvf cardano-signer-${signer_release}_linux-x64.tar.gz
     rm cardano-signer-${signer_release}_linux-x64.tar.gz
     ```
 
 **インストール** 
 === "ブロックプロデューサーノード"
-    ```
+    ```bash
     sudo cp cardano-signer /usr/local/bin/cardano-signer
     ```
 
 **バージョン確認**
 === "ブロックプロデューサーノード"
-    ```
+    ```bash
     cardano-signer --version
     ```
 
@@ -41,12 +41,12 @@
     BPの`$HOME/git`にある`cardano-signer`をエアギャップマシンの`$HOME/git`にコピーします。
     ``` mermaid
     graph LR
-        A[BP] -->|cardano-signer| B[エアギャップ];
+        A[BP] -->|**cardano-signer**| B[エアギャップ];
     ```
 
-**システムフォルダへコピーする**
+**システムフォルダへコピー**
 === "エアギャップマシン"  
-    ```
+    ```bash
     cd $HOME/git
     chmod 755 cardano-signer
     sudo cp cardano-signer /usr/local/bin/cardano-signer
@@ -54,7 +54,7 @@
 
 **バージョン確認** 
 === "エアギャップマシン" 
-    ```
+    ```bash
     cardano-signer --version
     ```
 
@@ -65,24 +65,24 @@
     - `Calidus-MnemonicsKey.json`にはライトウォレットに復元するための`Mnemonics`(復元シードフレーズ)が含まれています。
     - 万が一このキーを紛失した場合でも差し替え可能ですが、もしADAを保持している場合は出金が出来なくなりますのでご注意ください。
     - 複数のデバイスにバックアップすることをオススメします。
-    - <font color=red>一つのcalidusペアキーで複数のプールを登録できます</font>
+    - <font color=red>一つのcalidusペアキーで複数のプールを登録できます。</font>
 
 ??? "一つのペアキーで複数プールを登録する場合はこちら"
-    1. 1プール目のエアギャップ領域で`myCalidusKey`ペアキー発行する。
-    2. 2プール目のエアギャップ領域($NODE_HOME)にcalidusディレクトリを作成する
-    ```
+    1. 1プール目のエアギャップ領域で`myCalidusKey`ペアキー発行します。
+    2. 2プール目のエアギャップ領域($NODE_HOME)にcalidusディレクトリを作成します。
+    ```bash
     mkdir -p $NODE_HOME/calidus
     ```
-    3. 作成したディレクトリに`myCalidusKey`**ペアキー(myCalidusKey.skey、myCalidusKey.vkey)のみ**をコピーする
-    4. 「3.メタデータ作成」から実行する
+    3. 作成したディレクトリに`myCalidusKey`**ペアキー(myCalidusKey.skey、myCalidusKey.vkey)のみ**をコピーします。
+    4. [3.メタデータ作成](../operation/calidus-key-generation.md/#3)から実行します。
 
 **`myCalidusKey`ペアキー発行**
 
 === "エアギャップマシン"
-    ```
+    ```bash
     mkdir -p $NODE_HOME/calidus
     cd $NODE_HOME/calidus
-    cardano-signer keygen --path payment \
+    cardano-signer keygen --path calidus \
         --out-skey myCalidusKey.skey \
         --out-vkey myCalidusKey.vkey \
         --json-extended \
@@ -91,9 +91,9 @@
 
 ## **3. メタデータ作成**
 
-**プール秘密鍵で署名したメタデータ作成します**  
+**プール秘密鍵で署名したメタデータの作成**  
 === "エアギャップマシン"
-    ```
+    ```bash
     chmod u+rwx $HOME/cold-keys
     cardano-signer sign --cip88 \
         --calidus-public-key $NODE_HOME/calidus/myCalidusKey.vkey \
@@ -106,12 +106,12 @@
 
 ## **4. オンチェーン登録**
 
-最新のスロット番号を取得します
+最新のスロット番号を取得します。
 
 === "ブロックプロデューサーノード"
     ```bash
     cd $NODE_HOME
-    currentSlot=$(cardano-cli conway query tip $NODE_NETWORK | jq -r '.slot')
+    currentSlot=$(cardano-cli latest query tip $NODE_NETWORK | jq -r '.slot')
     echo Current Slot: $currentSlot
     ```
 
@@ -136,18 +136,18 @@ payment.addrの残高を算出します。
 
 === "ブロックプロデューサーノード"
     ```bash
-    cardano-cli conway query utxo \
+    cardano-cli latest query utxo \
         --address $(cat payment.addr) \
         $NODE_NETWORK \
         --output-text \
         --out-file fullUtxo.out
     ```
-    ```
+    ```bash
     tail -n +3 fullUtxo.out | sort -k3 -nr | sed -e '/lovelace + [0-9]/d' > balance.out
     cat balance.out
     ```
 
-UTXOを算出します
+UTXOを算出します。
 
 === "ブロックプロデューサーノード"
     ```bash
@@ -169,7 +169,7 @@ UTXOを算出します
     tempBalanceAmont=$(( ${total_balance}-${amountToSend} ))
     ```
     
-    ウォレット残高情報ファイル作成
+    ウォレット残高情報ファイルの作成
     ```bash
     cat > $NODE_HOME/wallet_balance.sh << EOF 
     #!/bin/bash
@@ -186,21 +186,21 @@ UTXOを算出します
         BPの`$NODE_HOME`にある`wallet_balance.sh`と`params.json`をエアギャップマシンのcnodeディレクトリにコピーします。
         ``` mermaid
         graph LR
-            A[BP] -->|wallet_balance.sh / params.json| B[エアギャップ];
+            A[BP] -->|**wallet_balance.sh** / **params.json**| B[エアギャップ];
         ```
 
-エアギャップでウォレット残高を読み込む
+エアギャップでウォレット残高を読み込みます。
 
 === "エアギャップ"
-    ```
+    ```bash
     source $NODE_HOME/wallet_balance.sh
     ```
 
-トランザクションファイルを作成
+トランザクションファイルの作成
 === "エアギャップ"
     ```bash
     cd $NODE_HOME
-    cardano-cli conway transaction build-raw \
+    cardano-cli latest transaction build-raw \
         ${tx_in} \
         --tx-out $(cat payment.addr)+${tempBalanceAmont} \
         --tx-out ${destinationAddress}+${amountToSend} \
@@ -210,11 +210,11 @@ UTXOを算出します
         --out-file tx.tmp
     ```
 
-最低手数料を出力します
+最低手数料を出力します。
 
 === "エアギャップ"
     ```bash
-    fee=$(cardano-cli conway transaction calculate-min-fee \
+    fee=$(cardano-cli latest transaction calculate-min-fee \
         --tx-body-file tx.tmp \
         --witness-count 1 \
         --output-text \
@@ -222,7 +222,7 @@ UTXOを算出します
     echo fee: $fee
     ```
 
-手数料計算
+手数料を計算します。
 
 === "エアギャップ"
     ```bash
@@ -230,11 +230,11 @@ UTXOを算出します
     echo Change Output: ${txOut}
     ```
 
-トランザクションファイルを構築します
+トランザクションファイルを構築します。
 
 === "エアギャップ"
     ```bash
-    cardano-cli conway transaction build-raw \
+    cardano-cli latest transaction build-raw \
         ${tx_in} \
         --tx-out $(cat payment.addr)+${txOut} \
         --tx-out ${destinationAddress}+${amountToSend} \
@@ -244,12 +244,12 @@ UTXOを算出します
         --out-file tx.raw
     ```
 
-トランザクションに署名します
+トランザクションに署名します。
 
 === "エアギャップ"
     ```bash
     cd $NODE_HOME
-    cardano-cli conway transaction sign \
+    cardano-cli latest transaction sign \
         --tx-body-file tx.raw \
         --signing-key-file payment.skey \
         $NODE_NETWORK \
@@ -261,25 +261,25 @@ UTXOを算出します
     エアギャップの`tx.signed` をBPのcnodeディレクトリにコピーします。
     ``` mermaid
     graph LR
-        A[エアギャップ] -->|tx.signed| B[BP];
+        A[エアギャップ] -->|**tx.signed**| B[BP];
     ```
 
-署名されたトランザクションを送信します
+署名されたトランザクションを送信します。
 
 === "ブロックプロデューサーノード"
-    ウォレット残高情報ファイルを削除する
-    ```
+    ウォレット残高情報ファイルの削除
+    ```bash
     rm $NODE_HOME/wallet_balance.sh
     ```
-    トランザクションIDを確認する
-    ```
-    tx_id=$(cardano-cli conway transaction txid --tx-body-file $NODE_HOME/tx.signed)
+    トランザクションIDの確認
+    ```bash
+    tx_id=$(cardano-cli latest transaction txid --tx-body-file $NODE_HOME/tx.signed)
     echo TxID:$tx_id
     ```
 
-    トランザクションを送信する
+    トランザクション送信
     ```bash
-    cardano-cli conway transaction submit \
+    cardano-cli latest transaction submit \
         --tx-file tx.signed \
         $NODE_NETWORK
     ```
@@ -287,7 +287,7 @@ UTXOを算出します
 > Transacsion Successfully submittedと表示されれば成功
 
 ## **5. オンチェーン確認**
-```
+```bash
 curl -s "https://api.koios.rest/api/v1/pool_calidus_keys?pool_id_bech32=eq.$(cat $NODE_HOME/pool.id-bech32)" | jq .
 ```
 > 戻り値に、`"pool_status": "registered"`の項目があれば登録成功
@@ -295,7 +295,7 @@ curl -s "https://api.koios.rest/api/v1/pool_calidus_keys?pool_id_bech32=eq.$(cat
 ## **6. Calidusキー転送**
 
 === "ブロックプロデューサーノード"
-    ```
+    ```bash
     mkdir -p $NODE_HOME/calidus
     ```
 
@@ -304,7 +304,26 @@ curl -s "https://api.koios.rest/api/v1/pool_calidus_keys?pool_id_bech32=eq.$(cat
     エアギャップの`myCalidusKey.skey`をBPのcnode/calidusディレクトリにコピーします。
     ``` mermaid
     graph LR
-        A[エアギャップ] -->|myCalidusKey.skey| B[BP];
+        A[エアギャップ] -->|**myCalidusKey.skey**| B[BP];
     ```
+
+## **7. ニーモニックフレーズを使い、Eternlでウォレット作成**
+
+エアギャップにて以下のコマンドを実行し、ニーモニックフレーズを紙などにメモします。
+=== "エアギャップ"
+    ```bash
+    jq -r '.mnemonics' $NODE_HOME/calidus/Calidus-MnemonicsKey.json
+    ```
+
+Eternlウォレットにて復元します。
+=== "Eternlウォレット"
+    1. 「`現在のウォレット`」を選択  
+    2. 「`ウォレットを追加`」を選択  
+    3. 「`シードフレーズを入力`」を選択  
+    4. 「`24単語`」を選択  
+    5. 先ほど控えた「`ニーモニックフレーズ`」を入力  
+    6. 「`新規ウォレット名`」を入力    
+    7. 「`送金パスワード`」の設定  
+    8. 新規ウォレットに少額（10 ADA程度）投入
 
 ---
