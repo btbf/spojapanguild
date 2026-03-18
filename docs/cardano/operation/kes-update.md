@@ -62,13 +62,13 @@ KESファイルの新規作成
 
 
 ## **3. KESファイルをエアギャップにコピー**
-BPで生成したKESファイル(**`kes.skey`**/**`kes.vkey`**)をエアギャップのcnodeディレクトリへコピー    
+BPで生成したKESファイル(`kes.skey`/`kes.vkey`)をエアギャップのcnodeディレクトリへコピー    
 
 !!! important "ファイル転送"
-    BPで生成した**`kes.skey`**/**`kes.vkey`**をエアギャップのcnodeディレクトリにコピーします。
+    BPで生成した`kes.skey`/`kes.vkey`をエアギャップのcnodeディレクトリにコピーします。
     ```mermaid
     graph LR
-        A[BP] -->|**kes.skey** / **kes.vkey**| B[エアギャップ];
+        A[BP] -->|kes.skey / kes.vkey| B[エアギャップ];
     ``` 
 
 
@@ -202,7 +202,7 @@ chmod a-rwx $HOME/cold-keys
     エアギャップで生成した**`node.cert`**をBPのcnodeディレクトリにコピーします。
     ```mermaid
     graph LR
-        A[エアギャップ] -->|**node.cert**| B[BP];
+        A[エアギャップ] -->|node.cert| B[BP];
     ``` 
 
 

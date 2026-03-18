@@ -4,7 +4,6 @@
     このツールはウロボロスにおける自プールのブロック生成スケジュールを事前に取得するツールです。  
     <font color=red>ブロック生成スケジュールはセキュリティ上パブリックには公開されません。</font>
 
-
 ## **1. インストール要件**
 
 !!! abstract "設定サーバー"
@@ -44,17 +43,13 @@
             
     ```
 
-
- 
-
 ## **2. CNCLIインストール**
 
 !!! info "CNCLIについて"
     [AndrewWestberg](https://twitter.com/amw7){target="_blank" rel="noopener"}さんによって開発された[CNCLI](https://github.com/cardano-community/cncli){target="_blank" rel="noopener"}はプールのブロック生成スケジュールを算出し、Shelley期におけるSPOに革命をもたらしました。
 
   
-RUST環境を準備します
-
+**RUST環境の準備**
 ```bash
 mkdir $HOME/.cargo && mkdir $HOME/.cargo/bin
 chown -R $USER $HOME/.cargo
@@ -62,12 +57,11 @@ touch $HOME/.profile
 chown $USER $HOME/.profile
 ```
 
-rustupをインストールします-デフォルトのインストールを続行します（オプション1）
+**rustupのインストール**
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
-
-> 1) Proceed with installation (default)  1を入力してEnter
+> 1) Proceed with standard installation (default - just press enter)が表示されたらEnter
 
 ```bash
 source $HOME/.cargo/env
@@ -75,74 +69,57 @@ rustup install stable
 rustup default stable
 rustup update
 rustup component add clippy rustfmt
-rustup target add x86_64-unknown-linux-musl
 ```
 
-依存関係をインストールします
-
-```bash
-source $HOME/.cargo/env
-sudo apt update -y && sudo apt install -y automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool autoconf musl-tools
-```
-
-CNCLIをダウンロード・インストール
+**CNCLIのダウンロード・インストール**
 ```bash
 cd $HOME
 cncli_release="$(curl -s https://api.github.com/repos/cardano-community/cncli/releases/latest | jq -r '.tag_name' | sed -e "s/^.\{1\}//")"
 ```
-```
+```bash
 curl -sLJ https://github.com/cardano-community/cncli/releases/download/v${cncli_release}/cncli-${cncli_release}-ubuntu22-x86_64-unknown-linux-gnu.tar.gz -o $HOME/cncli-${cncli_release}-x86_64-unknown-linux-gnu.tar.gz
 ```
-```
+```bash
 tar xzvf $HOME/cncli-${cncli_release}-x86_64-unknown-linux-gnu.tar.gz -C $HOME/.cargo/bin/
 ```
-```
+```bash
 rm $HOME/cncli-${cncli_release}-x86_64-unknown-linux-gnu.tar.gz
 ```
 
-CNCLIのバージョンを確認します。
+**CNCLIのバージョン確認**
 ```bash
 cncli --version
 ```
-> 6.7.0 が最新バージョンです
+> cncli v6.7.0
 
-## **3. sqlite3インストール**
-
+## **3. sqlite3のインストール**
 ```bash
 sudo apt install sqlite3
+```
+```bash
 sqlite3 --version
 ```
-> 3.31.1以上のバージョンがインストールされたらOKです。
+> 3.31.1以上のバージョンがインストールされていれば問題ありません。
 
 
-## **4. 依存ファイルダウンロード**
-
-依存関係のあるプログラムをダウンロードします。
+## **4. 依存ファイルのダウンロード**
 
 ```bash
-cd $NODE_HOME
-mkdir scripts
 cd $NODE_HOME/scripts
 wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cncli.sh -O ./cncli.sh
-wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/env -O ./env
-wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/gLiveView.sh -O ./gLiveView.sh
 wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cntools.library -O ./cntools.library
 wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/blocks.sh -O ./blocks.sh 
 wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/logMonitor.sh -q -O ./logMonitor.sh
 ```
 
-**パーミッションを設定する**
+**パーミッション変更**
 ```bash
 chmod 755 cncli.sh
 chmod 755 logMonitor.sh
-chmod 755 gLiveView.sh
 chmod 755 blocks.sh
 ```
 
-**設定ファイルを修正する**
-
-envファイルを修正します
-
+**設定ファイルの修正**
 ```bash
 PORT=`grep "PORT=" $NODE_HOME/startBlockProducingNode.sh`
 b_PORT=${PORT#"PORT="}
@@ -161,13 +138,22 @@ sed -i $NODE_HOME/scripts/env \
   -e '1,73s!#PROM_HOST=127.0.0.1!PROM_HOST=127.0.0.1!' \
   -e '1,73s!#PROM_PORT=12798!PROM_PORT=12798!' \
   -e '1,73s!#BLOCKLOG_TZ="UTC"!BLOCKLOG_TZ="Asia/Tokyo"!' \
-  -e '1,73s!#POOL_NAME=""!POOL_DIR=${CNODE_HOME}!'
+  -e '1,73s!#POOL_NAME=""!POOL_DIR=${CNODE_HOME}!' \
+  -e '1,116s!#WALLET_PAY_ADDR_FILENAME="payment.addr"!WALLET_PAY_ADDR_FILENAME="payment.addr"!' \
+  -e '1,116s!#WALLET_STAKE_ADDR_FILENAME="reward.addr"!WALLET_STAKE_ADDR_FILENAME="stake.addr"!' \
+  -e '1,116s!#POOL_HOTKEY_VK_FILENAME="hot.vkey"!POOL_HOTKEY_VK_FILENAME="kes.vkey"!' \
+  -e '1,116s!#POOL_HOTKEY_SK_FILENAME="hot.skey"!POOL_HOTKEY_SK_FILENAME="kes.skey"!' \
+  -e '1,116s!#POOL_COLDKEY_VK_FILENAME="cold.vkey"!POOL_COLDKEY_VK_FILENAME="node.vkey"!' \
+  -e '1,116s!#POOL_COLDKEY_SK_FILENAME="cold.skey"!POOL_COLDKEY_SK_FILENAME="node.skey"!' \
+  -e '1,116s!#POOL_OPCERT_COUNTER_FILENAME="cold.counter"!POOL_OPCERT_COUNTER_FILENAME="node.counter"!' \
+  -e '1,116s!#POOL_OPCERT_FILENAME="op.cert"!POOL_OPCERT_FILENAME="node.cert"!' \
+  -e '1,116s!#POOL_VRF_SK_FILENAME="vrf.skey"!POOL_VRF_SK_FILENAME="vrf.skey"!'
 ```
 
-**cncli.shファイルを修正します**
+**cncli.shファイルの修正**
 
-プールIDを確認する。以下のコマンドをすべてコピーして実行してください
-```
+**プールIDの確認**
+```bash
 pool_hex=`cat $NODE_HOME/pool.id`
 pool_bech32=`cat $NODE_HOME/pool.id-bech32`
 printf "\nプールID(hex)は \e[32m${pool_hex}\e[m です\n\n"
@@ -175,11 +161,10 @@ printf "\nプールID(bech32)は \e[32m${pool_bech32}\e[m です\n\n"
 ```
 
 <strong><font color=red>ご自身のプールID `2種類`が表示されていることを確認してください</font></strong>  
-プールIDが表示されていない場合は、[こちらの手順](../setup/stake-pool-register.md/#4)を実行してください  
+プールIDが表示されていない場合は、[こちらの手順](../setup/stake-pool-register.md/#4)を実行してください。  
 
-<br>
-cncli.shファイルを修正します。以下のコマンドをすべてコピーして実行してください
-```
+**cncli.shファイルの修正**
+```bash
 sed -i $NODE_HOME/scripts/cncli.sh \
 -e '1,30s!#POOL_ID=""!POOL_ID="'${pool_hex}'"!' \
 -e '1,30s!#POOL_ID_BECH32=""!POOL_ID_BECH32="'${pool_bech32}'"!' \
@@ -188,11 +173,9 @@ sed -i $NODE_HOME/scripts/cncli.sh \
 ```
 
 ## **5. サービスファイル作成・登録**
-
 ```bash
-cd $NODE_HOME
-mkdir service
-cd service
+mkdir -p $NODE_HOME/service
+cd $NODE_HOME/service
 ```
 
 === "cncli"
@@ -317,37 +300,27 @@ cd service
     ```
 
 
-**サービスファイルをシステムフォルダにコピーして権限を付与します**
-
-**1行ずつコマンドに貼り付けてください**
+**サービスファイルをシステムフォルダにコピーし、権限を付与**
 ```bash
-sudo cp $NODE_HOME/service/cnode-cncli-sync.service /etc/systemd/system/cnode-cncli-sync.service
-sudo cp $NODE_HOME/service/cnode-cncli-validate.service /etc/systemd/system/cnode-cncli-validate.service
-sudo cp $NODE_HOME/service/cnode-cncli-leaderlog.service /etc/systemd/system/cnode-cncli-leaderlog.service
-sudo cp $NODE_HOME/service/cnode-logmonitor.service /etc/systemd/system/cnode-logmonitor.service
+sudo cp $NODE_HOME/service/cnode-cncli-sync.service $NODE_HOME/service/cnode-cncli-validate.service $NODE_HOME/service/cnode-cncli-leaderlog.service $NODE_HOME/service/cnode-logmonitor.service /etc/systemd/system/
+```
+```bash
+sudo chmod 644 /etc/systemd/system/cnode-cncli-sync.service /etc/systemd/system/cnode-cncli-validate.service /etc/systemd/system/cnode-cncli-leaderlog.service /etc/systemd/system/cnode-logmonitor.service
 ```
 
-```bash
-sudo chmod 644 /etc/systemd/system/cnode-cncli-sync.service
-sudo chmod 644 /etc/systemd/system/cnode-cncli-validate.service
-sudo chmod 644 /etc/systemd/system/cnode-cncli-leaderlog.service
-sudo chmod 644 /etc/systemd/system/cnode-logmonitor.service
-```
-
-**サービスファイルを有効化します**
+**サービスファイルの有効化**
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable cnode-cncli-sync.service
-sudo systemctl enable cnode-cncli-validate.service
-sudo systemctl enable cnode-cncli-leaderlog.service
-sudo systemctl enable cnode-logmonitor.service
+```
+```bash
+sudo systemctl enable --now cnode-cncli-sync.service cnode-cncli-validate.service cnode-cncli-leaderlog.service cnode-logmonitor.service
 ```
 
 **便利なエイリアス設定**
 !!! hint "エイリアス設定"
     スクリプトへのパスを通し、エイリアスで起動出来るようにする。
-    ```
+    ```bash
     echo alias cnclilog='"journalctl --no-hostname -u cnode-cncli-sync -f"' >> $HOME/.bashrc
     echo alias validate='"journalctl --no-hostname -u cnode-cncli-validate -f"' >> $HOME/.bashrc
     echo alias leaderlog='"journalctl --no-hostname -u cnode-cncli-leaderlog -f"' >> $HOME/.bashrc
@@ -355,7 +328,7 @@ sudo systemctl enable cnode-logmonitor.service
     ```
 
     環境変数再読み込み
-    ```
+    ```bash
     source $HOME/.bashrc
     ```
 
@@ -365,13 +338,8 @@ sudo systemctl enable cnode-logmonitor.service
 
 ## **6. ブロックチェーンとDBを同期**
 
-**cncli-sync**サービスを開始します
-```bash
-sudo systemctl start cnode-cncli-sync.service
-```
-
 cncliログ確認
-```
+```bash
 cnclilog
 ```
 
@@ -386,7 +354,7 @@ cnclilog
     !!! info ""
         こちらのサービスは生成したブロックがブロックチェーン上に記録されているか照合します。
 
-        ```
+        ```bash
         validate
         ```
 
@@ -402,7 +370,7 @@ cnclilog
         こちらのサービスはスロットリーダーを自動的に算出します。 
         次エポックの1.5日前から次エポックのスケジュールを算出することができます。
 
-        ```
+        ```bash
         leaderlog
         ```
 
@@ -416,7 +384,7 @@ cnclilog
     !!! info ""
         こちらのサービスはプールのノードログからブロック生成結果を抽出します。
 
-        ```
+        ```bash
         logmonitor
         ```
 
@@ -482,106 +450,98 @@ echo $LANG
 ```
 
 
-## **8. スケジュールを取得する**
+## **8. ブロック生成スケジュールと通知**
 
-!!! tip "ブロック生成スケジュール取得のタイミングについて"
-    取得タイミングは、エポックスロットが約302400を過ぎてから次エポックのスケジュールを自動取得します(次エポックの1.5日前)  
-    [SPO BlockNotify設定](../setup/blocknotify-setup.md)を導入することで任意の通知プラットフォームへ通知することが可能です。    
+[SPO BlockNotify設定](../setup/blocknotify-setup.md)を導入することでブロックログDBに保存されるブロック生成ステータスを`LINE`/`Slack`/`Discord`/`Telegram`に通知することができます。  
 
+!!! info "ブロック生成スケジュール取得のタイミング"
+    ブロック生成スケジュールは、**エポックスロットが約302,400を超えた時点**で**次エポックのスケジュールを自動取得**します。これは **次エポック開始の約1.5日前** に相当します。
 
+!!! tip "1エポックで1ブロック割り当てられる委任量の目安"
+    | 委任量 | 割り当て確率 |
+    |------|-------------|
+    | 1M ADA | 約60% |
+    | 2M ADA | 約85% |
+    | 3M ADA | 約95% |
 
-!!! tip "ヒント"
-    * `Leaderslots: 0 - Ideal slots for epoch based on active stake: 0.01 - Luck factor 0%`が表示された場合は、残念がらブロック生成スケジュールはありません。
+!!! tip "プール開設後のエポックの流れ"
+    新しくプールを登録した場合、**ブロック割り当ては約2エポック後から開始**されます。
 
-
-1エポックで1ブロック割り当てられるために必要な委任量の目安は以下の通りです。%は確率  
-1M 60%  
-2M 85%  
-3M 95%  
-  
-プール開設時は、2エポック後から割り当てがスタートします。  
-303 プール登録   
-304 待機期間 次エポックスケジュール算出  
-305 委任有効 ブロック生成  
-306 報酬計算  
-307 報酬振り込み   
-
-
-!!! info "ブロック生成ステータスを通知する"
-    ブロックログDBに保存されるブロック生成ステータスをLINE/Slack/discord/telegramに通知することができます。  
-    設定手順は[SPO BlockNotify設定](../setup/blocknotify-setup.md)を参照してください。
-
+    | エポック | 状態 |
+    |---------|------|
+    | 603 | プール登録 |
+    | 604 | 待機期間（次エポックスケジュール算出） |
+    | 605 | 委任有効 / ブロック生成開始 |
+    | 606 | 報酬計算 |
+    | 607 | 報酬支払い |
 
 ## **9. CNCLI更新手順**
-**以下は最新版がリリースされた場合に実行してください**  
 
-cncli旧バージョンからの更新手順
+!!! warning "注意"
+    **以下は最新版がリリースされた場合に実行してください。**  
+    **１時間以内にブロック生成スケジュールがないことを確認してから、以下を実施してください。**
 
-!!! info "注意"
-    １時間以内にブロック生成スケジュールがないことを確認してから、以下を実施してください
-
-
-**CNCLIをアップデートする**
+**CNCLIのアップデート**
 
 ```bash
 cd $HOME
 cncli_release="$(curl -s https://api.github.com/repos/cardano-community/cncli/releases/latest | jq -r '.tag_name' | sed -e "s/^.\{1\}//")"
 ```
-```
+```bash
 curl -sLJ https://github.com/cardano-community/cncli/releases/download/v${cncli_release}/cncli-${cncli_release}-ubuntu22-x86_64-unknown-linux-gnu.tar.gz -o $HOME/cncli-${cncli_release}-x86_64-unknown-linux-gnu.tar.gz
 ```
-```
+```bash
 tar xzvf $HOME/cncli-${cncli_release}-x86_64-unknown-linux-gnu.tar.gz -C $HOME/.cargo/bin/
 ```
-```
+```bash
 rm $HOME/cncli-${cncli_release}-x86_64-unknown-linux-gnu.tar.gz
 ```
 
-バージョン確認
-```
+**バージョン確認**
+```bash
 cncli --version
 ```
-> cncli 6.7.0になったことを確認する 
+> cncli 6.7.0
 
-ノードを再起動する
+**ノード再起動**
 ```bash
 sudo systemctl reload-or-restart cardano-node
 ```
-> ノードが同期したことを確認する
+> ノードの同期を確認
 
-```
+**ログ確認**
+```bash
 cnclilog
 ```
->100% syncedになったことを確認する
+>100% syncedになったことを確認
 
 
 ### **9-1. スケジュールにないブロックが生成される場合**
 
-CNCLIのブロック生成スケジュールは正しい値が取得できていれば、100%正確です。  
-cncli.dbを再作成することで正しいスケジュールを取得することができます。
+!!! tip "ヒント"
+    CNCLIのブロック生成スケジュールは正しい値が取得できていれば、100%正確です。  
+    cncli.dbを再作成することで正しいスケジュールを取得することができます。
 
-修正手順
-
-・サービスを止める
-```
+**サービス停止**
+```bash
 sudo systemctl stop cnode-cncli-sync.service
 ```
 
-cncli.dbを削除する
-```
+**cncli.dbを削除**
+```bash
 rm $NODE_HOME/guild-db/cncli/cncli.db
 ```
 
-サービスを起動し、同期が100％になるまで待つ
-```
+**サービス再起動**
+```bash
 sudo systemctl restart cnode-cncli-sync.service
 ```
 
-100% syncedになるまで待つ
-```
+**ログ確認**
+```bash
 cnclilog
 ```
-
+> 100% syncedになるまでお待ちください。
 
 !!! info "制作クレジット"
     このツールは海外ギルドオペレーター制作の[CNCLI By AndrewWestberg](https://github.com/cardano-community/cncli){target="_blank" rel="noopener"}、[Guild LiveView](https://cardano-community.github.io/guild-operators/#/Scripts/gliveview){target="_blank" rel="noopener"}、[BLOCK LOG for CNTools](https://cardano-community.github.io/guild-operators/#/Scripts/cntools){target="_blank" rel="noopener"}を組み合わせたツールとなっております。カスタマイズするにあたり、開発者の[AHLNET(AHL)](https://twitter.com/olaahlman){target="_blank" rel="noopener"}にご協力頂きました。ありがとうございます。

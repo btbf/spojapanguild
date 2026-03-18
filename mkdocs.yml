@@ -140,14 +140,13 @@ nav:
           - '・ 資金引き出し': './cardano/operation/withdrawal.md'
           - '・ 運用証明書の更新': './cardano/operation/cert-update.md'
         - 'インフラ管理':
-          - '・ リレーノード増設': './cardano/operation/add-relay.md'
           #- '・ BPポート変更': './cardano/operation/bp-port-change.md'
           - '・ リレーサーバー移行': './cardano/operation/relay-migration.md'
           - '・ BPサーバー移行': './cardano/operation/bp-migration.md'
           #- '・ サーバー間転送設定':
           #- '・ 事前設定': './cardano/operation/rsync-ssh.md'
           #- '・ ファイル転送手順': './cardano/operation/transfer.md'
-          - '・ Ubuntu22.04移行': './cardano/operation/ubuntu22-migration.md'
+          - '・ Ubuntu24.04への移行': './cardano/operation/ubuntu24-migration.md'
         - '運用ツール':
             - '・ Calidusキー': './cardano/operation/calidus-key-generation.md'
             - '・ Mithril-DB同期': './cardano/operation/mithril-client.md'
@@ -156,10 +155,9 @@ nav:
             - 'Grafana追加設定':
               - '・ Grafanaセキュリティ強化': './cardano/operation/grafana-security.md'
               - '・ Grafanaアラート設定': './cardano/operation/grafana-alert.md'
-              - '・ Grafanaリポジトリ変更': './cardano/operation/grafana-repo.md'
-            - '・ SPOBlockNotify移行手順': './cardano/operation/blocknotify-reinstall.md'
         - 'ガバナンス':
           - '・ GA-SPO投票': './cardano/operation/gov-spo-vote.md'
+          - '・ 委任代表者（DRep）への委任': './cardano/operation/delegating-to-a-drep.md'
           - '・ カタリスト有権者登録': './cardano/operation/catalyst-voting.md'
         - 'プール廃止処理': './cardano/operation/pool-retire.md'
       - 'Mithril Signer構築': './cardano/operation/mithril-signer-node-setup-and-updates.md'

@@ -17,8 +17,7 @@
 
 ## **1. リタイア処理**
 
-現在のエポックを計算します。
-
+**現在のエポックの計算**
 
 === "ブロックプロデューサノード"
     ```bash
@@ -31,9 +30,8 @@
     ```
 
 
-
-プールが最も早く引退できるエポックと最も遅い引退エポックを見つけます。
-
+**引退エポックの算出**
+> プールが最も早く引退できるエポックと最も遅い引退エポックを見つけます。
 
 === "ブロックプロデューサノード"
     ```bash
@@ -48,7 +46,6 @@
     ```
 
 
-
 !!! info "リタイアのタイミングについて"
     **例**: エポック320でeMax18の場合,
 
@@ -60,22 +57,23 @@
     * プール登録料500ADAはリタイア処理エポック開始時にstake.addrに入金されます。  
 
 
-登録解除証明書 `pool.dereg`を作成します。  
-以下のコマンド内の `--epoch ***` にリタイアしたいエポックを記入します
+**登録解除証明書 `pool.dereg`の作成**  
+
+以下のコマンド内の `--epoch ***` にリタイアしたいエポックを記入します。
 
 === "エアギャップオフラインマシン"
     ```bash
     cd $NODE_HOME
     chmod u+rwx $HOME/cold-keys
     cardano-cli latest stake-pool deregistration-certificate \
-    --cold-verification-key-file $HOME/cold-keys/node.vkey \
-    --epoch *** \
-    --out-file pool.dereg
+      --cold-verification-key-file $HOME/cold-keys/node.vkey \
+      --epoch *** \
+      --out-file pool.dereg
     ```
 
 
 !!! important "ファイル転送"
-    **エアギャップの`pool.dereg`をBPのcnodeディレクトリにコピーします**
+    エアギャップの`pool.dereg`をBPのcnodeディレクトリにコピー
     
     ``` mermaid
     graph LR
@@ -83,23 +81,23 @@
     ```
 
 
-payment.addrの残高を参照します
+**payment.addrの残高参照**
 
 === "ブロックプロデューサノード"
     ```bash
     cd $NODE_HOME
     cardano-cli latest query utxo \
-        --address $(cat payment.addr) \
-        $NODE_NETWORK \
-        --output-text \
-        --out-file fullUtxo.out
+      --address $(cat payment.addr) \
+      $NODE_NETWORK \
+      --output-text \
+      --out-file fullUtxo.out
 
     tail -n +3 fullUtxo.out | sort -k3 -nr | sed -e '/lovelace + [0-9]/d' > balance.out
 
     cat balance.out
     ```
 
-UTXOを算出します
+**UTXOを算出**
 
 === "ブロックプロデューサノード"
     ```bash
@@ -119,7 +117,7 @@ UTXOを算出します
     echo Number of UTXOs: ${txcnt}
     ```
 
-現在のスロットを算出します。
+**現在のスロットを算出**
 
 === "ブロックプロデューサノード"
     ```bash
@@ -127,39 +125,32 @@ UTXOを算出します
     echo Current Slot: $currentSlot
     ```
 
-build-raw transactionコマンドを実行します。
-
+**トランザクションのビルド**
 
 === "ブロックプロデューサノード"
     ```bash
     cardano-cli latest transaction build-raw \
-        ${tx_in} \
-        --tx-out $(cat payment.addr)+${total_balance} \
-        --invalid-hereafter $(( ${currentSlot} + 10000)) \
-        --fee 200000 \
-        --certificate-file pool.dereg \
-        --out-file tx.tmp
+      ${tx_in} \
+      --tx-out $(cat payment.addr)+${total_balance} \
+      --invalid-hereafter $(( ${currentSlot} + 10000)) \
+      --fee 200000 \
+      --certificate-file pool.dereg \
+      --out-file tx.tmp
     ```
 
-
-
-最低料金を計算します。
-
+**最低料金の計算**
 
 === "ブロックプロデューサノード"
     ```bash
     fee=$(cardano-cli latest transaction calculate-min-fee \
-        --tx-body-file tx.tmp \
-        --witness-count 2 \
-        --output-text \
-        --protocol-params-file params.json | awk '{ print $1 }')
+      --tx-body-file tx.tmp \
+      --witness-count 2 \
+      --output-text \
+      --protocol-params-file params.json | awk '{ print $1 }')
     echo fee: $fee
     ```
 
-
-
-変更出力を計算します。
-
+**変更出力の計算**
 
 === "ブロックプロデューサノード"
     ```bash
@@ -167,45 +158,43 @@ build-raw transactionコマンドを実行します。
     echo txOut: ${txOut}
     ```
 
-
-
-トランザクションをビルドします。
-
+**トランザクションのビルド**
 
 === "ブロックプロデューサノード"
     ```bash
     cardano-cli latest transaction build-raw \
-        ${tx_in} \
-        --tx-out $(cat payment.addr)+${txOut} \
-        --invalid-hereafter $(( ${currentSlot} + 10000)) \
-        --fee ${fee} \
-        --certificate-file pool.dereg \
-        --out-file tx.raw
+      ${tx_in} \
+      --tx-out $(cat payment.addr)+${txOut} \
+      --invalid-hereafter $(( ${currentSlot} + 10000)) \
+      --fee ${fee} \
+      --certificate-file pool.dereg \
+      --out-file tx.raw
     ```
 
 
 !!! important "ファイル転送"
-    **BPの`tx.raw`をエアギャップオフラインマシンのcnodeディレクトリにコピーします**
+    BPの`tx.raw`をエアギャップオフラインマシンのcnodeディレクトリにコピー
     
     ``` mermaid
     graph LR
         A[BP] -->|tx.raw| B[エアギャップ];
     ```
 
-トランザクションに署名する
+**トランザクションに署名**
 
 === "エアギャップオフラインマシン"
     ```bash
     cardano-cli latest transaction sign \
-        --tx-body-file tx.raw \
-        --signing-key-file payment.skey \
-        --signing-key-file $HOME/cold-keys/node.skey \
-        $NODE_NETWORK \
-        --out-file tx.signed
+      --tx-body-file tx.raw \
+      --signing-key-file payment.skey \
+      --signing-key-file $HOME/cold-keys/node.skey \
+      $NODE_NETWORK \
+      --out-file tx.signed
     ```
 
-コールドキーをロックする
-```
+**コールドキーのロック**
+
+```bash
 chmod a-rwx $HOME/cold-keys
 ```
 
@@ -213,7 +202,7 @@ chmod a-rwx $HOME/cold-keys
 
 !!! important "ファイル転送"
     
-    **エアギャップ**の**tx.signed** を **ブロックプロデューサノード**のcnodeディレクトリにコピーします。
+    エアギャップの`tx.signed` を ブロックプロデューサノードのcnodeディレクトリにコピーします。
     
     ``` mermaid
     graph LR
@@ -221,14 +210,13 @@ chmod a-rwx $HOME/cold-keys
     ```
 
 
-トランザクションを送信します
-
+**トランザクションの送信**
 
 === "ブロックプロデューサノード"
     ```bash
     cardano-cli latest transaction submit \
-        --tx-file tx.signed \
-        $NODE_NETWORK
+      --tx-file tx.signed \
+      $NODE_NETWORK
     ```
 
 ### **1-1. リタイア確認**
@@ -243,7 +231,7 @@ chmod a-rwx $HOME/cold-keys
     EOS
     ```
 
-    ```bash
+    ``` { .yaml .no-copy }
     #戻り値サンプル
     "retired" # "retiring"でリタイア処理待ち "retired"でリタイア済み 
     309 #リタイアエポック
@@ -251,12 +239,12 @@ chmod a-rwx $HOME/cold-keys
 
 ## **2. 登録料返還確認**
 
-!!! caution "注意"
+!!! warning "注意"
     以降の処理は、プールのリタイア処理が完了してから実施してください
 
 !!! important "ファイル転送"
     
-    **エアギャップ**の**stake.addr** を **BP**のcnodeディレクトリにコピーします。
+    エアギャップの`stake.addr` を BPのcnodeディレクトリにコピーします。
     
     ``` mermaid
     graph LR
@@ -267,25 +255,25 @@ chmod a-rwx $HOME/cold-keys
     ```bash
     cd $NODE_HOME
     cardano-cli latest query stake-address-info \
-    --address $(cat stake.addr) \
-    $NODE_NETWORK
+      --address $(cat stake.addr) \
+      $NODE_NETWORK
     ```
 
 **戻り値確認**
 
-> rewardAccountBalance: の値を確認する
+> rewardAccountBalance: の値を確認
 
 ## **3. stake.addrから引き出し**
 
 [stake.addrからpayment.addrへ送金する方法](../operation/withdrawal.md/#1-1-paymentaddr)  
 
 
-## **4. ステークキー解除手順**
+## **4. ステークキーの解除**
 
 !!! fail "注意"
     * この手順ではstake.addrの登録を解除し、2ADAの返還手続きを行います。
     * プール登録料(500ADA)が返還される前に以下の処理を行ってしまうと、500ADAを受け取ることが出来ません。  
-    * 以下の手続きは、プール登録料の500ADAを受け取ってから実施してください
+    * 以下の手続きは、プール登録料の500ADAを受け取ってから実施してください。
 
 
 **ステークキー登録解除証明書作成**
@@ -294,15 +282,15 @@ chmod a-rwx $HOME/cold-keys
     ```bash
     cd $NODE_HOME
     cardano-cli latest stake-address deregistration-certificate \
-        --stake-verification-key-file stake.vkey \
-        --key-reg-deposit-amt 2000000 \
-        --out-file stake-dereg.cert
+      --stake-verification-key-file stake.vkey \
+      --key-reg-deposit-amt 2000000 \
+      --out-file stake-dereg.cert
     ```
 
 
 !!! important "ファイル転送"
     
-    **エアギャップ**の**stake-dereg.cert** を **ブロックプロデューサノード**のcnodeディレクトリにコピーします。
+    エアギャップの`stake-dereg.cert` を ブロックプロデューサノードのcnodeディレクトリにコピーします。
     
     ``` mermaid
     graph LR
@@ -319,6 +307,7 @@ chmod a-rwx $HOME/cold-keys
     ```
 
 **最新スロット算出**
+
 === "ブロックプロデューサノード"
     ```bash
     cd $NODE_HOME
@@ -327,19 +316,22 @@ chmod a-rwx $HOME/cold-keys
     ```
 
 **payment.addr残高を参照**
+
 === "ブロックプロデューサノード"
     ```bash
     cardano-cli latest query utxo \
-        --address $(cat payment.addr) \
-        $NODE_NETWORK \
-        --output-text \
-        --out-file fullUtxo.out
+      --address $(cat payment.addr) \
+      $NODE_NETWORK \
+      --output-text \
+      --out-file fullUtxo.out
 
     tail -n +3 fullUtxo.out | sort -k3 -nr | sed -e '/lovelace + [0-9]/d' > balance.out
 
     cat balance.out
     ```
+
 **UTXOを算出**
+
 === "ブロックプロデューサノード"
     ```bash   
     tx_in=""
@@ -359,46 +351,49 @@ chmod a-rwx $HOME/cold-keys
     ```
 
 **仮トランザクションファイルを作成**
+
 === "ブロックプロデューサノード"
     ```bash
     cardano-cli latest transaction build-raw \
-        ${tx_in} \
-        --tx-out $(cat payment.addr)+$(( ${total_balance} + ${keyDeposit} )) \
-        --invalid-hereafter $(( ${currentSlot} + 10000)) \
-        --fee 200000 \
-        --certificate stake-dereg.cert \
-        --out-file tx.tmp
+      ${tx_in} \
+      --tx-out $(cat payment.addr)+$(( ${total_balance} + ${keyDeposit} )) \
+      --invalid-hereafter $(( ${currentSlot} + 10000)) \
+      --fee 200000 \
+      --certificate stake-dereg.cert \
+      --out-file tx.tmp
     ```
 
-**最低料金を計算します**
+**最低料金の計算**
+
 === "ブロックプロデューサノード"
     ```bash
     fee=$(cardano-cli latest transaction calculate-min-fee \
-        --tx-body-file tx.tmp \
-        --witness-count 2 \
-        --output-text \
-        --protocol-params-file params.json | awk '{ print $1 }')
+      --tx-body-file tx.tmp \
+      --witness-count 2 \
+      --output-text \
+      --protocol-params-file params.json | awk '{ print $1 }')
     echo fee: $fee
     ```
 
-**変更出力を計算します。**
+**変更出力の計算**
+
 === "ブロックプロデューサノード"
     ```bash
     txOut=$((total_balance+keyDeposit-fee))
     echo Change Output: ${txOut}
     ```
 
-**トランザクションをビルドします。**
+**トランザクションのビルド**
 
 === "ブロックプロデューサノード"
     ```bash
     cardano-cli latest transaction build-raw \
-        ${tx_in} \
-        --tx-out $(cat payment.addr)+${txOut} \
-        --invalid-hereafter $(( ${currentSlot} + 10000)) \
-        --fee ${fee} \
-        --certificate-file stake-dereg.cert \
-        --out-file tx.raw
+      ${tx_in} \
+      --tx-out $(cat payment.addr)+${txOut} \
+      --invalid-hereafter $(( ${currentSlot} + 10000)) \
+      --fee ${fee} \
+      --certificate-file stake-dereg.cert \
+      --out-file tx.raw
     ```
 
 !!! important "ファイル転送"
@@ -409,16 +404,17 @@ chmod a-rwx $HOME/cold-keys
     ```
 
 
-トランザクションに署名する
+**トランザクションに署名**
+
 === "エアギャップオフラインマシン"
     ```bash
     cd $NODE_HOME
     cardano-cli latest transaction sign \
-        --tx-body-file tx.raw \
-        --signing-key-file payment.skey \
-        --signing-key-file stake.skey \
-        $NODE_NETWORK \
-        --out-file tx.signed
+      --tx-body-file tx.raw \
+      --signing-key-file payment.skey \
+      --signing-key-file stake.skey \
+      $NODE_NETWORK \
+      --out-file tx.signed
     ```
 
 
@@ -431,11 +427,11 @@ chmod a-rwx $HOME/cold-keys
 === "ブロックプロデューサノード"
     ```bash
     cardano-cli latest transaction submit \
-        --tx-file tx.signed \
-        $NODE_NETWORK
+      --tx-file tx.signed \
+      $NODE_NETWORK
     ```
 
-## **5. payment.addrから全額引き出す手順**
+## **5. 全額引き出し（payment.addr）**
 
 まずは、最新のスロット番号を取得し **invalid-hereafter** パラメータを正しく設定します。
 
@@ -447,11 +443,7 @@ chmod a-rwx $HOME/cold-keys
     echo Current Slot: $currentSlot
     ```
 
-
-
-
-送金先のアドレスを設定します。
-
+**送金先のアドレスの設定**
 
 === "ブロックプロデューサーノード"
     ```bash
@@ -459,23 +451,22 @@ chmod a-rwx $HOME/cold-keys
     echo destinationAddress: $destinationAddress
     ```
 
-
-payment.addrの残高を参照します。
+**payment.addrの残高の参照**
 
 === "ブロックプロデューサーノード"
     ```bash
     cardano-cli latest query utxo \
-        --address $(cat payment.addr) \
-        $NODE_NETWORK \
-        --output-text \
-        --out-file fullUtxo.out
+      --address $(cat payment.addr) \
+      $NODE_NETWORK \
+      --output-text \
+      --out-file fullUtxo.out
 
     tail -n +3 fullUtxo.out | sort -k3 -nr > balance.out
 
     cat balance.out
     ```
 
-UTXOを算出します。
+**UTXOを算出**
 
 === "ブロックプロデューサーノード"
     ```bash
@@ -496,39 +487,33 @@ UTXOを算出します。
     ```
 
 
-
-build-rawトランザクションコマンドを実行します。
-
+**トランザクションのビルド**
 
 === "ブロックプロデューサーノード"
     ```bash
     cardano-cli latest transaction build-raw \
-        ${tx_in} \
-        --tx-out ${destinationAddress}+${total_balance} \
-        --invalid-hereafter $(( ${currentSlot} + 10000)) \
-        --fee 200000 \
-        --out-file tx.tmp
+      ${tx_in} \
+      --tx-out ${destinationAddress}+${total_balance} \
+      --invalid-hereafter $(( ${currentSlot} + 10000)) \
+      --fee 200000 \
+      --out-file tx.tmp
     ```
 
 
-
-最低手数料を出力します
-
+**最低手数料の出力**
 
 === "ブロックプロデューサーノード"
     ```bash
     fee=$(cardano-cli latest transaction calculate-min-fee \
-        --tx-body-file tx.tmp \
-        --witness-count 1 \
-        --output-text \
-        --protocol-params-file params.json | awk '{ print $1 }')
+      --tx-body-file tx.tmp \
+      --witness-count 1 \
+      --output-text \
+      --protocol-params-file params.json | awk '{ print $1 }')
     echo fee: $fee
     ```
 
 
-
-計算結果を出力します。
-
+**計算結果の出力**
 
 === "ブロックプロデューサーノード"
     ```bash
@@ -536,7 +521,7 @@ build-rawトランザクションコマンドを実行します。
     echo Change Output: ${txOut}
     ```
 
-送金金額を確認します
+**送金金額を確認**
 
 === "ブロックプロデューサーノード"
     ```bash
@@ -544,82 +529,73 @@ build-rawトランザクションコマンドを実行します。
     echo amountToSend: $amountToSend
     ```
 
-トランザクションファイルを構築します。
-
+**トランザクションのビルド**
 
 === "ブロックプロデューサーノード"
     ```bash
     cardano-cli latest transaction build-raw \
-        ${tx_in} \
-        --tx-out ${destinationAddress}+${amountToSend} \
-        --invalid-hereafter $(( ${currentSlot} + 10000)) \
-        --fee ${fee} \
-        --out-file tx.raw
+      ${tx_in} \
+      --tx-out ${destinationAddress}+${amountToSend} \
+      --invalid-hereafter $(( ${currentSlot} + 10000)) \
+      --fee ${fee} \
+      --out-file tx.raw
     ```
-
 
 
 !!! important "ファイル転送"
     
-    BPの**tx.raw** をエアギャップオフラインマシンのcnodeディレクトリにコピーします。
+    BPの`tx.raw` をエアギャップオフラインマシンのcnodeディレクトリにコピーします。
     
     ``` mermaid
     graph LR
         A[BP] -->|tx.raw| B[エアギャップ];
     ```
 
-トランザクションに署名します。
-
+**トランザクションに署名**
 
 === "エアギャップオフラインマシン"
     ```bash
     cd $NODE_HOME
     cardano-cli latest transaction sign \
-        --tx-body-file tx.raw \
-        --signing-key-file payment.skey \
-        $NODE_NETWORK \
-        --out-file tx.signed
+      --tx-body-file tx.raw \
+      --signing-key-file payment.skey \
+      $NODE_NETWORK \
+      --out-file tx.signed
     ```
-
-
 
 **tx.signed** をブロックプロデューサーノードのcnodeディレクトリにコピーします。
 
-
 !!! important "ファイル転送"
     
-    エアギャップの**tx.signed** をBPのcnodeディレクトリにコピーします。
+    エアギャップの`tx.signed` をBPのcnodeディレクトリにコピーします。
     
     ``` mermaid
     graph LR
         A[エアギャップ] -->|tx.signed| B[BP];
     ```
 
-署名されたトランザクションを送信します。
-
+**署名済みトランザクションの送信**
 
 === "ブロックプロデューサーノード"
     ```bash
     cardano-cli latest transaction submit \
-        --tx-file tx.signed \
-        $NODE_NETWORK
+      --tx-file tx.signed \
+      $NODE_NETWORK
     ```
 
 
-
-全額出金されているか確認します。
-
+全額出金されているかを確認します。
 
 === "ブロックプロデューサーノード"
     ```bash
     cd $NODE_HOME
     cardano-cli latest query utxo \
-        --address $(cat payment.addr) \
-        $NODE_NETWORK \
-        --output-text
+      --address $(cat payment.addr) \
+      $NODE_NETWORK \
+      --output-text
     ```
 
-トランザクションが消えていればOKです
+トランザクションが消えていれば問題ありません。
 
 ```text
                            TxHash                                 TxIx        Lovelace

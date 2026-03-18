@@ -14,17 +14,19 @@
 
 ## **設定**
 
-**スクリプトダウンロード**
-```
+BPサーバーで実行してください。
+
+**スクリプトのダウンロード**
+```bash
 cd $NODE_HOME/scripts
 wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/sjgtool.sh -O sjgtool.sh
 chmod 755 sjgtool.sh
 ```
 
-**envファイル修正**
+**envファイルの修正**
 
 そのまま全コピーして実行してください。
-```
+```bash
 sed -i $NODE_HOME/scripts/env \
     -e '1,116s!#WALLET_PAY_ADDR_FILENAME="payment.addr"!WALLET_PAY_ADDR_FILENAME="payment.addr"!' \
     -e '1,116s!#WALLET_STAKE_ADDR_FILENAME="reward.addr"!WALLET_STAKE_ADDR_FILENAME="stake.addr"!' \
@@ -37,32 +39,33 @@ sed -i $NODE_HOME/scripts/env \
     -e '1,116s!#POOL_VRF_SK_FILENAME="vrf.skey"!POOL_VRF_SK_FILENAME="vrf.skey"!'
 ```
 
-=== "各ファイル名を独自のファイル名変更している場合"
+    
+!!! tip "各ファイル名を独自のファイル名変更している場合"
     ~/cnode/scripts/envファイル内の以下の変数に対し、先頭の#を削除しご自身の環境に合わせてファイル名を設定してください。  
-    !!! memo ""
-        WALLET_PAY_ADDR_FILENAME="payment.addr"  
-        WALLET_STAKE_ADDR_FILENAME="stake.addr"  
-        POOL_HOTKEY_VK_FILENAME="kes.vkey"  
-        POOL_OPCERT_FILENAME="node.cert"  
-        POOL_VRF_SK_FILENAME="vrf.skey"  
-        POOL_OPCERT_COUNTER_FILENAME="node.counter"  
-        POOL_OPCERT_FILENAME="node.cert  
-        POOL_VRF_SK_FILENAME="vrf.skey
+
+    WALLET_PAY_ADDR_FILENAME="payment.addr"  
+    WALLET_STAKE_ADDR_FILENAME="stake.addr"  
+    POOL_HOTKEY_VK_FILENAME="kes.vkey"  
+    POOL_OPCERT_FILENAME="node.cert"  
+    POOL_VRF_SK_FILENAME="vrf.skey"  
+    POOL_OPCERT_COUNTER_FILENAME="node.counter"  
+    POOL_OPCERT_FILENAME="node.cert  
+    POOL_VRF_SK_FILENAME="vrf.skey
 
 
-**スクリプトへのパスを通し、任意の単語で起動出来るようにする**
-```
+**エイリアス設定**
+```bash
 echo alias gtool="'cd $NODE_HOME/scripts; ./sjgtool.sh'" >> $HOME/.bashrc
 source $HOME/.bashrc
 ```
 
-TOOLを実行する
-```
+**実行**
+```bash
 gtool
 ```
 
-**エアギャップマシンに環境変数を追加する**
-```
+**エアギャップマシンに環境変数を追加**
+```bash
 echo alias airgap="'cd $HOME/cnode && [ -f airgap-set.tar.gz ] && tar -xOzf airgap-set.tar.gz airgap_script | bash -s verify || echo "airgap-set.tar.gz が見つかりません"'" >> $HOME/.bashrc
 source $HOME/.bashrc
 ```
@@ -71,7 +74,7 @@ source $HOME/.bashrc
 
     なし
 
-    また、その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues){target="_blank" rel="noopener"}を提出してください。
+    その他バグを発見した場合はGithubで[issue](https://github.com/btbf/spojapanguild/issues){target="_blank" rel="noopener"}を提出してください。
 
 ---
 
@@ -101,7 +104,7 @@ source $HOME/.bashrc
 
 エアギャップに環境変数を追加してください
 
-```
+```bash
 echo alias airgap="'cd $HOME/cnode && [ -f airgap-set.tar.gz ] && tar -xOzf airgap-set.tar.gz airgap_script | bash -s verify || echo "airgap-set.tar.gz が見つかりません"'" >> $HOME/.bashrc
 source $HOME/.bashrc
 ```

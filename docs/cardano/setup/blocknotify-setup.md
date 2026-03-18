@@ -9,7 +9,7 @@
     * ブロック生成スケジュールを自動取得し、取得スケジュール一覧を通知します。  
     ![*](../../images/block_notify/auto_leader.png)
 
-    * 通知先対応アプリ LINE/Slack/discord/telegram
+    * 通知先対応アプリ : `LINE`/`Slack`/`Discord`/`Telegram`
 
     * 多言語ファイルを用意することで様々な言語に対応しました！
  
@@ -58,7 +58,7 @@
     * 1.2.3 エポック取得フロー修正
     * 1.2.2 通知バグ修正
     * 1.2 ・Telegram、Slackに対応  
-    　　　・通知基準設定( 全て/confirm以外全て/Missedとivaildのみ)  
+    　　　・通知基準設定( 全て/confirm以外全て/Missedとinvalidのみ)  
     　　　・通知内容を変更(X番目/トータルスケジュール数)  
     * 1.1 スケジュール取得時、その他通知判定修正  
     * 1.0.1 軽微な修正  
@@ -70,35 +70,36 @@
 
 **Python環境のセットアップ**
 
-パッケージを更新する
+パッケージの更新
 ```bash
 sudo apt update && sudo apt upgrade -y
 ```
 
-pythonバージョンを確認する
+pythonバージョンの確認
 ```bash
 python3 -V
 ```
 > Python 3.10以上
 
-??? "Python 3.9以下の場合こちらのツールでアップデートしてください"
-    pythonUpdate.shをダウンロードして自動アップデートする
-    ```
-    cd
-    wget https://raw.githubusercontent.com/btbf/spojapanguild/master/scripts/pythonUpdate.sh
-    chmod +x pythonUpdate.sh
-    ./pythonUpdate.sh
-    ```
-
-依存関係をインストールする
+依存関係のインストール
 ```bash
-sudo apt install -y build-essential libssl-dev libffi-dev python3-dev python3-pip python3-testresources
-```
-```bash
-pip3 install watchdog pytz python-dateutil requests discordwebhook slackweb i18nice
+sudo apt install -y python3-pip python3-venv python3-full
 ```
 
-**実行スクリプトと設定ファイルをダウンロードする**
+```bash
+python3 -m venv ~/notify-venv
+~/notify-venv/bin/pip install -U pip
+~/notify-venv/bin/pip install watchdog pytz python-dateutil requests discordwebhook slackweb i18nice[YAML] python-dotenv
+```
+
+確認
+```bash
+~/notify-venv/bin/python -c "import watchdog, pytz, dateutil, requests, discordwebhook, slackweb, i18n, dotenv; print('OK')"
+```
+> `OK`と表示されれば問題ありません。
+
+
+**実行スクリプトと設定ファイルのダウンロード**
 
 ```bash
 bn_release="$(curl -s https://api.github.com/repos/btbf/block-notify/releases/latest | jq -r '.tag_name')"
@@ -122,11 +123,11 @@ rm ${bn_release}.tar.gz
         <br>
         <font color=red>新しいAPIはLINE公式アカウントを通じて配信されるため、設定を間違えるとセキュリティ漏洩のリスクがあります。複数人で運用する場合はご注意ください</font>  
 
-    * **1.LINEビジネスIDを作成する**  
-    LINE Bussiness ID [https://manager.line.biz/](https://manager.line.biz/){target="_blank" rel="noopener"} にアクセスし、お持ちのLINEアカウントでログインするか新規でBussinessIDを作成してください
+    * **1.LINEビジネスIDの作成**  
+    LINE Business ID [https://manager.line.biz/](https://manager.line.biz/){target="_blank" rel="noopener"} にアクセスし、お持ちのLINEアカウントでログインするか新規でBusinessIDを作成してください
     ![*](../../images/block_notify/line-message-api0.jpg)
 
-    * **2.LINE公式アカウントを作成する**  
+    * **2.LINE公式アカウントの作成**  
     ![*](../../images/block_notify/line-message-api1.jpg)  
     ![*](../../images/block_notify/line-message-api2.jpg)  
     
@@ -136,132 +137,132 @@ rm ${bn_release}.tar.gz
         主な使い方：メッセージ配信用  
 
     ![*](../../images/block_notify/line-message-api3.jpg)  
-    LINEヤフー for Bussinessを友だち追加のチェックを外す
+    LINEヤフー for Businessを友だち追加のチェックを外します
     ![*](../../images/block_notify/line-message-api4.jpg)  
     <br>
-    LINE Official Account Managerへをクリックする
+    LINE Official Account Managerへをクリック
     ![*](../../images/block_notify/line-message-api5.jpg)  
     
     * **3.Messaging APIの設定**  
     <br>
-    **右上の「設定を」クリックする**  
+    **右上の「設定」をクリック**  
     ![*](../../images/block_notify/line-message-api6.jpg)  
     <br>
     **プロフィール画像を編集するとプールアイコンを設定できます**  
     ![*](../../images/block_notify/line-message-api6-1.jpg)  
     <br>
-    **左メニューの「Messaging API」をクリックし、「Messaging APIを利用する」をクリックする**  
+    **左メニューの「Messaging API」をクリックし、「Messaging APIを利用する」をクリック**  
     ![*](../../images/block_notify/line-message-api7.jpg)  
     <br>
     **「プロバイダーを作成」欄に「notify」と入力し、「同意する」をクリック**  
     ![*](../../images/block_notify/line-message-api8.jpg)  
     <br>
-    **空欄のまま「OK」をクリックする**  
+    **空欄のまま「OK」をクリック**  
     ![*](../../images/block_notify/line-message-api9.jpg)  
     
     * **4.LINE Developers設定**  
     <br>
     ![*](../../images/block_notify/line-message-api10.jpg)  
     <br>
-    **コンソールにログインする**  
+    **コンソールにログイン**  
     ![*](../../images/block_notify/line-message-api11.jpg)  
     <br>
-    **プロバイダーから先ほど作成した「notify」をクリックする**  
+    **プロバイダーから先ほど作成した「notify」をクリック**  
     ![*](../../images/block_notify/line-message-api12.jpg)  
     <br>
-    **2で作成したLINE公式アカウントをクリックする**  
+    **2で作成したLINE公式アカウントをクリック**  
     ![*](../../images/block_notify/line-message-api13.jpg)  
     <br>
-    **「Messaging API」タブをクリックする**  
+    **「Messaging API」タブをクリック**  
     ![*](../../images/block_notify/line-message-api14.jpg)  
     <br>
-    **ページ下部の「チャンネルアクセストークン(長期)」で「実行」をクリックする**  
+    **ページ下部の「チャンネルアクセストークン(長期)」で「実行」をクリック**  
     ![*](../../images/block_notify/line-message-api15.jpg)  
     <br>
-    **発行されたトークンを控える**  
+    **発行されたトークンを控えます**  
     （発行されたトークンはいつでも確認することができます）  
     `line_notify_token`の値として使用します  
     ![*](../../images/block_notify/line-message-api16.jpg)  
     <br>
-    **上部に戻り「チャンネル基本設定」をクリックする**  
+    **上部に戻り「チャンネル基本設定」をクリック**  
     ![*](../../images/block_notify/line-message-api17.jpg)  
     <br>
-    **「あなたのユーザーID」を控える**  
+    **「あなたのユーザーID」を控えます**  
     `line_user_id`の値として使用します  
     ![*](../../images/block_notify/line-message-api18.jpg)  
 
 
 === "Discord"
 
-    * 1.サーバーを追加する  
+    * 1.サーバーを追加  
     ![*](../../images/block_notify/3-1-1.jpg)
     
-    * 2.「オリジナルの作成」を選択する  
+    * 2.「オリジナルの作成」を選択  
     ![*](../../images/block_notify/3-1-2.jpg)
     
-    * 3.「自分と友達のため」を選択する  
+    * 3.「自分と友達のため」を選択  
     ![*](../../images/block_notify/3-1-3.jpg)
     
-    * 4.任意のサーバー名を入力して「新規作成」をクリックする  
+    * 4.任意のサーバー名を入力して「新規作成」をクリック  
     ![*](../../images/block_notify/3-1-4.jpg)
     
-    * 5.通知したいチャンネルの歯車マークをクリックする  
+    * 5.通知したいチャンネルの歯車マークをクリック  
     ![*](../../images/block_notify/3-1-5.jpg)
     
-    * 6.「連携サービス」をクリックし、「ウェブフックを作成」をクリックする  
+    * 6.「連携サービス」をクリックし、「ウェブフックを作成」をクリック  
     ![*](../../images/block_notify/3-1-6.jpg)
     
-    * 7.「ウェブフックURLをコピー」をクリックし、一旦メモ帳などに貼り付ける  
+    * 7.「ウェブフックURLをコピー」をクリックし、一旦メモ帳などに貼り付けます  
     ![*](../../images/block_notify/3-1-7.jpg)
 
 
 === "Telegram"
-    * 1.Telegramの検索欄で「@botFather」を検索して認証マーク付きのアカウントをクリックする  
+    * 1.Telegramの検索欄で「@botFather」を検索して認証マーク付きのアカウントをクリック  
     ![*](../../images/block_notify/4-1-1.jpg)
 
-    * 2.「START」をクリックする  
+    * 2.「START」をクリック  
     ![*](../../images/block_notify/4-1-2.jpg)
 
-    * 3.「/newbot」コマンドを入力する  
+    * 3.「/newbot」コマンドを入力  
     ![*](../../images/block_notify/4-1-3.jpg)
 
-    * 4.任意のbot名を入力する 例）「btbf_bot」最後は必ず`_bot`で終わるようにする  
+    * 4.任意のbot名を入力する 例）「btbf_bot」最後は必ず`_bot`で終わるようにします  
     ![*](../../images/block_notify/4-1-4.jpg)
 
-    * 5.緑で隠した部分のAPIトークンをメモ帳に控える  
+    * 5.緑で隠した部分のAPIトークンをメモ帳に控えます  
     ![*](../../images/block_notify/4-1-4.jpg)
 
-    * 6.赤枠で囲ったbotチャンネルに参加する  
+    * 6.赤枠で囲ったbotチャンネルに参加  
     ![*](../../images/block_notify/4-1-4-1.jpg)
 
-    * 7.検索欄で「@RawDataBot」を検索してクリックする  
+    * 7.検索欄で「@RawDataBot」を検索してクリック  
     ![*](../../images/block_notify/4-1-5.jpg)
 
-    * 8.「START」をクリックする  
+    * 8.「START」をクリック  
     ![*](../../images/block_notify/4-1-6.jpg)
 
-    * 9.「Chat id」をメモ帳に控える  
+    * 9.「Chat id」をメモ帳に控えます  
     ![*](../../images/block_notify/4-1-7.jpg)
 
 === "Slack"
-    * 1.Slackを起動し、通知用のワークスペースとチャンネルを設定する
+    * 1.Slackを起動し、通知用のワークスペースとチャンネルの設定
 
-    * 2.[Incoming Webhook](https://my.slack.com/services/new/incoming-webhook/){target="_blank" rel="noopener"}の設定ページへアクセスする
+    * 2.[Incoming Webhook](https://my.slack.com/services/new/incoming-webhook/){target="_blank" rel="noopener"}の設定ページへアクセス
 
-    * 3.通知したいワークスペースとチャンネルを選択する  
+    * 3.通知したいワークスペースとチャンネルを選択  
     ![*](../../images/block_notify/5-1-1.jpg)
 
-    * 4.「Webhook URL」をメモ帳に控える  
+    * 4.「Webhook URL」をメモ帳に控えます  
     ![*](../../images/block_notify/5-1-2.jpg)
 
-    * 5.ページ下部の「設定を保存する」をクリックする  
+    * 5.ページ下部の「設定を保存する」をクリック  
     ![*](../../images/block_notify/5-1-3.jpg)
 
 ## **3. 通知プログラムの設定**
 
-**設定ファイルをSJG用に書き換える**
+**設定ファイルをSJG用にします**
 ```
-cd block-notify
+cd $NODE_HOME/scripts/block-notify
 sed -i config.ini \
     -e 's!/opt/cardano/cnode!'${NODE_HOME}'!' \
     -e 's!files/!'${NODE_CONFIG}-'!' \
@@ -280,26 +281,26 @@ nano config.ini
 !!! hint "設定ファイル内容詳細"
     | 項目      | 値      | 使用用途                          |
     | ----------- |---------| ------------------------------------ |
-    | `pool_ticker`      | ex.) SJG | プールティッカー名を入力する  |
-    | `notify_language` | 英語:`en`<br>日本語:`ja`| 通知言語を入力する |
-    | `notify_timezone`   | Asia/Tokyo<br>[タイムゾーン一覧](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568){target="_blank" rel="noopener"} | お住いの[タイムゾーン](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568){target="_blank" rel="noopener"}を指定する |
-    | `notify_platform`   | `Line`<br>`Discord`<br>`Slack`<br>`Telegram` | 通知先プラットフォームを指定する<br> (複数指定は無効) |
-    | `notify_level`   |全て:`All`<br>Confirm以外:`ExceptCofirm`<br>Missのみ:`OnlyMissed`  | 通知基準を設定する |
+    | `pool_ticker`      | ex.) SJG | プールティッカー名を入力  |
+    | `notify_language` | 英語:`en`<br>日本語:`ja`| 通知言語を入力 |
+    | `notify_timezone`   | Asia/Tokyo<br>[タイムゾーン一覧](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568){target="_blank" rel="noopener"} | お住いの[タイムゾーン](https://gist.github.com/heyalexej/8bf688fd67d7199be4a1682b3eec7568){target="_blank" rel="noopener"}を指定 |
+    | `notify_platform`   | `Line`<br>`Discord`<br>`Slack`<br>`Telegram` | 通知先プラットフォームを指定<br> (複数指定は無効) |
+    | `notify_level`   |全て:`All`<br>Confirm以外:`ExceptConfirm`<br>Missのみ:`OnlyMissed`  | 通知基準を設定 |
     | `nextepoch_leader_date`   |概要のみ:`SummaryOnly`<br>概要と日付:`SummaryDate` | 次エポックスケジュール日時の通知有無<br>次エポックスケジュール日付一覧を通知に流したくない場合は`SummaryOnly`を記載してください |
-    | `line_notify_token`     |[LINE設定](../setup/blocknotify-setup.md/#__tabbed_1_1)で発行したチャンネルアクセストークン | Line通知用のトークンを入力する |
-    | `line_user_id`     |[LINE設定](../setup/blocknotify-setup.md/#__tabbed_1_1)で発行したユーザーID | Line通知用のユーザーIDを入力する |
-    | `discord_webhook_url`   |[Discord設定の(7)](../setup/blocknotify-setup.md/#__tabbed_1_2)で発行したウェブフックURL| DiscordウェブフックURLを入力する |
-    | `slack_webhook_url`   |[Slack設定の(4)](../setup/blocknotify-setup.md/#__tabbed_1_4)で発行したWebhook URL| SlackウェブフックURLを入力する |
-    | `telegram_token`   |[Telegram設定の(5)](../setup/blocknotify-setup.md/#__tabbed_1_3)で発行したAPIトークン | Telegram APIトークンを入力する |
-    | `telegram_id`   |[Telegram設定の(9)](../setup/blocknotify-setup.md/#__tabbed_1_3)で表示されたChat id| Telegram ChatIDを入力する |
-    | `node_home` |ex.)`/home/usr/cnode`| node_homeディレクトリパスを入力する |
-    | `guild_db_dir` |ex.)`%(node_home)s/guild-db/blocklog/`| guild-dbのパスを入力する<br>`%(node_home)s`は変数のため変更しないでください |
-    | `shelley_genesis` |ex.)`%(node_home)s/files/shelley-genesis.json`| shelley_genesisのファイルパスを入力する<br>`%(node_home)s`は変数のため変更しないでください |
-    | `byron_genesis` |ex.)`%(node_home)s/files/byron-genesis.json`| byron_genesisのファイルパスを入力する<br>`%(node_home)s`は変数のため変更しないでください |
+    | `line_notify_token`     |[LINE設定](../setup/blocknotify-setup.md/#__tabbed_1_1)で発行したチャンネルアクセストークン | Line通知用のトークンを入力 |
+    | `line_user_id`     |[LINE設定](../setup/blocknotify-setup.md/#__tabbed_1_1)で発行したユーザーID | Line通知用のユーザーIDを入力 |
+    | `discord_webhook_url`   |[Discord設定の(7)](../setup/blocknotify-setup.md/#__tabbed_1_2)で発行したウェブフックURL| DiscordウェブフックURLを入力 |
+    | `slack_webhook_url`   |[Slack設定の(4)](../setup/blocknotify-setup.md/#__tabbed_1_4)で発行したWebhook URL| SlackウェブフックURLを入力 |
+    | `telegram_token`   |[Telegram設定の(5)](../setup/blocknotify-setup.md/#__tabbed_1_3)で発行したAPIトークン | Telegram APIトークンを入力 |
+    | `telegram_id`   |[Telegram設定の(9)](../setup/blocknotify-setup.md/#__tabbed_1_3)で表示されたChat id| Telegram ChatIDを入力 |
+    | `node_home` |ex.)`/home/usr/cnode`| node_homeディレクトリパスを入力 |
+    | `guild_db_dir` |ex.)`%(node_home)s/guild-db/blocklog/`| guild-dbのパスを入力<br>`%(node_home)s`は変数のため変更しないでください |
+    | `shelley_genesis` |ex.)`%(node_home)s/files/shelley-genesis.json`| shelley_genesisのファイルパスを入力<br>`%(node_home)s`は変数のため変更しないでください |
+    | `byron_genesis` |ex.)`%(node_home)s/files/byron-genesis.json`| byron_genesisのファイルパスを入力<br>`%(node_home)s`は変数のため変更しないでください |
 
 
 
-**サービスファイルを設定する**
+**サービスファイルの設定**
 === "ブロックプロデューサーノード"
     ```bash title="このボックスはすべてコピーして実行してください"
     cat > $NODE_HOME/service/cnode-blocknotify.service << EOF 
@@ -314,7 +315,7 @@ nano config.ini
     Type=simple
     User=$(whoami)
     WorkingDirectory=${NODE_HOME}/scripts/block-notify
-    ExecStart=/bin/bash -c 'cd ${NODE_HOME}/scripts/block-notify/ && python3 -u block_notify.py'
+    ExecStart=/home/${USER}/notify-venv/bin/python -u ${NODE_HOME}/scripts/block-notify/block_notify.py
     Restart=on-failure
     StandardOutput=syslog
     StandardError=syslog
@@ -325,35 +326,39 @@ nano config.ini
     EOF
     ```
 
-    ```
+    ```bash
     sudo cp $NODE_HOME/service/cnode-blocknotify.service /etc/systemd/system/cnode-blocknotify.service
     ```
 
-    ```bash title="Ubuntu22.04の場合は１行づつ実行してください"
+    ```bash
     sudo chmod 644 /etc/systemd/system/cnode-blocknotify.service
+    ```
+    ```bash
     sudo systemctl daemon-reload
-    sudo systemctl enable cnode-blocknotify.service
     ```
-    SPO BlockNotifyを起動する
-    ```
-    sudo systemctl start cnode-blocknotify.service
+    ```bash
+    sudo systemctl enable --now cnode-blocknotify.service
     ```
 
-    環境変数にログ確認用エイリアスを追加する
-    ```
+    環境変数にログ確認用エイリアスを追加
+  
+    ```bash
     echo alias blocknotify='"journalctl --no-hostname -u cnode-blocknotify -f"' >> $HOME/.bashrc
     ```
+
     環境変数再読み込み
-    ```
+  
+    ```bash
     source $HOME/.bashrc
     ```
 
     起動確認
-    ```
+  
+    ```bash
     blocknotify
     ```
     以下の表示なら正常です。
-    > [xxx] ブロック生成ステータス通知を起動しました 
+    > [***] SPO Block Notify(v2.*.*)を起動しました
 
 
 !!! danger ""
@@ -403,12 +408,12 @@ blocknotify
 
 ## **4. アップデート手順**
 
-SPO BlockNotifyを停止する
+SPO BlockNotifyの停止
 ```
 sudo systemctl stop cnode-blocknotify.service
 ```
 
-アップデートファイルをダウンロードする
+アップデートファイルのダウンロード
 ```bash
 bn_release="$(curl -s https://api.github.com/repos/btbf/block-notify/releases/latest | jq -r '.tag_name')"
 wget https://github.com/btbf/block-notify/archive/refs/tags/${bn_release}.tar.gz -P $NODE_HOME/scripts
@@ -435,24 +440,35 @@ rm -rf block-notify-${bn_release} ${bn_release}.tar.gz
     上記の点を踏まえ、他の通知システム(Discord/Telegram/Slack)へ移行するか新しい[LINE通知の設定](../setup/blocknotify-setup.md/#__tabbed_1_1)を実施してください。（流れで11-3まで実施しないでください）  
     LINE公式アカウント発行後、`config.ini`の`line_notify_token`と`line_user_id`を発行した値に書き換えてください。
 
-SPO BlockNotifyを起動する
+SPO BlockNotifyの起動
 ```
 sudo systemctl start cnode-blocknotify.service
 ```
 
-バージョン確認
+バージョンの確認
 ```
-python3 $NODE_HOME/scripts/block-notify/block_notify.py version
+$HOME/notify-venv/bin/python $NODE_HOME/scripts/block-notify/block_notify.py version
 ```
 
 ## **5. アンインストール手順**
 
-```
+```bash
 sudo systemctl stop cnode-blocknotify.service
 ```
-```
+```bash
 sudo systemctl disable cnode-blocknotify.service
+```
+```bash
+sudo systemctl daemon-reload
+```
+```bash
 sudo rm /etc/systemd/system/cnode-blocknotify.service
+```
+```bash
+sudo rm -rf $NODE_HOME/scripts/block-notify
+```
+```bash
+sudo rm -rf $HOME/notify-venv
 ```
 
 ---

@@ -20,7 +20,7 @@
 
 システムのアップデート
 ```bash
-sudo apt update -y && sudo apt upgrade -y
+sudo apt update && sudo apt upgrade -y
 ```
 
 作業ディレクトリの作成
@@ -131,7 +131,7 @@ sudo systemctl enable mithril-signer
 
 システムのアップデート
 ```bash
-sudo apt update -y && sudo apt upgrade -y
+sudo apt update && sudo apt upgrade -y
 ```
 
 `squid`のインストール
@@ -438,7 +438,7 @@ sed -i $NODE_HOME/Mithril-Signer-on-SJG-Grafana-dashboard.json \
     BPのcnodeディレクトリに取得した`Mithril-Signer-on-SJG-Grafana-dashboard.json`をローカルのホストマシンにダウンロードします。
     ```mermaid
     graph LR
-        A[BP] -->|**Mithril-Signer-on-SJG-Grafana-dashboard.json**| B[ローカルのホストマシン];
+        A[BP] -->|Mithril-Signer-on-SJG-Grafana-dashboard.json| B[ローカルのホストマシン];
     ``` 
 
 Grafanaの左メニューから「`Dashboards`」を開き、「`New`」→「`Import`」→「`Upload dashboard JSON file`」を選択し、ダウンロードした `Mithril-Signer-on-SJG-Grafana-dashboard.json` を指定します。  
@@ -461,7 +461,7 @@ Grafanaの左メニューから「`Dashboards`」を開き、「`New`」→「`I
 
 システムのアップデート
 ```bash
-sudo apt update -y && sudo apt upgrade -y
+sudo apt update && sudo apt upgrade -y
 ```
 
 `mithril-signer`の停止
@@ -535,7 +535,7 @@ sudo systemctl disable squid
 
 システムアップデート
 ```bash
-sudo apt update -y && sudo apt upgrade -y
+sudo apt update && sudo apt upgrade -y
 ```
 
 `squid7.4`のインストール
