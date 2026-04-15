@@ -99,8 +99,8 @@ mkdir -p ~/.ssh
     [事前準備](../setup/index.md/#_2)で生成した`authorized_keys`を対象サーバーの`$HOME/.ssh`ディレクトリにコピーします。
     ```mermaid
     graph LR
-        A[ローカルのホストマシン] -->|**authorized_keys**| B[対象サーバー];
-    ``` 
+        A[ローカルのホストマシン] -->|authorized_keys| B[対象サーバー];
+    ```
 
 パーミッションを設定します。
 ```bash
@@ -141,9 +141,36 @@ kbdinteractiveauthentication no
 gatewayports no
 ```
 
+`ssh.socket`の設定  
+```bash
+sudo systemctl status ssh.socket
+```
+> active (running)になっていることを確認します。
+
+??? tip "activeではない場合"
+    ```bash
+    sudo systemctl enable --now ssh.socket
+    ```
+    ```bash
+    sudo systemctl status ssh.socket
+    ```
+    > active (running)になっていることを確認します。
+
 問題がなければ、SSHサービスを再起動します。
 ```bash
-sudo systemctl restart ssh
+sudo systemctl daemon-reload
+```
+```bash
+sudo systemctl restart ssh.socket
+```
+
+確認
+```bash
+sudo ss -tlnp | grep ssh
+```
+``` { .yaml .no-copy }
+LISTEN 0 4096 0.0.0.0:<設定したSSH Port>  
+LISTEN 0 4096 [::]:<設定したSSH Port>  
 ```
 
 !!! info "ターミナルソフト設定について"
@@ -178,10 +205,8 @@ sudo ufw allow ${SSH_PORT}/tcp
 
 ファイアウォールを有効化します。
 ```bash
-sudo ufw enable
+sudo ufw --force enable
 ```
-以下のメッセージが表示されたら `y` を入力して `Enter`
-> Command may disrupt existing ssh connections. Proceed with operation (y|n)? y
 
 ステータスを確認します。
 ```bash
@@ -197,7 +222,7 @@ sudo ufw status
 
 パッケージリストを更新し、依存関係を含めた包括的なアップグレードを実行します。
 ```bash
-sudo apt update -y && sudo apt full-upgrade -y
+sudo apt update && sudo apt full-upgrade -y
 ```
 
 不要なパッケージを削除します。
@@ -212,7 +237,7 @@ sudo apt autoclean -y
 
 セキュリティ更新の自動適用を有効にします。
 ```bash
-sudo apt install unattended-upgrades
+sudo apt install unattended-upgrades -y
 ```
 ```bash
 sudo dpkg-reconfigure --priority=low unattended-upgrades
@@ -260,7 +285,6 @@ tail -n 1 /etc/fstab
 ```bash
 sudo apt install nano fail2ban -y
 ```
-> `nano`エディタも未インストールなのでインストールしておきます。
 
 SSHログインを監視する設定ファイルを開きます。
 ```bash
@@ -268,7 +292,7 @@ sudo nano /etc/fail2ban/jail.local
 ```
 
 ファイルの最後に次の行を追加し保存します。
-> コマンド中の (SSHポートを入力してください) については1-3で設定したSSHポートを入力してください。(**)は不要です。
+> コマンド中の (SSHポートを入力してください) については[3. SSH設定変更](../setup/ubuntu-setup.md/#3-ssh)で設定したSSHポートを入力してください。(**)は不要です。
 
 ```bash
 [sshd]
@@ -276,7 +300,10 @@ enabled = true
 port = (SSHポートを入力してください)
 filter = sshd
 logpath = /var/log/auth.log
-maxretry = 6
+maxretry = 3
+bantime = 24h
+findtime = 10m
+backend = systemd
 ```
 
 自動起動を有効化し、即時起動します。
@@ -295,6 +322,11 @@ sudo systemctl status fail2ban --no-pager
 chronyをインストールします。
 ```bash
 sudo apt install chrony -y
+```
+
+バックアップします。
+```bash
+sudo mv /etc/chrony/chrony.conf /etc/chrony/chrony-bk.conf
 ```
 
 `/etc/chrony/chrony.conf`を更新します。
@@ -353,7 +385,7 @@ sudo ufw allow 123/udp
 
 設定を有効にするには、Chronyを再起動します。
 ```bash
-sudo systemctl reload-or-restart chronyd.service
+sudo systemctl reload-or-restart chrony.service
 ```
 
 !!! tip "ヘルプコマンド"
@@ -367,6 +399,129 @@ sudo systemctl reload-or-restart chronyd.service
     chronyc tracking
     ```
 
+## **10. sysctlの設定**
+
+=== "リレー"
+    バックアップを取得しておきます。
+    ```bash
+    sysctl \
+      net.ipv4.conf.all.rp_filter \
+      net.ipv4.conf.default.rp_filter \
+      net.ipv4.icmp_echo_ignore_broadcasts \
+      net.ipv4.conf.all.accept_source_route \
+      net.ipv4.conf.default.accept_source_route \
+      net.ipv4.conf.all.accept_redirects \
+      net.ipv4.conf.default.accept_redirects \
+      net.ipv4.conf.all.secure_redirects \
+      net.ipv4.conf.default.secure_redirects \
+      net.ipv4.conf.all.log_martians \
+      net.ipv4.tcp_syncookies \
+      net.core.somaxconn \
+      net.ipv4.tcp_max_syn_backlog \
+      net.core.netdev_max_backlog \
+      net.ipv4.ip_local_port_range \
+      > "$HOME/sysctl-before-cardano-relay-$(date +%F).txt"
+    ```
+    ```bash
+    sudo tee /etc/sysctl.d/99-cardano-relay.conf > /dev/null << 'EOF'
+
+    # ------------------------------
+    # Security hardening
+    # ------------------------------
+
+    # Ignore ICMP broadcast
+    net.ipv4.icmp_echo_ignore_broadcasts = 1
+
+    # Disable source routing
+    net.ipv4.conf.all.accept_source_route = 0
+    net.ipv4.conf.default.accept_source_route = 0
+
+    # Disable ICMP redirects
+    net.ipv4.conf.all.accept_redirects = 0
+    net.ipv4.conf.default.accept_redirects = 0
+    net.ipv4.conf.all.secure_redirects = 0
+    net.ipv4.conf.default.secure_redirects = 0
+
+    # Log suspicious packets
+    net.ipv4.conf.all.log_martians = 1
+
+    # SYN flood protection
+    net.ipv4.tcp_syncookies = 1
+
+    # ------------------------------
+    # Relay network performance
+    # ------------------------------
+
+    # Increase TCP listen queue
+    net.core.somaxconn = 4096
+
+    # Increase SYN backlog
+    net.ipv4.tcp_max_syn_backlog = 4096
+
+    # Improve network buffer
+    net.core.netdev_max_backlog = 5000
+
+    # Increase ephemeral port range
+    net.ipv4.ip_local_port_range = 10000 65535
+
+    EOF
+    ```
+
+=== "BP"
+    バックアップを取得しておきます。
+    ```bash
+    sysctl \
+      net.ipv4.conf.all.rp_filter \
+      net.ipv4.conf.default.rp_filter \
+      net.ipv4.icmp_echo_ignore_broadcasts \
+      net.ipv4.conf.all.accept_source_route \
+      net.ipv4.conf.default.accept_source_route \
+      net.ipv4.conf.all.accept_redirects \
+      net.ipv4.conf.default.accept_redirects \
+      net.ipv4.conf.all.secure_redirects \
+      net.ipv4.conf.default.secure_redirects \
+      net.ipv4.conf.all.log_martians \
+      net.ipv4.tcp_syncookies \
+      > "$HOME/sysctl-before-cardano-bp-$(date +%F).txt"
+    ```
+    ```bash
+    sudo tee /etc/sysctl.d/99-cardano-bp.conf > /dev/null << 'EOF'
+
+    # ------------------------------
+    # Security hardening
+    # ------------------------------
+
+    # Ignore ICMP broadcast
+    net.ipv4.icmp_echo_ignore_broadcasts = 1
+
+    # Disable source routing
+    net.ipv4.conf.all.accept_source_route = 0
+    net.ipv4.conf.default.accept_source_route = 0
+
+    # Disable ICMP redirects
+    net.ipv4.conf.all.accept_redirects = 0
+    net.ipv4.conf.default.accept_redirects = 0
+    net.ipv4.conf.all.secure_redirects = 0
+    net.ipv4.conf.default.secure_redirects = 0
+
+    # Log suspicious packets
+    net.ipv4.conf.all.log_martians = 1
+
+    # SYN flood protection
+    net.ipv4.tcp_syncookies = 1
+
+    EOF
+    ```
+
+設定反映
+```bash
+sudo sysctl --system
+```
+
+!!! tip "既存設定の確認"
+    ```bash
+    cat $HOME/sysctl-before-cardano-*.txt
+    ```
 
 ## **補足：SSH2段階認証（任意作業・上級者向け）**
 
@@ -378,11 +533,9 @@ sudo systemctl reload-or-restart chronyd.service
 
 ??? info "`Google Authenticator`を用いたSSH2段階設定（任意）"
     システムを更新して`libpam-google-authenticator`をインストールします。
+  
     ```bash
-    sudo apt update -y
-    ```
-    ```bash
-    sudo apt install libpam-google-authenticator -y
+    sudo apt update && sudo apt install libpam-google-authenticator -y
     ```
 
     **google-authenticator**コマンドを実行します。
@@ -515,7 +668,7 @@ sudo systemctl reload-or-restart chronyd.service
     sudo sshd -t
     ```
     ```bash
-    sudo systemctl reload ssh
+    sudo systemctl restart ssh.socket
     ```
 
     グローバル設定の実効値を確認します。
@@ -551,7 +704,7 @@ sudo systemctl reload-or-restart chronyd.service
     sudo sshd -t
     ```
     ```bash
-    sudo systemctl reload ssh
+    sudo systemctl restart ssh.socket
     ```
 
     確認します。
@@ -559,8 +712,6 @@ sudo systemctl reload-or-restart chronyd.service
     sudo sshd -T | egrep -i 'authenticationmethods|kbdinteractiveauthentication'
     ```
     ``` { .yaml .no-copy } 
-    usepam yes
-    passwordauthentication no
     kbdinteractiveauthentication yes
     authenticationmethods any
     ```
@@ -587,16 +738,16 @@ sudo systemctl reload-or-restart chronyd.service
     sudo sshd -t
     ```
     ```bash
-    sudo systemctl reload ssh
+    sudo systemctl restart ssh.socket
     ```
     > 別ターミナルから新規 SSH 接続し、OTP が要求されないことを確認
 
     完全クリーンアップします。
     ```bash
-    sudo apt remove libpam-google-authenticator
+    sudo apt remove libpam-google-authenticator -y
     ```
     ```bash
-    sudo apt autoremove
+    sudo apt autoremove -y
     ```
     ```bash
     rm -f ~/.google_authenticator

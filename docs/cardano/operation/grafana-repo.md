@@ -3,7 +3,7 @@
 !!! note "概要"
 
     * このマニュアルでは旧式のGrafana更新用APTリポジトリを更新します。
-    * Grafanaがインストールされているサーバー(Relay1)のみ対象です。
+    * Grafana搭載サーバーのみ対象です。
 
     * <font color=red>設定済みのAPTリポジトリを確認する</font>
     ```
@@ -48,7 +48,7 @@ echo "deb [signed-by=/usr/share/keyrings/grafana.key] https://apt.grafana.com st
 
 !!! note "Ubuntu22.04の場合はこちらも実行"
     ```
-    sudo apt update -y && sudo apt install -y needrestart
+    sudo apt update && sudo apt install -y needrestart
     ```
     ```
     echo "\$nrconf{restart} = 'a';" | sudo tee /etc/needrestart/conf.d/50local.conf
@@ -69,7 +69,7 @@ sudo wget -q -O /usr/share/keyrings/grafana.key https://apt.grafana.com/gpg.key
 
 システムアップデート
 ```
-sudo apt update -y && sudo apt upgrade -y
+sudo apt update && sudo apt upgrade -y
 ```
 
 Grafanaバージョン確認

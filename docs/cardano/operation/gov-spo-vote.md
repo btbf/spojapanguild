@@ -14,8 +14,8 @@
 
 
 === "BP/エアギャップ"
-    初めて作業する場合はガバナンス作業用ディレクトリを作成する
-    ```
+    初めて作業する場合はガバナンス作業用ディレクトリを作成
+    ```bash
     mkdir -p $NODE_HOME/governance
     ```
 
@@ -26,37 +26,37 @@
     ガバナンスアクショントランザクションID:`59fd353253eb177e2104e8f23ea4c63e3d32ef95c7865d03e90d3884424dc1db`に対して
     `No`で投票する場合
 
-エアギャップで投票ファイルを作成する
+エアギャップで投票ファイルを作成
 === "エアギャップ"
 
     1. `gov_id`変数に投票するガバナンスアクションのトランザクションIDを指定する(Bech32IDは指定できない) 
     2. 投票フラグは次の3つのいずれかを指定 `--yes` `--no` `--abstain`  
     
 
-    ```
+    ```bash
     gov_id="59fd353253eb177e2104e8f23ea4c63e3d32ef95c7865d03e90d3884424dc1db"
     ```
 
-    ```
+    ```bash
     chmod u+rwx $HOME/cold-keys
     cd $NODE_HOME
     cardano-cli latest governance vote create \
-    --no \
-    --governance-action-tx-id $gov_id \
-    --governance-action-index "0" \
-    --cold-verification-key-file $HOME/cold-keys/node.vkey \
-    --out-file $NODE_HOME/governance/vote.file
+      --no \
+      --governance-action-tx-id $gov_id \
+      --governance-action-index "0" \
+      --cold-verification-key-file $HOME/cold-keys/node.vkey \
+      --out-file $NODE_HOME/governance/vote.file
     ```
 
 !!! important "ファイル転送"
-    エアギャップの**vote.file**をBPの~/cnode/governance/ディレクトリにコピーします。
+    エアギャップの`vote.file`をBPの`~/cnode/governance/`ディレクトリにコピーします。
     ``` mermaid
     graph LR
         A[エアギャップ] -->|vote.file| B[BP];
     ```
 
 **ハッシュ値確認**
-エアギャップとBPで`vote.file`ファイルハッシュを比較する  
+エアギャップとBPで`vote.file`ファイルハッシュを比較します。  
 <font color="red">必ずハッシュ値が一致していることを確認してください</font>
 
 === "エアギャップ"
@@ -73,22 +73,22 @@ sha256sum $NODE_HOME/governance/vote.file
 ## **2. トランザクションファイル作成**
 === "BP"
 
-    payment.addrの残高を取得する
-    ```
+    payment.addrの残高を取得
+    ```bash
     cd $NODE_HOME
     cardano-cli latest query utxo \
-        --address $(cat payment.addr) \
-        $NODE_NETWORK \
-        --output-text \
-        --out-file fullUtxo.out
+      --address $(cat payment.addr) \
+      $NODE_NETWORK \
+      --output-text \
+      --out-file fullUtxo.out
 
     tail -n +3 fullUtxo.out | sort -k3 -nr | sed -e '/lovelace + [0-9]/d' > balance.out
 
     cat balance.out
     ```
 
-    未使用UTXOを取得する
-    ```
+    未使用UTXOを取得
+    ```bash
     tx_in=""
     total_balance=0
     while read -r utxo; do
@@ -105,26 +105,26 @@ sha256sum $NODE_HOME/governance/vote.file
     echo Number of UTXOs: ${txcnt}
     ```
 
-    ```
+    ```bash
     cd $NODE_HOME
     cardano-cli latest transaction build \
-    $NODE_NETWORK \
-    ${tx_in} \
-    --change-address $(cat $NODE_HOME/payment.addr) \
-    --vote-file $NODE_HOME/governance/vote.file \
-    --witness-override 2 \
-    --out-file $NODE_HOME/governance/vote-tx.raw
+      $NODE_NETWORK \
+      ${tx_in} \
+      --change-address $(cat $NODE_HOME/payment.addr) \
+      --vote-file $NODE_HOME/governance/vote.file \
+      --witness-override 2 \
+      --out-file $NODE_HOME/governance/vote-tx.raw
     ```
 
 !!! important "ファイル転送"
-    BPの**vote-tx.raw**をエアギャップマシンの~/cnode/governance/ディレクトリにコピーします。
+    BPの`vote-tx.raw`をエアギャップマシンの`~/cnode/governance/`ディレクトリにコピーします。
     ``` mermaid
     graph LR
         A[BP] -->|vote-tx.raw| B[エアギャップ];
     ```
 
 **ハッシュ値確認**
-BPとエアギャップで`vote-tx.raw`ファイルハッシュを比較する  
+BPとエアギャップで`vote-tx.raw`ファイルハッシュを比較します。  
 <font color="red">必ずハッシュ値が一致していることを確認してください</font>
 
 === "BP"
@@ -139,25 +139,25 @@ sha256sum $NODE_HOME/governance/vote-tx.raw
 
 ## **3. 署名ファイル作成**
 === "エアギャップ"
-    ```
+    ```bash
     cardano-cli latest transaction sign \
-    --tx-body-file $NODE_HOME/governance/vote-tx.raw \
-    --signing-key-file $HOME/cold-keys/node.skey \
-    --signing-key-file $NODE_HOME/payment.skey \
-    --out-file $NODE_HOME/governance/vote-tx.signed
+      --tx-body-file $NODE_HOME/governance/vote-tx.raw \
+      --signing-key-file $HOME/cold-keys/node.skey \
+      --signing-key-file $NODE_HOME/payment.skey \
+      --out-file $NODE_HOME/governance/vote-tx.signed
 
     chmod a-rwx $HOME/cold-keys
     ```
 
 !!! important "ファイル転送"
-    エアギャップの**vote-tx.signed**をBPの~/cnode/governance/ディレクトリにコピーします。
+    エアギャップの`vote-tx.signed`をBPの`~/cnode/governance/`ディレクトリにコピーします。
     ``` mermaid
     graph LR
         A[エアギャップ] -->|vote-tx.signed| B[BP];
     ```
 
 **ハッシュ値確認**
-エアギャップとBPで`vote-tx.signed`ファイルハッシュを比較する  
+エアギャップとBPで`vote-tx.signed`ファイルハッシュを比較します。  
 <font color="red">必ずハッシュ値が一致していることを確認してください</font>
 
 === "エアギャップ"
@@ -172,11 +172,11 @@ sha256sum $NODE_HOME/governance/vote-tx.signed
 
 ## **4. 投票トランザクション送信**
 === "BP"
-    ```
+    ```bash
     cd $NODE_HOME
     cardano-cli latest transaction submit \
-    --tx-file $NODE_HOME/governance/vote-tx.signed \
-    $NODE_NETWORK
+      --tx-file $NODE_HOME/governance/vote-tx.signed \
+      $NODE_NETWORK
     ```
 
 ---

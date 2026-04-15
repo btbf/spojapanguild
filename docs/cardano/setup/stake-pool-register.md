@@ -44,10 +44,10 @@
         
         ```bash
         {
-        "name": "MyPoolName",
-        "description": "My pool description",
-        "ticker": "MPN",
-        "homepage": "https://myadapoolnamerocks.com"
+          "name": "MyPoolName",
+          "description": "My pool description",
+          "ticker": "MPN",
+          "homepage": "https://myadapoolnamerocks.com"
         }
         ```
 
@@ -70,7 +70,7 @@
         8.GitPages設定
         
         * 左メニューから**Pages**をクリックします。
-        * Branchのプルダウンから**main** **/root**を選択する
+        * Branchのプルダウンから**main** **/root**を選択
         * **Save**をクリックします
 
         ![](../../images/github-pages/github-page5.png)
@@ -93,7 +93,7 @@
         <font color=red>このURLの文字列が64文字以内であることを確認してください</font>
 
 
-        11．**ブロックプロデューサーノード**でjsonファイルをダウンロードし、ハッシュ値を計算する。  
+        11．**ブロックプロデューサーノード**でjsonファイルをダウンロードし、ハッシュ値を計算。  
 
         !!! danger "URLを書き換えてから実行して下さい"
             10で作成したメタデータURLを用いて下さい。
@@ -113,27 +113,28 @@
             **ticker**名の長さは3～5文字にする必要があります。文字はA-Zと0-9のみで構成する必要があります。  
             **description**の長さは255文字以内(255byte)となります。（ひらがな、漢字、カタカナは1文字2byte）
 
-        メタデータファイルを作成する。
+        メタデータファイルの作成。
         === "ブロックプロデューサーノード"
 
             ```bash
             cd $NODE_HOME
             cat > poolMetaData.json << EOF
             {
-            "name": "MyPoolName",
-            "description": "My pool description",
-            "ticker": "MPN",
-            "homepage": "https://myadapoolnamerocks.com"
+              "name": "MyPoolName",
+              "description": "My pool description",
+              "ticker": "MPN",
+              "homepage": "https://myadapoolnamerocks.com"
             }
             EOF
             ```
-        
+
+
         !!! danger "注意"
             **poolMetaData.json**をあなたの公開用WEBサーバへアップロードしてください。 
 
-メタデータJSONをチェックする
+メタデータJSONの確認
 ```
-cat $NODE_HOME/poolMetaData.json | jq .
+jq . $NODE_HOME/poolMetaData.json
 ```
 
 !!! error "戻り値にエラーが表示される場合"
@@ -158,7 +159,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
         A[BP] -->| vrf.vkey / poolMetaDataHash.txt | B[エアギャップ];
     ``` 
 
-** BPとエアギャップで`vrf.vkey`ファイルハッシュを比較する **
+**BPとエアギャップで`vrf.vkey`ファイルハッシュを比較**
 
 === "ブロックプロデューサーノード"
     ```bash
@@ -166,8 +167,8 @@ cat $NODE_HOME/poolMetaData.json | jq .
     sha256sum vrf.vkey
     ```
 
-!!! hint ""
-    BPとエアギャップで表示された戻り値を比較して、ハッシュ値が一致していればOK  
+!!! tip "ヒント"
+    BPとエアギャップで表示された戻り値を比較して、ハッシュ値が一致していれば問題ありません。  
 
 === "エアギャップマシン"
     ```bash
@@ -187,7 +188,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
     minPoolCost(最低固定費)は 170000000 lovelace \(170 ADA\)です。
 
 
- **エアギャップマシンでpool.certを作成する**
+ **エアギャップマシンでpool.certを作成**
 
 !!! note annotate "pool.cert作成時の注意点▼"
     
@@ -242,7 +243,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "エアギャップマシン(リレー2台構成)"
     下記のスクリプトは例です。ご自身のプール運用設定値に変更してから実行してください。  
     
-    !!! danger "値を変更する"
+    !!! danger "値の変更"
         `--pool-pledge` 誓約数  
         `--pool-cost` 固定手数料  
         `--pool-margin` 変動手数料  
@@ -289,7 +290,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 
 ## **3. プール登録トランザクションの送信**
 
-**最新のスロット番号を取得する必要があります**
+**最新のスロット番号の取得**
 
 === "ブロックプロデューサーノード"
     ```bash
@@ -465,7 +466,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "ブロックプロデューサーノード"
     ```
     cd $NODE_HOME
-    cat pool.id-bech32
+    cat pool.id-bech32;echo
     ```
 
 表示されたPoolIDであなたのステークプールがブロックチェーンに登録されているか、次のサイトで確認することが出来ます。  

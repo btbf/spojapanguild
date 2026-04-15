@@ -41,7 +41,7 @@
     BPの`$HOME/git`にある`cardano-signer`をエアギャップマシンの`$HOME/git`にコピーします。
     ``` mermaid
     graph LR
-        A[BP] -->|**cardano-signer**| B[エアギャップ];
+        A[BP] -->|cardano-signer| B[エアギャップ];
     ```
 
 **システムフォルダへコピー**
@@ -186,7 +186,7 @@ UTXOを算出します。
         BPの`$NODE_HOME`にある`wallet_balance.sh`と`params.json`をエアギャップマシンのcnodeディレクトリにコピーします。
         ``` mermaid
         graph LR
-            A[BP] -->|**wallet_balance.sh** / **params.json**| B[エアギャップ];
+            A[BP] -->|wallet_balance.sh / params.json| B[エアギャップ];
         ```
 
 エアギャップでウォレット残高を読み込みます。
@@ -261,7 +261,7 @@ UTXOを算出します。
     エアギャップの`tx.signed` をBPのcnodeディレクトリにコピーします。
     ``` mermaid
     graph LR
-        A[エアギャップ] -->|**tx.signed**| B[BP];
+        A[エアギャップ] -->|tx.signed| B[BP];
     ```
 
 署名されたトランザクションを送信します。
@@ -299,12 +299,12 @@ curl -s "https://api.koios.rest/api/v1/pool_calidus_keys?pool_id_bech32=eq.$(cat
     mkdir -p $NODE_HOME/calidus
     ```
 
-エアギャップの**myCalidusKey.skey** をブロックプロデューサーノードのcnode/calidusディレクトリにコピーします。
+エアギャップの`myCalidusKey.skey` をブロックプロデューサーノードのcnode/calidusディレクトリにコピーします。
 !!! important "ファイル転送"
     エアギャップの`myCalidusKey.skey`をBPのcnode/calidusディレクトリにコピーします。
     ``` mermaid
     graph LR
-        A[エアギャップ] -->|**myCalidusKey.skey**| B[BP];
+        A[エアギャップ] -->|myCalidusKey.skey| B[BP];
     ```
 
 ## **7. ニーモニックフレーズを使い、Eternlでウォレット作成**

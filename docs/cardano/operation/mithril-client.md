@@ -4,59 +4,60 @@
     * このマニュアルではMithril-Clientを使用したcardano-node DB同期ブートストラップを実行します。
     * ノード初回起動時のDB同期時間を約2日から約30分以内にまで短縮できます。
     * Mithrilプロトコルはまだベータバージョンのため、ご自身の責任で実施してください。
-    * この作業は [ノードセットアップ](../setup/node-setup.md)の`1. 依存関係インストール` ～ `7. gLiveViewのインストール`まで実施してから行って下さい。
+    * この作業は [1. 依存関係インストール](../setup/node-setup.md/#1) ~ [7. gLiveViewのインストール](../setup/node-setup.md/#7-gliveview)まで実施してから行って下さい。
     * スナップショットノードバージョンとサーバーノードバージョンが異なる場合、DB再構築処理が入る場合がありDB同期までに数時間かかります。
+
 
 ## **1. インストール**
 
 ### **1-1. システムアップデート**
 ノード停止
-```
+```bash
 sudo systemctl stop cardano-node
 ```
 システムアップデート
-```
-sudo apt update -y && sudo apt upgrade -y
+```bash
+sudo apt update && sudo apt upgrade -y
 ```
 
 ### **1-2. Mithirlインストール**
-```
+```bash
 cd $HOME/git
 mithril_release="$(curl -s https://api.github.com/repos/input-output-hk/mithril/releases/latest | jq -r '.tag_name')"
 wget https://github.com/input-output-hk/mithril/releases/download/${mithril_release}/mithril-${mithril_release}-linux-x64.tar.gz -O mithril.tar.gz
 ```
 
 設定
-```
+```bash
 tar zxvf mithril.tar.gz mithril-client
 sudo cp mithril-client /usr/local/bin/mithril-client
 ```
 パーミッション設定
-```
+```bash
 sudo chmod +x /usr/local/bin/mithril-client
 ```
 
 DLファイル削除
-```
+```bash
 rm mithril.tar.gz mithril-client
 ```
 
 バージョン確認
-```
+```bash
 mithril-client -V
 ```
 > Mithril Githubの[リリースノート](https://github.com/input-output-hk/mithril/releases/latest){target="_blank" rel="noopener"}内にある`mithril-client-cli`のバージョンをご確認ください。
 
 ## **2.DBブートストラップ**
 
-tmux作業ウィンドウを作成する
-```
+tmux作業ウィンドウの作成
+```bash
 tmux new -s mithril
 ```
 
-### **2-1. 変数セット**
+### **2-1. 変数代入**
 
-```
+```bash
 export NETWORK=mainnet
 export AGGREGATOR_ENDPOINT=https://aggregator.release-mainnet.api.mithril.network/aggregator
 export GENESIS_VERIFICATION_KEY=$(wget -q -O - https://raw.githubusercontent.com/input-output-hk/mithril/main/mithril-infra/configuration/release-mainnet/genesis.vkey)
@@ -64,28 +65,28 @@ export ANCILLARY_VERIFICATION_KEY=$(wget -q -O - https://raw.githubusercontent.c
 export SNAPSHOT_DIGEST=latest
 ```
 
-### **2-2.最新スナップショットDL**
+### **2-2.最新スナップショットのダウンロード**
 
-既存DBフォルダ削除
-```
+既存DBフォルダの削除
+```bash
 rm -rf $NODE_HOME/db
 ```
 
 最新スナップショットダウンロード及び解凍
-```
+```bash
 mithril-client cardano-db download --download-dir $NODE_HOME --include-ancillary latest
 ```
 > スナップショットダウンロード～解凍まで自動的に行われます。1/5～5/5が終了するまで待ちましょう
 
-tmux作業ウィンドウを終了する
-```
+tmux作業ウィンドウの終了
+```bash
 exit
 ```
 
 ??? tip "その他のmithril-clientコマンド"
 
     **Cardanoノードをブートストラップできる利用可能なスナップショットを一覧表示**
-    ```
+    ```bash
     mithril-client cardano-db snapshot list
     ```
 
@@ -111,7 +112,7 @@ exit
     ```
 
     **スナップショット詳細表示**
-    ```
+    ```bash
     mithril-client cardano-db snapshot show (Digestハッシュ値指定)
     ```
     戻り値
@@ -143,14 +144,14 @@ exit
 
 ## **3. ノード起動**
 
-```
+```bash
 sudo systemctl start cardano-node
 ```
 
 ノード同期確認
 
-gliveviewを起動し、最新ブロックと同期していることを確認する
-```
+gliveviewを起動し、最新ブロックと同期していることを確認します。
+```bash
 glive
 ```
 

@@ -86,7 +86,9 @@ chmod 400 payment.addr
 | `stake.addr`    | ステークアドレスファイル |
 
 !!! danger "注意"
-    これらのファイルは紛失しないようにご注意ください。特に.vkey/.skeyを無くした場合、プール報酬や誓約金を引き出せなくなります。複数の外部デバイスにバックアップを取ってください。
+    これらのファイルは紛失しないようにご注意ください。  
+    特に`.vkey`/`.skey`を無くした場合、プール報酬や誓約金を引き出せなくなります。  
+    複数の外部デバイスにバックアップを取ってください。
 
 
 <!--{% tab title="Mnemonic Method" %}
@@ -290,12 +292,12 @@ rm -rf $NODE_HOME/cardano-wallet-shelley-2020.7.28
 {% endtab %} -->
 
 
-## **6. 支払い用アドレスに入金する**
+## **6. 支払い用アドレスへ入金**
 
 次のステップは、あなたの支払いアドレスに送金する手順です。
 
 !!! important "ファイル転送"
-    エアギャップマシンの**payment.addr**と**stake.addr** をBPのcnodeディレクトリにコピーします。
+    エアギャップマシンの`payment.addr`と`stake.addr` をBPのcnodeディレクトリにコピーします。
     ``` mermaid
     graph LR
         A[エアギャップ] -->|payment.addr / stake.addr| B[BP];
@@ -303,8 +305,8 @@ rm -rf $NODE_HOME/cardano-wallet-shelley-2020.7.28
 
 === "メインネット"
 
-    !!! info "以下のウォレットから送金が可能です"
-        * ダイダロス / ヨロイウォレット / nami / ccvault.io
+    !!! info "Cardanoウォレット(メインネット)から送金が可能です"
+        * （例）ダイダロス / ヨロイウォレット / Eternl  
 
     支払いアドレスを表示させ、このアドレスに送金します。
 
@@ -322,7 +324,7 @@ rm -rf $NODE_HOME/cardano-wallet-shelley-2020.7.28
 
 === "テストネット"
     !!! info "テストネット用tADAの請求"
-        [テストネット用口座](https://docs.cardano.org/cardano-testnet/tools/faucet/)にあなたの支払い用アドレスをリクエストします。  
+        [テストネット用口座](https://docs.cardano.org/cardano-testnets/tools/faucet){target="_blank" rel="noopener"}にあなたの支払い用アドレスをリクエストします。  
         テストネット用口座は24時間ごとに10000tADAを提供します。
 
     次のコードを実行し。支払いアドレスを表示させます。
@@ -352,9 +354,9 @@ rm -rf $NODE_HOME/cardano-wallet-shelley-2020.7.28
     次のように表示されたら入金完了です。
 
     ```text
-                            TxHash                                 TxIx        Lovelace
-    ----------------------------------------------------------------------------------------
-    100322a39d02c2ead....                                              0        1000000000
+                            TxHash                                 TxIx        Amount
+    --------------------------------------------------------------------------------------
+    9e0c10b599606a5**********************************************     0        10000000000     lovelace + TxOutDatumNone
     ```
 
 ---
