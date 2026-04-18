@@ -1,30 +1,48 @@
 # **ノードアップデート**
 
-このガイドは ノードバージョン10.5.4に対応しています。  
+このガイドは ノードバージョン`10.6.4`に対応しています。  
 
-最終更新日：2026年2月11日  
+最終更新日：2026年4月**日  
 
 !!! info "バージョン対応表"
     * <font color=red>各依存関係もバージョンアップしてますのでよくお読みになって進めてください</font>
 
-    | Node | CLI | GHC | Cabal | CNCLI |
-    | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 10.5.4 | 10.11.0.0 | 9.6.7 | 3.12.1.0 | 6.7.0 |
+    | OS | Node | CLI | GHC | Cabal | CNCLI |
+    | :---------- | :---------- | :---------- | :---------- | :---------- | :---------- |
+    | ubuntu 24.04.* | 10.6.4 | 10.15.0.0 | 9.6.7 | 3.12.1.0 | 6.7.0 |
 
     **■アップデートパターンDB再構築有無**
 
     | バージョン | DB再構築有無 | 設定ファイル更新有無 | トポロジーファイル更新有無 |
     | :---------- | :---------- | :---------- | :---------- |
-    | 10.1.4→10.5.4 | あり | 更新あり | 更新なし |
-    | 10.4.1→10.5.4 | なし | 更新あり | 更新なし |
+    | 10.5.4 → 10.6.4 | あり | 更新あり | なし |
 
-    * <font color=red>作業前にブロック生成スケジュールを確認し余裕のある作業をお願いします</font>
-    * <font color=green>複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。</font>
+<!--
+    | OS | Node | CLI | GHC | Cabal | CNCLI |
+    | :---------- | :---------- | :---------- | :---------- | :---------- | :---------- |
+    | ubuntu 24.04.* | 10.7.0 | 10.15.1.0 | 9.6.7 | 3.12.1.0 | 6.7.0 |
+
+    **■アップデートパターンDB再構築有無**
+
+    | バージョン | DB再構築有無 | 設定ファイル更新有無 | トポロジーファイル更新有無 | Grafanaダッシュボード更新有無 |
+    | :---------- | :---------- | :---------- | :---------- | :---------- |
+    | 10.5.4 → 10.7.0 | あり | 更新あり | 更新あり | 更新あり |
+-->
+
+!!! warning "留意点"
+    作業実施前にブロック生成スケジュールを確認してください。  
+    複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。
 
 
 ??? danger "主な変更点と新機能および検証結果"
 
     !!! tip "cardano-node"
+
+        **10.6.4 <font color=red>Plutusインタープリタに対する多数の修正と改善リリース</font>**
+        
+        - ソースビルドの場合 blst v0.3.14使用必須
+        - PraosModeを有効
+
         **10.5.3 <font color=red>バグ修正緊急リリース</font>**
         
         - cardano-crypto-classライブラリ参照先修正
@@ -65,14 +83,16 @@
         UTxO-HDの概要については[こちら](https://docs.google.com/presentation/d/16gJt5k9p3H9ycwHNO6O0HGb0cYvRpbwhUsvH4kFEthM/edit?usp=sharing){target="_blank" rel="noopener"}をご参照ください
         * config.json内 `LedgerDB`新しいキーを設定
     
-    !!! tip "cardano-cli v10.11.0.0"
+    !!! tip "cardano-cli v10.15.0.0"
 
-        - JSON/YAML 出力の標準化
-        - 特定コマンドの出力フォーマット変更
+        - `TxBodyContent` 型を更新（互換性あり）
+        - `transaction build-estimate` で推定手数料を表示
+        - 不正な `timestamp` のエラーメッセージを改善
+        - `create-testnet-data` で `Byron` / `Shelley` の `k` を統一
 
     !!! 検証結果
         ■検証環境
-        Ubuntu22.04 / PreProd-Testnet / cardano-node 10.5.4 / cardano-cli 10.11.0.0 / SJG-TOOL 4.1.2  
+        Ubuntu24.04 / PreProd-Testnet / cardano-node 10.6.4 / cardano-cli 10.15.0.0 / SJG-TOOL 4.1.2  
 
         | 検証項目 | 結果 |
         | :---------- | :---------- |
@@ -90,6 +110,9 @@
 更新フローチャートは、画像をクリックすると別ウィンドウで開きます。
 <a href="../../../images/8.7.2-update.png" target=_blank><img src="../../../images/8.7.2-update.png"></a>-->
 
+## **事前準備**
+1. [Ubuntu22.04から24.04へ移行](../../operation/ubuntu24-migration/)を実施してから以降進めてください。
+
 
 ## **1. 依存環境アップデート**
 
@@ -99,17 +122,14 @@ current_node=$(cardano-node version | grep cardano-node)
 echo $current_node
 ```
 
-### **1-1. システムアップデート**
+### **1-1. システムのアップデートと依存関係のインストール**
 
 ```bash
 sudo apt update && sudo apt upgrade -y
 ```
-
-??? warning "10.3.1からアップデートする場合はこちらも実施(クリックして開く)"
-    **<font color=red>【重要】LMDBライブラリインストール</font>**
-    ```bash
-    sudo apt install liblmdb-dev -y
-    ```
+```bash
+sudo apt install bc curl htop nano needrestart protobuf-compiler rsync ufw zstd automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libncurses-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libtool autoconf liblmdb-dev liburing-dev libsnappy-dev -y
+```
 
 ### **1-2. 依存関係バージョン確認**
 
@@ -287,162 +307,6 @@ cat /usr/local/lib/pkgconfig/libblst.pc | grep Version
         > Version 0.3.14
 
 
-<!--
-prometheus-node-exporterのパスを取得する
-```bash
-cd $HOME/git
-nodeexPath=`which prometheus-node-exporter`
-```
-
-1.5.0をダウンロードする
-```bash
-wget https://github.com/prometheus/node_exporter/releases/download/v1.5.0/node_exporter-1.5.0.linux-amd64.tar.gz
-```
-
-ダウンロードファイルを解凍する
-```bash
-tar xvf node_exporter-1.5.0.linux-amd64.tar.gz
-```
-
-サービスを停止する
-```bash
-sudo systemctl stop prometheus-node-exporter.service
-```
-
-バイナリファイルをシステムフォルダへコピーする
-```bash
-cd node_exporter-1.5.0.linux-amd64
-sudo cp node_exporter $nodeexPath
-```
-
-バージョン確認
-
-```bash
-prometheus-node-exporter --version
-```
-> 戻り値1行目が`node_exporter, version 1.5.0`ならOK
-
-サービスをスタートする
-```bash
-sudo systemctl start prometheus-node-exporter.service
-```
--->
-
-<!--
-### **1-4.Guildスクリプト再取得**
-!!! error "注意"
-    * リレーとBPでコマンドが異なりますので、タブを切り替えてください。
-
-
-=== "リレーノード"
-    スクリプトをバックアップ
-    ```
-    cd $NODE_HOME/scripts
-    cp gLiveView.sh gLiveView-1.35.4.sh
-    cp env env-1.35.4
-    ```
-
-    スクリプトをダウンロードする(上書き)
-    ```
-    wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/gLiveView.sh -O ./gLiveView.sh
-    wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/env -O ./env
-    ```
-
-    ノードポート番号を確認する。以下のコマンドをすべてコピーして実行してください
-    ```
-    PORT=`grep "PORT=" $NODE_HOME/startRelayNode1.sh`
-    b_PORT=${PORT#"PORT="}
-    echo "リレーポートは${b_PORT}です"
-    ```
-    > リレーのポート番号が表示されることを確認する
-
-    envファイルの修正します。以下のコマンドをすべてコピーして実行してください
-    ```
-    sed -i $NODE_HOME/scripts/env \
-    -e '1,73s!#CNODE_HOME="/opt/cardano/cnode"!CNODE_HOME=${NODE_HOME}!' \
-    -e '1,73s!#CNODE_PORT=6000!CNODE_PORT='${b_PORT}'!' \
-    -e '1,73s!#UPDATE_CHECK="Y"!UPDATE_CHECK="N"!' \
-    -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/'${NODE_CONFIG}'-config.json"!' \
-    -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node0.socket"!SOCKET="${CNODE_HOME}/db/socket"!'
-    ```
-    
-
-=== "ブロックプロデューサーノード"
-
-    **サービスを止める**
-    ```
-    sudo systemctl stop cnode-cncli-sync.service
-    ```
-
-    スクリプトをバックアップ
-    ```
-    cd $NODE_HOME/scripts
-    cp gLiveView.sh gLiveView-1.35.4.sh
-    cp env env-1.35.4
-    cp cncli.sh cncli-1.35.4.sh
-    ```
-
-    スクリプトをダウンロードする(上書き)
-    ```
-    wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/cncli.sh -q -O ./cncli.sh
-    wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/env -q -O ./env
-    wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/gLiveView.sh -q -O ./gLiveView.sh
-    ```
-
-    ノードポート番号を確認する
-    ```
-    PORT=`grep "PORT=" $NODE_HOME/startBlockProducingNode.sh`
-    b_PORT=${PORT#"PORT="}
-    echo "BPポートは${b_PORT}です"
-    ```
-    > ↑そのまま実行し、BPのポート番号が表示されることを確認する
-
-    envファイルを修正します。以下のコマンドをすべてコピーして実行してください
-
-    ```
-    sed -i $NODE_HOME/scripts/env \
-    -e '1,73s!#CCLI="${HOME}/.local/bin/cardano-cli"!CCLI="/usr/local/bin/cardano-cli"!' \
-    -e '1,73s!#CNCLI="${HOME}/.local/bin/cncli"!CNCLI="${HOME}/.cargo/bin/cncli"!' \
-    -e '1,73s!#CNODE_HOME="/opt/cardano/cnode"!CNODE_HOME='${NODE_HOME}'!' \
-    -e '1,73s!#CNODE_PORT=6000!CNODE_PORT='${b_PORT}'!' \
-    -e '1,73s!#UPDATE_CHECK="Y"!UPDATE_CHECK="N"!' \
-    -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/'${NODE_CONFIG}'-config.json"!' \
-    -e '1,73s!#TOPOLOGY="${CNODE_HOME}/files/topology.json"!TOPOLOGY="${CNODE_HOME}/'${NODE_CONFIG}'-topology.json"!' \
-    -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node0.socket"!SOCKET="${CNODE_HOME}/db/socket"!' \
-    -e '1,73s!#BLOCKLOG_TZ="UTC"!BLOCKLOG_TZ="Asia/Tokyo"!' \
-    -e '1,73s!#WALLET_PAY_ADDR_FILENAME="payment.addr"!WALLET_PAY_ADDR_FILENAME="payment.addr"!' \
-    -e '1,73s!#WALLET_STAKE_ADDR_FILENAME="reward.addr"!WALLET_STAKE_ADDR_FILENAME="stake.addr"!' \
-    -e '1,73s!#POOL_HOTKEY_VK_FILENAME="hot.vkey"!POOL_HOTKEY_VK_FILENAME="kes.vkey"!' \
-    -e '1,73s!#POOL_HOTKEY_SK_FILENAME="hot.skey"!POOL_HOTKEY_SK_FILENAME="kes.skey"!' \
-    -e '1,73s!#POOL_COLDKEY_VK_FILENAME="cold.vkey"!POOL_COLDKEY_VK_FILENAME="node.vkey"!' \
-    -e '1,73s!#POOL_COLDKEY_SK_FILENAME="cold.skey"!POOL_COLDKEY_SK_FILENAME="node.skey"!' \
-    -e '1,73s!#POOL_OPCERT_COUNTER_FILENAME="cold.counter"!POOL_OPCERT_COUNTER_FILENAME="node.counter"!' \
-    -e '1,73s!#POOL_OPCERT_FILENAME="op.cert"!POOL_OPCERT_FILENAME="node.cert"!' \
-    -e '1,73s!#POOL_VRF_SK_FILENAME="vrf.skey"!POOL_VRF_SK_FILENAME="vrf.skey"!'
-    ```
-
-    プールIDを確認する。以下のコマンドをすべてコピーして実行してください
-    ```
-    pool_hex=`cat $NODE_HOME/stakepoolid_hex.txt`
-    pool_bech32=`cat $NODE_HOME/stakepoolid_bech32.txt`
-    printf "\nプールID(hex)は \e[32m${pool_hex}\e[m です\n\n"
-    printf "\nプールID(bech32)は \e[32m${pool_bech32}\e[m です\n\n"
-    ```
-
-    <strong><font color=red>ご自身のプールID `2種類`が表示されていることを確認してください</font></strong>  
-    プールIDが表示されていない場合は、[こちらの手順](../setup/7-register-stakepool.md#4)を実行してください  
-    
-    <br>
-    cncli.shファイルを修正します。以下のコマンドをすべてコピーして実行してください
-    ```
-    sed -i $NODE_HOME/scripts/cncli.sh \
-    -e '1,73s!#POOL_ID=""!POOL_ID="'${pool_hex}'"!' \
-    -e '1,73s!#POOL_ID_BECH32=""!POOL_ID_BECH32="'${pool_bech32}'"!' \
-    -e '1,73s!#POOL_VRF_SKEY=""!POOL_VRF_SKEY="${CNODE_HOME}/vrf.skey"!' \
-    -e '1,73s!#POOL_VRF_VKEY=""!POOL_VRF_VKEY="${CNODE_HOME}/vrf.vkey"!'
-    ```
--->
-
 ### **1-3. CNCLIバージョン確認(BPのみ)**
 
 CNCLIバージョン確認
@@ -450,10 +314,6 @@ CNCLIバージョン確認
 cncli --version
 ```
 > cncli 6.7.0
-
-!!! hint ""
-    cncli 6.7.0でcardano-db再同期時において33ブロック以上ロールバックする際のcncli同期エラー(※1)が解消されています。  
-    ※1 `Missing eta_v for block xxxxxx`エラー 
 
 ??? danger "cncli v6.6.0以下だった場合(クリックして開く)"
     
@@ -502,12 +362,12 @@ cncli --version
     ```bash
     mkdir $HOME/git/cardano-node2
     cd $HOME/git/cardano-node2
-    wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.5.4/cardano-node-10.5.4-linux.tar.gz
+    wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.6.4/cardano-node-10.6.4-linux-amd64.tar.gz
     ```
 
     解凍
     ```bash
-    tar zxvf cardano-node-10.5.4-linux.tar.gz ./bin/cardano-node ./bin/cardano-cli ./bin/snapshot-converter
+    tar zxvf cardano-node-10.6.4-linux-amd64.tar.gz ./bin/cardano-node ./bin/cardano-cli ./bin/snapshot-converter
     ```
 
     **バージョンの確認**
@@ -518,11 +378,11 @@ cncli --version
     ```
     以下の戻り値を確認します。  
     ``` { .yaml .no-copy }
-    cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-    b0a12592c4e996b57edf5bc5b9109ecc88c2273f
+    cardano-cli 10.15.0.0 - linux-x86_64 - ghc-9.6  
+    git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
 
-    cardano-node 10.5.4 - linux-x86_64 - ghc-9.6  
-    b0a12592c4e996b57edf5bc5b9109ecc88c2273f
+    cardano-node 10.6.4 - linux-x86_64 - ghc-9.6  
+    git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
     ```
 
 
@@ -551,11 +411,11 @@ cncli --version
 
     以下の戻り値を確認します。
     ``` { .yaml .no-copy }
-    cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-    b0a12592c4e996b57edf5bc5b9109ecc88c2273f
+    cardano-cli 10.15.0.0 - linux-x86_64 - ghc-9.6  
+    git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
 
-    cardano-node 10.5.4 - linux-x86_64 - ghc-9.6  
-    b0a12592c4e996b57edf5bc5b9109ecc88c2273f
+    cardano-node 10.6.4 - linux-x86_64 - ghc-9.6  
+    git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
     ```
 
 
@@ -595,7 +455,7 @@ cncli --version
 
     ```bash
     git fetch --all --recurse-submodules --tags
-    git checkout tags/10.5.4
+    git checkout tags/10.6.4
     cabal configure --with-compiler=ghc-9.6.7
     ```
 
@@ -618,11 +478,11 @@ cncli --version
 
     以下の戻り値を確認します。
     ``` { .yaml .no-copy }
-    cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-    b0a12592c4e996b57edf5bc5b9109ecc88c2273f
+    cardano-cli 10.15.0.0 - linux-x86_64 - ghc-9.6  
+    git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
 
-    cardano-node 10.5.4 - linux-x86_64 - ghc-9.6  
-    b0a12592c4e996b57edf5bc5b9109ecc88c2273f
+    cardano-node 10.6.4 - linux-x86_64 - ghc-9.6  
+    git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
     ```
 
     **ビルド用TMUXセッションを終了します。** 
@@ -655,253 +515,25 @@ cncli --version
 
     以下の戻り値を確認します。
     ``` { .yaml .no-copy }
-    cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-    b0a12592c4e996b57edf5bc5b9109ecc88c2273f
+    cardano-cli 10.15.0.0 - linux-x86_64 - ghc-9.6  
+    git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
 
-    cardano-node 10.5.4 - linux-x86_64 - ghc-9.6  
-    b0a12592c4e996b57edf5bc5b9109ecc88c2273f
+    cardano-node 10.6.4 - linux-x86_64 - ghc-9.6  
+    git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
     ```
 
     ??? warning "10.3.1以下からアップデートする場合はこちらも実施(クリックして開く)"
         **snapshot-converterのダウンロード**
         ```bash
         cd $HOME/git/cardano-node2
-        wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.5.4/cardano-node-10.5.4-linux.tar.gz
+        wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.6.4/cardano-node-10.6.4-linux-amd64.tar.gz
         ```
         解凍
         ```bash
-        tar zxvf cardano-node-10.5.4-linux.tar.gz ./bin/snapshot-converter
+        tar zxvf cardano-node-10.6.4-linux-amd64.tar.gz ./bin/snapshot-converter
         ```
 
 ### **2-3. 設定ファイル更新**
-
-<!--
-設定ファイルを書き換える
-
-```bash
-sed -i ${NODE_CONFIG}-config.json \
-    -e 's!"AlonzoGenesisFile": "alonzo-genesis.json"!"AlonzoGenesisFile": "'${NODE_CONFIG}'-alonzo-genesis.json"!' \
-    -e 's!"ByronGenesisFile": "byron-genesis.json"!"ByronGenesisFile": "'${NODE_CONFIG}'-byron-genesis.json"!' \
-    -e 's!"CheckpointsFile": "checkpoints.json"!"CheckpointsFile": "'${NODE_CONFIG}'-checkpoints.json"!' \
-    -e 's!"ShelleyGenesisFile": "shelley-genesis.json"!"ShelleyGenesisFile": "'${NODE_CONFIG}'-shelley-genesis.json"!' \
-    -e 's!"ConwayGenesisFile": "conway-genesis.json"!"ConwayGenesisFile": "'${NODE_CONFIG}'-conway-genesis.json"!' \
-    -e 's!"TraceBlockFetchDecisions": false!"TraceBlockFetchDecisions": true!' \
-    -e 's!"rpKeepFilesNum": 10!"rpKeepFilesNum": 30!' \
-    -e 's!"rpMaxAgeHours": 24!"rpMaxAgeHours": 48!' \
-    -e '/"defaultScribes": \[/a\    \[\n      "FileSK",\n      "'${NODE_HOME}'/logs/node.json"\n    \],' \
-    -e '/"setupScribes": \[/a\    \{\n      "scFormat": "ScJson",\n      "scKind": "FileSK",\n      "scName": "'${NODE_HOME}'/logs/node.json"\n    \},' \
-    -e "s/127.0.0.1/0.0.0.0/g"
-```
--->
-
-<!--
-**トポロジー設定**
-
-新トポロジーファイル項目解説
-
-| 項目     | 説明                          |
-| ----------- | ------------------------------------ |
-| `bootstrapPeers`       | Genesis lite bootstrap用ノードを記入する |
-| `localRoots`       | 常にHot接続を固定したい接続先を記入 |
-| `accessPoints`       |  接続先グループ |
-| `advertise`    | PeerSharing伝播フラグ |
-| `trustable`    | 信頼ノード設定フラグ |
-| `valency`    | 接続数(接続先グループ内に記載した数と一致させる必要があります) |
-| `publicRoots`    | IOGリレーなどの公開リレー接続先 |
-| `useLedgerAfterSlot`    | 初期同期の際に台帳Peer検索を有効にするスロット番号 |
-
-**以下、各ノードごとのタブをクリックして実施してください**
-
-各タブ内コード実行前に `+`をクリックして注釈を確認してください。  
-
-??? example "リレーノードトポロジーファイル作成手順"
-    トポロジーファイルをP2P-bootstrapPeersフォーマットに書き換える。  
-    <font color=red><strong>すでにP2P-bootstrapPeersフォーマットで運用しているリレーでは実施する必要はございません。</strong></font>  
-
-    自身のリレーノードから接続を固定するノードを指定します。(BPやリレーノード)  
-    「xxx.xxx.xxx.xxx」は接続先のパブリックIP(静的)アドレスと接続先ノードポート番号に置き換えて下さい。  
-
-    === "リレー1"
-        ``` yaml
-        cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
-        {
-        "bootstrapPeers": [
-            {
-            "address": "backbone.cardano.iog.io",
-            "port": 3001
-            },
-            {
-            "address": "backbone.mainnet.emurgornd.com",
-            "port": 3001
-            },
-            {
-            "address": "backbone.mainnet.cardanofoundation.org",
-            "port": 3001
-            }
-        ],
-        "localRoots": [
-            {
-            "accessPoints": [
-                {
-                "address": "BPのIP",#(1)!
-                "port": 00000 #(2)!
-                }
-            ],
-                "advertise": false,#(5)!
-                "trustable": true,
-                "valency": 1
-            },
-            {
-            "accessPoints": [
-                {
-                "address": "リレー2のIP",#(3)!
-                "port": 6000 #(4)!
-                }
-            ],
-                "advertise": true,
-                "trustable": true,
-                "valency": 1
-            }
-        ],
-        "publicRoots": [
-            {
-            "accessPoints": [],
-            "advertise": false
-            }
-        ],
-        "useLedgerAfterSlot": 110332824
-        }
-        EOF
-        ```
-        { .annotate }
-
-        1.  BPのIPアドレスまたはDNSアドレスに置き換えてください
-        2.  BPのポートに置き換えてください
-        3.  リレー2のIPアドレスまたはDNSアドレスに置き換えてください
-        4.  リレー2他リレーのポートに置き換えてください
-        5.  accessPointsにBPを指定する時は必ず`advertise`を`false`にしてください
-
-    === "リレー2"
-        ``` yaml
-        cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
-        {
-        "bootstrapPeers": [
-            {
-            "address": "backbone.cardano.iog.io",
-            "port": 3001
-            },
-            {
-            "address": "backbone.mainnet.emurgornd.com",
-            "port": 3001
-            },
-            {
-            "address": "backbone.mainnet.cardanofoundation.org",
-            "port": 3001
-            }
-        ],
-        "localRoots": [
-            {
-            "accessPoints": [
-                {
-                "address": "BPのIP",#(1)!
-                "port": 00000 #(2)!
-                }
-            ],
-                "advertise": false,#(5)!
-                "trustable": true,
-                "valency": 1
-            },
-            {
-            "accessPoints": [
-                {
-                "address": "リレー1のIP",#(3)!
-                "port": 6000 #(4)!
-                }
-            ],
-                "advertise": true,
-                "trustable": true,
-                "valency": 1
-            }
-        ],
-        "publicRoots": [
-            {
-            "accessPoints": [],
-            "advertise": false
-            }
-        ],
-        "useLedgerAfterSlot": 110332824
-        }
-        EOF
-        ```
-        { .annotate }
-
-        1.  BPのIPアドレスまたはDNSアドレスに置き換えてください
-        2.  BPのポートに置き換えてください
-        3.  リレー1のIPアドレスまたはDNSアドレスに置き換えてください
-        4.  リレー1他リレーのポートに置き換えてください
-        5.  accessPointsにBPを指定する時は必ず`advertise`を`false`にしてください
-
-
-??? example "BPノードトポロジーファイル作成手順"
-    <font color=red><strong>すでにこのフォーマットで運用されている場合は実施する必要はございません。</strong></font>  
-
-    <font color=red>BPでは`bootstrapPeers`と`PeerSharing`を無効にします</font>
-    ``` yaml
-    cat > $NODE_HOME/${NODE_CONFIG}-topology.json << EOF
-    {
-    "bootstrapPeers": null,
-    "localRoots": [
-        {
-        "accessPoints": [
-            {
-            "address": "リレー１のIP",#(1)!
-            "port": 6000 #(2)!
-            },
-            {
-            "address": "リレー２のIP",#(3)!
-            "port": 6000 #(4)!
-            }
-        ],
-        "advertise": false,#(8)!
-        "trustable": true,
-        "valency": 2 #(5)!
-        }
-    ],
-    "publicRoots": [],#(6)!
-    "useLedgerAfterSlot": -1 #(7)!
-    }
-    EOF
-    ```
-    { .annotate }
-
-    1.  リレー１のIPアドレスまたはDNSアドレスに置き換えてください
-    2.  リレー１のポートに置き換えてください
-    3.  リレー２のIPアドレスまたはDNSアドレスに置き換えてください
-    4.  リレー２のポートに置き換えてください
-    5.  固定接続ピアの数を指定してください
-    6.  "publicRoots":を空にしてください
-    7.  `-1`を指定することで台帳から接続先を取得しないBPモードになります
-    8. ここでは`advertise`を`false`にしてください
-
-**mainnet-topology.json構文チェック**
-```
-cat $NODE_HOME/mainnet-topology.json | jq .
-```
-=== "正常"
-    mainnet-topology.jsonの中身がそのまま表示されます
-
-=== "parse error"
-    json記法に誤りがあるため以下のエラーが表示されます。mainnet-topology.jsonを開いて`{}` `[]` `,`が正しい位置にあるかご確認ください。
-    ```{ .yaml .no-copy }
-    parse error: Expected another key-value pair at line x, column x
-    ```
-
-トポロジーファイルを再読み込みする
-```
-cnreload
-```
-> ダイナミックP2Pを有効にしている場合、トポロジーファイル変更によるノード再起動は不要になりました。
--->
 
 既存ファイルのバックアップ
 ```bash
@@ -909,6 +541,28 @@ mkdir -p $NODE_HOME/backup
 cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config.json
 ```
 
+<!--
+cp $NODE_HOME/${NODE_CONFIG}-topology.json $NODE_HOME/backup/${NODE_CONFIG}-topology.json
+-->
+
+設定ファイルダウンロード
+
+BPとリレー共通：
+```bash
+cd $NODE_HOME
+wget -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
+wget -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
+```
+
+<!--
+リレー・BPともに[リレー/BP接続設定](../setup/relay-bp-setup.md/#2-2)を実施してから以降進めてください。
+> ファイアウォール設定はすでに設定しているのでスキップしてください。  
+> ノード再起動はサーバー再起動するので不要です。
+
+[Grafanaダッシュボード用のJSONファイル](../setup/monitoring-setup.md/#3-grafana)をダウンロードしてください。
+-->
+
+<!--
 !!! danger ""
     <font color=red>BPとリレーで実行するコマンドが異なるので、対象サーバーごとにタブを切り替えてください</font>
     
@@ -927,6 +581,7 @@ cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config
         wget -q https://spojapanguild.net/node_config/10.5.4/${NODE_CONFIG}-config-bp.json -O ${NODE_CONFIG}-config.json
         wget -q https://spojapanguild.net/node_config/10.5.4/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
         ```
+-->
 
 ??? warning "10.1.4~10.3.1からアップデートする場合はこちらも実施(クリックして開く)"
 
@@ -959,7 +614,7 @@ cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config
     !!! hint "全ノード"
         **DB更新**  
 
-        **Mithirlインストール**
+        **Mithrilインストール**
         ```bash
         cd $HOME/git
         mithril_release="$(curl -s https://api.github.com/repos/input-output-hk/mithril/releases/latest | jq -r '.tag_name')"
@@ -998,7 +653,6 @@ cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config
 
         変数セット
         ```bash
-        export NETWORK=mainnet
         export AGGREGATOR_ENDPOINT=https://aggregator.release-mainnet.api.mithril.network/aggregator
         export GENESIS_VERIFICATION_KEY=$(wget -q -O - https://raw.githubusercontent.com/input-output-hk/mithril/main/mithril-infra/configuration/release-mainnet/genesis.vkey)
         export ANCILLARY_VERIFICATION_KEY=$(wget -q -O - https://raw.githubusercontent.com/input-output-hk/mithril/main/mithril-infra/configuration/release-mainnet/ancillary.vkey)
@@ -1032,23 +686,24 @@ cp $NODE_HOME/${NODE_CONFIG}-config.json $NODE_HOME/backup/${NODE_CONFIG}-config
 
         最新スナップショットDL
         ```bash
-        mithril-client cardano-db download --download-dir $NODE_HOME --include-ancillary latest
+        mithril-client cardano-db download \
+          --download-dir $NODE_HOME \
+          --include-ancillary \
+          $SNAPSHOT_DIGEST
         ```
-        > スナップショットダウンロード～解凍まで自動的に行われます。1/5～5/5が終了するまで待ちましょう。  
+        > スナップショットダウンロード～解凍まで自動的に行われます。1/7～7/7が終了するまで待ちましょう。  
 
-        DBスナップショットDL/解答完了メッセージ
-        > 5/5 - Verifying the cardano db signature…  
-        Cardano db 'xxxxx' has been unpacked and successfully checked against Mithril  multi-signature contained in the certificate.  
-        ('xxxxx'は作業時期によって変わります。下の文字列は無視して大丈夫です)
+        DBスナップショットDL/解凍完了メッセージ  
+        > 7/7 - Verifying the cardano db signature…    
+        > Cardano database snapshot '*****' archives have been successfully unpacked. Immutable files have been successfully verified with Mithril.
 
         tmux作業ウィンドウを終了します。
         ```bash
         exit
         ```
 
-
 <!--
-### **2-4.LMDB変換**
+### **2-4.DB変換**
 
 !!! danger "LMDB変換について"
     10.5.1の元帳データではLMDB構造を使用しているため、10.3.1以下のバージョンからアップグレードする場合リプレイ(再構築)が発生します。この再構築を避けるために以下の設定を実施して元帳データを変換してください。
@@ -1073,8 +728,79 @@ cp -r ${snapshot_slotno}_mem $NODE_HOME/db/ledger/${snapshot_slotno}
 ``` 
 -->
 
+### **2-4. DB更新**
 
-### **2-4. サーバー再起動**
+=== "全ノード"
+
+    **Mithrilインストール**
+    ```bash
+    cd $HOME/git
+    mithril_release="$(curl -s https://api.github.com/repos/input-output-hk/mithril/releases/latest | jq -r '.tag_name')"
+    wget https://github.com/input-output-hk/mithril/releases/download/${mithril_release}/mithril-${mithril_release}-linux-x64.tar.gz -O mithril.tar.gz
+    ```
+
+    設定
+    ```bash
+    tar zxvf mithril.tar.gz mithril-client
+    sudo cp mithril-client /usr/local/bin/mithril-client
+    ```
+
+    パーミッション設定
+    ```bash
+    sudo chmod +x /usr/local/bin/mithril-client
+    ```
+
+    DLファイル削除
+    ```bash
+    rm mithril.tar.gz mithril-client
+    ```
+
+    バージョン確認
+    ```bash
+    mithril-client -V
+    ```
+    > Mithril Githubの[リリースノート](https://github.com/input-output-hk/mithril/releases/latest){target="_blank" rel="noopener"}内にある`mithril-client-cli`のバージョンをご確認ください。
+                                    
+
+    スナップショット復元
+
+    作業用TMUX起動
+    ```bash
+    tmux new -s mithril
+    ```
+
+    変数セット
+    ```bash
+    export AGGREGATOR_ENDPOINT=https://aggregator.release-mainnet.api.mithril.network/aggregator
+    export GENESIS_VERIFICATION_KEY=$(wget -q -O - https://raw.githubusercontent.com/input-output-hk/mithril/main/mithril-infra/configuration/release-mainnet/genesis.vkey)
+    export ANCILLARY_VERIFICATION_KEY=$(wget -q -O - https://raw.githubusercontent.com/input-output-hk/mithril/main/mithril-infra/configuration/release-mainnet/ancillary.vkey)
+    export SNAPSHOT_DIGEST=latest
+    ```
+
+    既存DBの削除
+    ```bash
+    rm -rf $NODE_HOME/db
+    ```
+
+    最新スナップショットDL
+    ```bash
+    mithril-client cardano-db download \
+      --download-dir $NODE_HOME \
+      --include-ancillary \
+      $SNAPSHOT_DIGEST
+    ```
+    > スナップショットダウンロード～解凍まで自動的に行われます。1/5～7/7が終了するまで待ちましょう。  
+
+    DBスナップショットDL/解凍完了メッセージ  
+    > 7/7 - Verifying the cardano db signature…    
+    > Cardano database snapshot '*****' archives have been successfully unpacked. Immutable files have been successfully verified with Mithril.
+
+    tmux作業ウィンドウを終了します。
+    ```bash
+    exit
+    ```
+
+### **2-5. サーバー再起動**
 
 **作業フォルダリネーム**
 
@@ -1097,6 +823,10 @@ SSH接続後、ノード同期状況の確認
 sudo journalctl --unit=cardano-node --follow
 ```
 
+<!--
+DB再構築が完了するまで待機（Replayed block: ~ Progress: 100% を過ぎ、ログが流れるまで）
+-->
+
 !!! tip "ノードログメッセージ確認"
 
     以下のメッセージがログに含まれている場合に同期状況を判断できます。
@@ -1109,7 +839,6 @@ sudo journalctl --unit=cardano-node --follow
     | `Invalid option` | 起動オプションエラー |
     | `Invalid argument` | 起動コマンドエラー |
     | `Address in use` | ノード起動ポートが競合しています |
- 
 
 
 ## **3. 依存関係作業**
@@ -1150,37 +879,6 @@ glive
 > Koios gLiveView v1.32.0
 
 <!--
-??? danger "8.1.2/8.7.3からアップデートする場合はこちらも実施必須"
-    **リレー/BP共通**
-
-    **環境変数にリロード用エイリアスを作成(更新)する**
-
-    ```bash title="このボックスはすべてコピーして実行してください"
-    kill_alias=$(cat $HOME/.bashrc | grep cnreload)
-    if [ -n "$kill_alias" ]; then
-        sed -i 's/alias cnreload="kill -SIGHUP $(pidof cardano-node)"/alias cnreload="pkill -HUP cardano-node"/g' $HOME/.bashrc
-    else
-        echo alias cnreload='"pkill -HUP cardano-node"' >> $HOME/.bashrc
-    fi
-    source $HOME/.bashrc
-    ```
-
-    **Grafanaダッシュボードパネル更新**
-    !!! danger "独自カスタマイズしている方"
-        Grafanaダッシュボードを独自カスタマイズしている方は以下のメトリクス追加を推奨します。
-
-        * cardano_node_metrics_connectionManager_incomingConns
-        * cardano_node_metrics_connectionManager_outgoingConns
-        * cardano_node_metrics_peerSelection_hot
-        * cardano_node_metrics_peerSelection_warm
-        * cardano_node_metrics_peerSelection_cold 
-
-    既存のダッシュボードを削除する
-
-    1. Grafanaを開き左メニューの「Dashboards」から「SJG: Cardano-Node」にチェックを入れてDeleteボタンをクリック
-    2. 確認ポップアップに`Delete`を入力しDeleteをクリック
-    3. [Grafanaダッシュボード設定](../setup/9-monitoring-tools-setup.md#9-3grafana)の11～15を実施する
-
 ### **3-2.BPのみ**
 
 **ライブラリ更新**
@@ -1297,8 +995,8 @@ BPノードが完全に同期した後、サービス起動状態を確認しま
 
         **戻り値確認**
         ``` { .yaml .no-copy }
-        cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-        b0a12592c4e996b57edf5bc5b9109ecc88c2273f
+        cardano-cli 10.15.0.0 - linux-x86_64 - ghc-9.6  
+        git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
         ```
 
 === "ソースコードからビルドした場合"
@@ -1342,13 +1040,11 @@ BPノードが完全に同期した後、サービス起動状態を確認しま
 
             **cardano-cliの配置**
             ```bash
-            sudo cp \
-            $HOME/git/cardano-node2/cardano-cli \
-            /usr/local/bin/cardano-cli
+            sudo cp $HOME/git/cardano-node2/cardano-cli /usr/local/bin/cardano-cli
             ```
             **権限付与**
             ```bash
-            sudo chmod 755 /usr/local/bin/cardano-cli
+            sudo chmod +x /usr/local/bin/cardano-cli
             ```
             **依存ライブラリ配置用ディレクトリ作成**
             ```bash
@@ -1356,14 +1052,10 @@ BPノードが完全に同期した後、サービス起動状態を確認しま
             ```
             **`lib`ディレクトリに`libsodium.so.23.3.0`、`libsecp256k1.so.2.0.2`を配置**
             ```bash
-            sudo cp \
-            $HOME/git/cardano-node2/libsodium.so.23.3.0 \
-            /usr/local/lib/
+            sudo cp $HOME/git/cardano-node2/libsodium.so.23.3.0 /usr/local/lib/
             ```
             ```bash
-            sudo cp \
-            $HOME/git/cardano-node2/libsecp256k1.so.2.0.2 \
-            /usr/local/lib/
+            sudo cp $HOME/git/cardano-node2/libsecp256k1.so.2.0.2 /usr/local/lib/
             ```
 
             **権限設定**
@@ -1374,10 +1066,10 @@ BPノードが完全に同期した後、サービス起動状態を確認しま
             sudo chown root:root /usr/local/lib/libsecp256k1.so.2.0.2
             ```
             ```bash
-            sudo chmod 755 /usr/local/lib/libsodium.so.23.3.0
+            sudo chmod +x /usr/local/lib/libsodium.so.23.3.0
             ```
             ```bash
-            sudo chmod 755 /usr/local/lib/libsecp256k1.so.2.0.2
+            sudo chmod +x /usr/local/lib/libsecp256k1.so.2.0.2
             ```
 
             **シンボリックリンク作成**
@@ -1425,174 +1117,9 @@ BPノードが完全に同期した後、サービス起動状態を確認しま
 
             **戻り値確認**
             ``` { .yaml .no-copy }
-            cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6
-            git rev b0a12592c4e996b57edf5bc5b9109ecc88c2273f
+            cardano-cli 10.15.0.0 - linux-x86_64 - ghc-9.6  
+            git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
             ```
-
-
-
-<!--
-## **4.新メトリクスについて**
-
-v1.31.0からブロックチェーンの状態をより可視化したメトリクスが追加されています。
-Grafanaに新規パネルを追加することで確認することができます。
-
-現時点では、このメトリクスをもってプールの性能が図れるわけではないですが、現状を把握する指標としてお使いいただけます。
-
-```
-■ブロックの伝搬について
-1秒、3秒、5秒以内にブロックをダウンロードできたおおよその推定値
-95%のブロックを3秒以内にダウンロードしていれば、よく稼働しているノード指標となります。
-95%のブロックを5秒以内にダウンロードすることは、ウロボロスPraosのセキュリティ上の最低ラインとなります。
-※ノードを再起動すると初期化されますので適正値になるまで時間がかかります。
-cardano_node_metrics_blockfetchclient_blockdelay_cdfOne (1秒以内に伝播)
-cardano_node_metrics_blockfetchclient_blockdelay_cdfThree (3秒以内に伝播)
-cardano_node_metrics_blockfetchclient_blockdelay_cdfFive (5秒以内に伝播)
-Panel Stat 
-#Grafana Field Unit (Percent(0.0-1.0))
-
-■ブロック受信までの時間
-ブロックがミントされるべきだったときから、ローカルのリレーがブロックを受信するまでの遅延を推定した時間
-この指標には、コンセンサス/元帳がそのブロックを採用するまでの時間は含まれていません（採用されない可能性もあります）。
-cardano_node_metrics_blockfetchclient_blockdelay_s
-#Grafana
-Panel Stat 
-Field Unit (none)
-
-
-■ブロックサイズの確認
-あるスロットのブロックを最初にダウンロードしたときのブロックサイズです。
-cardano_node_metrics_blockfetchclient_blocksize
-#Grafana
-Panel Graph
-Field Unit (Bytes(IEC))
-
-■5秒以上後に到着したブロックの追跡
-ミントされたはずのブロックが5秒以上後に到着したブロックを追跡します。
-cardano_node_metrics_blockfetchclient_lateblocks
-#Grafana
-Panel Stat 
-Field Unit (none)
-
-
-■リレーノードの有用性判定
-人気のないノードには0に近い値が与えられます。そして、非常に有用なノードには1以上の値が与えられます。
-値が0の場合、誰もあなたのリレーからブロックを取得していないことを意味します。
-1の値は、新しいブロックが作成されるたびに、誰かがそれを取得していることを意味します。
-2以上の値は、ミントされたブロックごとに、2つのノードがあなたからそのブロックをフェッチしていることを意味します。
-cardano.node.metrics.served.block.latest.count
-#計算式
-rate(cardano_node_metrics_served_block_latest_count_int[1h])/rate(cardano_node_metrics_blockNum_int[1h])
-#Grafana
-Panel Graph
-Field Unit (none)
-
-■チェーン上のフォーク数をカウント
-ノードがスタートしてからのフォーク数。ブロック伝播遅延の影響で2秒前後のスロット間のスケジュールで発生
-cardano_node_metrics_forks_int
-#Grafana
-Panel Graph
-Field Unit (none)
-```
-
-
-# 5 ブロックログアップデート暫定調整
-
-## BPの対応
-GliveView、ブロックログのCNTOOL系モジュールの仕様変更に伴うアップデート作業です。
-
-```
-cd $NODE_HOME/scripts
-wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/env -O env
-```
-```
-sed -i $NODE_HOME/scripts/env \
-    -e '1,73s!#CCLI="${HOME}/.cabal/bin/cardano-cli"!CCLI="/usr/local/bin/cardano-cli"!' \
-    -e '1,73s!#CNODE_HOME="/opt/cardano/cnode"!CNODE_HOME='${NODE_HOME}'!' \
-    -e '1,73s!#CNODE_PORT=6000!CNODE_PORT=6000!' \
-    -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/mainnet-config.json"!' \
-    -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node0.socket"!SOCKET="${CNODE_HOME}/db/socket"!' \
-    -e '1,73s!#SOCKET="#LOG_DIR="${CNODE_HOME}/logs"!LOG_DIR="${CNODE_HOME}/logs"!' \
-    -e '1,73s!#UPDATE_CHECK="Y"!UPDATE_CHECK="N"!' \
-    -e '1,73s!#BLOCKLOG_DIR="${CNODE_HOME}/guild-db/blocklog"!BLOCKLOG_DIR="${CNODE_HOME}/guild-db/blocklog"!' \
-    -e '1,73s!#BLOCKLOG_TZ="UTC"!BLOCKLOG_TZ="Asia/Tokyo"!'
-```
->BPのポート番号を変更している場合は6000を変更してください。
-
-```
-./gLiveView.sh
-```
-> Script update(s) detected, do you want to download the latest version? (yes/no): ***_no_***
-
-
-> A new version of Guild LiveView is available  
-> Installed Version : v1.22.4  
-> Available Version : v1.24.0  
-> Do you want to upgrade to the latest version of Guild LiveView? (yes/no):***_yes_***  
-
->Enter
-
-```
-./gLiveView.sh
-```
-> Script update(s) detected, do you want to download the latest version? (yes/no):***_no_***  
-> このメッセージはしばらく手続けるため、煩わしい場合はenvファイルにある`UPDATE_CHECK="N"`へ変更する    
-
-```
-wget https://raw.githubusercontent.com/btbf/coincashew/master/guild-tools/blocks.sh -O blocks.sh
-```
-
-```
-./blocks.sh
-```
-> The static content from env file does not match with guild-operators repository, do you want to download the updated file? (yes/no):***_no_*** 
-
-## リレーの対応
-```
-cd $NODE_HOME/scripts
-wget https://raw.githubusercontent.com/cardano-community/guild-operators/master/scripts/cnode-helper-scripts/env -O env
-```
-```
-sed -i $NODE_HOME/scripts/env \
-    -e '1,73s!#CNODE_HOME="/opt/cardano/cnode"!CNODE_HOME=${NODE_HOME}!' \
-    -e '1,73s!#CNODE_PORT=6000!CNODE_PORT=6000!' \
-    -e '1,73s!#CONFIG="${CNODE_HOME}/files/config.json"!CONFIG="${CNODE_HOME}/mainnet-config.json"!' \
-    -e '1,73s!#SOCKET="${CNODE_HOME}/sockets/node0.socket"!SOCKET="${CNODE_HOME}/db/socket"!'
-```
->リレーのポート番号を変更している場合は6000を変更してください。
-
-```
-./gLiveView.sh
-```
-
-> Script update(s) detected, do you want to download the latest version? (yes/no):***_no_*** 
-
-> A new version of Guild LiveView is available  
-> Installed Version : v1.22.4  
-> Available Version : v1.24.0  
-> Do you want to upgrade to the latest version of Guild LiveView? (yes/no):***_yes_***  
-
->Enter
-
-```
-./gLiveView.sh
-```
-> Script update(s) detected, do you want to download the latest version? (yes/no):***_yes_***  
-
->Enter
-
-次回以降...
-```
-./gLiveView.sh
-```
-> Script update(s) detected, do you want to download the latest version? (yes/no):***_no_***  
-
-> このメッセージはしばらく手続けるため、煩わしい場合はenvファイルにある`UPDATE_CHECK="N"`へ変更する  
-
-
-以上、暫定的な対応となります。  
-
--->
 
 <!--
 ## **99 前バージョンへロールバックする場合**
@@ -1604,7 +1131,6 @@ sed -i $NODE_HOME/scripts/env \
 ```bash
 sudo systemctl stop cardano-node
 ```
-
 
 古いリポジトリを復元します。
 

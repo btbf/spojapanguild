@@ -446,12 +446,12 @@ sudo apt update && sudo apt upgrade -y
 
 === "リレーの場合"
     ```bash
-    sudo apt install bc curl htop nano needrestart rsync ufw zstd automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libncurses-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libtool autoconf liblmdb-dev -y
+    sudo apt install bc curl htop nano needrestart protobuf-compiler rsync ufw zstd automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libncurses-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libtool autoconf liblmdb-dev liburing-dev libsnappy-dev -y
     ```
 
 === "BPの場合"
     ```bash
-    sudo apt install bc curl htop nano needrestart python3-pip python3-venv python3-full rsync ufw zstd automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libncurses-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libtool autoconf liblmdb-dev -y
+    sudo apt install bc curl htop nano needrestart protobuf-compiler python3-pip python3-venv python3-full rsync ufw zstd automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libncurses-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libtool autoconf liblmdb-dev liburing-dev libsnappy-dev -y
     ```
     ```bash
     python3 -m venv ~/notify-venv
