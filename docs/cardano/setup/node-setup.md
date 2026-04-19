@@ -3,13 +3,13 @@
 !!! hint "インストールバージョン"
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 10.5.4 | 10.11.0.0 | 9.6.7 | 3.12.1.0 | 6.7.0 |
-
+    | 10.6.4 | 10.15.0.0 | 9.6.7 | 3.12.1.0 | 6.7.0 |
+    
 !!! danger "コマンド実行時の注意点"
     * Ubuntuコマンド初心者の方は、コードボックスに複数行のコマンドがある場合でも、コマンドを1行づつコピーして実行するようにしてください。ただし `cat > xxx << EOF`のボックスについてはコードボックスのコピーボタンを使用してコマンドラインに貼り付けてください。
     * 複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合、途中のコマンドでエラーが表示されている場合がありますので見落とさないようご注意ください。また、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。
     * 複数行のsudoコマンドを一度に貼り付けてsudoパスワードを求められた場合、1行目のコマンドしか実行されませんので残りのコマンドを再度実行してください。
-    * Ubuntu22.04の場合、複数行のsudoコマンドを1度に貼り付けると1行目しか実行されませんので、必ず1行ずつ貼り付けて実行してください。
+    * Ubuntu24.04の場合、複数行のsudoコマンドを1度に貼り付けると1行目しか実行されませんので、必ず1行ずつ貼り付けて実行してください。
 
 ## **1. 依存関係インストール**
 
@@ -21,7 +21,7 @@
 sudo apt update && sudo apt upgrade -y
 ```
 ```bash
-sudo apt install bc curl htop nano needrestart rsync ufw zstd automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libncurses-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libtool autoconf liblmdb-dev -y
+sudo apt install bc curl htop nano needrestart protobuf-compiler rsync ufw zstd automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libncurses-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libtool autoconf liblmdb-dev liburing-dev libsnappy-dev -y
 ```
 
 新しいTMUXセッションを開きます。
@@ -252,7 +252,7 @@ cd $HOME/git
 git clone https://github.com/IntersectMBO/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/10.5.4
+git checkout tags/10.6.4
 ```
 
 Cabalのビルドオプションを構成します。
@@ -293,11 +293,11 @@ cardano-node version
 
 以下の戻り値を確認します。  
 ``` { .yaml .no-copy }
-cardano-cli 10.11.0.0 - linux-x86_64 - ghc-9.6  
-b0a12592c4e996b57edf5bc5b9109ecc88c2273f
+cardano-cli 10.15.0.0 - linux-x86_64 - ghc-9.6  
+git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
 
-cardano-node 10.5.4 - linux-x86_64 - ghc-9.6  
-b0a12592c4e996b57edf5bc5b9109ecc88c2273f
+cardano-node 10.6.4 - linux-x86_64 - ghc-9.6  
+git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
 ```
 
 TMUXセッションを閉じる
@@ -353,23 +353,18 @@ config.json、genesis.json、topology.json
 ```bash
 mkdir -p $NODE_HOME
 cd $NODE_HOME
-wget -q https://spojapanguild.net/node_config/10.5.4/${NODE_CONFIG}-byron-genesis.json -O ${NODE_CONFIG}-byron-genesis.json
-wget -q https://spojapanguild.net/node_config/10.5.4/${NODE_CONFIG}-topology.json -O ${NODE_CONFIG}-topology.json
-wget -q https://spojapanguild.net/node_config/10.5.4/${NODE_CONFIG}-shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
-wget -q https://spojapanguild.net/node_config/10.5.4/${NODE_CONFIG}-alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
-wget -q https://spojapanguild.net/node_config/10.5.4/${NODE_CONFIG}-conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
-wget -q https://spojapanguild.net/node_config/10.5.4/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
+wget -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-byron-genesis.json -O ${NODE_CONFIG}-byron-genesis.json
+wget -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-topology.json -O ${NODE_CONFIG}-topology.json
+wget -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
+wget -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
+wget -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
+wget -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
 ```
 
-=== "リレーノードで実施"
-    ```
-    wget --no-use-server-timestamps -q https://spojapanguild.net/node_config/10.5.4/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
-    ```
-
-=== "ブロックプロデューサーノードで実施"
-    ```
-    wget --no-use-server-timestamps -q https://spojapanguild.net/node_config/10.5.4/${NODE_CONFIG}-config-bp.json -O ${NODE_CONFIG}-config.json
-    ```
+BPとリレーで実行
+```bash
+wget --no-use-server-timestamps -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
+```
 
 
 環境変数を追加し、.bashrcファイルを更新します。
@@ -680,7 +675,7 @@ Guild Liveviewを起動します。
 ## **8. エアギャップマシンのセットアップ**
 
 ### **8-1. `cardano-cli`バイナリのコピー**
-リレーサーバーで[バイナリファイルのコピー](../operation/node-update.md/#4-1)をします。
+リレーサーバーで[バイナリファイルのコピー](../operation/node-update.md/#4)をします。
 
 ### **8-2. 環境変数の設定**
 ```bash
