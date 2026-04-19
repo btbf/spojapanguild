@@ -73,7 +73,7 @@ sudo systemctl reload-or-restart cnode-blocknotify.service
 cd $NODE_HOME
 date=`date +\%Y\%m\%d`
 mv params.json params-$date.json
-cardano-cli conway query protocol-parameters \
+cardano-cli latest query protocol-parameters \
     ${NODE_NETWORK} \
     --out-file params.json
 ```

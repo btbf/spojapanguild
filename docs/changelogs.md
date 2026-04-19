@@ -1,5 +1,18 @@
 # **更新履歴**
 
+## 2026/4/19　ver.13.9.2
+!!! note ""
+    **追加**：  
+    [**Ubuntu24.04移行マニュアル**](/docs/cardano/operation/ubuntu24-migration.md)
+
+    **変更**：  
+    cardano-node v10.6.4対応 [インストール](./cardano/setup/node-setup.md) / [アップデート](./cardano/operation/node-update.md)  
+
+    **リリース**：  
+    なし
+
+    
+
 ## 2026/2/11　ver.13.9.1
 !!! note ""
     **追加**：  

@@ -44,10 +44,10 @@
         
         ```bash
         {
-        "name": "MyPoolName",
-        "description": "My pool description",
-        "ticker": "MPN",
-        "homepage": "https://myadapoolnamerocks.com"
+          "name": "MyPoolName",
+          "description": "My pool description",
+          "ticker": "MPN",
+          "homepage": "https://myadapoolnamerocks.com"
         }
         ```
 
@@ -70,7 +70,7 @@
         8.GitPages設定
         
         * 左メニューから**Pages**をクリックします。
-        * Branchのプルダウンから**main** **/root**を選択する
+        * Branchのプルダウンから**main** **/root**を選択
         * **Save**をクリックします
 
         ![](../../images/github-pages/github-page5.png)
@@ -93,7 +93,7 @@
         <font color=red>このURLの文字列が64文字以内であることを確認してください</font>
 
 
-        11．**ブロックプロデューサーノード**でjsonファイルをダウンロードし、ハッシュ値を計算する。  
+        11．**ブロックプロデューサーノード**でjsonファイルをダウンロードし、ハッシュ値を計算。  
 
         !!! danger "URLを書き換えてから実行して下さい"
             10で作成したメタデータURLを用いて下さい。
@@ -113,27 +113,28 @@
             **ticker**名の長さは3～5文字にする必要があります。文字はA-Zと0-9のみで構成する必要があります。  
             **description**の長さは255文字以内(255byte)となります。（ひらがな、漢字、カタカナは1文字2byte）
 
-        メタデータファイルを作成する。
+        メタデータファイルの作成。
         === "ブロックプロデューサーノード"
 
             ```bash
             cd $NODE_HOME
             cat > poolMetaData.json << EOF
             {
-            "name": "MyPoolName",
-            "description": "My pool description",
-            "ticker": "MPN",
-            "homepage": "https://myadapoolnamerocks.com"
+              "name": "MyPoolName",
+              "description": "My pool description",
+              "ticker": "MPN",
+              "homepage": "https://myadapoolnamerocks.com"
             }
             EOF
             ```
-        
+
+
         !!! danger "注意"
             **poolMetaData.json**をあなたの公開用WEBサーバへアップロードしてください。 
 
-メタデータJSONをチェックする
+メタデータJSONの確認
 ```
-cat $NODE_HOME/poolMetaData.json | jq .
+jq . $NODE_HOME/poolMetaData.json
 ```
 
 !!! error "戻り値にエラーが表示される場合"
@@ -145,7 +146,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "ブロックプロデューサーノード"
     ```bash
     cd $NODE_HOME
-    cardano-cli conway stake-pool metadata-hash --pool-metadata-file poolMetaData.json > poolMetaDataHash.txt
+    cardano-cli latest stake-pool metadata-hash --pool-metadata-file poolMetaData.json > poolMetaDataHash.txt
     ```
 
 
@@ -158,7 +159,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
         A[BP] -->| vrf.vkey / poolMetaDataHash.txt | B[エアギャップ];
     ``` 
 
-** BPとエアギャップで`vrf.vkey`ファイルハッシュを比較する **
+**BPとエアギャップで`vrf.vkey`ファイルハッシュを比較**
 
 === "ブロックプロデューサーノード"
     ```bash
@@ -166,8 +167,8 @@ cat $NODE_HOME/poolMetaData.json | jq .
     sha256sum vrf.vkey
     ```
 
-!!! hint ""
-    BPとエアギャップで表示された戻り値を比較して、ハッシュ値が一致していればOK  
+!!! tip "ヒント"
+    BPとエアギャップで表示された戻り値を比較して、ハッシュ値が一致していれば問題ありません。  
 
 === "エアギャップマシン"
     ```bash
@@ -187,7 +188,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
     minPoolCost(最低固定費)は 170000000 lovelace \(170 ADA\)です。
 
 
- **エアギャップマシンでpool.certを作成する**
+ **エアギャップマシンでpool.certを作成**
 
 !!! note annotate "pool.cert作成時の注意点▼"
     
@@ -242,7 +243,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "エアギャップマシン(リレー2台構成)"
     下記のスクリプトは例です。ご自身のプール運用設定値に変更してから実行してください。  
     
-    !!! danger "値を変更する"
+    !!! danger "値の変更"
         `--pool-pledge` 誓約数  
         `--pool-cost` 固定手数料  
         `--pool-margin` 変動手数料  
@@ -251,7 +252,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 
     ```bash
     cd $NODE_HOME
-    cardano-cli conway stake-pool registration-certificate \
+    cardano-cli latest stake-pool registration-certificate \
         --cold-verification-key-file $HOME/cold-keys/node.vkey \
         --vrf-verification-key-file vrf.vkey \
         --pool-pledge 100000000 \
@@ -275,7 +276,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "エアギャップマシン"
 
     ```bash
-    cardano-cli conway stake-address stake-delegation-certificate \
+    cardano-cli latest stake-address stake-delegation-certificate \
         --stake-verification-key-file stake.vkey \
         --cold-verification-key-file $HOME/cold-keys/node.vkey \
         --out-file deleg.cert
@@ -289,12 +290,12 @@ cat $NODE_HOME/poolMetaData.json | jq .
 
 ## **3. プール登録トランザクションの送信**
 
-**最新のスロット番号を取得する必要があります**
+**最新のスロット番号の取得**
 
 === "ブロックプロデューサーノード"
     ```bash
     cd $NODE_HOME
-    currentSlot=$(cardano-cli conway query tip $NODE_NETWORK | jq -r '.slot')
+    currentSlot=$(cardano-cli latest query tip $NODE_NETWORK | jq -r '.slot')
     echo Current Slot: $currentSlot
     ```
 
@@ -302,7 +303,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 
 === "ブロックプロデューサーノード"
     ```bash
-    cardano-cli conway query utxo \
+    cardano-cli latest query utxo \
         --address $(cat payment.addr) \
         $NODE_NETWORK \
         --output-text \
@@ -347,7 +348,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "ブロックプロデューサーノード"
 
     ```bash
-    cardano-cli conway transaction build-raw \
+    cardano-cli latest transaction build-raw \
         ${tx_in} \
         --tx-out $(cat payment.addr)+$(( ${total_balance} - ${poolDeposit})) \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
@@ -362,7 +363,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "ブロックプロデューサーノード"
 
     ```bash
-    fee=$(cardano-cli conway transaction calculate-min-fee \
+    fee=$(cardano-cli latest transaction calculate-min-fee \
         --tx-body-file tx.tmp \
         --witness-count 3 \
         --output-text \
@@ -385,7 +386,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "ブロックプロデューサーノード"
 
     ```bash
-    cardano-cli conway transaction build-raw \
+    cardano-cli latest transaction build-raw \
         ${tx_in} \
         --tx-out $(cat payment.addr)+${txOut} \
         --invalid-hereafter $(( ${currentSlot} + 10000)) \
@@ -407,7 +408,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "エアギャップマシン"
     ```bash
     cd $NODE_HOME
-    cardano-cli conway transaction sign \
+    cardano-cli latest transaction sign \
         --tx-body-file tx.raw \
         --signing-key-file payment.skey \
         --signing-key-file $HOME/cold-keys/node.skey \
@@ -426,7 +427,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 
 === "ブロックプロデューサーノード"
     ```bash
-    cardano-cli conway transaction submit \
+    cardano-cli latest transaction submit \
         --tx-file tx.signed \
         $NODE_NETWORK
     ```
@@ -439,8 +440,8 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "エアギャップマシン"
     ```bash
     chmod u+rwx $HOME/cold-keys
-    cardano-cli conway stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format bech32 --out-file pool.id-bech32
-    cardano-cli conway stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format hex --out-file pool.id
+    cardano-cli latest stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format bech32 --out-file pool.id-bech32
+    cardano-cli latest stake-pool id --cold-verification-key-file $HOME/cold-keys/node.vkey --output-format hex --out-file pool.id
     chmod a-rwx $HOME/cold-keys
     ```
 
@@ -465,7 +466,7 @@ cat $NODE_HOME/poolMetaData.json | jq .
 === "ブロックプロデューサーノード"
     ```
     cd $NODE_HOME
-    cat pool.id-bech32
+    cat pool.id-bech32;echo
     ```
 
 表示されたPoolIDであなたのステークプールがブロックチェーンに登録されているか、次のサイトで確認することが出来ます。  
