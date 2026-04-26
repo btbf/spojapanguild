@@ -166,11 +166,40 @@ apt-mark showhold
     apt list --upgradable
     ```
 
-### **1-9. サーバー再起動**
+### **1-9. リレーサーバーにGrafanaを搭載している場合の対応**
+
+??? warning "Grafana搭載サーバー"
+
+    **Grafanaリポジトリの無効化**
+
+    - disabledへとファイル名変更
+
+    ```bash
+    sudo mv /etc/apt/sources.list.d/grafana.list \
+      /etc/apt/sources.list.d/grafana.list.disabled 2>/dev/null
+    ```
+    ```bash
+    sudo mv /etc/apt/sources.list.d/grafana.list.distUpgrade \
+      /etc/apt/sources.list.d/grafana.list.distUpgrade.disabled 2>/dev/null
+    ```
+
+    - 確認（.disabled だけならOK）
+
+    ```bash
+    grep -R "apt.grafana.com" /etc/apt/
+    ```
+
+    - APT を更新
+
+    ```bash
+    sudo apt update
+    ```
+    > ここで EXPKEYSIG エラーが出ないことを確認
+
+### **1-10. サーバー再起動**
 ```bash
 sudo reboot
 ```
-
 
 ## **2. Ubuntuアップグレード**
 
@@ -436,6 +465,60 @@ exit
 ```
 > SSHで再接続してください。
 
+### **3-4. リレーサーバーにGrafanaを搭載している場合の対応**
+
+??? warning "Grafana搭載サーバー"
+
+    **Ubuntu24.04へとアップグレード完了後は、以下の対応を実施することを忘れないでください。**  
+    **Grafana 復旧（鍵更新）**
+
+    - 古い鍵削除
+
+    ```bash
+    sudo rm -f /usr/share/keyrings/grafana.key
+    ```
+
+    ```bash
+    sudo rm -f /etc/apt/keyrings/grafana.gpg
+    ```
+
+    - 新しい鍵登録
+
+    ```bash
+    sudo mkdir -p /etc/apt/keyrings
+    ```
+
+    ```bash
+    wget -q -O - https://apt.grafana.com/gpg.key \
+    | gpg --dearmor \
+    | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
+    ```
+
+    ```bash
+    sudo chmod 644 /etc/apt/keyrings/grafana.gpg
+    ```
+
+    - Grafana リポジトリ再登録
+
+    ```bash
+    echo 'deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main' \
+    | sudo tee /etc/apt/sources.list.d/grafana.list
+    ```
+
+    - APT に再認識させる
+
+    ```bash
+    sudo apt update
+    ```
+
+    - Grafana が復旧しているか確認
+
+    ```bash
+    apt policy grafana
+    ```
+
+    > `https://apt.grafana.com` が表示されればOK
+
 
 ## **4. 依存関係再インストール**
 
@@ -597,13 +680,7 @@ rm -rf ghc-8.*
     sudo ufw status numbered
     ```
 
-## **5. ノード再インストール**
-
-<font color=red>ソースコードからビルドした`cardano-node`/`cardano-cli`を使用していた場合、もしくはノードアップデートする場合に以下の手順を実行してください。</font>
-!!! tip "ヒント"
-    [1. 依存環境アップデート](../operation/node-update.md/#1) ~ [3. 依存関係作業](../operation/node-update.md/#3)  
-
-## **6. sysctlの設定**
+## **5. sysctlの設定**
 
 === "リレー"
     バックアップを取得しておきます。
@@ -726,6 +803,12 @@ sudo sysctl --system
     ```bash
     cat $HOME/sysctl-before-cardano-*.txt
     ```
+
+## **6. ノード再インストール**
+
+<font color=red>ソースコードからビルドした`cardano-node`/`cardano-cli`を使用していた場合、もしくはノードアップデートする場合に以下の手順を実行してください。</font>
+!!! tip "ヒント"
+    [1. 依存環境アップデート](../operation/node-update.md/#1) ~ [3. 依存関係作業](../operation/node-update.md/#3)  
 
 <!--
 ## **6. エアギャップマシンアップグレード**
