@@ -11,7 +11,7 @@
 
 ### **1-1. スナップショットの作成**
 
-!!! warning "スナップショットの作成"
+!!! danger "スナップショットの作成"
     アップグレード前に<font color=red>**必ず**</font>、VPSのサーバー管理画面から現時点のスナップショット(バックアップ)を作成してください。  
     万一アップグレードに失敗した場合、素早く復旧できます。
 
@@ -31,7 +31,7 @@ WindowsでR-loginをご利用の場合は、[最新のRLogin](https://github.com
 ### **1-4. 作業対象サーバログイン**
 
 !!! Tip "接続方法"
-    [1-4. 作業対象サーバログイン](../operation/ubuntu24-migration.md/#1-4)〜[1-8. Ubuntuバージョン確認](../operation/ubuntu24-migration.md/#1-8-ubuntu)は通常のSSH接続で作業してください。
+    [1-4. 作業対象サーバログイン](../operation/ubuntu24-migration.md/#1-4)〜[1-9. Ubuntuバージョン確認](../operation/ubuntu24-migration.md/#1-9-ubuntu)は通常のSSH接続で作業してください。
 
 ??? note "id_rsaの場合"
     古いssh-rsa（SHA-1）方式は非推奨／接続不可になることがあるため、Ed25519 が推奨されるので作成します。
@@ -83,18 +83,155 @@ sudo systemctl stop cardano-node
 sudo systemctl disable cardano-node
 ```
 
-### **1-6. システムアップデート**
+### **1-6. Python依存関係の正常化**
+
+`update-alternatives`でpythonを管理しているか確認します。
+```bash
+update-alternatives --get-selections | grep -E '^(python|python3)\s' || echo "未登録"
+```
+> `未登録`と表示された場合、以下の手順は不要です。  
+> `未登録`以外（`python3 auto /usr/bin/python3.12`等）が表示された場合は、以下の手順で対応してください。
+
+??? warning "update-alternativesでPythonを管理していた場合"
+
+    Ubuntu22.04時代に`update-alternatives`で`python3.12`等を登録していた場合、Ubuntu24.04へのアップグレード過程で`python3-apt`等のaptフックが破損する原因となります。  
+    該当する場合のみ、以下の手順でアップグレード前にapt管理状態へ戻してください。
+
+    **現状確認**
+
+
+    現在のシンボリックリンク先を確認します。
+    ```bash
+    ls -l /usr/bin/python3
+    ```
+
+    **グローバルにインストールしたpipパッケージの削除**
+
+    `block-notify`関連の依存パッケージを`pip3`でグローバルインストールしている場合は削除します。  
+    （アップグレード後に`venv`環境で再インストールします）
+    ```bash
+    sudo pip3 uninstall -y watchdog pytz python-dateutil requests discordwebhook slackweb i18nice
+    ```
+    > 黄色文字で `◯◯ as it is not installed.`と表示されても問題ないのでスルーしてください
+
+    **update-alternatives登録の解除**
+    ```bash
+    sudo update-alternatives --remove-all python3 2>/dev/null || true
+    ```
+    ```bash
+    sudo update-alternatives --remove-all python 2>/dev/null || true
+    ```
+
+    **apt管理のpython3を再インストール**
+
+    dpkg管理のシンボリックリンクを復元します。
+    ```bash
+    sudo apt install --reinstall python3-minimal python3 -y
+    ```
+
+    **確認**
+
+    シンボリックリンクが`python3.10`を指していることを確認します。
+    ```bash
+    ls -l /usr/bin/python3
+    ```
+    > `/usr/bin/python3 -> python3.10`
+
+    バージョンを確認します。
+    ```bash
+    python3 --version
+    ```
+    > Python 3.10.*
+
+サードパーティリポジトリ（deadsnakes PPA等）から`python3.10`以外のバージョン（`python3.8`、`python3.11`、`python3.12`等）をインストールしているか確認します。
+```bash
+dpkg-query -W -f='${Package} ${Version}\n' 2>/dev/null | grep -E '^(python3\.(8|9|11|12|13)|libpython3\.(8|9|11|12|13)|idle-python3\.(8|9|11|12|13))' || echo "該当なし"
+```
+> `該当なし`と表示された場合、以下の手順は不要です。  
+> `python3.8`、`python3.11`、`python3.12`等のパッケージが表示された場合は、以下の手順で対応してください。
+
+??? warning "サードパーティリポジトリからpython3.10以外を導入していた場合"
+
+    Ubuntu22.04の標準は`python3.10`ですが、過去に`deadsnakes` PPA等から`python3.8` / `python3.11` / `python3.12`等を導入していた場合、それらを残したまま`do-release-upgrade`を実行すると以下の問題が発生します。
+
+    - PPA側のバージョン（`+jammy1`・`+focal1`等のサフィックス）がUbuntu24.04公式版より新しく、依存関係が解決できなくなる
+    - `ufw`等のPython製ツールが**巻き添えで自動削除**される
+    - 存在しない`python3.x`を指す`update-alternatives`エントリが`apt`フックを破損させる
+
+    !!! note "サフィックスについて"
+        バージョン末尾のサフィックスはPPAが作成された当時のUbuntuコード名を示します。  
+        過去のアップグレード履歴によって異なるサフィックスが混在することがあります。
+
+        | サフィックス | 元のUbuntu |
+        |---|---|
+        | `+focal1` | 20.04 LTS時代に追加 |
+        | `+jammy1` | 22.04 LTS時代に追加 |
+
+    該当する場合のみ、以下の手順でアップグレード前にPPA由来のパッケージとリポジトリを除去してください。
+
+    **対象バージョンの特定**
+
+    削除対象となる`python3.x`系パッケージを一覧表示します。
+    ```bash
+    dpkg-query -W -f='${Package} ${Version}\n' | grep -E '^(python3\.(8|9|11|12|13)|libpython3\.(8|9|11|12|13)|idle-python3\.(8|9|11|12|13))'
+    ```
+    > 表示されたバージョン（例: `3.8`、`3.12`）を以降の手順の対象とします。
+
+    **deadsnakes PPAリポジトリの無効化**
+
+    PPAリポジトリファイルを`.disabled`にリネームします。
+    ```bash
+    sudo sh -c 'for f in /etc/apt/sources.list.d/*deadsnakes*.list; do [ -f "$f" ] && mv "$f" "$f.disabled"; done'
+    ```
+
+    確認
+    ```bash
+    ls /etc/apt/sources.list.d/ | grep -i deadsnakes
+    ```
+    > `.disabled`のみ表示されればOK
+
+    **python3.x系パッケージのパージ**
+
+    `python3.10`以外の全バージョン（`python3.8`〜`python3.13`）の関連パッケージを一括パージします。
+    ```bash
+    sudo apt purge -y \
+      'python3.8*' 'libpython3.8*' 'idle-python3.8*' \
+      'python3.9*' 'libpython3.9*' 'idle-python3.9*' \
+      'python3.11*' 'libpython3.11*' 'idle-python3.11*' \
+      'python3.12*' 'libpython3.12*' 'idle-python3.12*' \
+      'python3.13*' 'libpython3.13*' 'idle-python3.13*' \
+      2>/dev/null || true
+    ```
+    > 削除対象は以下の2種類です。インストールされていないパッケージは無視されます。
+    >
+    > | バージョンのサフィックス例 | 出所 |
+    > |---|---|
+    > | `+focal1`、`+jammy1` | deadsnakes PPA由来 |
+    > | `~20.04.*`、`~22.04.*` | 旧Ubuntuの公式パッケージがアップグレード時に残留したもの |
+
+    `2to3`、`idle`等のメタパッケージも依存関係で残っている場合があるため削除します。
+    ```bash
+    sudo apt purge -y 2to3 idle 2>/dev/null || true
+    ```
+
+    **APTを更新**
+    ```bash
+    sudo apt update
+    ```
+    > ここでdeadsnakes関連のエラーが出ないことを確認
+
+### **1-7. システムアップデート**
 ```bash
 sudo apt update && sudo apt full-upgrade -y && sudo apt autoremove -y
 ```
 
-### **1-7. LTSアップグレード設定の確認**
+### **1-8. LTSアップグレード設定の確認**
 ```bash
 grep Prompt /etc/update-manager/release-upgrades
 ```
 > Prompt=lts であること
 
-### **1-8. Ubuntuバージョン確認**
+### **1-9. Ubuntuバージョン確認**
 
 現在のバージョンを確認します。
 ```bash
@@ -166,7 +303,7 @@ apt-mark showhold
     apt list --upgradable
     ```
 
-### **1-9. リレーサーバーにGrafanaを搭載している場合の対応**
+### **1-10. リレーサーバーにGrafanaを搭載している場合の対応**
 
 ??? warning "Grafana搭載サーバー"
 
@@ -196,7 +333,7 @@ apt-mark showhold
     ```
     > ここで EXPKEYSIG エラーが出ないことを確認
 
-### **1-10. サーバー再起動**
+### **1-11. サーバー再起動**
 ```bash
 sudo reboot
 ```
@@ -520,6 +657,7 @@ exit
     > `https://apt.grafana.com` が表示されればOK
 
 
+
 ## **4. 依存関係再インストール**
 
 システムアップデート
@@ -536,70 +674,131 @@ sudo apt update && sudo apt upgrade -y
     ```bash
     sudo apt install bc curl htop nano needrestart protobuf-compiler python3-pip python3-venv python3-full rsync ufw zstd automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libncurses-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libtool autoconf liblmdb-dev liburing-dev libsnappy-dev -y
     ```
+
+**Python依存関係エラーの対処**
+
+アップグレード後に`apt`コマンドで以下のような依存関係エラーが表示された場合の対処です。
+
+``` { .yaml .no-copy }
+The following packages have unmet dependencies:
+ python3.12-full : Depends: python3.12 (= 3.12.3-1ubuntu0.13) but 3.12.13-1+jammy1 is to be installed
+ python3.12-venv : Depends: python3.12 (= 3.12.3-1ubuntu0.13) but 3.12.13-1+jammy1 is to be installed
+```
+
+> `+jammy1`の部分は`+focal1`等、サーバーのアップグレード履歴によって異なります。
+
+??? warning "Python依存関係エラーが発生した場合"
+
+    deadsnakes PPA由来の`python3.12`（`+jammy1`・`+focal1`等のサフィックス）がUbuntu24.04公式版（`3.12.3-1ubuntu0.13`）より新しいため、`apt`が自動解決できない状態です。  
+    `apt`の依存解決を迂回して`dpkg`で直接ダウングレードします。
+
+    **状況確認**
     ```bash
-    python3 -m venv ~/notify-venv
-    ~/notify-venv/bin/pip install -U pip
-    ~/notify-venv/bin/pip install watchdog pytz python-dateutil requests discordwebhook slackweb i18nice[YAML] python-dotenv
+    apt policy python3.12 libpython3.12-stdlib | grep -E 'Installed|Candidate'
     ```
-    
-    確認
+    > `Installed: 3.12.12-1+jammy1`や`Installed: 3.12.11-1+focal1`等のPPA版が表示された場合は以下の手順へ
+
+    **noble版の`.deb`をダウンロード**
     ```bash
-    ~/notify-venv/bin/python -c "import watchdog, pytz, dateutil, requests, discordwebhook, slackweb, i18n, dotenv; print('OK')"
-    ```
-    > `OK`と表示されれば問題ありません。
-
-    ```bash
-    sudo systemctl stop cnode-blocknotify.service
-    ```
-  
-    ```bash title="このボックスはすべてコピーして実行してください"
-    cat > $NODE_HOME/service/cnode-blocknotify.service << EOF 
-    # file: /etc/systemd/system/cnode-blocknotify.service
-
-    [Unit]
-    Description=Cardano Node - SPO Blocknotify
-    BindsTo=cnode-cncli-sync.service
-    After=cnode-cncli-sync.service
-
-    [Service]
-    Type=simple
-    User=$(whoami)
-    WorkingDirectory=${NODE_HOME}/scripts/block-notify
-    ExecStart=/home/${USER}/notify-venv/bin/python -u ${NODE_HOME}/scripts/block-notify/block_notify.py
-    Restart=on-failure
-    StandardOutput=syslog
-    StandardError=syslog
-    SyslogIdentifier=cnode-blocknotify
-
-    [Install]
-    WantedBy=cnode-cncli-sync.service
-    EOF
+    cd /tmp && sudo apt-get download \
+      python3.12=3.12.3-1ubuntu0.13 \
+      libpython3.12-stdlib=3.12.3-1ubuntu0.13
     ```
 
+    **`dpkg`で強制ダウングレード**
     ```bash
-    sudo cp $NODE_HOME/service/cnode-blocknotify.service /etc/systemd/system/cnode-blocknotify.service
+    sudo dpkg --install --force-downgrade \
+      /tmp/python3.12_3.12.3-1ubuntu0.13_amd64.deb \
+      /tmp/libpython3.12-stdlib_3.12.3-1ubuntu0.13_amd64.deb
     ```
 
+    **残りのパッケージをインストール**
     ```bash
-    sudo chmod 644 /etc/systemd/system/cnode-blocknotify.service
-    ```
-    ```bash
-    sudo systemctl daemon-reload
-    ```
-    ```bash
-    sudo systemctl enable --now cnode-blocknotify.service
+    sudo apt install -y python3.12-full python3.12-venv
     ```
 
-    起動確認
-  
+    **確認**
     ```bash
-    blocknotify
+    apt policy python3.12 | grep Installed
     ```
-    以下の表示なら正常です。
-    > [***] SPO Block Notify(v2.*.*)を起動しました
+    > `Installed: 3.12.3-1ubuntu0.*`（`+jammy`を含まない）になっていればOK
 
-    !!! tip "最新バージョンにアップデート"
-        現在の最新バージョンはv2.5.*なのでそれ以下の方は、[4. アップデート手順](../setup/blocknotify-setup.md/#4)を実施して更新してください。
+    === "リレーの場合"
+    ```bash
+    sudo apt install bc curl htop nano needrestart protobuf-compiler rsync ufw zstd automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libncurses-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libtool autoconf liblmdb-dev liburing-dev libsnappy-dev -y
+    ```
+
+    === "BPの場合"
+        ```bash
+        sudo apt install bc curl htop nano needrestart protobuf-compiler python3-pip python3-venv python3-full rsync ufw zstd automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libncurses-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libtool autoconf liblmdb-dev liburing-dev libsnappy-dev -y
+        ```
+
+
+
+```bash
+python3 -m venv ~/notify-venv
+~/notify-venv/bin/pip install -U pip
+~/notify-venv/bin/pip install watchdog pytz python-dateutil requests discordwebhook slackweb i18nice[YAML] python-dotenv
+```
+
+確認
+```bash
+~/notify-venv/bin/python -c "import watchdog, pytz, dateutil, requests, discordwebhook, slackweb, i18n, dotenv; print('OK')"
+```
+> `OK`と表示されれば問題ありません。
+
+```bash
+sudo systemctl stop cnode-blocknotify.service
+```
+
+```bash title="このボックスはすべてコピーして実行してください"
+cat > $NODE_HOME/service/cnode-blocknotify.service << EOF 
+# file: /etc/systemd/system/cnode-blocknotify.service
+
+[Unit]
+Description=Cardano Node - SPO Blocknotify
+BindsTo=cnode-cncli-sync.service
+After=cnode-cncli-sync.service
+
+[Service]
+Type=simple
+User=$(whoami)
+WorkingDirectory=${NODE_HOME}/scripts/block-notify
+ExecStart=/home/${USER}/notify-venv/bin/python -u ${NODE_HOME}/scripts/block-notify/block_notify.py
+Restart=on-failure
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=cnode-blocknotify
+
+[Install]
+WantedBy=cnode-cncli-sync.service
+EOF
+```
+
+```bash
+sudo cp $NODE_HOME/service/cnode-blocknotify.service /etc/systemd/system/cnode-blocknotify.service
+```
+
+```bash
+sudo chmod 644 /etc/systemd/system/cnode-blocknotify.service
+```
+```bash
+sudo systemctl daemon-reload
+```
+```bash
+sudo systemctl enable --now cnode-blocknotify.service
+```
+
+起動確認
+
+```bash
+blocknotify
+```
+以下の表示なら正常です。
+> [***] SPO Block Notify(v2.*.*)を起動しました
+
+!!! tip "最新バージョンにアップデート"
+    現在の最新バージョンはv2.5.*なのでそれ以下の方は、[4. アップデート手順](../setup/blocknotify-setup.md/#4)を実施して更新してください。
 
 
 デーモン再起動自動化
