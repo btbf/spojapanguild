@@ -31,7 +31,7 @@ WindowsでR-loginをご利用の場合は、[最新のRLogin](https://github.com
 ### **1-4. 作業対象サーバログイン**
 
 !!! Tip "接続方法"
-    [1-4. 作業対象サーバログイン](../operation/ubuntu24-migration.md/#1-4)〜[1-8. Ubuntuバージョン確認](../operation/ubuntu24-migration.md/#1-8-ubuntu)は通常のSSH接続で作業してください。
+    [1-4. 作業対象サーバログイン](../operation/ubuntu24-migration.md/#1-4)〜[1-9. Ubuntuバージョン確認](../operation/ubuntu24-migration.md/#1-9-ubuntu)は通常のSSH接続で作業してください。
 
 ??? note "id_rsaの場合"
     古いssh-rsa（SHA-1）方式は非推奨／接続不可になることがあるため、Ed25519 が推奨されるので作成します。
@@ -83,18 +83,84 @@ sudo systemctl stop cardano-node
 sudo systemctl disable cardano-node
 ```
 
-### **1-6. システムアップデート**
+### **1-6. Python依存関係の正常化**
+
+`update-alternatives`でpythonを管理しているか確認します。
+```bash
+update-alternatives --get-selections | grep -E '^(python|python3)\s' || echo "未登録"
+```
+> `未登録`と表示された場合、以下の手順は不要です。
+
+??? warning "update-alternativesでPythonを管理していた場合"
+
+    Ubuntu22.04時代に`update-alternatives`で`python3.12`等を登録していた場合、Ubuntu24.04へのアップグレード過程で`python3-apt`等のaptフックが破損する原因となります。  
+    該当する場合のみ、以下の手順でアップグレード前にapt管理状態へ戻してください。
+
+    **現状確認**
+
+    update-alternativesの登録有無を確認します。
+    ```bash
+    update-alternatives --display python3 2>/dev/null || echo "未登録"
+    ```
+    ```bash
+    update-alternatives --display python 2>/dev/null || echo "未登録"
+    ```
+    > 両方が`未登録`の場合、以降の手順は不要です。
+
+    現在のシンボリックリンク先を確認します。
+    ```bash
+    ls -l /usr/bin/python3
+    ```
+
+    **グローバルにインストールしたpipパッケージの削除**
+
+    `block-notify`関連の依存パッケージを`pip3`でグローバルインストールしている場合は削除します。  
+    （アップグレード後に`venv`環境で再インストールします）
+    ```bash
+    sudo pip3 uninstall -y watchdog pytz python-dateutil requests discordwebhook slackweb i18nice
+    ```
+
+    **update-alternatives登録の解除**
+    ```bash
+    sudo update-alternatives --remove-all python3 2>/dev/null || true
+    ```
+    ```bash
+    sudo update-alternatives --remove-all python 2>/dev/null || true
+    ```
+
+    **apt管理のpython3を再インストール**
+
+    dpkg管理のシンボリックリンクを復元します。
+    ```bash
+    sudo apt install --reinstall python3-minimal python3 -y
+    ```
+
+    **確認**
+
+    シンボリックリンクが`python3.10`を指していることを確認します。
+    ```bash
+    ls -l /usr/bin/python3
+    ```
+    > `/usr/bin/python3 -> python3.10`
+
+    バージョンを確認します。
+    ```bash
+    python3 --version
+    ```
+    > Python 3.10.*
+
+### **1-7. システムアップデート**
 ```bash
 sudo apt update && sudo apt full-upgrade -y && sudo apt autoremove -y
 ```
 
-### **1-7. LTSアップグレード設定の確認**
+### **1-8. LTSアップグレード設定の確認**
 ```bash
 grep Prompt /etc/update-manager/release-upgrades
 ```
 > Prompt=lts であること
 
-### **1-8. Ubuntuバージョン確認**
+### **1-9. Ubuntuバージョン確認**
 
 現在のバージョンを確認します。
 ```bash
@@ -166,7 +232,7 @@ apt-mark showhold
     apt list --upgradable
     ```
 
-### **1-9. リレーサーバーにGrafanaを搭載している場合の対応**
+### **1-10. リレーサーバーにGrafanaを搭載している場合の対応**
 
 ??? warning "Grafana搭載サーバー"
 
@@ -196,7 +262,7 @@ apt-mark showhold
     ```
     > ここで EXPKEYSIG エラーが出ないことを確認
 
-### **1-10. サーバー再起動**
+### **1-11. サーバー再起動**
 ```bash
 sudo reboot
 ```
