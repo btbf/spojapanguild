@@ -372,6 +372,6 @@ chmod a-rx $HOME/cold-keys
 
 #### **4-3. cardano-cliのインストール**
 
-[バイナリーファイルコピー](../operation/node-update.md#4-1)を参照してください。
+[バイナリーファイルコピー](../operation/node-update.md#4)を参照してください。
 
 ---
