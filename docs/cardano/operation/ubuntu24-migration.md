@@ -670,149 +670,186 @@ sudo apt update && sudo apt upgrade -y
     sudo apt install bc curl htop nano needrestart protobuf-compiler rsync ufw zstd automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libncurses-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libtool autoconf liblmdb-dev liburing-dev libsnappy-dev -y
     ```
 
+    デーモン再起動自動化
+    ```bash
+    sudo grep -qxF "\$nrconf{restart} = 'a';" /etc/needrestart/conf.d/50local.conf || \
+    echo "\$nrconf{restart} = 'a';" | sudo tee -a /etc/needrestart/conf.d/50local.conf > /dev/null
+    ```
+    ```bash
+    sudo sed -i '/^\$nrconf{blacklist_rc}/d' /etc/needrestart/conf.d/50local.conf
+    ```
+    ```bash
+    sudo grep -qxF "\$nrconf{blacklist_rc} = [qr(^cardano-node\\.service$) => 0,];" /etc/needrestart/conf.d/50local.conf || \
+    echo "\$nrconf{blacklist_rc} = [qr(^cardano-node\\.service$) => 0,];" | sudo tee -a /etc/needrestart/conf.d/50local.conf > /dev/null
+    ```
+
+    自動起動有効化
+    ```bash
+    sudo systemctl enable --now cardano-node
+    ```
+
+    ノード同期状況の確認
+    ```bash
+    sudo journalctl -u cardano-node -f
+    ```
+
+    コンパイル済みHaskellパッケージ削除
+    ```bash
+    cd ~/.cabal/store
+    rm -rf ghc-8.*
+    ```
+
 === "BPの場合"
     ```bash
     sudo apt install bc curl htop nano needrestart protobuf-compiler python3-pip python3-venv python3-full rsync ufw zstd automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libncurses-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libtool autoconf liblmdb-dev liburing-dev libsnappy-dev -y
     ```
 
-**Python依存関係エラーの対処**
+    **Python依存関係エラーの対処**
 
-アップグレード後に`apt`コマンドで以下のような依存関係エラーが表示された場合の対処です。
+    アップグレード後に`apt`コマンドで以下のような依存関係エラーが表示された場合の対処です。
 
-``` { .yaml .no-copy }
-The following packages have unmet dependencies:
- python3.12-full : Depends: python3.12 (= 3.12.3-1ubuntu0.13) but 3.12.13-1+jammy1 is to be installed
- python3.12-venv : Depends: python3.12 (= 3.12.3-1ubuntu0.13) but 3.12.13-1+jammy1 is to be installed
-```
-
-> `+jammy1`の部分は`+focal1`等、サーバーのアップグレード履歴によって異なります。
-
-??? warning "Python依存関係エラーが発生した場合"
-
-    deadsnakes PPA由来の`python3.12`（`+jammy1`・`+focal1`等のサフィックス）がUbuntu24.04公式版（`3.12.3-1ubuntu0.13`）より新しいため、`apt`が自動解決できない状態です。  
-    `apt`の依存解決を迂回して`dpkg`で直接ダウングレードします。
-
-    **状況確認**
-    ```bash
-    apt policy python3.12 libpython3.12-stdlib | grep -E 'Installed|Candidate'
-    ```
-    > `Installed: 3.12.12-1+jammy1`や`Installed: 3.12.11-1+focal1`等のPPA版が表示された場合は以下の手順へ
-
-    **noble版の`.deb`をダウンロード**
-    ```bash
-    cd /tmp && sudo apt-get download \
-      python3.12=3.12.3-1ubuntu0.13 \
-      libpython3.12-stdlib=3.12.3-1ubuntu0.13
+    ``` { .yaml .no-copy }
+    The following packages have unmet dependencies:
+    python3.12-full : Depends: python3.12 (= 3.12.3-1ubuntu0.13) but 3.12.13-1+jammy1 is to be installed
+    python3.12-venv : Depends: python3.12 (= 3.12.3-1ubuntu0.13) but 3.12.13-1+jammy1 is to be installed
     ```
 
-    **`dpkg`で強制ダウングレード**
-    ```bash
-    sudo dpkg --install --force-downgrade \
-      /tmp/python3.12_3.12.3-1ubuntu0.13_amd64.deb \
-      /tmp/libpython3.12-stdlib_3.12.3-1ubuntu0.13_amd64.deb
-    ```
+    > `+jammy1`の部分は`+focal1`等、サーバーのアップグレード履歴によって異なります。
 
-    **残りのパッケージをインストール**
-    ```bash
-    sudo apt install -y python3.12-full python3.12-venv
-    ```
+    ??? warning "Python依存関係エラーが発生した場合"
 
-    **確認**
-    ```bash
-    apt policy python3.12 | grep Installed
-    ```
-    > `Installed: 3.12.3-1ubuntu0.*`（`+jammy`を含まない）になっていればOK
+        deadsnakes PPA由来の`python3.12`（`+jammy1`・`+focal1`等のサフィックス）がUbuntu24.04公式版（`3.12.3-1ubuntu0.13`）より新しいため、`apt`が自動解決できない状態です。  
+        `apt`の依存解決を迂回して`dpkg`で直接ダウングレードします。
 
-    === "リレーの場合"
-    ```bash
-    sudo apt install bc curl htop nano needrestart protobuf-compiler rsync ufw zstd automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libncurses-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libtool autoconf liblmdb-dev liburing-dev libsnappy-dev -y
-    ```
-
-    === "BPの場合"
+        **状況確認**
         ```bash
-        sudo apt install bc curl htop nano needrestart protobuf-compiler python3-pip python3-venv python3-full rsync ufw zstd automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libncurses-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libtool autoconf liblmdb-dev liburing-dev libsnappy-dev -y
+        apt policy python3.12 libpython3.12-stdlib | grep -E 'Installed|Candidate'
+        ```
+        > `Installed: 3.12.12-1+jammy1`や`Installed: 3.12.11-1+focal1`等のPPA版が表示された場合は以下の手順へ
+
+        **noble版の`.deb`をダウンロード**
+        ```bash
+        cd /tmp && sudo apt-get download \
+          python3.12=3.12.3-1ubuntu0.13 \
+          libpython3.12-stdlib=3.12.3-1ubuntu0.13
         ```
 
+        **`dpkg`で強制ダウングレード**
+        ```bash
+        sudo dpkg --install --force-downgrade \
+          /tmp/python3.12_3.12.3-1ubuntu0.13_amd64.deb \
+          /tmp/libpython3.12-stdlib_3.12.3-1ubuntu0.13_amd64.deb
+        ```
 
+        **残りのパッケージをインストール**
+        ```bash
+        sudo apt install -y python3.12-full python3.12-venv
+        ```
 
-```bash
-python3 -m venv ~/notify-venv
-~/notify-venv/bin/pip install -U pip
-~/notify-venv/bin/pip install watchdog pytz python-dateutil requests discordwebhook slackweb i18nice[YAML] python-dotenv
-```
+        **確認**
+        ```bash
+        apt policy python3.12 | grep Installed
+        ```
+        > `Installed: 3.12.3-1ubuntu0.*`（`+jammy`を含まない）になっていればOK 
 
-確認
-```bash
-~/notify-venv/bin/python -c "import watchdog, pytz, dateutil, requests, discordwebhook, slackweb, i18n, dotenv; print('OK')"
-```
-> `OK`と表示されれば問題ありません。
+        **上記エラー対処後は依存関係インストールを再実行してください。**
 
-```bash
-sudo systemctl stop cnode-blocknotify.service
-```
+    ```bash
+    python3 -m venv ~/notify-venv
+    ~/notify-venv/bin/pip install -U pip
+    ~/notify-venv/bin/pip install watchdog pytz python-dateutil requests discordwebhook slackweb i18nice[YAML] python-dotenv
+    ```
 
-```bash title="このボックスはすべてコピーして実行してください"
-cat > $NODE_HOME/service/cnode-blocknotify.service << EOF 
-# file: /etc/systemd/system/cnode-blocknotify.service
+    確認
+    ```bash
+    ~/notify-venv/bin/python -c "import watchdog, pytz, dateutil, requests, discordwebhook, slackweb, i18n, dotenv; print('OK')"
+    ```
+    > `OK`と表示されれば問題ありません。
 
-[Unit]
-Description=Cardano Node - SPO Blocknotify
-BindsTo=cnode-cncli-sync.service
-After=cnode-cncli-sync.service
+    ```bash
+    sudo systemctl stop cnode-blocknotify.service
+    ```
 
-[Service]
-Type=simple
-User=$(whoami)
-WorkingDirectory=${NODE_HOME}/scripts/block-notify
-ExecStart=/home/${USER}/notify-venv/bin/python -u ${NODE_HOME}/scripts/block-notify/block_notify.py
-Restart=on-failure
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=cnode-blocknotify
+    ```bash title="このボックスはすべてコピーして実行してください"
+    cat > $NODE_HOME/service/cnode-blocknotify.service << EOF 
+    # file: /etc/systemd/system/cnode-blocknotify.service
 
-[Install]
-WantedBy=cnode-cncli-sync.service
-EOF
-```
+    [Unit]
+    Description=Cardano Node - SPO Blocknotify
+    BindsTo=cnode-cncli-sync.service
+    After=cnode-cncli-sync.service
 
-```bash
-sudo cp $NODE_HOME/service/cnode-blocknotify.service /etc/systemd/system/cnode-blocknotify.service
-```
+    [Service]
+    Type=simple
+    User=$(whoami)
+    WorkingDirectory=${NODE_HOME}/scripts/block-notify
+    ExecStart=/home/${USER}/notify-venv/bin/python -u ${NODE_HOME}/scripts/block-notify/block_notify.py
+    Restart=on-failure
+    StandardOutput=syslog
+    StandardError=syslog
+    SyslogIdentifier=cnode-blocknotify
 
-```bash
-sudo chmod 644 /etc/systemd/system/cnode-blocknotify.service
-```
-```bash
-sudo systemctl daemon-reload
-```
-```bash
-sudo systemctl enable --now cnode-blocknotify.service
-```
+    [Install]
+    WantedBy=cnode-cncli-sync.service
+    EOF
+    ```
 
-起動確認
+    ```bash
+    sudo cp $NODE_HOME/service/cnode-blocknotify.service /etc/systemd/system/cnode-blocknotify.service
+    ```
 
-```bash
-blocknotify
-```
-以下の表示なら正常です。
-> [***] SPO Block Notify(v2.*.*)を起動しました
+    ```bash
+    sudo chmod 644 /etc/systemd/system/cnode-blocknotify.service
+    ```
+    ```bash
+    sudo systemctl daemon-reload
+    ```
+    ```bash
+    sudo systemctl enable --now cnode-blocknotify.service
+    ```
 
-!!! tip "最新バージョンにアップデート"
-    現在の最新バージョンはv2.5.*なのでそれ以下の方は、[4. アップデート手順](../setup/blocknotify-setup.md/#4)を実施して更新してください。
+    デーモン再起動自動化
+    ```bash
+    sudo grep -qxF "\$nrconf{restart} = 'a';" /etc/needrestart/conf.d/50local.conf || \
+    echo "\$nrconf{restart} = 'a';" | sudo tee -a /etc/needrestart/conf.d/50local.conf > /dev/null
+    ```
+    ```bash
+    sudo sed -i '/^\$nrconf{blacklist_rc}/d' /etc/needrestart/conf.d/50local.conf
+    ```
+    ```bash
+    sudo grep -qxF "\$nrconf{blacklist_rc} = [qr(^cardano-node\\.service$) => 0, qr(^cnode-blocknotify\\.service$) => 0, qr(^cnode-cncli-sync\\.service$) => 0,];" /etc/needrestart/conf.d/50local.conf || \
+    echo "\$nrconf{blacklist_rc} = [qr(^cardano-node\\.service$) => 0, qr(^cnode-blocknotify\\.service$) => 0, qr(^cnode-cncli-sync\\.service$) => 0,];" | sudo tee -a /etc/needrestart/conf.d/50local.conf > /dev/null
+    ```
 
+    自動起動有効化
+    ```bash
+    sudo systemctl enable --now cardano-node
+    ```
 
-デーモン再起動自動化
-```bash
-sudo grep -qxF "\$nrconf{restart} = 'a';" /etc/needrestart/conf.d/50local.conf || \
-echo "\$nrconf{restart} = 'a';" | sudo tee -a /etc/needrestart/conf.d/50local.conf > /dev/null
-```
-```bash
-sudo sed -i '/^\$nrconf{blacklist_rc}/d' /etc/needrestart/conf.d/50local.conf
-```
-```bash
-sudo grep -qxF "\$nrconf{blacklist_rc} = [qr(^cardano-node\\.service$) => 0, qr(^cnode-blocknotify\\.service$) => 0, qr(^cnode-cncli-sync\\.service$) => 0,];" /etc/needrestart/conf.d/50local.conf || \
-echo "\$nrconf{blacklist_rc} = [qr(^cardano-node\\.service$) => 0, qr(^cnode-blocknotify\\.service$) => 0, qr(^cnode-cncli-sync\\.service$) => 0,];" | sudo tee -a /etc/needrestart/conf.d/50local.conf > /dev/null
-```
+    ノード同期状況の確認
+    ```bash
+    sudo journalctl -u cardano-node -f
+    ```
+
+    コンパイル済みHaskellパッケージ削除
+    ```bash
+    cd ~/.cabal/store
+    rm -rf ghc-8.*
+    ```
+
+    起動確認
+
+    ```bash
+    blocknotify
+    ```
+    以下の表示なら正常です。
+    > [***] SPO Block Notify(v2.*.*)を起動しました
+
+    **ノードが起動していなければ上記の表示になりません**
+
+    !!! tip "最新バージョンにアップデート"
+        現在の最新バージョンはv2.5.*なのでそれ以下の方は、[4. アップデート手順](../setup/blocknotify-setup.md/#4)を実施して更新してください。
+
 
 <!--
 libssl3アンインストール
@@ -839,22 +876,6 @@ rm $HOME/libssl-dev_1.1.1f-1ubuntu2.17_amd64.deb
 rm $HOME/libssl1.1_1.1.1f-1ubuntu2.17_amd64.deb
 ```
 -->
-
-自動起動有効化
-```bash
-sudo systemctl enable --now cardano-node
-```
-
-ノード同期状況の確認
-```bash
-sudo journalctl -u cardano-node -f
-```
-
-コンパイル済みHaskellパッケージ削除
-```bash
-cd ~/.cabal/store
-rm -rf ghc-8.*
-```
 
 
 !!! tip "SSHでアップグレードを実施した場合"
