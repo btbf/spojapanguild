@@ -5,7 +5,7 @@
 !!! info "インストールバージョン"
     | Node | Mithril-signer | squid |
     | :---------- | :---------- | :---------- |
-    | 10.5.4 | 0.3.7 | 7.4 |
+    | 10.7.1 | 1.0.0 | 7.5 |
 
 ## **1. Mithril Signerの設定**
 
@@ -30,7 +30,7 @@ mkdir -p $HOME/mithril
 
 ビルド済みバイナリのダウンロード
 ```bash
-curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/input-output-hk/mithril/refs/heads/main/mithril-install.sh | sh -s -- -c mithril-signer -d 2603.1 -p $HOME/git/mithril
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/input-output-hk/mithril/refs/heads/main/mithril-install.sh | sh -s -- -c mithril-signer -d 2617.0 -p $HOME/git/mithril
 ```
 
 `bin`ディレクトリへコピー
@@ -42,7 +42,7 @@ sudo cp $HOME/git/mithril/mithril-signer /usr/local/bin/mithril-signer
 ```bash
 mithril-signer -V
 ```
-> mithril-signer 0.3.7+567a8e8
+> mithril-signer 1.0.0
 
 #### **ENV変数の設定**
 
@@ -137,12 +137,12 @@ sudo apt update && sudo apt upgrade -y
 `squid`のインストール
 ```bash
 cd $HOME
-wget https://github.com/squid-cache/squid/releases/download/SQUID_7_4/squid-7.4.tar.gz
+wget https://github.com/squid-cache/squid/releases/download/SQUID_7_5/squid-7.5.tar.gz
 ```
 
 ```bash
-tar xzf squid-7.4.tar.gz
-cd squid-7.4
+tar xzf squid-7.5.tar.gz
+cd squid-7.5
 ```
 
 `squid`のビルド
@@ -174,7 +174,7 @@ sudo make install
 
 戻り値
 ``` { .yaml .no-copy }
-Squid Cache: Version 7.4
+Squid Cache: Version 7.5
 Service Name: squid
 configure options:  '--prefix=/opt/squid' '--localstatedir=/opt/squid/var' '--libexecdir=/opt/squid/lib/squid' '--datadir=/opt/squid/share/squid' '--sysconfdir=/etc/squid' '--with-default-user=squid' '--with-logdir=/opt/squid/var/log/squid' '--with-pidfile=/opt/squid/var/run/squid.pid' 'PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:'
 ```
@@ -182,8 +182,8 @@ configure options:  '--prefix=/opt/squid' '--localstatedir=/opt/squid/var' '--li
 インストールファイルの削除
 ```bash
 cd $HOME
-rm squid-7.4.tar.gz
-rm -rf squid-7.4
+rm squid-7.5.tar.gz
+rm -rf squid-7.5
 ```
 
 `squid`のアカウント作成
@@ -476,7 +476,7 @@ rm -rf $HOME/git/mithril/*
 
 ビルド済みバイナリファイルのダウンロード
 ```bash
-curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/input-output-hk/mithril/refs/heads/main/mithril-install.sh | sh -s -- -c mithril-signer -d 2603.1 -p $HOME/git/mithril
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/input-output-hk/mithril/refs/heads/main/mithril-install.sh | sh -s -- -c mithril-signer -d 2617.0 -p $HOME/git/mithril
 ```
 
 `bin`ディレクトリへコピー
@@ -488,7 +488,7 @@ sudo cp $HOME/git/mithril/mithril-signer /usr/local/bin/mithril-signer
 ```bash
 mithril-signer -V
 ```
-> mithril-signer 0.3.7+567a8e8
+> mithril-signer 1.0.0
 
 `mithril-signer`の起動
 ```bash
@@ -523,7 +523,7 @@ curl -s localhost:61234/metrics | grep ^mithril_signer_signer_registration_succe
 ```
 
 !!! tip "ヒント"
-    `Squid Cache: Version 7.4` の戻り値がある場合、以降実施不要です。
+    `Squid Cache: Version 7.5` の戻り値がある場合、以降実施不要です。
 
 `squid`の停止
 ```bash
@@ -538,15 +538,15 @@ sudo systemctl disable squid
 sudo apt update && sudo apt upgrade -y
 ```
 
-`squid7.4`のインストール
+`squid7.5`のインストール
 ```bash
 cd $HOME
-wget https://github.com/squid-cache/squid/releases/download/SQUID_7_4/squid-7.4.tar.gz
+wget https://github.com/squid-cache/squid/releases/download/SQUID_7_5/squid-7.5.tar.gz
 ```
 
 ```bash
-tar xzf squid-7.4.tar.gz
-cd squid-7.4
+tar xzf squid-7.5.tar.gz
+cd squid-7.5
 ```
 
 `squid`のビルド
@@ -577,7 +577,7 @@ sudo make install
 
 戻り値
 ``` { .yaml .no-copy }
-Squid Cache: Version 7.4
+Squid Cache: Version 7.5
 ```
 
 `squid`のサービス有効化
@@ -593,6 +593,6 @@ sudo systemctl start squid
 インストールファイルの削除
 ```bash
 cd $HOME
-rm squid-7.4.tar.gz
-rm -rf squid-7.4
+rm squid-7.5.tar.gz
+rm -rf squid-7.5
 ```

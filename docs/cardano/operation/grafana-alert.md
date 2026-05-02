@@ -170,7 +170,7 @@ BPリレー接続監視
 * 「`2. Define query and alert condition`」→「`Metrics Browser`」を選択
 * 「`1. Select a metric`」→以下を入力し、選択
 ```bash
-cardano_node_metrics_peers_connectedPeers_int
+cardano_node_metrics_peerSelection_ActivePeers
 ```
 * 「`2. Select labels to search in`」→「`alias`」を入力し、選択
 * 「`3. Select (multiple) values for your labels`」→「`block-producing-node`」を選択
