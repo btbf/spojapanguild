@@ -120,7 +120,7 @@ P2P では接続先の多くはノードが自動で選びます。
             }
           ],
           "publicRoots": [],
-          "useLedgerAfterSlot": 177724800
+          "useLedgerAfterSlot": 182044807
         }
         EOF
         ```
@@ -176,7 +176,7 @@ P2P では接続先の多くはノードが自動で選びます。
             }
           ],
           "publicRoots": [],
-          "useLedgerAfterSlot": 177724800
+          "useLedgerAfterSlot": 182044807
         }
         EOF
         ```
@@ -221,7 +221,7 @@ P2P では接続先の多くはノードが自動で選びます。
           ],
           "peerSnapshotFile": "$NODE_HOME/${NODE_CONFIG}-peer-snapshot.json",
           "publicRoots": [],
-          "useLedgerAfterSlot": 177724800
+          "useLedgerAfterSlot": 182044807
         }
         EOF
         ```
@@ -265,7 +265,7 @@ P2P では接続先の多くはノードが自動で選びます。
           ],
           "peerSnapshotFile": "$NODE_HOME/${NODE_CONFIG}-peer-snapshot.json",
           "publicRoots": [],
-          "useLedgerAfterSlot": 177724800
+          "useLedgerAfterSlot": 182044807
         }
         EOF
         ```
