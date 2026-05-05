@@ -3,7 +3,8 @@
 !!! hint "インストールバージョン"
     | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | 10.6.4 | 10.15.0.0 | 9.6.7 | 3.12.1.0 | 6.7.0 |
+    | 10.7.1 | 10.16.0.0 | 9.6.7 | 3.12.1.0 | 6.7.0 |
+    
     
 !!! danger "コマンド実行時の注意点"
     * Ubuntuコマンド初心者の方は、コードボックスに複数行のコマンドがある場合でも、コマンドを1行づつコピーして実行するようにしてください。ただし `cat > xxx << EOF`のボックスについてはコードボックスのコピーボタンを使用してコマンドラインに貼り付けてください。
@@ -252,7 +253,7 @@ cd $HOME/git
 git clone https://github.com/IntersectMBO/cardano-node.git
 cd cardano-node
 git fetch --all --recurse-submodules --tags
-git checkout tags/10.6.4
+git checkout tags/10.7.1
 ```
 
 Cabalのビルドオプションを構成します。
@@ -293,11 +294,11 @@ cardano-node version
 
 以下の戻り値を確認します。  
 ``` { .yaml .no-copy }
-cardano-cli 10.15.0.0 - linux-x86_64 - ghc-9.6  
-git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
+cardano-cli 10.16.0.0 - linux-x86_64 - ghc-9.6  
+git rev 045bc187a36ef0cbd236db902b85dd8f202fb059
 
-cardano-node 10.6.4 - linux-x86_64 - ghc-9.6  
-git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
+cardano-node 10.7.1 - linux-x86_64 - ghc-9.6  
+git rev 045bc187a36ef0cbd236db902b85dd8f202fb059
 ```
 
 TMUXセッションを閉じる
@@ -353,17 +354,17 @@ config.json、genesis.json、topology.json
 ```bash
 mkdir -p $NODE_HOME
 cd $NODE_HOME
-wget -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-byron-genesis.json -O ${NODE_CONFIG}-byron-genesis.json
-wget -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-topology.json -O ${NODE_CONFIG}-topology.json
-wget -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
-wget -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
-wget -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
-wget -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
+wget -q https://spojapanguild.net/node_config/10.7.1/${NODE_CONFIG}-byron-genesis.json -O ${NODE_CONFIG}-byron-genesis.json
+wget -q https://spojapanguild.net/node_config/10.7.1/${NODE_CONFIG}-topology.json -O ${NODE_CONFIG}-topology.json
+wget -q https://spojapanguild.net/node_config/10.7.1/${NODE_CONFIG}-shelley-genesis.json -O ${NODE_CONFIG}-shelley-genesis.json
+wget -q https://spojapanguild.net/node_config/10.7.1/${NODE_CONFIG}-alonzo-genesis.json -O ${NODE_CONFIG}-alonzo-genesis.json
+wget -q https://spojapanguild.net/node_config/10.7.1/${NODE_CONFIG}-conway-genesis.json -O ${NODE_CONFIG}-conway-genesis.json
+wget -q https://spojapanguild.net/node_config/10.7.1/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
 ```
 
 BPとリレーで実行
 ```bash
-wget --no-use-server-timestamps -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
+wget --no-use-server-timestamps -q https://spojapanguild.net/node_config/10.7.1/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
 ```
 
 

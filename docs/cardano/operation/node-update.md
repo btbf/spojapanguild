@@ -1,21 +1,21 @@
 # **ノードアップデート**
 
-このガイドは ノードバージョン`10.6.4`に対応しています。  
+このガイドは ノードバージョン`10.7.1`に対応しています。  
 
-最終更新日：2026年4月19日  
+最終更新日：2026年5月5日  
 
 !!! info "バージョン対応表"
     * <font color=red>各依存関係もバージョンアップしてますのでよくお読みになって進めてください</font>
 
     | OS | Node | CLI | GHC | Cabal | CNCLI |
     | :---------- | :---------- | :---------- | :---------- | :---------- | :---------- |
-    | ubuntu 24.04 | 10.6.4 | 10.15.0.0 | 9.6.7 | 3.12.1.0 | 6.7.0 |
+    | ubuntu 24.04.* | 10.7.1 | 10.16.0.0 | 9.6.7 | 3.12.1.0 | 6.7.0 |
 
     **■アップデートパターンDB再構築有無**
 
     | バージョン | DB再構築有無 | 設定ファイル更新有無 | トポロジーファイル更新有無 |
     | :---------- | :---------- | :---------- | :---------- |
-    | 10.5.4以前 → 10.6.4 | あり | 更新あり | なし |
+    | 10.6.4 → 10.7.1 | あり | 更新あり | なし |
 
 <!--
     | OS | Node | CLI | GHC | Cabal | CNCLI |
@@ -32,12 +32,19 @@
 !!! warning "留意点"
     - 作業実施前にブロック生成スケジュールを確認してください。  
     - 今回のアップデートではDB更新があるため、ブロック生成が2時間以上無いことを確認してください。   
-    - 複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。
+    - 複数行のコードをコードボックスのコピーボタンを使用してコマンドラインに貼り付ける場合は、最後の行が自動実行されないため確認の上Enterを押してコードを実行してください。  
+    - OSバージョンアップを完了していること  
+    [Ubuntu22.04から24.04へ移行](../../operation/ubuntu24-migration/)
 
 
 ??? danger "主な変更点と新機能および検証結果"
 
     !!! tip "cardano-node"
+
+        **10.7.1 <font color=red>マイナーアップデート</font>**  
+        
+        - 10.7.0で確認されたパフォーマンス問題を修正し、Plutus・Consensus・トレーシングの改善を含むマイナーアップデート  
+        - PraosModeを有効  
 
         **10.6.4 <font color=red>Plutusインタープリタに対する多数の修正と改善リリース</font>**
         
@@ -84,16 +91,14 @@
         UTxO-HDの概要については[こちら](https://docs.google.com/presentation/d/16gJt5k9p3H9ycwHNO6O0HGb0cYvRpbwhUsvH4kFEthM/edit?usp=sharing){target="_blank" rel="noopener"}をご参照ください
         * config.json内 `LedgerDB`新しいキーを設定
     
-    !!! tip "cardano-cli v10.15.0.0"
+    !!! tip "cardano-cli v10.16.0.0"
 
-        - `TxBodyContent` 型を更新（互換性あり）
-        - `transaction build-estimate` で推定手数料を表示
-        - 不正な `timestamp` のエラーメッセージを改善
-        - `create-testnet-data` で `Byron` / `Shelley` の `k` を統一
+        - BLS鍵に関する機能が追加されたアップデート。  
+        - BLS鍵の生成・ハッシュ化、およびProof of Possession（所有証明）の生成に対応。
 
     !!! 検証結果
         ■検証環境
-        Ubuntu24.04 / PreProd-Testnet / cardano-node 10.6.4 / cardano-cli 10.15.0.0 / SJG-TOOL 4.1.2  
+        PreProd-Testnet / cardano-node 10.7.1 / cardano-cli 10.16.0.0 / SJG-TOOL 4.1.2  
 
         | 検証項目 | 結果 |
         | :---------- | :---------- |
@@ -111,8 +116,6 @@
 更新フローチャートは、画像をクリックすると別ウィンドウで開きます。
 <a href="../../../images/8.7.2-update.png" target=_blank><img src="../../../images/8.7.2-update.png"></a>-->
 
-## **0. 事前準備**
-1. [Ubuntu22.04から24.04へ移行](../../operation/ubuntu24-migration/)を実施してから以降進めてください。
 
 ## **1. 依存環境アップデート**
 
@@ -362,12 +365,12 @@ cncli --version
     ```bash
     mkdir $HOME/git/cardano-node2
     cd $HOME/git/cardano-node2
-    wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.6.4/cardano-node-10.6.4-linux-amd64.tar.gz
+    wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.7.1/cardano-node-10.7.1-linux-amd64.tar.gz
     ```
 
     解凍
     ```bash
-    tar zxvf cardano-node-10.6.4-linux-amd64.tar.gz ./bin/cardano-node ./bin/cardano-cli ./bin/snapshot-converter
+    tar zxvf cardano-node-10.7.1-linux-amd64.tar.gz ./bin/cardano-node ./bin/cardano-cli ./bin/snapshot-converter
     ```
 
     **バージョンの確認**
@@ -378,11 +381,11 @@ cncli --version
     ```
     以下の戻り値を確認します。  
     ``` { .yaml .no-copy }
-    cardano-cli 10.15.0.0 - linux-x86_64 - ghc-9.6  
-    git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
+    cardano-cli 10.16.0.0 - linux-x86_64 - ghc-9.6  
+    git rev 045bc187a36ef0cbd236db902b85dd8f202fb059
 
-    cardano-node 10.6.4 - linux-x86_64 - ghc-9.6  
-    git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
+    cardano-node 10.7.1 - linux-x86_64 - ghc-9.6  
+    git rev 045bc187a36ef0cbd236db902b85dd8f202fb059
     ```
 
 
@@ -411,11 +414,11 @@ cncli --version
 
     以下の戻り値を確認します。
     ``` { .yaml .no-copy }
-    cardano-cli 10.15.0.0 - linux-x86_64 - ghc-9.6  
-    git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
+    cardano-cli 10.16.0.0 - linux-x86_64 - ghc-9.6  
+    git rev 045bc187a36ef0cbd236db902b85dd8f202fb059
 
-    cardano-node 10.6.4 - linux-x86_64 - ghc-9.6  
-    git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
+    cardano-node 10.7.1 - linux-x86_64 - ghc-9.6  
+    git rev 045bc187a36ef0cbd236db902b85dd8f202fb059
     ```
 
 
@@ -455,7 +458,7 @@ cncli --version
 
     ```bash
     git fetch --all --recurse-submodules --tags
-    git checkout tags/10.6.4
+    git checkout tags/10.7.1
     cabal configure --with-compiler=ghc-9.6.7
     ```
 
@@ -478,11 +481,11 @@ cncli --version
 
     以下の戻り値を確認します。
     ``` { .yaml .no-copy }
-    cardano-cli 10.15.0.0 - linux-x86_64 - ghc-9.6  
-    git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
+    cardano-cli 10.16.0.0 - linux-x86_64 - ghc-9.6  
+    git rev 045bc187a36ef0cbd236db902b85dd8f202fb059
 
-    cardano-node 10.6.4 - linux-x86_64 - ghc-9.6  
-    git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
+    cardano-node 10.7.1 - linux-x86_64 - ghc-9.6  
+    git rev 045bc187a36ef0cbd236db902b85dd8f202fb059
     ```
 
     **ビルド用TMUXセッションを終了します。** 
@@ -502,7 +505,6 @@ cncli --version
     sudo cp $(./scripts/bin-path.sh cardano-cli) /usr/local/bin/cardano-cli
     ```
     ```bash
-    cd $HOME/git/cardano-node2
     sudo cp $(./scripts/bin-path.sh cardano-node) /usr/local/bin/cardano-node
     ```
 
@@ -515,22 +517,22 @@ cncli --version
 
     以下の戻り値を確認します。
     ``` { .yaml .no-copy }
-    cardano-cli 10.15.0.0 - linux-x86_64 - ghc-9.6  
-    git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
+    cardano-cli 10.16.0.0 - linux-x86_64 - ghc-9.6  
+    git rev 045bc187a36ef0cbd236db902b85dd8f202fb059
 
-    cardano-node 10.6.4 - linux-x86_64 - ghc-9.6  
-    git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
+    cardano-node 10.7.1 - linux-x86_64 - ghc-9.6  
+    git rev 045bc187a36ef0cbd236db902b85dd8f202fb059
     ```
 
     ??? warning "10.3.1以下からアップデートする場合はこちらも実施(クリックして開く)"
         **snapshot-converterのダウンロード**
         ```bash
         cd $HOME/git/cardano-node2
-        wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.6.4/cardano-node-10.6.4-linux-amd64.tar.gz
+        wget -q https://github.com/IntersectMBO/cardano-node/releases/download/10.7.1/cardano-node-10.7.1-linux-amd64.tar.gz
         ```
         解凍
         ```bash
-        tar zxvf cardano-node-10.6.4-linux-amd64.tar.gz ./bin/snapshot-converter
+        tar zxvf cardano-node-10.7.1-linux-amd64.tar.gz ./bin/snapshot-converter
         ```
 
 ### **2-3. 設定ファイル更新**
@@ -550,8 +552,8 @@ cp $NODE_HOME/${NODE_CONFIG}-topology.json $NODE_HOME/backup/${NODE_CONFIG}-topo
 BPとリレー共通：
 ```bash
 cd $NODE_HOME
-wget -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
-wget -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
+wget -q https://spojapanguild.net/node_config/10.7.1/${NODE_CONFIG}-config.json -O ${NODE_CONFIG}-config.json
+wget -q https://spojapanguild.net/node_config/10.7.1/${NODE_CONFIG}-checkpoints.json -O ${NODE_CONFIG}-checkpoints.json
 ```
 
 <!--
@@ -583,7 +585,7 @@ wget -q https://spojapanguild.net/node_config/10.6.4/${NODE_CONFIG}-checkpoints.
         ```
 -->
 
-??? warning "10.1.4~10.3.1からアップデートする場合はこちらも実施(クリックして開く)"
+??? warning "10.1.4~からアップデートする場合はこちらも実施(クリックして開く)"
 
     !!! hint "BPのみ"
         起動スクリプト更新 
@@ -728,6 +730,7 @@ cp -r ${snapshot_slotno}_mem $NODE_HOME/db/ledger/${snapshot_slotno}
 ``` 
 -->
 
+
 ### **2-4. DB更新**
 
 === "全ノード"
@@ -799,6 +802,7 @@ cp -r ${snapshot_slotno}_mem $NODE_HOME/db/ledger/${snapshot_slotno}
     ```bash
     exit
     ```
+
 
 ### **2-5. サーバー再起動**
 
@@ -950,6 +954,16 @@ BPノードが完全に同期した後、サービス起動状態を確認しま
     100% sync'dになるまでお待ち下さい。
 
 
+### **3-3. Grafanaアラートの対象メトリクス変更** 
+
+左ペインの「Alerting」→「Alert rules」→「ノード監視」→「BPリレー接続監視」のメトリクスを変更して保存します。  
+`cardano_node_metrics_peers_connectedPeers_int`から  
+```
+cardano_node_metrics_peerSelection_ActivePeers
+```
+へと変更してください。
+
+
 ## **4. エアギャップアップデート**
 !!! hint "SFTP機能ソフト導入"
     R-loginの転送機能が遅いので、大容量ファイルをダウン・アップロードする場合は、SFTP接続可能なソフトを使用すると効率的です。（FileZilaなど）  
@@ -995,8 +1009,8 @@ BPノードが完全に同期した後、サービス起動状態を確認しま
 
         **戻り値確認**
         ``` { .yaml .no-copy }
-        cardano-cli 10.15.0.0 - linux-x86_64 - ghc-9.6  
-        git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
+        cardano-cli 10.16.0.0 - linux-x86_64 - ghc-9.6  
+        git rev 045bc187a36ef0cbd236db902b85dd8f202fb059
         ```
 
 === "ソースコードからビルドした場合"
@@ -1066,10 +1080,10 @@ BPノードが完全に同期した後、サービス起動状態を確認しま
             sudo chown root:root /usr/local/lib/libsecp256k1.so.2.0.2
             ```
             ```bash
-            sudo chmod +x /usr/local/lib/libsodium.so.23.3.0
+            sudo chmod 755 /usr/local/lib/libsodium.so.23.3.0
             ```
             ```bash
-            sudo chmod +x /usr/local/lib/libsecp256k1.so.2.0.2
+            sudo chmod 755 /usr/local/lib/libsecp256k1.so.2.0.2
             ```
 
             **シンボリックリンク作成**
@@ -1117,8 +1131,8 @@ BPノードが完全に同期した後、サービス起動状態を確認しま
 
             **戻り値確認**
             ``` { .yaml .no-copy }
-            cardano-cli 10.15.0.0 - linux-x86_64 - ghc-9.6  
-            git rev 5a4dcd1b410ba78f9faab7acd48f606496909935
+            cardano-cli 10.16.0.0 - linux-x86_64 - ghc-9.6  
+            git rev 045bc187a36ef0cbd236db902b85dd8f202fb059
             ```
 
 <!--
