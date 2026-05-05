@@ -1,5 +1,18 @@
 # **更新履歴**
 
+## 2026/5/5　ver.13.9.5
+!!! note ""
+    **追加**：  
+    なし
+
+    **変更**：  
+    cardano-node v10.7.1対応 [インストール](./cardano/setup/node-setup.md) / [アップデート](./cardano/operation/node-update.md)  
+    Mithril-Signerアップデート [Mithril Signerの更新](./cardano/operation/mithril-signer-node-setup-and-updates.md/#2-mithril-signer)  
+    Grafanaメトリクス一部変更 [Grafanaアラート設定](./cardano/operation/grafana-alert.md)  
+    
+    **リリース**：  
+    なし
+
 ## 2026/4/30　ver.13.9.4
 !!! note ""
     **追加**：  
